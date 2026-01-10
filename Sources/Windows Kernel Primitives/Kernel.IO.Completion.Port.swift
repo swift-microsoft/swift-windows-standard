@@ -72,11 +72,11 @@
         @inlinable
         public static func associate(
             _ port: Kernel.Descriptor,
-            handle: HANDLE,
+            handle: Kernel.Descriptor,
             key: Key
         ) throws(Error) {
             let result = CreateIoCompletionPort(
-                handle,
+                handle.rawValue,
                 port.rawValue,
                 key.rawValue,
                 0
@@ -137,18 +137,20 @@
         /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
         @inlinable
         public static func read(
-            _ handle: HANDLE,
+            _ handle: Kernel.Descriptor,
             into buffer: UnsafeMutableRawBufferPointer,
-            overlapped: UnsafeMutablePointer<OVERLAPPED>
+            overlapped: inout Overlapped
         ) throws(Error) -> Read.Result {
             var count: DWORD = 0
-            let success = ReadFile(
-                handle,
-                buffer.baseAddress,
-                DWORD(buffer.count),
-                &count,
-                overlapped
-            )
+            let success = withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+                ReadFile(
+                    handle.rawValue,
+                    buffer.baseAddress,
+                    DWORD(buffer.count),
+                    &count,
+                    rawPtr
+                )
+            }
 
             if success {
                 return .completed(bytes: count)
@@ -172,18 +174,20 @@
         /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
         @inlinable
         public static func write(
-            _ handle: HANDLE,
+            _ handle: Kernel.Descriptor,
             from buffer: UnsafeRawBufferPointer,
-            overlapped: UnsafeMutablePointer<OVERLAPPED>
+            overlapped: inout Overlapped
         ) throws(Error) -> Write.Result {
             var count: DWORD = 0
-            let success = WriteFile(
-                handle,
-                buffer.baseAddress,
-                DWORD(buffer.count),
-                &count,
-                overlapped
-            )
+            let success = withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+                WriteFile(
+                    handle.rawValue,
+                    buffer.baseAddress,
+                    DWORD(buffer.count),
+                    &count,
+                    rawPtr
+                )
+            }
 
             if success {
                 return .completed(bytes: count)
@@ -207,17 +211,19 @@
         /// - Throws: `Error.result` on failure.
         @inlinable
         public static func result(
-            _ handle: HANDLE,
-            overlapped: UnsafeMutablePointer<OVERLAPPED>,
+            _ handle: Kernel.Descriptor,
+            overlapped: inout Overlapped,
             wait: Bool = false
         ) throws(Error) -> UInt32 {
             var count: DWORD = 0
-            let success = GetOverlappedResult(
-                handle,
-                overlapped,
-                &count,
-                wait
-            )
+            let success = withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+                GetOverlappedResult(
+                    handle.rawValue,
+                    rawPtr,
+                    &count,
+                    wait
+                )
+            }
 
             if success {
                 return count

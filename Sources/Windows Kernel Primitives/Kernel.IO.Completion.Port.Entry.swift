@@ -59,10 +59,18 @@
     // MARK: - Accessors
 
     extension Kernel.IO.Completion.Port.Entry {
-        /// Pointer to the OVERLAPPED structure for this completion.
+        /// Pointer to the Overlapped structure for this completion.
+        ///
+        /// Returns `nil` for synthetic completions posted via `PostQueuedCompletionStatus`
+        /// without an associated overlapped structure.
+        ///
+        /// The pointer is cast from the raw C type to the Swift wrapper type.
+        /// This is safe because `Overlapped` is a transparent wrapper around `OVERLAPPED`.
         @inlinable
-        internal var overlapped: UnsafeMutablePointer<OVERLAPPED>? {
-            raw.lpOverlapped
+        public var overlapped: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>? {
+            guard let rawPtr = raw.lpOverlapped else { return nil }
+            return UnsafeMutableRawPointer(rawPtr)
+                .assumingMemoryBound(to: Kernel.IO.Completion.Port.Overlapped.self)
         }
 
         /// The completion key associated with the file handle.

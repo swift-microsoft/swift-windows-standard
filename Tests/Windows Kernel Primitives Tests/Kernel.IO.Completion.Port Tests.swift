@@ -11,8 +11,8 @@
 
 #if os(Windows)
     import WinSDK
-    import Test_Support_Primitives
-    import Testing
+    import Test_Primitives
+import Testing_Extras
 
     @testable import Windows_Kernel_Primitives
     import Kernel_Primitives

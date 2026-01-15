@@ -97,6 +97,7 @@
         ///   - key: The completion key to return.
         ///   - overlapped: The overlapped pointer to return (can be nil).
         /// - Throws: `Error.post` on failure.
+        @unsafe
         @inlinable
         public static func post(
             _ port: Kernel.Descriptor,
@@ -104,7 +105,7 @@
             key: Key = .zero,
             overlapped: LPOVERLAPPED? = nil
         ) throws(Error) {
-            let result = PostQueuedCompletionStatus(
+            let result = unsafe PostQueuedCompletionStatus(
                 port.rawValue,
                 bytes,
                 key.rawValue,
@@ -135,6 +136,7 @@
         ///   - overlapped: The overlapped structure for this operation.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
+        @unsafe
         @inlinable
         public static func read(
             _ handle: Kernel.Descriptor,
@@ -142,7 +144,7 @@
             overlapped: inout Overlapped
         ) throws(Error) -> Read.Result {
             var count: DWORD = 0
-            let success = withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
                 ReadFile(
                     handle.rawValue,
                     buffer.baseAddress,
@@ -172,6 +174,7 @@
         ///   - overlapped: The overlapped structure for this operation.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
+        @unsafe
         @inlinable
         public static func write(
             _ handle: Kernel.Descriptor,
@@ -179,7 +182,7 @@
             overlapped: inout Overlapped
         ) throws(Error) -> Write.Result {
             var count: DWORD = 0
-            let success = withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
                 WriteFile(
                     handle.rawValue,
                     buffer.baseAddress,
@@ -216,7 +219,7 @@
             wait: Bool = false
         ) throws(Error) -> UInt32 {
             var count: DWORD = 0
-            let success = withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
                 GetOverlappedResult(
                     handle.rawValue,
                     rawPtr,

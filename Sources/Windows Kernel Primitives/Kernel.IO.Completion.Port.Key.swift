@@ -76,6 +76,7 @@
         /// with a handle.
         ///
         /// - Parameter pointer: A pointer to associate with the handle.
+        @unsafe
         @inlinable
         public init(_ pointer: UnsafeRawPointer) {
             self.init(rawValue: ULONG_PTR(UInt(bitPattern: pointer)))
@@ -84,6 +85,7 @@
         /// Creates a completion key from a typed pointer.
         ///
         /// - Parameter pointer: A pointer to associate with the handle.
+        @unsafe
         @inlinable
         public init<T>(pointer: UnsafePointer<T>) {
             self.init(rawValue: ULONG_PTR(UInt(bitPattern: pointer)))
@@ -92,6 +94,7 @@
         /// Creates a completion key from a mutable typed pointer.
         ///
         /// - Parameter pointer: A mutable pointer to associate with the handle.
+        @unsafe
         @inlinable
         public init<T>(pointer: UnsafeMutablePointer<T>) {
             self.init(rawValue: ULONG_PTR(UInt(bitPattern: pointer)))

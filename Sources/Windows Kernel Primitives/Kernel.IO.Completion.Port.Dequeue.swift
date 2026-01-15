@@ -73,6 +73,7 @@
         ///   the completion is fully processed. This type is `@unchecked Sendable`
         ///   for IOCP usage; callers must ensure correct lifetime and synchronization
         ///   of the pointed-to storage.
+        @safe
         @frozen
         public struct Item: @unchecked Sendable {
             /// Number of bytes transferred.
@@ -90,6 +91,7 @@
             /// Status of the completed I/O operation.
             public let status: Status
 
+            @unsafe
             @inlinable
             public init(
                 bytes: UInt32,
@@ -99,7 +101,7 @@
             ) {
                 self.bytes = bytes
                 self.key = key
-                self.overlapped = overlapped
+                unsafe { self.overlapped = overlapped }
                 self.status = status
             }
         }
@@ -128,7 +130,7 @@
             var key: ULONG_PTR = 0
             var overlapped: LPOVERLAPPED? = nil
 
-            let ok = GetQueuedCompletionStatus(
+            let ok = unsafe GetQueuedCompletionStatus(
                 port.rawValue,
                 &bytes,
                 &key,
@@ -137,14 +139,15 @@
             )
 
             // Helper to convert raw pointer to Swift wrapper pointer
+            @unsafe
             func toOverlapped(_ raw: LPOVERLAPPED?) -> UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>? {
-                guard let raw else { return nil }
-                return UnsafeMutableRawPointer(raw)
+                guard let raw = unsafe raw else { return nil }
+                return unsafe UnsafeMutableRawPointer(raw)
                     .assumingMemoryBound(to: Kernel.IO.Completion.Port.Overlapped.self)
             }
 
             if ok {
-                return Item(
+                return unsafe Item(
                     bytes: UInt32(bytes),
                     key: Kernel.IO.Completion.Port.Key(rawValue: key),
                     overlapped: toOverlapped(overlapped),
@@ -158,9 +161,10 @@
                 throw .timeout
             }
 
-            if overlapped != nil {
+            let overlappedPtr = unsafe overlapped
+            if overlappedPtr != nil {
                 // Correct: dequeued completion of a FAILED I/O operation
-                return Item(
+                return unsafe Item(
                     bytes: UInt32(bytes),
                     key: Kernel.IO.Completion.Port.Key(rawValue: key),
                     overlapped: toOverlapped(overlapped),
@@ -186,21 +190,22 @@
         ///   - timeout: Timeout in milliseconds.
         /// - Returns: Number of entries dequeued (0 on timeout).
         /// - Throws: `Error.dequeue` on failure.
+        @unsafe
         @inlinable
         public static func batch(
             _ port: Kernel.Descriptor,
             entries: UnsafeMutableBufferPointer<Kernel.IO.Completion.Port.Entry>,
             timeout: DWORD
         ) throws(Kernel.IO.Completion.Port.Error) -> Int {
-            guard let base = entries.baseAddress else { return 0 }
+            guard let base = unsafe entries.baseAddress else { return 0 }
 
             // Entry is a transparent wrapper around OVERLAPPED_ENTRY,
             // so we can safely reinterpret the buffer pointer
-            let rawBase = UnsafeMutableRawPointer(base)
+            let rawBase = unsafe UnsafeMutableRawPointer(base)
                 .assumingMemoryBound(to: OVERLAPPED_ENTRY.self)
 
             var removed: ULONG = 0
-            let result = GetQueuedCompletionStatusEx(
+            let result = unsafe GetQueuedCompletionStatusEx(
                 port.rawValue,
                 rawBase,
                 ULONG(entries.count),

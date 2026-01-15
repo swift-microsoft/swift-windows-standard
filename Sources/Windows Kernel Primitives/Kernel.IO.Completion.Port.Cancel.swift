@@ -88,6 +88,7 @@
 
     extension Kernel.IO.Completion.Port.Cancel {
         /// Result of cancelling a specific pending I/O operation.
+        @safe
         public struct Pending: @unchecked Sendable {
             @usableFromInline
             let descriptor: Kernel.Descriptor
@@ -95,10 +96,11 @@
             @usableFromInline
             let overlappedPtr: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>
 
+            @unsafe
             @usableFromInline
             init(_ descriptor: Kernel.Descriptor, overlapped: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>) {
                 self.descriptor = descriptor
-                self.overlappedPtr = overlapped
+                unsafe { self.overlappedPtr = overlapped }
             }
 
             /// Cancels the specific pending I/O (fire-and-forget).
@@ -106,7 +108,8 @@
             /// Returns silently if the operation already completed.
             @inlinable
             public func callAsFunction() {
-                _ = withUnsafeMutablePointer(to: &overlappedPtr.pointee.raw) { rawPtr in
+                let ptr = unsafe overlappedPtr
+                _ = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
                     CancelIoEx(descriptor.rawValue, rawPtr)
                 }
             }
@@ -116,7 +119,8 @@
             /// - Returns: `true` if cancelled, `false` if already completed.
             @inlinable
             public var status: Bool {
-                let result = withUnsafeMutablePointer(to: &overlappedPtr.pointee.raw) { rawPtr in
+                let ptr = unsafe overlappedPtr
+                let result = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
                     CancelIoEx(descriptor.rawValue, rawPtr)
                 }
                 if result {
@@ -137,8 +141,8 @@
             _ descriptor: Kernel.Descriptor,
             overlapped: inout Kernel.IO.Completion.Port.Overlapped
         ) -> Pending {
-            withUnsafeMutablePointer(to: &overlapped) { ptr in
-                Pending(descriptor, overlapped: ptr)
+            unsafe withUnsafeMutablePointer(to: &overlapped) { ptr in
+                unsafe Pending(descriptor, overlapped: ptr)
             }
         }
 
@@ -148,12 +152,13 @@
         ///   - descriptor: The descriptor with pending I/O.
         ///   - overlapped: Pointer to the overlapped structure for the operation to cancel.
         /// - Returns: An accessor for cancel operations.
+        @unsafe
         @inlinable
         public static func pending(
             _ descriptor: Kernel.Descriptor,
             overlapped: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>
         ) -> Pending {
-            Pending(descriptor, overlapped: overlapped)
+            unsafe Pending(descriptor, overlapped: overlapped)
         }
     }
 

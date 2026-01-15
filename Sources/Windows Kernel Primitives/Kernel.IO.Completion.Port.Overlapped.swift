@@ -56,6 +56,7 @@
         ///
         /// - ``Kernel/IO/Completion/Port``
         /// - ``Kernel/IO/Completion/Port/Entry``
+        @safe
         public struct Overlapped: @unchecked Sendable {
             /// The underlying Windows OVERLAPPED structure.
             @usableFromInline

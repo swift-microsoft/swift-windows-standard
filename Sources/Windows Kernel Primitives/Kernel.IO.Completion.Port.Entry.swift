@@ -43,6 +43,7 @@
         /// - ``Kernel/IO/Completion/Port``
         /// - ``Kernel/IO/Completion/Port/Key``
         /// - ``Kernel/IO/Completion/Port/Overlapped``
+        @safe
         public struct Entry: @unchecked Sendable {
             /// The underlying Windows OVERLAPPED_ENTRY structure.
             @usableFromInline
@@ -66,10 +67,11 @@
         ///
         /// The pointer is cast from the raw C type to the Swift wrapper type.
         /// This is safe because `Overlapped` is a transparent wrapper around `OVERLAPPED`.
+        @unsafe
         @inlinable
         public var overlapped: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>? {
-            guard let rawPtr = raw.lpOverlapped else { return nil }
-            return UnsafeMutableRawPointer(rawPtr)
+            guard let rawPtr = unsafe raw.lpOverlapped else { return nil }
+            return unsafe UnsafeMutableRawPointer(rawPtr)
                 .assumingMemoryBound(to: Kernel.IO.Completion.Port.Overlapped.self)
         }
 

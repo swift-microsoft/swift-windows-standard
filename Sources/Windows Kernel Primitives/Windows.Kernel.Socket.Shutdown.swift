@@ -1,0 +1,75 @@
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-windows open source project
+//
+// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
+
+#if os(Windows)
+@_spi(Syscall) public import Kernel_Primitives
+public import WinSDK
+
+// MARK: - Socket Shutdown
+
+extension Windows.Kernel.Socket {
+    /// Shuts down part of a full-duplex connection.
+    ///
+    /// Disables sends, receives, or both on a socket. This does not close
+    /// the socket; use `close()` to release the socket descriptor.
+    ///
+    /// - Parameters:
+    ///   - socket: The socket to shut down.
+    ///   - how: Which operations to disable.
+    /// - Throws: `Error.shutdown` on failure.
+    ///
+    /// ## Example
+    ///
+    /// ```swift
+    /// // Signal that we're done sending (half-close)
+    /// try Windows.Kernel.Socket.shutdown(sock, how: .write)
+    ///
+    /// // Can still receive data until the peer closes
+    /// let bytes = try Windows.Kernel.Socket.receive(sock, buffer: &buf)
+    ///
+    /// // Now fully close the socket
+    /// try Windows.Kernel.Socket.close(sock)
+    /// ```
+    public static func shutdown(
+        _ socket: Kernel.Socket.Descriptor,
+        how: Kernel.Socket.Shutdown.How
+    ) throws(Error) {
+        let sdHow: Int32
+        switch how {
+        case .read:
+            sdHow = SD_RECEIVE
+        case .write:
+            sdHow = SD_SEND
+        case .both:
+            sdHow = SD_BOTH
+        }
+
+        let result = WinSDK.shutdown(SOCKET(socket.rawValue), sdHow)
+        guard result == 0 else {
+            throw .shutdown(captureLastSocketError())
+        }
+    }
+}
+
+// MARK: - Windows-specific Shutdown Values
+
+extension Kernel.Socket.Shutdown.How {
+    /// Windows shutdown constant for read.
+    public static var sdReceive: Int32 { SD_RECEIVE }
+
+    /// Windows shutdown constant for write.
+    public static var sdSend: Int32 { SD_SEND }
+
+    /// Windows shutdown constant for both.
+    public static var sdBoth: Int32 { SD_BOTH }
+}
+
+#endif

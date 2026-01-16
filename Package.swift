@@ -20,9 +20,14 @@ let package = Package(
             name: "Windows Kernel Primitives",
             targets: ["Windows Kernel Primitives"]
         ),
+        .library(
+            name: "Windows Loader Primitives",
+            targets: ["Windows Loader Primitives"]
+        ),
     ],
     dependencies: [
         .package(path: "../swift-kernel-primitives"),
+        .package(path: "../swift-loader-primitives"),
         .package(path: "../swift-test-primitives"),
         .package(path: "../../swift-foundations/swift-testing-extras"),
     ],
@@ -36,6 +41,13 @@ let package = Package(
             dependencies: [
                 .target(name: "Windows Primitives"),
                 .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+        .target(
+            name: "Windows Loader Primitives",
+            dependencies: [
+                .target(name: "Windows Primitives"),
+                .product(name: "Loader Primitives", package: "swift-loader-primitives"),
             ]
         ),
         .testTarget(

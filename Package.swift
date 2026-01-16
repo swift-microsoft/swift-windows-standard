@@ -60,6 +60,16 @@ let package = Package(
             ],
             path: "Tests/Windows Kernel Primitives Tests"
         ),
+        .testTarget(
+            name: "Windows Loader Primitives Tests",
+            dependencies: [
+                "Windows Loader Primitives",
+                .product(name: "Loader Primitives", package: "swift-loader-primitives"),
+                .product(name: "Test Primitives", package: "swift-test-primitives"),
+                .product(name: "Testing Extras", package: "swift-testing-extras"),
+            ],
+            path: "Tests/Windows Loader Primitives Tests"
+        ),
     ],
     swiftLanguageModes: [.v6]
 )

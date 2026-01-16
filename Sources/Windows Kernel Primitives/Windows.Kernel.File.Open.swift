@@ -1,0 +1,118 @@
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-windows open source project
+//
+// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
+
+#if os(Windows)
+@_spi(Syscall) public import Kernel_Primitives
+public import WinSDK
+
+// MARK: - Windows CreateFileW syscall
+
+extension Windows.Kernel.File.Open {
+    /// Opens a file at the specified path.
+    ///
+    /// ## Threading
+    /// This call blocks until the open completes. The open syscall may block
+    /// on networked filesystems.
+    ///
+    /// ## Descriptor Ownership
+    /// The caller receives ownership of the returned descriptor and must close it
+    /// explicitly via ``Kernel/Close/close(_:)``. Failing to close leaks the
+    /// kernel resource until process termination.
+    ///
+    /// ## Errors
+    /// - ``Error/notFound``: Path does not exist and `.create` not specified
+    /// - ``Error/exists``: Path exists and `.exclusive` was specified
+    /// - ``Error/permission``: Insufficient permissions for requested mode
+    /// - ``Error/isDirectory``: Cannot open directory without `.backupSemantics`
+    /// - ``Error/tooManyOpen``: Process or system handle limit reached
+    ///
+    /// - Parameters:
+    ///   - path: The file path to open.
+    ///   - mode: Read/write access mode.
+    ///   - options: Creation and behavior options.
+    ///   - permissions: File permissions (mostly ignored on Windows, used for readonly attribute).
+    /// - Returns: A file descriptor for the opened file.
+    /// - Throws: ``Kernel/File/Open/Error`` on failure.
+    @inlinable
+    public static func open(
+        path: borrowing Kernel.Path,
+        mode: Kernel.File.Open.Mode,
+        options: Kernel.File.Open.Options,
+        permissions: Kernel.File.Permissions = .standard
+    ) throws(Kernel.File.Open.Error) -> Kernel.Descriptor {
+        try open(
+            unsafePath: path.unsafeCString,
+            mode: mode,
+            options: options,
+            permissions: permissions
+        )
+    }
+
+    /// Opens a file at the specified path using an unsafe wide string pointer.
+    ///
+    /// This is the low-level variant for callers that already have a null-terminated
+    /// wide string. Prefer ``open(path:mode:options:permissions:)`` when possible.
+    ///
+    /// - Parameters:
+    ///   - unsafePath: Null-terminated wide string path. Must remain valid for the call duration.
+    ///   - mode: Read/write access mode.
+    ///   - options: Creation and behavior options.
+    ///   - permissions: File permissions (mostly ignored on Windows).
+    /// - Returns: A file descriptor for the opened file.
+    /// - Throws: ``Kernel/File/Open/Error`` on failure.
+    public static func open(
+        unsafePath: UnsafePointer<Kernel.Path.Char>,
+        mode: Kernel.File.Open.Mode,
+        options: Kernel.File.Open.Options,
+        permissions: Kernel.File.Permissions = .standard
+    ) throws(Kernel.File.Open.Error) -> Kernel.Descriptor {
+        let desiredAccess = mode.windowsDesiredAccess
+        let shareMode: DWORD = DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE)
+        let creationDisposition = options.windowsCreationDisposition
+        var flagsAndAttributes = options.windowsFlagsAndAttributesFull
+
+        // Apply readonly from permissions if no write requested
+        if !permissions.owner.write && !mode.contains(.write) {
+            flagsAndAttributes |= DWORD(FILE_ATTRIBUTE_READONLY)
+        }
+
+        // Cast UInt16 path pointer to WCHAR (they're the same on Windows)
+        let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
+
+        let handle = CreateFileW(
+            wpath,
+            desiredAccess,
+            shareMode,
+            nil,
+            creationDisposition,
+            flagsAndAttributes,
+            nil
+        )
+
+        guard handle != INVALID_HANDLE_VALUE else {
+            throw .current()
+        }
+
+        return Kernel.Descriptor.borrowing(handle: handle)
+    }
+}
+
+// MARK: - Error Construction
+
+extension Kernel.File.Open.Error {
+    /// Creates an error from the current Win32 last error.
+    @usableFromInline
+    internal static func current() -> Self {
+        Self(code: Windows.Kernel.Error.captureLastError())
+    }
+}
+
+#endif

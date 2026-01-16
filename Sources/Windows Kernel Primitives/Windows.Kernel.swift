@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Kernel_Primitives
+@_spi(Syscall) public import Kernel_Primitives
 public import Windows_Primitives
 
 extension Windows_Primitives.Windows {
@@ -20,5 +20,33 @@ extension Windows_Primitives.Windows {
     ///
     /// Low-level Windows syscall wrappers for:
     /// - I/O Completion Ports (IOCP) for async I/O
+    /// - File I/O (CreateFileW, ReadFile, WriteFile, CloseHandle)
+    /// - File seeking (SetFilePointerEx)
+    /// - Directory operations
+    /// - Process management
+    /// - Memory mapping
     public typealias Kernel = Kernel_Primitives.Kernel
 }
+
+// MARK: - Windows.Kernel.Descriptor Veneer
+
+#if os(Windows)
+public import WinSDK
+
+extension Kernel_Primitives.Kernel.Descriptor {
+    /// Creates a descriptor by borrowing a Windows HANDLE.
+    ///
+    /// - Parameter handle: The raw Windows HANDLE.
+    /// - Returns: A `Kernel.Descriptor` wrapping the handle.
+    @inlinable
+    public static func borrowing(handle: HANDLE) -> Self {
+        Self(_rawValue: UInt(bitPattern: handle))
+    }
+
+    /// The raw Windows HANDLE value.
+    @inlinable
+    public var handle: HANDLE {
+        HANDLE(bitPattern: _rawValue)!
+    }
+}
+#endif

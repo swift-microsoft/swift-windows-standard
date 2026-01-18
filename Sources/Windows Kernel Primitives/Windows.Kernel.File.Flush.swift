@@ -15,15 +15,15 @@ public import WinSDK
 
 // MARK: - Windows FlushFileBuffers syscall
 
-extension Windows.Kernel.Sync {
+extension Windows.Kernel.File.Flush {
     /// Flushes file buffers to disk.
     ///
     /// Ensures that all buffered data for the specified file has been written
     /// to the underlying storage device.
     ///
-    /// - Parameter descriptor: The file descriptor to sync.
-    /// - Throws: `Kernel.Sync.Error` on failure.
-    public static func sync(_ descriptor: Kernel.Descriptor) throws(Kernel.Sync.Error) {
+    /// - Parameter descriptor: The file descriptor to flush.
+    /// - Throws: `Kernel.File.Flush.Error` on failure.
+    public static func flush(_ descriptor: Kernel.Descriptor) throws(Kernel.File.Flush.Error) {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
@@ -33,21 +33,21 @@ extension Windows.Kernel.Sync {
         }
     }
 
-    /// Flushes file data to disk (same as sync on Windows).
+    /// Flushes file data to disk (same as flush on Windows).
     ///
-    /// On Windows, there is no distinction between `fsync` and `fdatasync`.
+    /// On Windows, there is no distinction between flushing data and metadata.
     /// Both operations flush all data and metadata.
     ///
-    /// - Parameter descriptor: The file descriptor to sync.
-    /// - Throws: `Kernel.Sync.Error` on failure.
-    public static func datasync(_ descriptor: Kernel.Descriptor) throws(Kernel.Sync.Error) {
-        try sync(descriptor)
+    /// - Parameter descriptor: The file descriptor to flush.
+    /// - Throws: `Kernel.File.Flush.Error` on failure.
+    public static func flushData(_ descriptor: Kernel.Descriptor) throws(Kernel.File.Flush.Error) {
+        try flush(descriptor)
     }
 }
 
 // MARK: - Error Construction
 
-extension Kernel.Sync.Error {
+extension Kernel.File.Flush.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

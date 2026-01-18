@@ -20,27 +20,27 @@ extension Windows.Kernel.Link {
     ///
     /// - Parameters:
     ///   - source: The path of the existing file.
-    ///   - link: The path of the hard link to create.
+    ///   - linkPath: The path of the hard link to create.
     /// - Throws: `Kernel.Link.Error` on failure.
-    public static func link(
+    public static func create(
         source: borrowing Kernel.Path,
-        link: borrowing Kernel.Path
+        linkPath: borrowing Kernel.Path
     ) throws(Kernel.Link.Error) {
-        try link(source: source.unsafeCString, link: link.unsafeCString)
+        try create(source: source.unsafeCString, linkPath: linkPath.unsafeCString)
     }
 
     /// Creates a hard link to an existing file using unsafe wide strings.
     ///
     /// - Parameters:
     ///   - source: The source file path as a null-terminated wide string.
-    ///   - link: The link path as a null-terminated wide string.
+    ///   - linkPath: The link path as a null-terminated wide string.
     /// - Throws: `Kernel.Link.Error` on failure.
-    public static func link(
+    public static func create(
         source: UnsafePointer<Kernel.Path.Char>,
-        link: UnsafePointer<Kernel.Path.Char>
+        linkPath: UnsafePointer<Kernel.Path.Char>
     ) throws(Kernel.Link.Error) {
         let wSource = UnsafeRawPointer(source).assumingMemoryBound(to: WCHAR.self)
-        let wLink = UnsafeRawPointer(link).assumingMemoryBound(to: WCHAR.self)
+        let wLink = UnsafeRawPointer(linkPath).assumingMemoryBound(to: WCHAR.self)
 
         guard CreateHardLinkW(wLink, wSource, nil) else {
             throw .current()

@@ -15,24 +15,24 @@ public import WinSDK
 
 // MARK: - Windows RemoveDirectoryW syscall
 
-extension Windows.Kernel.Rmdir {
+extension Windows.Kernel.Directory.Remove {
     /// Removes an empty directory.
     ///
     /// - Parameter path: The path of the directory to remove.
-    /// - Throws: `Kernel.Rmdir.Error` on failure.
-    public static func rmdir(
+    /// - Throws: `Kernel.Directory.Remove.Error` on failure.
+    public static func remove(
         path: borrowing Kernel.Path
-    ) throws(Kernel.Rmdir.Error) {
-        try rmdir(unsafePath: path.unsafeCString)
+    ) throws(Kernel.Directory.Remove.Error) {
+        try remove(unsafePath: path.unsafeCString)
     }
 
     /// Removes an empty directory using an unsafe wide string.
     ///
     /// - Parameter unsafePath: The path as a null-terminated wide string.
-    /// - Throws: `Kernel.Rmdir.Error` on failure.
-    public static func rmdir(
+    /// - Throws: `Kernel.Directory.Remove.Error` on failure.
+    public static func remove(
         unsafePath: UnsafePointer<Kernel.Path.Char>
-    ) throws(Kernel.Rmdir.Error) {
+    ) throws(Kernel.Directory.Remove.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard RemoveDirectoryW(wpath) else {
             throw .current()
@@ -42,7 +42,7 @@ extension Windows.Kernel.Rmdir {
 
 // MARK: - Error Construction
 
-extension Kernel.Rmdir.Error {
+extension Kernel.Directory.Remove.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

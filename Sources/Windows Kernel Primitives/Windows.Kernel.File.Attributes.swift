@@ -97,13 +97,13 @@ extension Windows.Kernel.File {
     /// - Parameters:
     ///   - path: The file path.
     ///   - attributes: The attributes to set.
-    /// - Throws: `Kernel.File.Chmod.Error` on failure.
-    public static func chmod(
+    /// - Throws: `Kernel.File.Attributes.Error` on failure.
+    public static func setAttributes(
         path: UnsafePointer<WCHAR>,
-        attributes: Attributes
-    ) throws(Kernel.File.Chmod.Error) {
+        to attributes: Attributes
+    ) throws(Kernel.File.Attributes.Error) {
         guard SetFileAttributesW(path, attributes.rawValue) else {
-            throw .set(Windows.Kernel.Error.captureLastError())
+            throw .platform(Kernel.Error(code: Windows.Kernel.Error.captureLastError()))
         }
     }
 

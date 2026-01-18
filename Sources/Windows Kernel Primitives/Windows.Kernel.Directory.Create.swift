@@ -15,18 +15,18 @@ public import WinSDK
 
 // MARK: - Windows CreateDirectoryW syscall
 
-extension Windows.Kernel.Mkdir {
+extension Windows.Kernel.Directory.Create {
     /// Creates a directory at the specified path.
     ///
     /// - Parameters:
     ///   - path: The path where the directory should be created.
     ///   - permissions: POSIX permissions (ignored on Windows, uses default security).
-    /// - Throws: `Kernel.Mkdir.Error` on failure.
-    public static func mkdir(
+    /// - Throws: `Kernel.Directory.Create.Error` on failure.
+    public static func create(
         path: borrowing Kernel.Path,
         permissions: Kernel.File.Permissions = .directoryDefault
-    ) throws(Kernel.Mkdir.Error) {
-        try mkdir(unsafePath: path.unsafeCString, permissions: permissions)
+    ) throws(Kernel.Directory.Create.Error) {
+        try create(unsafePath: path.unsafeCString, permissions: permissions)
     }
 
     /// Creates a directory at the specified path using an unsafe wide string.
@@ -34,11 +34,11 @@ extension Windows.Kernel.Mkdir {
     /// - Parameters:
     ///   - unsafePath: The path as a null-terminated wide string.
     ///   - permissions: POSIX permissions (ignored on Windows).
-    /// - Throws: `Kernel.Mkdir.Error` on failure.
-    public static func mkdir(
+    /// - Throws: `Kernel.Directory.Create.Error` on failure.
+    public static func create(
         unsafePath: UnsafePointer<Kernel.Path.Char>,
         permissions: Kernel.File.Permissions = .directoryDefault
-    ) throws(Kernel.Mkdir.Error) {
+    ) throws(Kernel.Directory.Create.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard CreateDirectoryW(wpath, nil) else {
             throw .current()
@@ -48,7 +48,7 @@ extension Windows.Kernel.Mkdir {
 
 // MARK: - Error Construction
 
-extension Kernel.Mkdir.Error {
+extension Kernel.Directory.Create.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

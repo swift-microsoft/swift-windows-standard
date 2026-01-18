@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Windows SetFilePointerEx syscall
 
-extension Windows.Kernel.Seek {
+extension Windows.Kernel.File.Seek {
     /// Repositions the file offset of a file descriptor.
     ///
     /// - Parameters:
@@ -23,7 +23,7 @@ extension Windows.Kernel.Seek {
     ///   - offset: The offset value.
     ///   - origin: The reference point for the offset.
     /// - Returns: The resulting offset from the beginning of the file.
-    /// - Throws: `Kernel.Seek.Error` on failure.
+    /// - Throws: `Kernel.File.Seek.Error` on failure.
     @discardableResult
     public static func seek(
         _ descriptor: Kernel.Descriptor,
@@ -56,7 +56,7 @@ extension Windows.Kernel.Seek {
     ///
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: The current offset from the beginning of the file.
-    /// - Throws: `Kernel.Seek.Error` on failure.
+    /// - Throws: `Kernel.File.Seek.Error` on failure.
     public static func tell(_ descriptor: Kernel.Descriptor) throws(Error) -> Int64 {
         try seek(descriptor, offset: 0, origin: .current)
     }
@@ -64,7 +64,7 @@ extension Windows.Kernel.Seek {
 
 // MARK: - Origin Windows Conversion
 
-extension Windows.Kernel.Seek.Origin {
+extension Windows.Kernel.File.Seek.Origin {
     /// Converts the origin to Windows move method.
     @usableFromInline
     internal var windowsMoveMethod: DWORD {
@@ -81,14 +81,14 @@ extension Windows.Kernel.Seek.Origin {
 
 // MARK: - Type Aliases
 
-extension Windows.Kernel.Seek {
-    public typealias Error = Kernel.Seek.Error
-    public typealias Origin = Kernel.Seek.Origin
+extension Windows.Kernel.File.Seek {
+    public typealias Error = Kernel.File.Seek.Error
+    public typealias Origin = Kernel.File.Seek.Origin
 }
 
 // MARK: - Error Construction
 
-extension Kernel.Seek.Error {
+extension Kernel.File.Seek.Error {
     /// Creates an error from the current Win32 last error.
     internal static func current() -> Self {
         let code = Windows.Kernel.Error.captureLastError()

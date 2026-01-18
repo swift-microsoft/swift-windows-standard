@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Windows DuplicateHandle syscall
 
-extension Windows.Kernel.Dup {
+extension Windows.Kernel.Descriptor.Duplicate {
     /// Duplicates a handle.
     ///
     /// Creates a duplicate of the specified handle with the same access rights.
@@ -23,8 +23,8 @@ extension Windows.Kernel.Dup {
     ///
     /// - Parameter descriptor: The handle to duplicate.
     /// - Returns: The duplicated handle.
-    /// - Throws: `Kernel.Dup.Error` on failure.
-    public static func dup(_ descriptor: Kernel.Descriptor) throws(Kernel.Dup.Error) -> Kernel.Descriptor {
+    /// - Throws: `Kernel.Descriptor.Duplicate.Error` on failure.
+    public static func duplicate(_ descriptor: Kernel.Descriptor) throws(Kernel.Descriptor.Duplicate.Error) -> Kernel.Descriptor {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
@@ -58,11 +58,11 @@ extension Windows.Kernel.Dup {
     ///   - descriptor: The source handle to duplicate.
     ///   - target: The target handle (will be closed and replaced).
     /// - Returns: The new handle (same as target).
-    /// - Throws: `Kernel.Dup.Error` on failure.
-    public static func dup2(
+    /// - Throws: `Kernel.Descriptor.Duplicate.Error` on failure.
+    public static func duplicate(
         _ descriptor: Kernel.Descriptor,
         to target: Kernel.Descriptor
-    ) throws(Kernel.Dup.Error) -> Kernel.Descriptor {
+    ) throws(Kernel.Descriptor.Duplicate.Error) -> Kernel.Descriptor {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
@@ -72,13 +72,13 @@ extension Windows.Kernel.Dup {
             _ = CloseHandle(target.handle)
         }
 
-        return try dup(descriptor)
+        return try duplicate(descriptor)
     }
 }
 
 // MARK: - Error Construction
 
-extension Kernel.Dup.Error {
+extension Kernel.Descriptor.Duplicate.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

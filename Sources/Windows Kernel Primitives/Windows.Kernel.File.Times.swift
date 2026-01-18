@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Windows File Time Operations
 
-extension Windows.Kernel.File {
+extension Windows.Kernel.File.Times {
     /// Sets file times (creation, access, modification).
     ///
     /// This is the Windows equivalent of POSIX `utimensat()`.
@@ -25,13 +25,13 @@ extension Windows.Kernel.File {
     ///   - creationTime: New creation time, or nil to leave unchanged.
     ///   - lastAccessTime: New last access time, or nil to leave unchanged.
     ///   - lastWriteTime: New last write time, or nil to leave unchanged.
-    /// - Throws: `Kernel.File.Utimensat.Error` on failure.
+    /// - Throws: `Kernel.File.Times.Error` on failure.
     public static func setTimes(
         _ descriptor: Kernel.Descriptor,
         creationTime: FILETIME? = nil,
         lastAccessTime: FILETIME? = nil,
         lastWriteTime: FILETIME? = nil
-    ) throws(Kernel.File.Utimensat.Error) {
+    ) throws(Kernel.File.Times.Error) {
         var creation = creationTime
         var access = lastAccessTime
         var write = lastWriteTime
@@ -50,7 +50,7 @@ extension Windows.Kernel.File {
         }
 
         guard success else {
-            throw .set(Windows.Kernel.Error.captureLastError())
+            throw .platform(Kernel.Error(code: Windows.Kernel.Error.captureLastError()))
         }
     }
 

@@ -15,38 +15,38 @@ public import WinSDK
 
 // MARK: - Windows MoveFileExW syscall
 
-extension Windows.Kernel.Rename {
-    /// Renames (moves) a file or directory.
+extension Windows.Kernel.File.Move {
+    /// Moves (renames) a file or directory.
     ///
     /// - Parameters:
     ///   - oldPath: The current path of the file or directory.
     ///   - newPath: The new path for the file or directory.
     ///   - replaceExisting: If true, replaces an existing file at newPath.
-    /// - Throws: `Kernel.Rename.Error` on failure.
-    public static func rename(
+    /// - Throws: `Kernel.File.Move.Error` on failure.
+    public static func move(
         from oldPath: borrowing Kernel.Path,
         to newPath: borrowing Kernel.Path,
         replaceExisting: Bool = false
-    ) throws(Kernel.Rename.Error) {
-        try rename(
+    ) throws(Kernel.File.Move.Error) {
+        try move(
             from: oldPath.unsafeCString,
             to: newPath.unsafeCString,
             replaceExisting: replaceExisting
         )
     }
 
-    /// Renames (moves) a file or directory using unsafe wide strings.
+    /// Moves (renames) a file or directory using unsafe wide strings.
     ///
     /// - Parameters:
     ///   - oldPath: The current path as a null-terminated wide string.
     ///   - newPath: The new path as a null-terminated wide string.
     ///   - replaceExisting: If true, replaces an existing file at newPath.
-    /// - Throws: `Kernel.Rename.Error` on failure.
-    public static func rename(
+    /// - Throws: `Kernel.File.Move.Error` on failure.
+    public static func move(
         from oldPath: UnsafePointer<Kernel.Path.Char>,
         to newPath: UnsafePointer<Kernel.Path.Char>,
         replaceExisting: Bool = false
-    ) throws(Kernel.Rename.Error) {
+    ) throws(Kernel.File.Move.Error) {
         let wOldPath = UnsafeRawPointer(oldPath).assumingMemoryBound(to: WCHAR.self)
         let wNewPath = UnsafeRawPointer(newPath).assumingMemoryBound(to: WCHAR.self)
 
@@ -63,7 +63,7 @@ extension Windows.Kernel.Rename {
 
 // MARK: - Error Construction
 
-extension Kernel.Rename.Error {
+extension Kernel.File.Move.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

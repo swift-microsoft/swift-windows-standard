@@ -97,7 +97,7 @@
     // MARK: - CustomStringConvertible
 
     extension Kernel.IO.Completion.Port.Error: CustomStringConvertible {
-        public var description: String {
+        public var description: Swift.String {
             switch self {
             case .create(let code):
                 return "CreateIoCompletionPort failed (\(code))"

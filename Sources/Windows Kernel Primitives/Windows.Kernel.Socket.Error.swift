@@ -65,7 +65,7 @@ extension Windows.Kernel.Socket {
 // MARK: - CustomStringConvertible
 
 extension Windows.Kernel.Socket.Error: CustomStringConvertible {
-    public var description: String {
+    public var description: Swift.String {
         switch self {
         case .startup(let code):
             return "WSAStartup failed (\(code))"

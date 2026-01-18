@@ -26,7 +26,9 @@ extension Windows.Kernel.Directory.Create {
         path: borrowing Kernel.Path,
         permissions: Kernel.File.Permissions = .directoryDefault
     ) throws(Kernel.Directory.Create.Error) {
-        try create(unsafePath: path.unsafeCString, permissions: permissions)
+        try path.withUnsafeCString { ptr throws(Kernel.Directory.Create.Error) in
+            try create(unsafePath: ptr, permissions: permissions)
+        }
     }
 
     /// Creates a directory at the specified path using an unsafe wide string.

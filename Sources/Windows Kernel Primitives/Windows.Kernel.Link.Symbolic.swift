@@ -31,11 +31,15 @@ extension Windows.Kernel.Link.Symbolic {
         linkPath: borrowing Kernel.Path,
         isDirectory: Bool = false
     ) throws(Kernel.Link.Symbolic.Error) {
-        try create(
-            target: target.unsafeCString,
-            linkPath: linkPath.unsafeCString,
-            isDirectory: isDirectory
-        )
+        try target.withUnsafeCString { targetPtr throws(Kernel.Link.Symbolic.Error) in
+            try linkPath.withUnsafeCString { linkPtr throws(Kernel.Link.Symbolic.Error) in
+                try create(
+                    target: targetPtr,
+                    linkPath: linkPtr,
+                    isDirectory: isDirectory
+                )
+            }
+        }
     }
 
     /// Creates a symbolic link using unsafe wide strings.
@@ -74,7 +78,9 @@ extension Windows.Kernel.Link.Symbolic {
         path: borrowing Kernel.Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Kernel.Link.Symbolic.Error) -> Int {
-        try readTarget(unsafePath: path.unsafeCString, into: buffer)
+        try path.withUnsafeCString { ptr throws(Kernel.Link.Symbolic.Error) in
+            try readTarget(unsafePath: ptr, into: buffer)
+        }
     }
 
     /// Reads the target of a symbolic link using an unsafe wide string.

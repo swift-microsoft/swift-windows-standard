@@ -26,7 +26,9 @@ extension Windows.Kernel.File.Delete {
     public static func delete(
         path: borrowing Kernel.Path
     ) throws(Kernel.File.Delete.Error) {
-        try delete(unsafePath: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Kernel.File.Delete.Error) in
+            try delete(unsafePath: ptr)
+        }
     }
 
     /// Deletes a file using an unsafe wide string.

@@ -26,7 +26,11 @@ extension Windows.Kernel.Link {
         source: borrowing Kernel.Path,
         linkPath: borrowing Kernel.Path
     ) throws(Kernel.Link.Error) {
-        try create(source: source.unsafeCString, linkPath: linkPath.unsafeCString)
+        try source.withUnsafeCString { sourcePtr throws(Kernel.Link.Error) in
+            try linkPath.withUnsafeCString { linkPtr throws(Kernel.Link.Error) in
+                try create(source: sourcePtr, linkPath: linkPtr)
+            }
+        }
     }
 
     /// Creates a hard link to an existing file using unsafe wide strings.

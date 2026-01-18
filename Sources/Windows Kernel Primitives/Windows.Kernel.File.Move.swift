@@ -28,11 +28,15 @@ extension Windows.Kernel.File.Move {
         to newPath: borrowing Kernel.Path,
         replaceExisting: Bool = false
     ) throws(Kernel.File.Move.Error) {
-        try move(
-            from: oldPath.unsafeCString,
-            to: newPath.unsafeCString,
-            replaceExisting: replaceExisting
-        )
+        try oldPath.withUnsafeCString { oldPtr throws(Kernel.File.Move.Error) in
+            try newPath.withUnsafeCString { newPtr throws(Kernel.File.Move.Error) in
+                try move(
+                    from: oldPtr,
+                    to: newPtr,
+                    replaceExisting: replaceExisting
+                )
+            }
+        }
     }
 
     /// Moves (renames) a file or directory using unsafe wide strings.

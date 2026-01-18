@@ -66,7 +66,9 @@ extension Windows.Kernel.Directory.Working {
     public static func set(
         path: borrowing Kernel.Path
     ) throws(Kernel.Directory.Working.Error) {
-        try set(unsafePath: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Kernel.Directory.Working.Error) in
+            try set(unsafePath: ptr)
+        }
     }
 
     /// Sets the current working directory using an unsafe wide string.

@@ -66,7 +66,9 @@ extension Windows.Kernel.Directory.Iterator {
     public static func open(
         path: borrowing Kernel.Path
     ) throws(Kernel.Directory.Error) -> Self {
-        try open(unsafePath: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Kernel.Directory.Error) in
+            try open(unsafePath: ptr)
+        }
     }
 
     /// Opens a directory for iteration using an unsafe wide string.

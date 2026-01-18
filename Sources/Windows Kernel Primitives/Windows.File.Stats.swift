@@ -114,7 +114,9 @@ extension Windows_Primitives.Windows.File.Stats {
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
     public static func get(path: borrowing Kernel.Path) throws(Error) -> Self {
-        try get(path: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Error) in
+            try get(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
+        }
     }
 
     /// Gets Windows-specific file metadata for a path using a wide string.
@@ -150,7 +152,9 @@ extension Windows_Primitives.Windows.File.Stats {
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
     public static func lget(path: borrowing Kernel.Path) throws(Error) -> Self {
-        try lget(path: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Error) in
+            try lget(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
+        }
     }
 
     /// Gets Windows-specific file metadata for a path using a wide string without following symlinks.

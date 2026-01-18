@@ -48,12 +48,14 @@ extension Windows.Kernel.File.Open {
         options: Kernel.File.Open.Options,
         permissions: Kernel.File.Permissions = .standard
     ) throws(Kernel.File.Open.Error) -> Kernel.Descriptor {
-        try open(
-            unsafePath: path.unsafeCString,
-            mode: mode,
-            options: options,
-            permissions: permissions
-        )
+        try path.withUnsafeCString { ptr throws(Kernel.File.Open.Error) in
+            try open(
+                unsafePath: ptr,
+                mode: mode,
+                options: options,
+                permissions: permissions
+            )
+        }
     }
 
     /// Opens a file at the specified path using an unsafe wide string pointer.

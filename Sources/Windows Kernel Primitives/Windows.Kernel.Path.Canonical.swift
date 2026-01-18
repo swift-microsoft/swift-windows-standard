@@ -27,7 +27,9 @@ extension Windows.Kernel.Path.Canonical {
         path: borrowing Kernel.Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Kernel.Path.Canonical.Error) -> Int {
-        try resolve(unsafePath: path.unsafeCString, into: buffer)
+        try path.withUnsafeCString { ptr throws(Kernel.Path.Canonical.Error) in
+            try resolve(unsafePath: ptr, into: buffer)
+        }
     }
 
     /// Resolves a path to its canonical form using an unsafe wide string.
@@ -66,7 +68,9 @@ extension Windows.Kernel.Path.Canonical {
     public static func resolve(
         path: borrowing Kernel.Path
     ) throws(Kernel.Path.Canonical.Error) -> [UInt16] {
-        try resolve(unsafePath: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Kernel.Path.Canonical.Error) in
+            try resolve(unsafePath: ptr)
+        }
     }
 
     /// Resolves a path to its canonical form using an unsafe wide string.

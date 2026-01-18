@@ -23,7 +23,9 @@ extension Windows.Kernel.Directory.Remove {
     public static func remove(
         path: borrowing Kernel.Path
     ) throws(Kernel.Directory.Remove.Error) {
-        try remove(unsafePath: path.unsafeCString)
+        try path.withUnsafeCString { ptr throws(Kernel.Directory.Remove.Error) in
+            try remove(unsafePath: ptr)
+        }
     }
 
     /// Removes an empty directory using an unsafe wide string.

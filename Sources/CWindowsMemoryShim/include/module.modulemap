@@ -1,0 +1,4 @@
+module CWindowsMemoryShim {
+    header "shim.h"
+    export *
+}

@@ -9,7 +9,7 @@ let package = Package(
         .iOS(.v26),
         .tvOS(.v26),
         .watchOS(.v26),
-        .visionOS(.v26),
+        .visionOS(.v26)
     ],
     products: [
         .library(
@@ -24,12 +24,14 @@ let package = Package(
             name: "Windows Loader Primitives",
             targets: ["Windows Loader Primitives"]
         ),
+        .library(
+            name: "Windows Memory Primitives",
+            targets: ["Windows Memory Primitives"]
+        )
     ],
     dependencies: [
         .package(path: "../swift-kernel-primitives"),
-        .package(path: "../swift-loader-primitives"),
-        .package(path: "../swift-test-primitives"),
-        .package(path: "../../swift-foundations/swift-testing-extras"),
+        .package(path: "../swift-loader-primitives")
     ],
     targets: [
         .target(
@@ -37,38 +39,29 @@ let package = Package(
             dependencies: []
         ),
         .target(
+            name: "CWindowsMemoryShim",
+            dependencies: []
+        ),
+        .target(
             name: "Windows Kernel Primitives",
             dependencies: [
                 .target(name: "Windows Primitives"),
-                .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Primitives", package: "swift-kernel-primitives")
             ]
         ),
         .target(
             name: "Windows Loader Primitives",
             dependencies: [
                 .target(name: "Windows Primitives"),
-                .product(name: "Loader Primitives", package: "swift-loader-primitives"),
+                .product(name: "Loader Primitives", package: "swift-loader-primitives")
             ]
         ),
-        .testTarget(
-            name: "Windows Kernel Primitives Tests",
+        .target(
+            name: "Windows Memory Primitives",
             dependencies: [
-                "Windows Kernel Primitives",
-                .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-                .product(name: "Testing Extras", package: "swift-testing-extras"),
-            ],
-            path: "Tests/Windows Kernel Primitives Tests"
-        ),
-        .testTarget(
-            name: "Windows Loader Primitives Tests",
-            dependencies: [
-                "Windows Loader Primitives",
-                .product(name: "Loader Primitives", package: "swift-loader-primitives"),
-                .product(name: "Test Primitives", package: "swift-test-primitives"),
-                .product(name: "Testing Extras", package: "swift-testing-extras"),
-            ],
-            path: "Tests/Windows Loader Primitives Tests"
+                .target(name: "Windows Primitives"),
+                .target(name: "CWindowsMemoryShim", condition: .when(platforms: [.windows]))
+            ]
         ),
     ],
     swiftLanguageModes: [.v6]
@@ -80,7 +73,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableExperimentalFeature("Lifetimes"),
-        .strictMemorySafety(),
+        .strictMemorySafety()
     ]
     target.swiftSettings = (target.swiftSettings ?? []) + settings
 }

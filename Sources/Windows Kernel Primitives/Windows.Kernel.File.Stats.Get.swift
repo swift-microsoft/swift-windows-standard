@@ -141,6 +141,71 @@ extension Windows.Kernel.File {
     }
 }
 
+// MARK: - Path-Based Stats
+
+extension Windows.Kernel.File {
+    /// Checks if a file or directory exists at the given path.
+    ///
+    /// - Parameter path: The path to check.
+    /// - Returns: True if the path exists, false otherwise.
+    @inlinable
+    public static func exists(path: borrowing Kernel.Path) -> Bool {
+        path.withUnsafeCString { ptr in
+            let wpath = UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self)
+            return GetFileAttributesW(wpath) != INVALID_FILE_ATTRIBUTES
+        }
+    }
+
+    /// Checks if a file or directory exists at the given path.
+    ///
+    /// - Parameter path: The path as a null-terminated wide string.
+    /// - Returns: True if the path exists, false otherwise.
+    @inlinable
+    public static func exists(path: UnsafePointer<WCHAR>) -> Bool {
+        GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES
+    }
+
+    /// Gets file attributes by path, returning nil if the file doesn't exist.
+    ///
+    /// - Parameter path: The path to check.
+    /// - Returns: The file attributes, or nil if the file doesn't exist.
+    @inlinable
+    public static func getAttributes(path: borrowing Kernel.Path) -> Attributes? {
+        path.withUnsafeCString { ptr in
+            let wpath = UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self)
+            let result = GetFileAttributesW(wpath)
+            guard result != INVALID_FILE_ATTRIBUTES else {
+                return nil
+            }
+            return Attributes(rawValue: result)
+        }
+    }
+
+    /// Checks if the path is a directory.
+    ///
+    /// - Parameter path: The path to check.
+    /// - Returns: True if the path is a directory, false otherwise (including if it doesn't exist).
+    @inlinable
+    public static func isDirectory(path: borrowing Kernel.Path) -> Bool {
+        guard let attrs = getAttributes(path: path) else {
+            return false
+        }
+        return attrs.contains(.directory)
+    }
+
+    /// Checks if the path is a regular file (not a directory or reparse point).
+    ///
+    /// - Parameter path: The path to check.
+    /// - Returns: True if the path is a regular file, false otherwise.
+    @inlinable
+    public static func isRegularFile(path: borrowing Kernel.Path) -> Bool {
+        guard let attrs = getAttributes(path: path) else {
+            return false
+        }
+        return !attrs.contains(.directory) && !attrs.contains(.reparsePoint)
+    }
+}
+
 // MARK: - File Type
 
 extension Windows.Kernel.File {

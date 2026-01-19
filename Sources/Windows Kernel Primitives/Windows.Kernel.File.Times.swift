@@ -162,6 +162,129 @@ extension Windows.Kernel.File {
     }
 }
 
+// MARK: - Basic Info Operations (FILE_BASIC_INFO)
+
+extension Windows.Kernel.File {
+    /// Basic file information including timestamps and attributes.
+    ///
+    /// This wraps the Windows `FILE_BASIC_INFO` structure for use with
+    /// `GetFileInformationByHandleEx` and `SetFileInformationByHandle`.
+    public struct BasicInfo: Sendable {
+        /// Creation time.
+        public var creationTime: LARGE_INTEGER
+
+        /// Last access time.
+        public var lastAccessTime: LARGE_INTEGER
+
+        /// Last write time.
+        public var lastWriteTime: LARGE_INTEGER
+
+        /// Change time (metadata change time).
+        public var changeTime: LARGE_INTEGER
+
+        /// File attributes.
+        public var fileAttributes: DWORD
+
+        public init() {
+            self.creationTime = LARGE_INTEGER()
+            self.lastAccessTime = LARGE_INTEGER()
+            self.lastWriteTime = LARGE_INTEGER()
+            self.changeTime = LARGE_INTEGER()
+            self.fileAttributes = 0
+        }
+
+        init(_ info: FILE_BASIC_INFO) {
+            self.creationTime = info.CreationTime
+            self.lastAccessTime = info.LastAccessTime
+            self.lastWriteTime = info.LastWriteTime
+            self.changeTime = info.ChangeTime
+            self.fileAttributes = info.FileAttributes
+        }
+
+        func toFileBasicInfo() -> FILE_BASIC_INFO {
+            FILE_BASIC_INFO(
+                CreationTime: creationTime,
+                LastAccessTime: lastAccessTime,
+                LastWriteTime: lastWriteTime,
+                ChangeTime: changeTime,
+                FileAttributes: fileAttributes
+            )
+        }
+    }
+}
+
+extension Windows.Kernel.File {
+    /// Gets basic file information by handle.
+    ///
+    /// This retrieves timestamps and attributes using `GetFileInformationByHandleEx`
+    /// with `FileBasicInfo`.
+    ///
+    /// - Parameter descriptor: The file descriptor.
+    /// - Returns: The basic file info.
+    /// - Throws: Error on failure.
+    public static func getBasicInfo(
+        _ descriptor: Kernel.Descriptor
+    ) throws(Kernel.File.Stats.Error) -> BasicInfo {
+        var info = FILE_BASIC_INFO()
+
+        let success = GetFileInformationByHandleEx(
+            descriptor.handle,
+            FileBasicInfo,
+            &info,
+            DWORD(MemoryLayout<FILE_BASIC_INFO>.size)
+        )
+
+        guard success else {
+            throw .get(Windows.Kernel.Error.captureLastError())
+        }
+
+        return BasicInfo(info)
+    }
+
+    /// Sets basic file information by handle.
+    ///
+    /// This sets timestamps and attributes using `SetFileInformationByHandle`
+    /// with `FileBasicInfo`.
+    ///
+    /// - Parameters:
+    ///   - descriptor: The file descriptor.
+    ///   - info: The basic file info to set.
+    /// - Throws: Error on failure.
+    public static func setBasicInfo(
+        _ descriptor: Kernel.Descriptor,
+        _ info: BasicInfo
+    ) throws(Kernel.File.Attributes.Error) {
+        var fileInfo = info.toFileBasicInfo()
+
+        let success = SetFileInformationByHandle(
+            descriptor.handle,
+            FileBasicInfo,
+            &fileInfo,
+            DWORD(MemoryLayout<FILE_BASIC_INFO>.size)
+        )
+
+        guard success else {
+            throw .platform(Kernel.Error(code: Windows.Kernel.Error.captureLastError()))
+        }
+    }
+
+    /// Copies basic file info (timestamps and attributes) from one handle to another.
+    ///
+    /// This is useful for preserving metadata when copying or replacing files.
+    ///
+    /// - Parameters:
+    ///   - source: The source file descriptor.
+    ///   - destination: The destination file descriptor.
+    /// - Throws: Error on failure.
+    public static func copyBasicInfo(
+        from source: Kernel.Descriptor,
+        to destination: Kernel.Descriptor
+    ) throws {
+        let info = try getBasicInfo(source)
+        try setBasicInfo(destination, info)
+    }
+}
+
 // MARK: - Touch Operation
 
 extension Windows.Kernel.File {

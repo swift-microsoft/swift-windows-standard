@@ -15,6 +15,34 @@ public import WinSDK
 
 // MARK: - Windows MoveFileExW syscall
 
+// MARK: - Move Options
+
+extension Windows.Kernel.File.Move {
+    /// Options for move operations.
+    public struct Options: OptionSet, Sendable {
+        public let rawValue: DWORD
+
+        public init(rawValue: DWORD) {
+            self.rawValue = rawValue
+        }
+
+        /// Replace existing file at destination.
+        public static let replaceExisting = Options(rawValue: DWORD(MOVEFILE_REPLACE_EXISTING))
+
+        /// Flush buffers to disk before returning (write-through semantics).
+        /// Provides durability guarantee that the rename is persisted.
+        public static let writeThrough = Options(rawValue: DWORD(MOVEFILE_WRITE_THROUGH))
+
+        /// Allow move across volumes (copy + delete).
+        public static let copyAllowed = Options(rawValue: DWORD(MOVEFILE_COPY_ALLOWED))
+
+        /// Delay move until reboot (requires privileges).
+        public static let delayUntilReboot = Options(rawValue: DWORD(MOVEFILE_DELAY_UNTIL_REBOOT))
+    }
+}
+
+// MARK: - Move Operations
+
 extension Windows.Kernel.File.Move {
     /// Moves (renames) a file or directory.
     ///
@@ -28,12 +56,28 @@ extension Windows.Kernel.File.Move {
         to newPath: borrowing Kernel.Path,
         replaceExisting: Bool = false
     ) throws(Kernel.File.Move.Error) {
+        let options: Options = replaceExisting ? .replaceExisting : []
+        try move(from: oldPath, to: newPath, options: options)
+    }
+
+    /// Moves (renames) a file or directory with options.
+    ///
+    /// - Parameters:
+    ///   - oldPath: The current path of the file or directory.
+    ///   - newPath: The new path for the file or directory.
+    ///   - options: Move options (replaceExisting, writeThrough, etc.).
+    /// - Throws: `Kernel.File.Move.Error` on failure.
+    public static func move(
+        from oldPath: borrowing Kernel.Path,
+        to newPath: borrowing Kernel.Path,
+        options: Options
+    ) throws(Kernel.File.Move.Error) {
         try oldPath.withUnsafeCString { oldPtr throws(Kernel.File.Move.Error) in
             try newPath.withUnsafeCString { newPtr throws(Kernel.File.Move.Error) in
                 try move(
                     from: oldPtr,
                     to: newPtr,
-                    replaceExisting: replaceExisting
+                    options: options
                 )
             }
         }
@@ -51,15 +95,26 @@ extension Windows.Kernel.File.Move {
         to newPath: UnsafePointer<Kernel.Path.Char>,
         replaceExisting: Bool = false
     ) throws(Kernel.File.Move.Error) {
+        let options: Options = replaceExisting ? .replaceExisting : []
+        try move(from: oldPath, to: newPath, options: options)
+    }
+
+    /// Moves (renames) a file or directory using unsafe wide strings with options.
+    ///
+    /// - Parameters:
+    ///   - oldPath: The current path as a null-terminated wide string.
+    ///   - newPath: The new path as a null-terminated wide string.
+    ///   - options: Move options (replaceExisting, writeThrough, etc.).
+    /// - Throws: `Kernel.File.Move.Error` on failure.
+    public static func move(
+        from oldPath: UnsafePointer<Kernel.Path.Char>,
+        to newPath: UnsafePointer<Kernel.Path.Char>,
+        options: Options
+    ) throws(Kernel.File.Move.Error) {
         let wOldPath = UnsafeRawPointer(oldPath).assumingMemoryBound(to: WCHAR.self)
         let wNewPath = UnsafeRawPointer(newPath).assumingMemoryBound(to: WCHAR.self)
 
-        var flags: DWORD = 0
-        if replaceExisting {
-            flags |= DWORD(MOVEFILE_REPLACE_EXISTING)
-        }
-
-        guard MoveFileExW(wOldPath, wNewPath, flags) else {
+        guard MoveFileExW(wOldPath, wNewPath, options.rawValue) else {
             throw .current()
         }
     }

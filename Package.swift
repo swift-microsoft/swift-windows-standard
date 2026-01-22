@@ -31,7 +31,9 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../swift-kernel-primitives"),
-        .package(path: "../swift-loader-primitives")
+        .package(path: "../swift-loader-primitives"),
+        // SDG(wraps): Windows syscalls wrap GetLastError
+        // .package(path: "../swift-error-primitives"),
     ],
     targets: [
         .target(

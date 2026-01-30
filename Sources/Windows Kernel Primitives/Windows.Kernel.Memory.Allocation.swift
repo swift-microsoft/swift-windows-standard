@@ -122,7 +122,7 @@ extension Windows.Kernel.Memory.Allocation {
         GetSystemInfo(&sysInfo)
         let granularity = Int(sysInfo.dwAllocationGranularity)
         // Safe: allocation granularity is always a power of 2
-        return Kernel.Memory.Allocation.Granularity(try! Binary.Alignment(granularity))
+        return Kernel.Memory.Allocation.Granularity(try! Memory.Alignment(granularity))
     }
 }
 

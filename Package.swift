@@ -32,6 +32,7 @@ let package = Package(
     dependencies: [
         .package(path: "../swift-kernel-primitives"),
         .package(path: "../swift-loader-primitives"),
+        .package(path: "../swift-sequence-primitives"),
         // SDG(wraps): Windows syscalls wrap GetLastError
         // .package(path: "../swift-error-primitives"),
     ],
@@ -48,7 +49,8 @@ let package = Package(
             name: "Windows Kernel Primitives",
             dependencies: [
                 .target(name: "Windows Primitives"),
-                .product(name: "Kernel Primitives", package: "swift-kernel-primitives")
+                .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),
         .target(
@@ -75,6 +77,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
         .enableExperimentalFeature("Lifetimes"),
+        .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .strictMemorySafety()
     ]
     target.swiftSettings = (target.swiftSettings ?? []) + settings

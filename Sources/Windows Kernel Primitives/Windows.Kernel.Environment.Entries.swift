@@ -12,6 +12,7 @@
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Primitives
 public import WinSDK
+public import Sequence_Primitives
 
 // MARK: - Windows Environment Enumeration
 
@@ -89,7 +90,7 @@ extension Windows.Kernel.Environment.Entries {
 
 extension Windows.Kernel.Environment.Entries {
     /// Iterator over environment variable entries.
-    public struct Iterator: IteratorProtocol {
+    public struct Iterator: Sequence.Iterator.`Protocol`, IteratorProtocol {
         private var current: LPWCH
 
         init(current: LPWCH) {

@@ -22,7 +22,7 @@ extension Windows.Kernel.System {
     /// longer paths (up to 32,767 characters with \\?\ prefix).
     /// Returns the legacy limit for compatibility.
     public static var pathMax: Kernel.System.Path.Length {
-        Kernel.System.Path.Length(260)  // MAX_PATH
+        Kernel.System.Path.Length(__unchecked: (), Cardinal(UInt(260)))  // MAX_PATH
     }
 
     /// Memory page size in bytes.
@@ -32,7 +32,7 @@ extension Windows.Kernel.System {
     public static var pageSize: Kernel.Memory.Page.Size {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
-        return Kernel.Memory.Page.Size(Int(sysInfo.dwPageSize))
+        return Kernel.Memory.Page.Size(__unchecked: (), Cardinal(UInt(sysInfo.dwPageSize)))
     }
 
     /// Number of active/online processors.
@@ -41,7 +41,7 @@ extension Windows.Kernel.System {
     public static var processorCount: Kernel.System.Processor.Count {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
-        return Kernel.System.Processor.Count(Int(sysInfo.dwNumberOfProcessors))
+        return Kernel.System.Processor.Count(__unchecked: (), Cardinal(UInt(sysInfo.dwNumberOfProcessors)))
     }
 
     /// Sleeps for the specified number of nanoseconds.

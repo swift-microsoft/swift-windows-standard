@@ -238,7 +238,7 @@ extension Windows_Primitives.Windows.File.Stats {
             gid: .root,
             inode: Kernel.Inode(inode),
             device: Kernel.Device(UInt64(info.dwVolumeSerialNumber)),
-            linkCount: Kernel.Link.Count(UInt32(info.nNumberOfLinks)),
+            linkCount: Kernel.Link.Count(__unchecked: (), Cardinal(UInt(info.nNumberOfLinks))),
             accessTime: accessTime,
             modificationTime: modificationTime,
             changeTime: changeTime

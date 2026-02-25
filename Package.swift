@@ -31,6 +31,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../swift-kernel-primitives"),
+        .package(path: "../swift-clock-primitives"),
         .package(path: "../swift-loader-primitives"),
         .package(path: "../swift-sequence-primitives"),
         // SDG(wraps): Windows syscalls wrap GetLastError
@@ -50,6 +51,7 @@ let package = Package(
             dependencies: [
                 .target(name: "Windows Primitives"),
                 .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Clock Primitives", package: "swift-clock-primitives"),
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),

@@ -67,6 +67,18 @@ let package = Package(
                 .target(name: "CWindowsMemoryShim", condition: .when(platforms: [.windows]))
             ]
         ),
+        .testTarget(
+            name: "Windows Kernel Primitives Tests",
+            dependencies: [
+                "Windows Kernel Primitives",
+            ]
+        ),
+        .testTarget(
+            name: "Windows Loader Primitives Tests",
+            dependencies: [
+                "Windows Loader Primitives",
+            ]
+        ),
     ],
     swiftLanguageModes: [.v6]
 )
@@ -77,6 +89,7 @@ for target in package.targets where ![.system, .binary, .plugin, .macro].contain
         .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
         .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
         .enableExperimentalFeature("Lifetimes"),
         .enableExperimentalFeature("SuppressedAssociatedTypes"),
         .enableExperimentalFeature("SuppressedAssociatedTypesWithDefaults"),

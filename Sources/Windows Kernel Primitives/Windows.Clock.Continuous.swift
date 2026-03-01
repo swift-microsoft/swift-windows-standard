@@ -25,6 +25,9 @@ extension Clock.Continuous: _Concurrency.Clock {
         Instant(nanoseconds: Kernel.Clock.Continuous.now())
     }
 
+    /// The current instant according to the continuous clock (static convenience).
+    public static var now: Instant { Self().now }
+
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
@@ -46,6 +49,9 @@ extension Clock.Suspending: _Concurrency.Clock {
     public var now: Instant {
         Instant(nanoseconds: Kernel.Clock.Suspending.now())
     }
+
+    /// The current instant according to the suspending clock (static convenience).
+    public static var now: Instant { Self().now }
 
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)

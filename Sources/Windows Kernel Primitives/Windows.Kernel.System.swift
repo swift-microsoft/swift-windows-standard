@@ -29,19 +29,19 @@ extension Windows.Kernel.System {
     ///
     /// This is the fundamental unit of memory management.
     /// Typically 4096 bytes on Windows (both x86 and ARM).
-    public static var pageSize: Kernel.Memory.Page.Size {
+    public static var pageSize: System.Page.Size {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
-        return Kernel.Memory.Page.Size(__unchecked: (), Cardinal(UInt(sysInfo.dwPageSize)))
+        return System.Page.Size(__unchecked: (), Cardinal(UInt(sysInfo.dwPageSize)))
     }
 
     /// Number of active/online processors.
     ///
     /// Uses GetSystemInfo to get the number of logical processors.
-    public static var processorCount: Kernel.System.Processor.Count {
+    public static var processorCount: System.Processor.Count {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
-        return Kernel.System.Processor.Count(__unchecked: (), Cardinal(UInt(sysInfo.dwNumberOfProcessors)))
+        return System.Processor.Count(__unchecked: (), Cardinal(UInt(sysInfo.dwNumberOfProcessors)))
     }
 
     /// Sleeps for the specified number of nanoseconds.

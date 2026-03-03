@@ -38,7 +38,7 @@ extension Windows.Kernel.Directory.Create {
     ///   - permissions: POSIX permissions (ignored on Windows).
     /// - Throws: `Kernel.Directory.Create.Error` on failure.
     public static func create(
-        unsafePath: UnsafePointer<Kernel.Path.Char>,
+        unsafePath: UnsafePointer<Path.Char>,
         permissions: Kernel.File.Permissions = .directoryDefault
     ) throws(Kernel.Directory.Create.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)

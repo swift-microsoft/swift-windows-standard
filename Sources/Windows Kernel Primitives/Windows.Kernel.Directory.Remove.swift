@@ -33,7 +33,7 @@ extension Windows.Kernel.Directory.Remove {
     /// - Parameter unsafePath: The path as a null-terminated wide string.
     /// - Throws: `Kernel.Directory.Remove.Error` on failure.
     public static func remove(
-        unsafePath: UnsafePointer<Kernel.Path.Char>
+        unsafePath: UnsafePointer<Path.Char>
     ) throws(Kernel.Directory.Remove.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard RemoveDirectoryW(wpath) else {

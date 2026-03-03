@@ -91,8 +91,8 @@ extension Windows.Kernel.File.Move {
     ///   - replaceExisting: If true, replaces an existing file at newPath.
     /// - Throws: `Kernel.File.Move.Error` on failure.
     public static func move(
-        from oldPath: UnsafePointer<Kernel.Path.Char>,
-        to newPath: UnsafePointer<Kernel.Path.Char>,
+        from oldPath: UnsafePointer<Path.Char>,
+        to newPath: UnsafePointer<Path.Char>,
         replaceExisting: Bool = false
     ) throws(Kernel.File.Move.Error) {
         let options: Options = replaceExisting ? .replaceExisting : []
@@ -107,8 +107,8 @@ extension Windows.Kernel.File.Move {
     ///   - options: Move options (replaceExisting, writeThrough, etc.).
     /// - Throws: `Kernel.File.Move.Error` on failure.
     public static func move(
-        from oldPath: UnsafePointer<Kernel.Path.Char>,
-        to newPath: UnsafePointer<Kernel.Path.Char>,
+        from oldPath: UnsafePointer<Path.Char>,
+        to newPath: UnsafePointer<Path.Char>,
         options: Options
     ) throws(Kernel.File.Move.Error) {
         let wOldPath = UnsafeRawPointer(oldPath).assumingMemoryBound(to: WCHAR.self)

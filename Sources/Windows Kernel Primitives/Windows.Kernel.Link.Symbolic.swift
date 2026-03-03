@@ -50,8 +50,8 @@ extension Windows.Kernel.Link.Symbolic {
     ///   - isDirectory: If true, creates a directory symlink.
     /// - Throws: `Kernel.Link.Symbolic.Error` on failure.
     public static func create(
-        target: UnsafePointer<Kernel.Path.Char>,
-        linkPath: UnsafePointer<Kernel.Path.Char>,
+        target: UnsafePointer<Path.Char>,
+        linkPath: UnsafePointer<Path.Char>,
         isDirectory: Bool = false
     ) throws(Kernel.Link.Symbolic.Error) {
         let wTarget = UnsafeRawPointer(target).assumingMemoryBound(to: WCHAR.self)
@@ -91,7 +91,7 @@ extension Windows.Kernel.Link.Symbolic {
     /// - Returns: The number of characters written (excluding null terminator).
     /// - Throws: `Kernel.Link.Symbolic.Error` on failure.
     public static func readTarget(
-        unsafePath: UnsafePointer<Kernel.Path.Char>,
+        unsafePath: UnsafePointer<Path.Char>,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Kernel.Link.Symbolic.Error) -> Int {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)

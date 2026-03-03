@@ -76,7 +76,7 @@ extension Windows.Kernel.Directory.Working {
     /// - Parameter unsafePath: The path as a null-terminated wide string.
     /// - Throws: `Kernel.Directory.Working.Error` on failure.
     public static func set(
-        unsafePath: UnsafePointer<Kernel.Path.Char>
+        unsafePath: UnsafePointer<Path.Char>
     ) throws(Kernel.Directory.Working.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard SetCurrentDirectoryW(wpath) else {

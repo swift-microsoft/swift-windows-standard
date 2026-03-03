@@ -40,7 +40,7 @@ extension Windows.Kernel.Path.Canonical {
     /// - Returns: The number of characters written (excluding null terminator).
     /// - Throws: `Kernel.Path.Canonical.Error` on failure.
     public static func resolve(
-        unsafePath: UnsafePointer<Kernel.Path.Char>,
+        unsafePath: UnsafePointer<Path.Char>,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Kernel.Path.Canonical.Error) -> Int {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
@@ -79,7 +79,7 @@ extension Windows.Kernel.Path.Canonical {
     /// - Returns: The canonical path as UTF-16 code units.
     /// - Throws: `Kernel.Path.Canonical.Error` on failure.
     public static func resolve(
-        unsafePath: UnsafePointer<Kernel.Path.Char>
+        unsafePath: UnsafePointer<Path.Char>
     ) throws(Kernel.Path.Canonical.Error) -> [UInt16] {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
 

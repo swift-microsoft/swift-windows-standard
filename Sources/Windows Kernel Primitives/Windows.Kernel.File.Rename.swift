@@ -130,8 +130,8 @@ extension Windows.Kernel.File.Rename {
     ///   - replaceExisting: If true, replaces existing destination file.
     /// - Throws: `Windows.Kernel.File.Rename.Error` on failure.
     public static func atomic(
-        from source: UnsafePointer<Kernel.Path.Char>,
-        to destination: UnsafePointer<Kernel.Path.Char>,
+        from source: UnsafePointer<Path.Char>,
+        to destination: UnsafePointer<Path.Char>,
         replaceExisting: Bool
     ) throws(Error) {
         let wSource = UnsafeRawPointer(source).assumingMemoryBound(to: WCHAR.self)

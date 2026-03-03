@@ -92,8 +92,8 @@ extension Windows.Kernel.File.Copy {
     ///   - overwrite: If true, overwrites existing destination file.
     /// - Throws: `Windows.Kernel.File.Copy.Error` on failure.
     public static func copy(
-        from source: UnsafePointer<Kernel.Path.Char>,
-        to destination: UnsafePointer<Kernel.Path.Char>,
+        from source: UnsafePointer<Path.Char>,
+        to destination: UnsafePointer<Path.Char>,
         overwrite: Bool = false
     ) throws(Error) {
         let wSource = UnsafeRawPointer(source).assumingMemoryBound(to: WCHAR.self)

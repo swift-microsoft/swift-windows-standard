@@ -40,8 +40,8 @@ extension Windows.Kernel.Link {
     ///   - linkPath: The link path as a null-terminated wide string.
     /// - Throws: `Kernel.Link.Error` on failure.
     public static func create(
-        source: UnsafePointer<Kernel.Path.Char>,
-        linkPath: UnsafePointer<Kernel.Path.Char>
+        source: UnsafePointer<Path.Char>,
+        linkPath: UnsafePointer<Path.Char>
     ) throws(Kernel.Link.Error) {
         let wSource = UnsafeRawPointer(source).assumingMemoryBound(to: WCHAR.self)
         let wLink = UnsafeRawPointer(linkPath).assumingMemoryBound(to: WCHAR.self)

@@ -36,7 +36,7 @@ extension Windows.Kernel.File.Delete {
     /// - Parameter unsafePath: The path as a null-terminated wide string.
     /// - Throws: `Kernel.File.Delete.Error` on failure.
     public static func delete(
-        unsafePath: UnsafePointer<Kernel.Path.Char>
+        unsafePath: UnsafePointer<Path.Char>
     ) throws(Kernel.File.Delete.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard DeleteFileW(wpath) else {

@@ -97,6 +97,28 @@ extension Windows.Kernel.Environment.Entries {
             self.current = current
         }
 
+        private var _element: Entry? = nil
+
+        @_lifetime(&self)
+        public mutating func nextSpan(maximumCount: Cardinal) -> Span<Entry> {
+            let ptr = unsafe withUnsafeMutablePointer(to: &_element) { p in
+                unsafe UnsafePointer<Entry>(
+                    unsafe UnsafeRawPointer(p).assumingMemoryBound(to: Entry.self)
+                )
+            }
+            guard maximumCount > .zero else {
+                let span = unsafe Span(_unsafeStart: ptr, count: 0)
+                return unsafe _overrideLifetime(span, mutating: &self)
+            }
+            guard let value = next() else {
+                let span = unsafe Span(_unsafeStart: ptr, count: 0)
+                return unsafe _overrideLifetime(span, mutating: &self)
+            }
+            _element = value
+            let span = unsafe Span(_unsafeStart: ptr, count: 1)
+            return unsafe _overrideLifetime(span, mutating: &self)
+        }
+
         public mutating func next() -> Entry? {
             // Check for end of block (double null)
             guard current.pointee != 0 else {

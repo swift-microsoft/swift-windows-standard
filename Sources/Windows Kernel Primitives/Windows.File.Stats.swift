@@ -9,9 +9,9 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Primitives
-public import Kernel_Primitives
-public import Time_Primitives
+internal import Windows_Primitives
+internal import Kernel_Primitives
+internal import Time_Primitives
 
 #if os(Windows)
 public import WinSDK

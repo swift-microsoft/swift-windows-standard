@@ -32,13 +32,6 @@ extension Windows.Kernel.Process {
         GetCurrentProcess()
     }
 
-    /// Terminates the current process.
-    ///
-    /// - Parameter exitCode: The exit code for the process.
-    public static func exit(_ exitCode: UInt32) -> Never {
-        ExitProcess(exitCode)
-    }
-
     /// Terminates another process.
     ///
     /// - Parameters:

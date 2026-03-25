@@ -26,13 +26,13 @@ extension Windows_Primitives.Windows.Interop {
     /// Converts a UInt32 value to DWORD.
     ///
     /// On Windows, DWORD is a typealias for UInt32, so this is an identity conversion.
-    @inline(__always)
+    @inline(always)
     public static func dword(_ value: UInt32) -> DWORD { value }
 
     /// Converts an Int32 value to DWORD using bit-preserving conversion.
     ///
     /// This handles Windows API constants that may be typed as signed integers.
-    @inline(__always)
+    @inline(always)
     public static func dword(_ value: Int32) -> DWORD { DWORD(bitPattern: value) }
 }
 
@@ -40,11 +40,11 @@ extension Windows_Primitives.Windows.Interop {
 
 extension Windows_Primitives.Windows.Interop {
     /// Converts a UInt32 value to DWORD for mask operations.
-    @inline(__always)
+    @inline(always)
     public static func mask(_ value: UInt32) -> DWORD { value }
 
     /// Converts an Int32 value to DWORD for mask operations using bit-preserving conversion.
-    @inline(__always)
+    @inline(always)
     public static func mask(_ value: Int32) -> DWORD { DWORD(bitPattern: value) }
 }
 
@@ -55,13 +55,13 @@ extension Windows_Primitives.Windows.Interop {
     ///
     /// In Swift 6.2, the WinSDK overlay has converted most Windows APIs to return Swift Bool.
     /// This adapter provides a consistent interface for checking API success.
-    @inline(__always)
+    @inline(always)
     public static func ok(_ value: Bool) -> Bool { value }
 
     /// Adapter for Windows APIs that return BOOLEAN (UInt8).
     ///
     /// Some APIs like CreateSymbolicLinkW still return BOOLEAN.
-    @inline(__always)
+    @inline(always)
     public static func ok(_ value: BOOLEAN) -> Bool { value != 0 }
 }
 #endif

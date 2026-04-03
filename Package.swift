@@ -16,10 +16,32 @@ let package = Package(
             name: "Windows Primitives",
             targets: ["Windows Primitives"]
         ),
+        // MARK: - Kernel
         .library(
             name: "Windows Kernel Primitives",
             targets: ["Windows Kernel Primitives"]
         ),
+        .library(
+            name: "Windows Kernel Primitives Core",
+            targets: ["Windows Kernel Primitives Core"]
+        ),
+        .library(
+            name: "Windows Kernel File Primitives",
+            targets: ["Windows Kernel File Primitives"]
+        ),
+        .library(
+            name: "Windows Kernel Socket Primitives",
+            targets: ["Windows Kernel Socket Primitives"]
+        ),
+        .library(
+            name: "Windows Kernel IO Primitives",
+            targets: ["Windows Kernel IO Primitives"]
+        ),
+        .library(
+            name: "Windows Kernel Memory Map Primitives",
+            targets: ["Windows Kernel Memory Map Primitives"]
+        ),
+        // MARK: - Other
         .library(
             name: "Windows Loader Primitives",
             targets: ["Windows Loader Primitives"]
@@ -27,7 +49,7 @@ let package = Package(
         .library(
             name: "Windows Memory Primitives",
             targets: ["Windows Memory Primitives"]
-        )
+        ),
     ],
     dependencies: [
         .package(path: "../swift-kernel-primitives"),
@@ -46,13 +68,59 @@ let package = Package(
             name: "CWindowsMemoryShim",
             dependencies: []
         ),
+
+        // MARK: - Kernel Core
         .target(
-            name: "Windows Kernel Primitives",
+            name: "Windows Kernel Primitives Core",
             dependencies: [
                 .target(name: "Windows Primitives"),
                 .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Clock Primitives", package: "swift-clock-primitives"),
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel File
+        .target(
+            name: "Windows Kernel File Primitives",
+            dependencies: [
+                "Windows Kernel Primitives Core",
+            ]
+        ),
+
+        // MARK: - Kernel Socket
+        .target(
+            name: "Windows Kernel Socket Primitives",
+            dependencies: [
+                "Windows Kernel Primitives Core",
+            ]
+        ),
+
+        // MARK: - Kernel IO
+        .target(
+            name: "Windows Kernel IO Primitives",
+            dependencies: [
+                "Windows Kernel Primitives Core",
+            ]
+        ),
+
+        // MARK: - Kernel Memory Map
+        .target(
+            name: "Windows Kernel Memory Map Primitives",
+            dependencies: [
+                "Windows Kernel Primitives Core",
+            ]
+        ),
+
+        // MARK: - Kernel Umbrella
+        .target(
+            name: "Windows Kernel Primitives",
+            dependencies: [
+                "Windows Kernel Primitives Core",
+                "Windows Kernel File Primitives",
+                "Windows Kernel Socket Primitives",
+                "Windows Kernel IO Primitives",
+                "Windows Kernel Memory Map Primitives",
             ]
         ),
         .target(

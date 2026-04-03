@@ -14,7 +14,7 @@ import WinSDK
 import Testing
 
 @testable import Windows_Kernel_Primitives
-import Kernel_Primitives
+@_spi(Syscall) import Kernel_Primitives
 
 extension Windows.Kernel.Socket {
     enum Test {
@@ -53,7 +53,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream, protocol: .tcp)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         #expect(sock.isValid)
     }
@@ -64,7 +63,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .datagram, protocol: .udp)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         #expect(sock.isValid)
     }
@@ -75,7 +73,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet6, type: .stream, protocol: .tcp)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         #expect(sock.isValid)
     }
@@ -86,7 +83,7 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        try Windows.Kernel.Socket.close(sock)
+        Windows.Kernel.Socket.close(sock)
         // No throw means success
     }
 
@@ -96,12 +93,10 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock1 = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock1) }
 
         let sock2 = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock2) }
 
-        #expect(sock1.rawValue != sock2.rawValue)
+        #expect(sock1._rawValue != sock2._rawValue)
     }
 }
 
@@ -200,7 +195,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         try Windows.Kernel.Socket.setReuseAddress(sock, enabled: true)
     }
@@ -211,7 +205,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream, protocol: .tcp)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         try Windows.Kernel.Socket.setNoDelay(sock, enabled: true)
     }
@@ -222,7 +215,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         try Windows.Kernel.Socket.setKeepAlive(sock, enabled: true)
     }
@@ -233,7 +225,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         try Windows.Kernel.Socket.setReceiveBuffer(sock, size: 65536)
     }
@@ -244,7 +235,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         try Windows.Kernel.Socket.setSendBuffer(sock, size: 65536)
     }
@@ -255,7 +245,6 @@ extension Windows.Kernel.Socket.Test.Unit {
         defer { Windows.Kernel.Socket.cleanup() }
 
         let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
 
         let error = try Windows.Kernel.Socket.getError(sock)
         #expect(error == 0)
@@ -309,43 +298,6 @@ extension Windows.Kernel.Socket.Test.Unit {
     func optionNameTcpNoDelayExists() {
         let name = Windows.Kernel.Socket.OptionName.tcpNoDelay
         #expect(name.rawValue == TCP_NODELAY)
-    }
-}
-
-// MARK: - Bind and Listen Tests
-
-extension Windows.Kernel.Socket.Test.Unit {
-    @Test("bind to any address succeeds")
-    func bindToAnySucceeds() throws {
-        try Windows.Kernel.Socket.startup()
-        defer { Windows.Kernel.Socket.cleanup() }
-
-        let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
-
-        var addr = sockaddr_in()
-        addr.sin_family = ADDRESS_FAMILY(AF_INET)
-        addr.sin_port = Windows.Kernel.Socket.htons(0)  // Let OS assign port
-        addr.sin_addr.s_addr = INADDR_ANY
-
-        try Windows.Kernel.Socket.bind(sock, address: &addr)
-    }
-
-    @Test("listen succeeds after bind")
-    func listenSucceeds() throws {
-        try Windows.Kernel.Socket.startup()
-        defer { Windows.Kernel.Socket.cleanup() }
-
-        let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-        defer { try? Windows.Kernel.Socket.close(sock) }
-
-        var addr = sockaddr_in()
-        addr.sin_family = ADDRESS_FAMILY(AF_INET)
-        addr.sin_port = Windows.Kernel.Socket.htons(0)
-        addr.sin_addr.s_addr = INADDR_ANY
-
-        try Windows.Kernel.Socket.bind(sock, address: &addr)
-        try Windows.Kernel.Socket.listen(sock, backlog: .default)
     }
 }
 
@@ -443,7 +395,7 @@ extension Windows.Kernel.Socket.Test.EdgeCase {
 
         for _ in 0..<100 {
             let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
-            try Windows.Kernel.Socket.close(sock)
+            Windows.Kernel.Socket.close(sock)
         }
     }
 
@@ -451,7 +403,7 @@ extension Windows.Kernel.Socket.Test.EdgeCase {
     func invalidSocketDescriptor() {
         let invalid = Kernel.Socket.Descriptor.invalid
         #expect(!invalid.isValid)
-        #expect(invalid.rawValue == UInt64.max)
+        #expect(invalid._rawValue == UInt.max)
     }
 }
 

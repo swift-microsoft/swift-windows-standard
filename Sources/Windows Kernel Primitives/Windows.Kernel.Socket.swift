@@ -147,18 +147,16 @@ extension Windows.Kernel.Socket {
         guard sock != INVALID_SOCKET else {
             throw .create(captureLastSocketError())
         }
-        return Kernel.Socket.Descriptor(rawValue: UInt64(bitPattern: Int64(sock)))
+        return Kernel.Socket.Descriptor(_rawValue: UInt(sock))
     }
 
-    /// Closes a socket.
+    /// Closes a socket by consuming ownership.
     ///
-    /// - Parameter socket: The socket to close.
-    /// - Throws: `Error.close` on failure.
-    public static func close(_ socket: Kernel.Socket.Descriptor) throws(Error) {
-        let result = closesocket(SOCKET(socket.rawValue))
-        guard result == 0 else {
-            throw .close(captureLastSocketError())
-        }
+    /// Takes ownership of the descriptor; the `deinit` handles `closesocket`.
+    ///
+    /// - Parameter socket: The socket to close (ownership transferred).
+    public static func close(_ socket: consuming Kernel.Socket.Descriptor) {
+        // Deinit handles closesocket.
     }
 }
 

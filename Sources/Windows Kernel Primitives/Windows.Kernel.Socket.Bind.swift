@@ -46,47 +46,13 @@ extension Windows.Kernel.Socket {
     /// }
     /// ```
     public static func bind(
-        _ socket: Kernel.Socket.Descriptor,
+        _ socket: borrowing Kernel.Socket.Descriptor,
         address: UnsafePointer<sockaddr>,
         addressLength: Int32
     ) throws(Error) {
-        let result = WinSDK.bind(SOCKET(socket.rawValue), address, addressLength)
+        let result = WinSDK.bind(SOCKET(socket._rawValue), address, addressLength)
         guard result == 0 else {
             throw .bind(captureLastSocketError())
-        }
-    }
-
-    /// Binds a socket to an IPv4 address.
-    ///
-    /// - Parameters:
-    ///   - socket: The socket to bind.
-    ///   - address: The IPv4 address structure.
-    /// - Throws: `Error.bind` on failure.
-    public static func bind(
-        _ socket: Kernel.Socket.Descriptor,
-        address: inout sockaddr_in
-    ) throws(Error) {
-        try withUnsafePointer(to: &address) { ptr in
-            try ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { addrPtr in
-                try bind(socket, address: addrPtr, addressLength: Int32(MemoryLayout<sockaddr_in>.size))
-            }
-        }
-    }
-
-    /// Binds a socket to an IPv6 address.
-    ///
-    /// - Parameters:
-    ///   - socket: The socket to bind.
-    ///   - address: The IPv6 address structure.
-    /// - Throws: `Error.bind` on failure.
-    public static func bind(
-        _ socket: Kernel.Socket.Descriptor,
-        address: inout sockaddr_in6
-    ) throws(Error) {
-        try withUnsafePointer(to: &address) { ptr in
-            try ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { addrPtr in
-                try bind(socket, address: addrPtr, addressLength: Int32(MemoryLayout<sockaddr_in6>.size))
-            }
         }
     }
 }

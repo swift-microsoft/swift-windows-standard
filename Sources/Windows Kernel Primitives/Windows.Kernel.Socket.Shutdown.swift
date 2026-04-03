@@ -39,7 +39,7 @@ extension Windows.Kernel.Socket {
     /// try Windows.Kernel.Socket.close(sock)
     /// ```
     public static func shutdown(
-        _ socket: Kernel.Socket.Descriptor,
+        _ socket: borrowing Kernel.Socket.Descriptor,
         how: Kernel.Socket.Shutdown.How
     ) throws(Error) {
         let sdHow: Int32
@@ -52,7 +52,7 @@ extension Windows.Kernel.Socket {
             sdHow = SD_BOTH
         }
 
-        let result = WinSDK.shutdown(SOCKET(socket.rawValue), sdHow)
+        let result = WinSDK.shutdown(SOCKET(socket._rawValue), sdHow)
         guard result == 0 else {
             throw .shutdown(captureLastSocketError())
         }

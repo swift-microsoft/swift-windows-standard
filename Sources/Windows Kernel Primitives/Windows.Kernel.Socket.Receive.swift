@@ -53,13 +53,13 @@ extension Windows.Kernel.Socket {
     /// - Zero: Connection closed gracefully (EOF).
     /// - Error: Connection error or socket error.
     public static func receive(
-        _ socket: Kernel.Socket.Descriptor,
+        _ socket: borrowing Kernel.Socket.Descriptor,
         buffer: UnsafeMutableRawPointer,
         length: Int,
         flags: ReceiveFlags = .none
     ) throws(Error) -> Int {
         let result = recv(
-            SOCKET(socket.rawValue),
+            SOCKET(socket._rawValue),
             buffer.assumingMemoryBound(to: CChar.self),
             Int32(length),
             flags.rawValue
@@ -79,7 +79,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: Number of bytes received.
     /// - Throws: `Error.receive` on failure.
     public static func receive(
-        _ socket: Kernel.Socket.Descriptor,
+        _ socket: borrowing Kernel.Socket.Descriptor,
         buffer: UnsafeMutableBufferPointer<UInt8>,
         flags: ReceiveFlags = .none
     ) throws(Error) -> Int {
@@ -105,7 +105,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: Number of bytes received.
     /// - Throws: `Error.receive` on failure.
     public static func receiveFrom(
-        _ socket: Kernel.Socket.Descriptor,
+        _ socket: borrowing Kernel.Socket.Descriptor,
         buffer: UnsafeMutableRawPointer,
         length: Int,
         flags: ReceiveFlags = .none,
@@ -113,7 +113,7 @@ extension Windows.Kernel.Socket {
         srcAddrLength: UnsafeMutablePointer<Int32>
     ) throws(Error) -> Int {
         let result = recvfrom(
-            SOCKET(socket.rawValue),
+            SOCKET(socket._rawValue),
             buffer.assumingMemoryBound(to: CChar.self),
             Int32(length),
             flags.rawValue,
@@ -124,78 +124,6 @@ extension Windows.Kernel.Socket {
             throw .receive(captureLastSocketError())
         }
         return Int(result)
-    }
-
-    /// Receives data from an IPv4 source.
-    ///
-    /// - Parameters:
-    ///   - socket: The socket.
-    ///   - buffer: The buffer to receive data into.
-    ///   - flags: Receive flags.
-    /// - Returns: Number of bytes received and the source address.
-    /// - Throws: `Error.receive` on failure.
-    public static func receiveFromIPv4(
-        _ socket: Kernel.Socket.Descriptor,
-        buffer: UnsafeMutableBufferPointer<UInt8>,
-        flags: ReceiveFlags = .none
-    ) throws(Error) -> (bytesReceived: Int, sourceAddress: sockaddr_in) {
-        guard let baseAddress = buffer.baseAddress else {
-            return (0, sockaddr_in())
-        }
-
-        var srcAddr = sockaddr_in()
-        var addrLen = Int32(MemoryLayout<sockaddr_in>.size)
-
-        let bytesReceived = try withUnsafeMutablePointer(to: &srcAddr) { ptr in
-            try ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { addrPtr in
-                try receiveFrom(
-                    socket,
-                    buffer: baseAddress,
-                    length: buffer.count,
-                    flags: flags,
-                    srcAddr: addrPtr,
-                    srcAddrLength: &addrLen
-                )
-            }
-        }
-
-        return (bytesReceived, srcAddr)
-    }
-
-    /// Receives data from an IPv6 source.
-    ///
-    /// - Parameters:
-    ///   - socket: The socket.
-    ///   - buffer: The buffer to receive data into.
-    ///   - flags: Receive flags.
-    /// - Returns: Number of bytes received and the source address.
-    /// - Throws: `Error.receive` on failure.
-    public static func receiveFromIPv6(
-        _ socket: Kernel.Socket.Descriptor,
-        buffer: UnsafeMutableBufferPointer<UInt8>,
-        flags: ReceiveFlags = .none
-    ) throws(Error) -> (bytesReceived: Int, sourceAddress: sockaddr_in6) {
-        guard let baseAddress = buffer.baseAddress else {
-            return (0, sockaddr_in6())
-        }
-
-        var srcAddr = sockaddr_in6()
-        var addrLen = Int32(MemoryLayout<sockaddr_in6>.size)
-
-        let bytesReceived = try withUnsafeMutablePointer(to: &srcAddr) { ptr in
-            try ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { addrPtr in
-                try receiveFrom(
-                    socket,
-                    buffer: baseAddress,
-                    length: buffer.count,
-                    flags: flags,
-                    srcAddr: addrPtr,
-                    srcAddrLength: &addrLen
-                )
-            }
-        }
-
-        return (bytesReceived, srcAddr)
     }
 }
 

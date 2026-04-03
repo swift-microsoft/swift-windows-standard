@@ -34,10 +34,10 @@ extension Windows.Kernel.Socket {
     /// try Windows.Kernel.Socket.listen(sock, backlog: .default)
     /// ```
     public static func listen(
-        _ socket: Kernel.Socket.Descriptor,
+        _ socket: borrowing Kernel.Socket.Descriptor,
         backlog: Kernel.Socket.Backlog
     ) throws(Error) {
-        let result = WinSDK.listen(SOCKET(socket.rawValue), backlog.rawValue)
+        let result = WinSDK.listen(SOCKET(socket._rawValue), backlog.rawValue)
         guard result == 0 else {
             throw .listen(captureLastSocketError())
         }

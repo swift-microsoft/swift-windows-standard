@@ -11,7 +11,7 @@
 
 public import Windows_Primitives
 
-extension Windows_Primitives.Windows {
+extension Windows_Primitives_Core.Windows {
     /// Memory namespace for Windows-specific memory operations.
     public enum Memory: Sendable {}
 }

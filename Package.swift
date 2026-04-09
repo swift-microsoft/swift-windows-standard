@@ -12,18 +12,10 @@ let package = Package(
         .visionOS(.v26)
     ],
     products: [
-        .library(
-            name: "Windows Primitives",
-            targets: ["Windows Primitives"]
-        ),
         // MARK: - Kernel
         .library(
             name: "Windows Kernel Primitives",
             targets: ["Windows Kernel Primitives"]
-        ),
-        .library(
-            name: "Windows Kernel Primitives Core",
-            targets: ["Windows Kernel Primitives Core"]
         ),
         .library(
             name: "Windows Kernel File Primitives",
@@ -60,8 +52,9 @@ let package = Package(
         // .package(path: "../swift-error-primitives"),
     ],
     targets: [
+        // MARK: - Core
         .target(
-            name: "Windows Primitives",
+            name: "Windows Primitives Core",
             dependencies: []
         ),
         .target(
@@ -73,7 +66,7 @@ let package = Package(
         .target(
             name: "Windows Kernel Primitives Core",
             dependencies: [
-                .target(name: "Windows Primitives"),
+                .target(name: "Windows Primitives Core"),
                 .product(name: "Kernel Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Clock Primitives", package: "swift-clock-primitives"),
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
@@ -126,14 +119,14 @@ let package = Package(
         .target(
             name: "Windows Loader Primitives",
             dependencies: [
-                .target(name: "Windows Primitives"),
+                .target(name: "Windows Primitives Core"),
                 .product(name: "Loader Primitives", package: "swift-loader-primitives")
             ]
         ),
         .target(
             name: "Windows Memory Primitives",
             dependencies: [
-                .target(name: "Windows Primitives"),
+                .target(name: "Windows Primitives Core"),
                 .target(name: "CWindowsMemoryShim", condition: .when(platforms: [.windows]))
             ]
         ),

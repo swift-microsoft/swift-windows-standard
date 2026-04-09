@@ -11,7 +11,7 @@
 
 public import Windows_Primitives
 
-extension Windows_Primitives.Windows.Memory {
+extension Windows_Primitives_Core.Windows.Memory {
     /// Allocation namespace for Windows memory allocation tracking.
     public enum Allocation: Sendable {}
 }

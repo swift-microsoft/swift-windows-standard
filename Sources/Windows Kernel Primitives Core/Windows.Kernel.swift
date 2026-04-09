@@ -10,9 +10,9 @@
 // ===----------------------------------------------------------------------===//
 
 @_spi(Syscall) public import Kernel_Primitives
-public import Windows_Primitives
+public import Windows_Primitives_Core
 
-extension Windows_Primitives.Windows {
+extension Windows_Primitives_Core.Windows {
     /// Windows kernel mechanisms.
     ///
     /// This is a typealias to `Kernel_Primitives.Kernel`, allowing Windows-specific

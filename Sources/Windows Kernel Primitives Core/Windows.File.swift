@@ -9,9 +9,9 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Primitives
+public import Windows_Primitives_Core
 
-extension Windows_Primitives.Windows {
+extension Windows_Primitives_Core.Windows {
     /// Windows-specific file operations.
     ///
     /// Contains Windows-specific file types and extensions that are not

@@ -9,10 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Primitives
+public import Windows_Primitives_Core
 public import Loader_Primitives
 
-extension Windows_Primitives.Windows {
+extension Windows_Primitives_Core.Windows {
     /// Windows dynamic loader mechanisms.
     ///
     /// This is a typealias to `Loader_Primitives.Loader`, allowing Windows-specific

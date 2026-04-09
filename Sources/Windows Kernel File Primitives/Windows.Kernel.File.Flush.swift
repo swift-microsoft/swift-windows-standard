@@ -10,7 +10,11 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Kernel_Primitives
+@_spi(Syscall) public import Kernel_Descriptor_Primitives
+@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Kernel_File_Primitives
+@_spi(Syscall) public import Kernel_Path_Primitives
+@_spi(Syscall) public import Kernel_IO_Primitives
 public import WinSDK
 
 // MARK: - Windows FlushFileBuffers syscall

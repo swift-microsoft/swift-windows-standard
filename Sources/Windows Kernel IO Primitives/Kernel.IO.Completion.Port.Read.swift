@@ -10,7 +10,10 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-    public import Kernel_Primitives
+    public import Kernel_Descriptor_Primitives
+    public import Kernel_Error_Primitives
+    public import Kernel_IO_Primitives
+    public import Kernel_File_Primitives
 
     extension Kernel.IO.Completion.Port {
         /// Namespace for read operation types.

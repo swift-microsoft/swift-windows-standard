@@ -14,7 +14,19 @@ import WinSDK
 import Testing
 
 @testable import Windows_Kernel_Primitives
-import Kernel_Primitives
+import Kernel_Primitives_Core
+import Kernel_Descriptor_Primitives
+import Kernel_Error_Primitives
+import Kernel_File_Primitives
+import Kernel_Path_Primitives
+import Kernel_IO_Primitives
+import Kernel_Thread_Primitives
+import Kernel_Clock_Primitives
+import Kernel_Time_Primitives
+import Kernel_Random_Primitives
+import Kernel_Environment_Primitives
+import Kernel_Process_Primitives
+import Kernel_System_Primitives
 
 extension Windows.Kernel.Time {
     enum Test {

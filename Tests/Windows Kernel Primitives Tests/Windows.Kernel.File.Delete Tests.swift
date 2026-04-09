@@ -14,7 +14,11 @@ import WinSDK
 import Testing
 
 @testable import Windows_Kernel_Primitives
-import Kernel_Primitives
+import Kernel_Descriptor_Primitives
+import Kernel_Error_Primitives
+import Kernel_File_Primitives
+import Kernel_Path_Primitives
+import Kernel_IO_Primitives
 
 extension Windows.Kernel.Unlink {
     enum Test {

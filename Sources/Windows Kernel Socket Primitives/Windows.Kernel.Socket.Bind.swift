@@ -10,7 +10,8 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Kernel_Primitives
+@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Kernel_Socket_Primitives
 public import WinSDK
 
 // MARK: - Socket Bind

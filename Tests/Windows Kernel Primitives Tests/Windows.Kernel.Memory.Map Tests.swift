@@ -14,7 +14,10 @@ import WinSDK
 import Testing
 
 @testable import Windows_Kernel_Primitives
-import Kernel_Primitives
+import Kernel_Descriptor_Primitives
+import Kernel_Error_Primitives
+import Kernel_File_Primitives
+import Kernel_Memory_Primitives
 
 extension Windows.Kernel.Memory.Map {
     enum Test {

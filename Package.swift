@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-windows-primitives",
+    name: "swift-windows-standard",
     platforms: [
         .macOS(.v26),
         .iOS(.v26),
@@ -44,10 +44,10 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../swift-kernel-primitives"),
-        .package(path: "../swift-clock-primitives"),
-        .package(path: "../swift-loader-primitives"),
-        .package(path: "../swift-sequence-primitives"),
+        .package(path: "../../swift-primitives/swift-kernel-primitives"),
+        .package(path: "../../swift-primitives/swift-clock-primitives"),
+        .package(path: "../../swift-primitives/swift-loader-primitives"),
+        .package(path: "../../swift-primitives/swift-sequence-primitives"),
         // SDG(wraps): Windows syscalls wrap GetLastError
         // .package(path: "../swift-error-primitives"),
     ],

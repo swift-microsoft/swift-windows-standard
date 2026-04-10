@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Windows_Primitives_Core
+internal import Windows_Standard_Core
 internal import Kernel_Primitives_Core
 internal import Kernel_Descriptor_Primitives
 internal import Kernel_Error_Primitives
@@ -28,7 +28,7 @@ internal import Time_Primitives
 #if os(Windows)
 public import WinSDK
 
-extension Windows_Primitives_Core.Windows.File {
+extension Windows_Standard_Core.Windows.File {
     /// Windows-specific file metadata including creation time.
     ///
     /// This type extends the cross-platform `Kernel.File.Stats` with Windows-specific
@@ -37,7 +37,7 @@ extension Windows_Primitives_Core.Windows.File {
     /// ## Usage
     ///
     /// ```swift
-    /// import Windows_Kernel_Primitives
+    /// import Windows_Kernel_Standard
     ///
     /// let stats = try Windows.File.Stats.get(path: "C:\\data.txt")
     /// print("Created: \(stats.creationTime)")  // Non-optional, always available on Windows
@@ -68,7 +68,7 @@ extension Windows_Primitives_Core.Windows.File {
 
 // MARK: - Convenience accessors
 
-extension Windows_Primitives_Core.Windows.File.Stats {
+extension Windows_Standard_Core.Windows.File.Stats {
     /// File size in bytes.
     @inlinable
     public var size: Kernel.File.Size { base.size }
@@ -116,7 +116,7 @@ extension Windows_Primitives_Core.Windows.File.Stats {
 
 // MARK: - Get operations
 
-extension Windows_Primitives_Core.Windows.File.Stats {
+extension Windows_Standard_Core.Windows.File.Stats {
     /// Error type for Windows file stats operations.
     public typealias Error = Kernel.File.Stats.Error
 
@@ -212,7 +212,7 @@ extension Windows_Primitives_Core.Windows.File.Stats {
 
 // MARK: - Internal construction
 
-extension Windows_Primitives_Core.Windows.File.Stats {
+extension Windows_Standard_Core.Windows.File.Stats {
     /// Creates Windows file stats from a BY_HANDLE_FILE_INFORMATION structure.
     internal init(_from info: BY_HANDLE_FILE_INFORMATION) {
         let size = (Int64(info.nFileSizeHigh) << 32) | Int64(info.nFileSizeLow)

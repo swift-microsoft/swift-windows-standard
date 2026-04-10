@@ -10,11 +10,16 @@
 // ===----------------------------------------------------------------------===//
 
 public import Windows_Standard_Core
+public import Loader_Primitives
 
 extension Windows_Standard_Core.Windows {
-    /// Windows-specific file operations.
+    /// Windows dynamic loader mechanisms.
     ///
-    /// Contains Windows-specific file types and extensions that are not
-    /// available on other platforms.
-    public enum File: Sendable {}
+    /// This is a typealias to `Loader_Primitives.Loader`, allowing Windows-specific
+    /// extensions to be added to the shared Loader type.
+    ///
+    /// Windows loader wrappers for:
+    /// - Library loading (LoadLibraryW, FreeLibrary)
+    /// - Symbol lookup (GetProcAddress)
+    public typealias Loader = Loader_Primitives.Loader
 }

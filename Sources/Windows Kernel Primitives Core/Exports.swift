@@ -1,1 +1,1 @@
-@_exported public import Windows_Primitives_Core
+@_exported public import Windows_Standard_Core

@@ -14,33 +14,33 @@ let package = Package(
     products: [
         // MARK: - Kernel
         .library(
-            name: "Windows Kernel Primitives",
-            targets: ["Windows Kernel Primitives"]
+            name: "Windows Kernel Standard",
+            targets: ["Windows Kernel Standard"]
         ),
         .library(
-            name: "Windows Kernel File Primitives",
-            targets: ["Windows Kernel File Primitives"]
+            name: "Windows Kernel File Standard",
+            targets: ["Windows Kernel File Standard"]
         ),
         .library(
-            name: "Windows Kernel Socket Primitives",
-            targets: ["Windows Kernel Socket Primitives"]
+            name: "Windows Kernel Socket Standard",
+            targets: ["Windows Kernel Socket Standard"]
         ),
         .library(
-            name: "Windows Kernel IO Primitives",
-            targets: ["Windows Kernel IO Primitives"]
+            name: "Windows Kernel IO Standard",
+            targets: ["Windows Kernel IO Standard"]
         ),
         .library(
-            name: "Windows Kernel Memory Map Primitives",
-            targets: ["Windows Kernel Memory Map Primitives"]
+            name: "Windows Kernel Memory Map Standard",
+            targets: ["Windows Kernel Memory Map Standard"]
         ),
         // MARK: - Other
         .library(
-            name: "Windows Loader Primitives",
-            targets: ["Windows Loader Primitives"]
+            name: "Windows Loader Standard",
+            targets: ["Windows Loader Standard"]
         ),
         .library(
-            name: "Windows Memory Primitives",
-            targets: ["Windows Memory Primitives"]
+            name: "Windows Memory Standard",
+            targets: ["Windows Memory Standard"]
         ),
     ],
     dependencies: [
@@ -54,7 +54,7 @@ let package = Package(
     targets: [
         // MARK: - Core
         .target(
-            name: "Windows Primitives Core",
+            name: "Windows Standard Core",
             dependencies: []
         ),
         .target(
@@ -64,9 +64,9 @@ let package = Package(
 
         // MARK: - Kernel Core
         .target(
-            name: "Windows Kernel Primitives Core",
+            name: "Windows Kernel Standard Core",
             dependencies: [
-                .target(name: "Windows Primitives Core"),
+                .target(name: "Windows Standard Core"),
                 .product(name: "Kernel Primitives Core", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
@@ -87,9 +87,9 @@ let package = Package(
 
         // MARK: - Kernel File
         .target(
-            name: "Windows Kernel File Primitives",
+            name: "Windows Kernel File Standard",
             dependencies: [
-                "Windows Kernel Primitives Core",
+                "Windows Kernel Standard Core",
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
@@ -100,9 +100,9 @@ let package = Package(
 
         // MARK: - Kernel Socket
         .target(
-            name: "Windows Kernel Socket Primitives",
+            name: "Windows Kernel Socket Standard",
             dependencies: [
-                "Windows Kernel Primitives Core",
+                "Windows Kernel Standard Core",
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
             ]
@@ -110,9 +110,9 @@ let package = Package(
 
         // MARK: - Kernel IO
         .target(
-            name: "Windows Kernel IO Primitives",
+            name: "Windows Kernel IO Standard",
             dependencies: [
-                "Windows Kernel Primitives Core",
+                "Windows Kernel Standard Core",
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
@@ -122,9 +122,9 @@ let package = Package(
 
         // MARK: - Kernel Memory Map
         .target(
-            name: "Windows Kernel Memory Map Primitives",
+            name: "Windows Kernel Memory Map Standard",
             dependencies: [
-                "Windows Kernel Primitives Core",
+                "Windows Kernel Standard Core",
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
@@ -134,39 +134,39 @@ let package = Package(
 
         // MARK: - Kernel Umbrella
         .target(
-            name: "Windows Kernel Primitives",
+            name: "Windows Kernel Standard",
             dependencies: [
-                "Windows Kernel Primitives Core",
-                "Windows Kernel File Primitives",
-                "Windows Kernel Socket Primitives",
-                "Windows Kernel IO Primitives",
-                "Windows Kernel Memory Map Primitives",
+                "Windows Kernel Standard Core",
+                "Windows Kernel File Standard",
+                "Windows Kernel Socket Standard",
+                "Windows Kernel IO Standard",
+                "Windows Kernel Memory Map Standard",
             ]
         ),
         .target(
-            name: "Windows Loader Primitives",
+            name: "Windows Loader Standard",
             dependencies: [
-                .target(name: "Windows Primitives Core"),
+                .target(name: "Windows Standard Core"),
                 .product(name: "Loader Primitives", package: "swift-loader-primitives")
             ]
         ),
         .target(
-            name: "Windows Memory Primitives",
+            name: "Windows Memory Standard",
             dependencies: [
-                .target(name: "Windows Primitives Core"),
+                .target(name: "Windows Standard Core"),
                 .target(name: "CWindowsMemoryShim", condition: .when(platforms: [.windows]))
             ]
         ),
         .testTarget(
-            name: "Windows Kernel Primitives Tests",
+            name: "Windows Kernel Standard Tests",
             dependencies: [
-                "Windows Kernel Primitives",
+                "Windows Kernel Standard",
             ]
         ),
         .testTarget(
-            name: "Windows Loader Primitives Tests",
+            name: "Windows Loader Standard Tests",
             dependencies: [
-                "Windows Loader Primitives",
+                "Windows Loader Standard",
             ]
         ),
     ],

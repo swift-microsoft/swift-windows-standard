@@ -3,9 +3,9 @@
 
 #if os(Windows)
 import WinSDK
-public import Windows_Primitives_Core
+public import Windows_Standard_Core
 
-extension Windows_Primitives_Core.Windows {
+extension Windows_Standard_Core.Windows {
     /// Identity-related types for Windows.
     public enum Identity {}
 }

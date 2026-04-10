@@ -11,9 +11,9 @@
 
 #if os(Windows)
 public import WinSDK
-public import Windows_Primitives_Core
+public import Windows_Standard_Core
 
-extension Windows_Primitives_Core.Windows {
+extension Windows_Standard_Core.Windows {
     /// Windows SDK interoperability helpers.
     ///
     /// Provides type conversions and adapters for working with Windows APIs.
@@ -22,7 +22,7 @@ extension Windows_Primitives_Core.Windows {
 
 // MARK: - DWORD Conversion Helpers
 
-extension Windows_Primitives_Core.Windows.Interop {
+extension Windows_Standard_Core.Windows.Interop {
     /// Converts a UInt32 value to DWORD.
     ///
     /// On Windows, DWORD is a typealias for UInt32, so this is an identity conversion.
@@ -38,7 +38,7 @@ extension Windows_Primitives_Core.Windows.Interop {
 
 // MARK: - Mask Helpers for Bitwise Operations
 
-extension Windows_Primitives_Core.Windows.Interop {
+extension Windows_Standard_Core.Windows.Interop {
     /// Converts a UInt32 value to DWORD for mask operations.
     @inline(always)
     public static func mask(_ value: UInt32) -> DWORD { value }
@@ -50,7 +50,7 @@ extension Windows_Primitives_Core.Windows.Interop {
 
 // MARK: - Boolean Adapters
 
-extension Windows_Primitives_Core.Windows.Interop {
+extension Windows_Standard_Core.Windows.Interop {
     /// Identity adapter for Windows API return values that return Bool.
     ///
     /// In Swift 6.2, the WinSDK overlay has converted most Windows APIs to return Swift Bool.

@@ -1,5 +1,0 @@
-@_exported import Windows_Kernel_Primitives_Core
-@_exported import Windows_Kernel_File_Primitives
-@_exported import Windows_Kernel_Socket_Primitives
-@_exported import Windows_Kernel_IO_Primitives
-@_exported import Windows_Kernel_Memory_Map_Primitives

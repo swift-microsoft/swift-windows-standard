@@ -30,11 +30,11 @@ extension Windows.Kernel.File.Times {
     ///   - lastAccessTime: New last access time, or nil to leave unchanged.
     ///   - lastWriteTime: New last write time, or nil to leave unchanged.
     /// - Throws: `Kernel.File.Times.Error` on failure.
-    public static func setTimes(
-        _ descriptor: Kernel.Descriptor,
-        creationTime: FILETIME? = nil,
-        lastAccessTime: FILETIME? = nil,
-        lastWriteTime: FILETIME? = nil
+    public static func set(
+        creation creationTime: FILETIME? = nil,
+        access lastAccessTime: FILETIME? = nil,
+        modification lastWriteTime: FILETIME? = nil,
+        on descriptor: Kernel.Descriptor
     ) throws(Kernel.File.Times.Error) {
         var creation = creationTime
         var access = lastAccessTime
@@ -68,11 +68,11 @@ extension Windows.Kernel.File.Times {
     /// - Returns: True on success, false on failure.
     @inlinable
     @discardableResult
-    public static func setTimes(
-        _ descriptor: Kernel.Descriptor,
-        creationTime: UnsafePointer<FILETIME>?,
-        lastAccessTime: UnsafePointer<FILETIME>?,
-        lastWriteTime: UnsafePointer<FILETIME>?
+    public static func set(
+        creation creationTime: UnsafePointer<FILETIME>?,
+        access lastAccessTime: UnsafePointer<FILETIME>?,
+        modification lastWriteTime: UnsafePointer<FILETIME>?,
+        on descriptor: Kernel.Descriptor
     ) -> Bool {
         SetFileTime(
             descriptor.handle,

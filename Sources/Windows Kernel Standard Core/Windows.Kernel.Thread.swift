@@ -118,6 +118,12 @@ extension Windows.Kernel.Thread {
     }
 
     /// Returns the ID of the current thread.
+    ///
+    /// - Note: Prefer `Kernel.Thread.ID.current` — the portable, typed
+    ///   equivalent that works across platforms. This Windows-specific
+    ///   overload remains for parity with the Windows API surface but
+    ///   new code should use the cross-platform form.
+    @available(*, deprecated, message: "Use Kernel.Thread.ID.current for portable, typed thread identity.")
     @inlinable
     public static func currentID() -> DWORD {
         GetCurrentThreadId()

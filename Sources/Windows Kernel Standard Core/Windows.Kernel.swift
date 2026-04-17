@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 public import Kernel_Primitives_Core
+@_spi(Syscall) public import Kernel_Descriptor_Primitives
 public import Windows_Standard_Core
 
 extension Windows_Standard_Core.Windows {

@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Primitives
+public import Windows_Standard_Core
 
 extension Windows_Standard_Core.Windows {
     /// Memory namespace for Windows-specific memory operations.

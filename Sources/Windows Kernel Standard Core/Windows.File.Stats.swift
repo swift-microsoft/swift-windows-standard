@@ -22,7 +22,6 @@ internal import Kernel_Random_Primitives
 internal import Kernel_Environment_Primitives
 internal import Kernel_Process_Primitives
 internal import Kernel_System_Primitives
-internal import Time_Primitives
 
 #if os(Windows)
 public import WinSDK

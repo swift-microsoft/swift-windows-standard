@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Primitives
+public import Windows_Standard_Core
 
 extension Windows_Standard_Core.Windows.Memory {
     /// Allocation namespace for Windows memory allocation tracking.

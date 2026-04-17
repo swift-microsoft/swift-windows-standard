@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Primitives
+public import Windows_Standard_Core
 #if os(Windows)
 import CWindowsMemoryShim
 #endif

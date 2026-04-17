@@ -82,6 +82,11 @@ let package = Package(
             name: "Windows Memory Standard",
             targets: ["Windows Memory Standard"]
         ),
+        // MARK: - Test Support
+        .library(
+            name: "Windows Kernel Standard Test Support",
+            targets: ["Windows Kernel Standard Test Support"]
+        ),
     ],
     dependencies: [
         .package(path: "../../swift-primitives/swift-kernel-primitives"),
@@ -282,16 +287,31 @@ let package = Package(
                 .target(name: "CWindowsMemoryShim", condition: .when(platforms: [.windows]))
             ]
         ),
+
+        // MARK: - Test Support
+        .target(
+            name: "Windows Kernel Standard Test Support",
+            dependencies: [
+                "Windows Kernel Standard",
+                "Windows Loader Standard",
+                .product(name: "Kernel Primitives Test Support", package: "swift-kernel-primitives"),
+            ],
+            path: "Tests/Support"
+        ),
+
+        // MARK: - Tests
         .testTarget(
             name: "Windows Kernel Standard Tests",
             dependencies: [
                 "Windows Kernel Standard",
+                "Windows Kernel Standard Test Support",
             ]
         ),
         .testTarget(
             name: "Windows Loader Standard Tests",
             dependencies: [
                 "Windows Loader Standard",
+                "Windows Kernel Standard Test Support",
             ]
         ),
     ],

@@ -18,6 +18,10 @@ let package = Package(
             targets: ["Windows Kernel Standard"]
         ),
         .library(
+            name: "Windows Kernel Clock Standard",
+            targets: ["Windows Kernel Clock Standard"]
+        ),
+        .library(
             name: "Windows Kernel File Standard",
             targets: ["Windows Kernel File Standard"]
         ),
@@ -74,14 +78,23 @@ let package = Package(
                 .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Thread Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Clock Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Time Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Random Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Environment Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Process Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel System Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Clock Primitives", package: "swift-clock-primitives"),
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Clock
+        .target(
+            name: "Windows Kernel Clock Standard",
+            dependencies: [
+                .target(name: "Windows Standard Core"),
+                .product(name: "Kernel Primitives Core", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Clock Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Clock Primitives", package: "swift-clock-primitives"),
             ]
         ),
 
@@ -137,6 +150,7 @@ let package = Package(
             name: "Windows Kernel Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
+                "Windows Kernel Clock Standard",
                 "Windows Kernel File Standard",
                 "Windows Kernel Socket Standard",
                 "Windows Kernel IO Standard",

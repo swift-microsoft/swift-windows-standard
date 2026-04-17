@@ -17,7 +17,6 @@ public import Kernel_File_Primitives
 public import Kernel_Path_Primitives
 public import Kernel_IO_Primitives
 public import Kernel_Thread_Primitives
-public import Kernel_Clock_Primitives
 public import Kernel_Time_Primitives
 public import Kernel_Random_Primitives
 public import Kernel_Environment_Primitives

@@ -16,7 +16,6 @@
 @_spi(Syscall) public import Kernel_Path_Primitives
 @_spi(Syscall) public import Kernel_IO_Primitives
 @_spi(Syscall) public import Kernel_Thread_Primitives
-@_spi(Syscall) public import Kernel_Clock_Primitives
 @_spi(Syscall) public import Kernel_Time_Primitives
 @_spi(Syscall) public import Kernel_Random_Primitives
 @_spi(Syscall) public import Kernel_Environment_Primitives

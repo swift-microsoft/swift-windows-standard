@@ -22,12 +22,20 @@ let package = Package(
             targets: ["Windows Kernel Clock Standard"]
         ),
         .library(
-            name: "Windows Kernel File Standard",
-            targets: ["Windows Kernel File Standard"]
+            name: "Windows Kernel Console Standard",
+            targets: ["Windows Kernel Console Standard"]
         ),
         .library(
-            name: "Windows Kernel Socket Standard",
-            targets: ["Windows Kernel Socket Standard"]
+            name: "Windows Kernel Directory Standard",
+            targets: ["Windows Kernel Directory Standard"]
+        ),
+        .library(
+            name: "Windows Kernel Environment Standard",
+            targets: ["Windows Kernel Environment Standard"]
+        ),
+        .library(
+            name: "Windows Kernel File Standard",
+            targets: ["Windows Kernel File Standard"]
         ),
         .library(
             name: "Windows Kernel IO Standard",
@@ -37,7 +45,35 @@ let package = Package(
             name: "Windows Kernel Memory Map Standard",
             targets: ["Windows Kernel Memory Map Standard"]
         ),
+        .library(
+            name: "Windows Kernel Process Standard",
+            targets: ["Windows Kernel Process Standard"]
+        ),
+        .library(
+            name: "Windows Kernel Socket Standard",
+            targets: ["Windows Kernel Socket Standard"]
+        ),
+        .library(
+            name: "Windows Kernel System Standard",
+            targets: ["Windows Kernel System Standard"]
+        ),
+        .library(
+            name: "Windows Kernel Thread Standard",
+            targets: ["Windows Kernel Thread Standard"]
+        ),
+        .library(
+            name: "Windows Kernel Time Standard",
+            targets: ["Windows Kernel Time Standard"]
+        ),
         // MARK: - Other
+        .library(
+            name: "Windows Identity Standard",
+            targets: ["Windows Identity Standard"]
+        ),
+        .library(
+            name: "Windows Interop Standard",
+            targets: ["Windows Interop Standard"]
+        ),
         .library(
             name: "Windows Loader Standard",
             targets: ["Windows Loader Standard"]
@@ -74,16 +110,6 @@ let package = Package(
                 .product(name: "Kernel Primitives Core", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Thread Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Time Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Random Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Environment Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Process Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel System Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),
 
@@ -91,10 +117,37 @@ let package = Package(
         .target(
             name: "Windows Kernel Clock Standard",
             dependencies: [
-                .target(name: "Windows Standard Core"),
-                .product(name: "Kernel Primitives Core", package: "swift-kernel-primitives"),
+                "Windows Kernel Standard Core",
                 .product(name: "Kernel Clock Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Clock Primitives", package: "swift-clock-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Console
+        .target(
+            name: "Windows Kernel Console Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+            ]
+        ),
+
+        // MARK: - Kernel Directory
+        .target(
+            name: "Windows Kernel Directory Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Environment
+        .target(
+            name: "Windows Kernel Environment Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel Environment Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),
 
@@ -103,21 +156,10 @@ let package = Package(
             name: "Windows Kernel File Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
-            ]
-        ),
-
-        // MARK: - Kernel Socket
-        .target(
-            name: "Windows Kernel Socket Standard",
-            dependencies: [
-                "Windows Kernel Standard Core",
-                .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Time Primitives", package: "swift-kernel-primitives"),
             ]
         ),
 
@@ -126,8 +168,6 @@ let package = Package(
             name: "Windows Kernel IO Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
             ]
@@ -138,10 +178,54 @@ let package = Package(
             name: "Windows Kernel Memory Map Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Memory Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Process
+        .target(
+            name: "Windows Kernel Process Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel Process Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Socket
+        .target(
+            name: "Windows Kernel Socket Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel System
+        .target(
+            name: "Windows Kernel System Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel System Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Random Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Thread
+        .target(
+            name: "Windows Kernel Thread Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel Thread Primitives", package: "swift-kernel-primitives"),
+            ]
+        ),
+
+        // MARK: - Kernel Time
+        .target(
+            name: "Windows Kernel Time Standard",
+            dependencies: [
+                "Windows Kernel Standard Core",
+                .product(name: "Kernel Time Primitives", package: "swift-kernel-primitives"),
             ]
         ),
 
@@ -151,12 +235,37 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard Core",
                 "Windows Kernel Clock Standard",
+                "Windows Kernel Console Standard",
+                "Windows Kernel Directory Standard",
+                "Windows Kernel Environment Standard",
                 "Windows Kernel File Standard",
-                "Windows Kernel Socket Standard",
                 "Windows Kernel IO Standard",
                 "Windows Kernel Memory Map Standard",
+                "Windows Kernel Process Standard",
+                "Windows Kernel Socket Standard",
+                "Windows Kernel System Standard",
+                "Windows Kernel Thread Standard",
+                "Windows Kernel Time Standard",
             ]
         ),
+
+        // MARK: - Identity
+        .target(
+            name: "Windows Identity Standard",
+            dependencies: [
+                .target(name: "Windows Standard Core"),
+            ]
+        ),
+
+        // MARK: - Interop
+        .target(
+            name: "Windows Interop Standard",
+            dependencies: [
+                .target(name: "Windows Standard Core"),
+            ]
+        ),
+
+        // MARK: - Loader
         .target(
             name: "Windows Loader Standard",
             dependencies: [
@@ -164,6 +273,8 @@ let package = Package(
                 .product(name: "Loader Primitives", package: "swift-loader-primitives")
             ]
         ),
+
+        // MARK: - Memory
         .target(
             name: "Windows Memory Standard",
             dependencies: [

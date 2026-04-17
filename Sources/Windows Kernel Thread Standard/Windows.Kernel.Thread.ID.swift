@@ -11,7 +11,6 @@
 
 #if os(Windows)
 
-@_spi(Syscall) public import Kernel_Thread_Primitives
 public import WinSDK
 
 extension Kernel.Thread {

@@ -111,19 +111,19 @@ extension Windows.Kernel.System.Test.Unit {
 // MARK: - Sleep Tests
 
 extension Windows.Kernel.System.Test.Unit {
-    @Test("sleep nanoseconds completes")
-    func sleepNanosecondsCompletes() {
+    @Test("sleep completes")
+    func sleepCompletes() {
         let start = GetTickCount64()
-        Windows.Kernel.System.sleep(nanoseconds: 10_000_000)  // 10ms
+        Windows.Kernel.System.sleep(.milliseconds(10))
         let elapsed = GetTickCount64() - start
         // Should have slept at least ~9ms (allowing for timing)
         #expect(elapsed >= 9)
     }
 
-    @Test("sleep zero nanoseconds completes immediately")
-    func sleepZeroNanoseconds() {
+    @Test("sleep zero completes immediately")
+    func sleepZero() {
         let start = GetTickCount64()
-        Windows.Kernel.System.sleep(nanoseconds: 0)
+        Windows.Kernel.System.sleep(.zero)
         let elapsed = GetTickCount64() - start
         // Should complete quickly (< 100ms)
         #expect(elapsed < 100)

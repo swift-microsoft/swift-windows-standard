@@ -43,21 +43,10 @@ extension Windows.Kernel.System {
         return System.Processor.Count(__unchecked: (), Cardinal(UInt(sysInfo.dwNumberOfProcessors)))
     }
 
-    /// Sleeps for the specified number of nanoseconds.
-    ///
-    /// Note: Windows Sleep() has millisecond granularity.
-    /// Sub-millisecond sleeps are rounded up to 1ms minimum.
-    ///
-    /// - Parameter nanoseconds: The number of nanoseconds to sleep.
-    @inlinable
-    public static func sleep(nanoseconds: UInt64) {
-        let ms = (nanoseconds + 999_999) / 1_000_000  // Round up to milliseconds
-        Sleep(DWORD(min(ms, UInt64(DWORD.max))))
-    }
-
     /// Sleeps for the specified duration.
     ///
     /// Note: Windows Sleep() has millisecond granularity.
+    /// Sub-millisecond sleeps are rounded up to 1ms minimum.
     ///
     /// - Parameter duration: The duration to sleep.
     @inlinable

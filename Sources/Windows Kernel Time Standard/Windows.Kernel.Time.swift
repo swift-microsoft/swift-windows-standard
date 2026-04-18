@@ -38,26 +38,27 @@ extension Windows.Kernel.Time {
         return UInt64(fileTime.dwHighDateTime) << 32 | UInt64(fileTime.dwLowDateTime)
     }
 
-    /// Gets the current system time as seconds since Unix epoch (January 1, 1970).
+    /// Gets the current wall-clock time as a typed `Kernel.Time`.
     ///
-    /// - Returns: Seconds since Unix epoch.
-    public static func unixTime() -> Int64 {
-        // Windows FILETIME starts at 1601-01-01
-        // Unix epoch starts at 1970-01-01
-        // Difference is 11644473600 seconds or 116444736000000000 100-ns intervals
+    /// Uses `GetSystemTimeAsFileTime` which tracks real-world UTC time.
+    /// Subject to clock adjustments — NOT suitable for elapsed time measurement.
+    /// Use for timestamps and record-keeping.
+    ///
+    /// - Returns: The current wall-clock reading as seconds and nanoseconds
+    ///   since 1970-01-01 00:00:00 UTC (100-ns precision, zero-padded to the
+    ///   nanosecond slot).
+    public static func realtime() -> Kernel.Time {
+        // FILETIME is 100-ns intervals since 1601-01-01 UTC.
+        // Unix epoch starts 1970-01-01 UTC; the difference is
+        // 116_444_736_000_000_000 intervals (11_644_473_600 seconds).
         let windowsEpochDiff: UInt64 = 116_444_736_000_000_000
         let intervals = systemTimeRaw()
-        return Int64((intervals - windowsEpochDiff) / 10_000_000)
-    }
-
-    /// Gets the current system time as nanoseconds since Unix epoch.
-    ///
-    /// - Returns: Nanoseconds since Unix epoch.
-    public static func unixTimeNanoseconds() -> Int64 {
-        let windowsEpochDiff: UInt64 = 116_444_736_000_000_000
-        let intervals = systemTimeRaw()
-        // Each interval is 100 nanoseconds
-        return Int64((intervals - windowsEpochDiff) * 100)
+        let sinceUnix = intervals - windowsEpochDiff
+        return Kernel.Time(
+            __unchecked: (),
+            secondsSinceUnixEpoch: Int64(sinceUnix / 10_000_000),
+            nanosecondFraction: Int32(sinceUnix % 10_000_000) * 100
+        )
     }
 }
 

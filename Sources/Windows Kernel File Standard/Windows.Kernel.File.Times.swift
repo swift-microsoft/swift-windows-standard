@@ -99,18 +99,23 @@ extension Windows.Kernel.File.Times {
 // MARK: - FILETIME Helpers
 
 extension Windows.Kernel.File {
-    /// Converts a Unix timestamp (seconds since 1970) to Windows FILETIME.
+    /// Converts a typed `Kernel.Time` (Unix-epoch instant) to Windows FILETIME.
     ///
     /// FILETIME is 100-nanosecond intervals since January 1, 1601 UTC.
+    /// The typed input is decomposed internally; callers never see raw
+    /// (seconds, nanoseconds) pairs.
     ///
-    /// - Parameter unixTimestamp: Seconds since Unix epoch (1970-01-01).
+    /// - Parameter time: The wall-clock instant to convert.
     /// - Returns: The equivalent FILETIME.
-    public static func fileTimeFromUnix(_ unixTimestamp: Int64) -> FILETIME {
+    public static func fileTimeFromUnix(_ time: Kernel.Time) -> FILETIME {
         // Difference between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
         let epochDifference: UInt64 = 116_444_736_000_000_000
 
-        // Convert seconds to 100-ns intervals and add epoch difference
-        let windowsTime = UInt64(unixTimestamp) * 10_000_000 + epochDifference
+        // Convert to 100-ns intervals
+        let windowsTime =
+            UInt64(time.secondsSinceUnixEpoch) * 10_000_000
+            + UInt64(time.nanosecondFraction) / 100
+            + epochDifference
 
         return FILETIME(
             dwLowDateTime: DWORD(windowsTime & 0xFFFFFFFF),
@@ -130,25 +135,6 @@ extension Windows.Kernel.File {
 
         // Convert from 100-ns intervals to seconds
         return Int64((windowsTime - epochDifference) / 10_000_000)
-    }
-
-    /// Converts a Unix timestamp with nanoseconds to Windows FILETIME.
-    ///
-    /// - Parameters:
-    ///   - seconds: Seconds since Unix epoch.
-    ///   - nanoseconds: Additional nanoseconds.
-    /// - Returns: The equivalent FILETIME.
-    public static func fileTimeFromUnix(seconds: Int64, nanoseconds: Int64) -> FILETIME {
-        // Difference between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
-        let epochDifference: UInt64 = 116_444_736_000_000_000
-
-        // Convert to 100-ns intervals
-        let windowsTime = UInt64(seconds) * 10_000_000 + UInt64(nanoseconds / 100) + epochDifference
-
-        return FILETIME(
-            dwLowDateTime: DWORD(windowsTime & 0xFFFFFFFF),
-            dwHighDateTime: DWORD(windowsTime >> 32)
-        )
     }
 
     /// Gets the current time as a FILETIME.

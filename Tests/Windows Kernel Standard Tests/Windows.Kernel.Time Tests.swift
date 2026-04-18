@@ -56,27 +56,21 @@ extension Windows.Kernel.Time.Test.Unit {
         #expect(ft.dwHighDateTime > 0 || ft.dwLowDateTime > 0)
     }
 
-    @Test("unixTime returns reasonable value")
-    func unixTimeReturnsReasonable() {
-        let unix = Windows.Kernel.Time.unixTime()
-        // Should be after Jan 1, 2020 (1577836800)
-        #expect(unix > 1577836800)
+    @Test("realtime returns reasonable value")
+    func realtimeReasonable() {
+        let now = Windows.Kernel.Time.realtime()
+        // Should be after Jan 1, 2020 (1_577_836_800 seconds since Unix epoch).
+        #expect(now.secondsSinceUnixEpoch > 1_577_836_800)
+        #expect(now.nanosecondFraction >= 0)
+        #expect(now.nanosecondFraction < 1_000_000_000)
     }
 
-    @Test("unixTimeNanoseconds returns reasonable value")
-    func unixTimeNanosecondsReturnsReasonable() {
-        let nanos = Windows.Kernel.Time.unixTimeNanoseconds()
-        // Should be after Jan 1, 2020 in nanoseconds
-        #expect(nanos > 1577836800_000_000_000)
-    }
-
-    @Test("unixTime and unixTimeNanoseconds are consistent")
-    func unixTimeConsistent() {
-        let seconds = Windows.Kernel.Time.unixTime()
-        let nanos = Windows.Kernel.Time.unixTimeNanoseconds()
-        // The second values should match (within margin for time between calls)
-        let nanosToSeconds = nanos / 1_000_000_000
-        #expect(abs(nanosToSeconds - seconds) <= 1)
+    @Test("realtime nanosecond fraction aligned to 100-ns boundary")
+    func realtimeNanosecondAlignment() {
+        // Windows FILETIME resolution is 100ns; realtime() encodes it in the
+        // nanosecond field, so the nanosecond fraction is a multiple of 100.
+        let now = Windows.Kernel.Time.realtime()
+        #expect(now.nanosecondFraction % 100 == 0)
     }
 }
 

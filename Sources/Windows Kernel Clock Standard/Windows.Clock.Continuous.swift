@@ -16,11 +16,9 @@
 extension Clock.Continuous: _Concurrency.Clock {
     /// The current instant according to the continuous clock.
     ///
-    /// Uses `Kernel.Clock.Continuous.now()` which wraps
-    /// `QueryPerformanceCounter` on Windows.
-    public var now: Instant {
-        Instant(nanoseconds: Kernel.Clock.Continuous.now())
-    }
+    /// Delegates directly to `Kernel.Clock.Continuous.now()`, which
+    /// wraps `QueryPerformanceCounter` on Windows.
+    public var now: Instant { Kernel.Clock.Continuous.now() }
 
     /// The current instant according to the continuous clock (static convenience).
     public static var now: Instant { Self().now }
@@ -28,8 +26,7 @@ extension Clock.Continuous: _Concurrency.Clock {
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
-        let target = deadline.nanoseconds
-        while Kernel.Clock.Continuous.now() < target {
+        while Kernel.Clock.Continuous.now() < deadline {
             try Task.checkCancellation()
             try await Task.sleep(for: .nanoseconds(1_000_000))
         }
@@ -41,11 +38,9 @@ extension Clock.Continuous: _Concurrency.Clock {
 extension Clock.Suspending: _Concurrency.Clock {
     /// The current instant according to the suspending clock.
     ///
-    /// Uses `Kernel.Clock.Suspending.now()` which wraps
-    /// `QueryUnbiasedInterruptTime` on Windows.
-    public var now: Instant {
-        Instant(nanoseconds: Kernel.Clock.Suspending.now())
-    }
+    /// Delegates directly to `Kernel.Clock.Suspending.now()`, which
+    /// wraps `QueryUnbiasedInterruptTime` on Windows.
+    public var now: Instant { Kernel.Clock.Suspending.now() }
 
     /// The current instant according to the suspending clock (static convenience).
     public static var now: Instant { Self().now }
@@ -53,8 +48,7 @@ extension Clock.Suspending: _Concurrency.Clock {
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
-        let target = deadline.nanoseconds
-        while Kernel.Clock.Suspending.now() < target {
+        while Kernel.Clock.Suspending.now() < deadline {
             try Task.checkCancellation()
             try await Task.sleep(for: .nanoseconds(1_000_000))
         }

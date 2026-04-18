@@ -15,12 +15,12 @@ public import WinSDK
 // MARK: - Windows Clock Operations
 
 extension Kernel.Clock.Continuous {
-    /// Returns the current continuous time in nanoseconds since boot.
+    /// Returns the current instant on the continuous clock.
     ///
     /// Uses `QueryPerformanceCounter` which advances during system sleep,
     /// providing wall-clock time measurement.
     @inlinable
-    public static func now() -> UInt64 {
+    public static func now() -> Clock.Continuous.Instant {
         var counter = LARGE_INTEGER()
         var frequency = LARGE_INTEGER()
         QueryPerformanceCounter(&counter)
@@ -35,23 +35,25 @@ extension Kernel.Clock.Continuous {
         let seconds = counterValue / frequencyValue
         let remainder = counterValue % frequencyValue
 
-        return seconds * 1_000_000_000 + (remainder * 1_000_000_000) / frequencyValue
+        let ns = seconds * 1_000_000_000 + (remainder * 1_000_000_000) / frequencyValue
+        return Clock.Continuous.Instant(nanoseconds: ns)
     }
 }
 
 extension Kernel.Clock.Suspending {
-    /// Returns the current suspending time in nanoseconds since boot.
+    /// Returns the current instant on the suspending clock.
     ///
     /// Uses `QueryUnbiasedInterruptTime` which pauses during system sleep,
     /// measuring only active execution time.
     @inlinable
-    public static func now() -> UInt64 {
+    public static func now() -> Clock.Suspending.Instant {
         var unbiasedTime: ULONGLONG = 0
         QueryUnbiasedInterruptTime(&unbiasedTime)
 
         // QueryUnbiasedInterruptTime returns 100-nanosecond intervals
         // Convert to nanoseconds by multiplying by 100
-        return UInt64(unbiasedTime) * 100
+        let ns = UInt64(unbiasedTime) * 100
+        return Clock.Suspending.Instant(nanoseconds: ns)
     }
 }
 

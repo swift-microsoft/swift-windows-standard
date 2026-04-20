@@ -50,30 +50,28 @@ extension Windows.Kernel.Random.Test.Unit {
 
 extension Windows.Kernel.Random.Test.Unit {
     @Test
-    func `bCryptGenRandom fills buffer without throwing`() throws {
-        var buffer = [UInt8](repeating: 0, count: 32)
-        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
-        }
+    func `bCryptGenRandom fills buffer without throwing`() throws(Kernel.Random.Error) {
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
+        defer { buffer.deallocate() }
+        buffer.initializeMemory(as: UInt8.self, repeating: 0)
+        try Windows.Kernel.Random.bCryptGenRandom(buffer)
     }
 
     @Test
-    func `bCryptGenRandom produces non-zero bytes`() throws {
-        var buffer = [UInt8](repeating: 0, count: 32)
-        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
-        }
+    func `bCryptGenRandom produces non-zero bytes`() throws(Kernel.Random.Error) {
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
+        defer { buffer.deallocate() }
+        buffer.initializeMemory(as: UInt8.self, repeating: 0)
+        try Windows.Kernel.Random.bCryptGenRandom(buffer)
         // Very unlikely all 32 bytes are zero
         let allZero = buffer.allSatisfy { $0 == 0 }
         #expect(!allZero)
     }
 
     @Test
-    func `bCryptGenRandom with empty buffer is a no-op`() throws {
-        var buffer: [UInt8] = []
-        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
-        }
+    func `bCryptGenRandom with empty buffer is a no-op`() throws(Kernel.Random.Error) {
+        let buffer = UnsafeMutableRawBufferPointer(start: nil, count: 0)
+        try Windows.Kernel.Random.bCryptGenRandom(buffer)
     }
 }
 
@@ -120,26 +118,26 @@ extension Windows.Kernel.Random.Test.Unit {
 
 extension Windows.Kernel.Random.Test.EdgeCase {
     @Test
-    func `bCryptGenRandom fills a one-megabyte buffer`() throws {
-        var buffer = [UInt8](repeating: 0, count: 1024 * 1024)  // 1MB
-        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
-        }
+    func `bCryptGenRandom fills a one-megabyte buffer`() throws(Kernel.Random.Error) {
+        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 1024 * 1024, alignment: 1)
+        defer { buffer.deallocate() }
+        buffer.initializeMemory(as: UInt8.self, repeating: 0)
+        try Windows.Kernel.Random.bCryptGenRandom(buffer)
     }
 
     @Test
-    func `successive bCryptGenRandom calls produce different bytes`() throws {
-        var buffer1 = [UInt8](repeating: 0, count: 32)
-        var buffer2 = [UInt8](repeating: 0, count: 32)
+    func `successive bCryptGenRandom calls produce different bytes`() throws(Kernel.Random.Error) {
+        let first = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
+        defer { first.deallocate() }
+        first.initializeMemory(as: UInt8.self, repeating: 0)
+        let second = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
+        defer { second.deallocate() }
+        second.initializeMemory(as: UInt8.self, repeating: 0)
 
-        try buffer1.withUnsafeMutableBytes { buffer throws(Kernel.Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(buffer)
-        }
-        try buffer2.withUnsafeMutableBytes { buffer throws(Kernel.Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(buffer)
-        }
+        try Windows.Kernel.Random.bCryptGenRandom(first)
+        try Windows.Kernel.Random.bCryptGenRandom(second)
 
-        #expect(buffer1 != buffer2)
+        #expect(Array(first) != Array(second))
     }
 }
 

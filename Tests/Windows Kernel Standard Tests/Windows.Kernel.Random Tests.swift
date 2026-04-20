@@ -12,6 +12,7 @@
 #if os(Windows)
 import WinSDK
 import Testing
+import Standard_Library_Extensions
 
 @testable import Windows_Kernel_Standard
 import Kernel_Primitives_Core
@@ -51,21 +52,20 @@ extension Windows.Kernel.Random.Test.Unit {
 extension Windows.Kernel.Random.Test.Unit {
     @Test
     func `bCryptGenRandom fills buffer without throwing`() throws(Kernel.Random.Error) {
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
-        defer { buffer.deallocate() }
-        buffer.initializeMemory(as: UInt8.self, repeating: 0)
-        try Windows.Kernel.Random.bCryptGenRandom(buffer)
+        var buffer: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)  // 32 bytes
+        try withUnsafeMutableBytes(of: &buffer) { raw throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(raw)
+        }
     }
 
     @Test
     func `bCryptGenRandom produces non-zero bytes`() throws(Kernel.Random.Error) {
-        let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
-        defer { buffer.deallocate() }
-        buffer.initializeMemory(as: UInt8.self, repeating: 0)
-        try Windows.Kernel.Random.bCryptGenRandom(buffer)
+        var buffer: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)  // 32 bytes
+        try withUnsafeMutableBytes(of: &buffer) { raw throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(raw)
+        }
         // Very unlikely all 32 bytes are zero
-        let allZero = buffer.allSatisfy { $0 == 0 }
-        #expect(!allZero)
+        #expect(buffer != (0, 0, 0, 0))
     }
 
     @Test
@@ -127,17 +127,17 @@ extension Windows.Kernel.Random.Test.EdgeCase {
 
     @Test
     func `successive bCryptGenRandom calls produce different bytes`() throws(Kernel.Random.Error) {
-        let first = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
-        defer { first.deallocate() }
-        first.initializeMemory(as: UInt8.self, repeating: 0)
-        let second = UnsafeMutableRawBufferPointer.allocate(byteCount: 32, alignment: 1)
-        defer { second.deallocate() }
-        second.initializeMemory(as: UInt8.self, repeating: 0)
+        var first: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)
+        var second: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)
 
-        try Windows.Kernel.Random.bCryptGenRandom(first)
-        try Windows.Kernel.Random.bCryptGenRandom(second)
+        try withUnsafeMutableBytes(of: &first) { raw throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(raw)
+        }
+        try withUnsafeMutableBytes(of: &second) { raw throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(raw)
+        }
 
-        #expect(Array(first) != Array(second))
+        #expect(first != second)
     }
 }
 

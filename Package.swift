@@ -93,6 +93,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-clock-primitives"),
         .package(path: "../../swift-primitives/swift-loader-primitives"),
         .package(path: "../../swift-primitives/swift-sequence-primitives"),
+        .package(path: "../../swift-primitives/swift-standard-library-extensions"),
         // SDG(wraps): Windows syscalls wrap GetLastError
         // .package(path: "../swift-error-primitives"),
     ],
@@ -305,6 +306,7 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard",
                 "Windows Kernel Standard Test Support",
+                .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
         ),
         .testTarget(

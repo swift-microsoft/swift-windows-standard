@@ -32,8 +32,8 @@ extension Windows.Kernel.Sync {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Sync.Test.Unit {
-    @Test("Sync namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Sync namespace exists`() {
         _ = Windows.Kernel.Sync.self
     }
 }
@@ -41,8 +41,8 @@ extension Windows.Kernel.Sync.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Sync.Test.Unit {
-    @Test("sync with invalid descriptor throws")
-    func syncInvalidDescriptorThrows() {
+    @Test
+    func `sync with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Sync.Error.self) {
@@ -50,8 +50,8 @@ extension Windows.Kernel.Sync.Test.Unit {
         }
     }
 
-    @Test("datasync with invalid descriptor throws")
-    func datasyncInvalidDescriptorThrows() {
+    @Test
+    func `datasync with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Sync.Error.self) {
@@ -63,8 +63,8 @@ extension Windows.Kernel.Sync.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Sync.Test.EdgeCase {
-    @Test("datasync is alias for sync on Windows")
-    func datasyncIsAliasForSync() {
+    @Test
+    func `datasync is alias for sync on Windows`() {
         // On Windows, datasync and sync are the same operation
         // This test just verifies both functions exist
         _ = Windows.Kernel.Sync.sync

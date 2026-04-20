@@ -40,8 +40,8 @@ extension Windows.Kernel.Directory.Working {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Directory.Working.Test.Unit {
-    @Test("Directory.Working namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Directory.Working namespace exists`() {
         _ = Windows.Kernel.Directory.Working.self
     }
 }
@@ -49,14 +49,14 @@ extension Windows.Kernel.Directory.Working.Test.Unit {
 // MARK: - Get Tests
 
 extension Windows.Kernel.Directory.Working.Test.Unit {
-    @Test("get() returns non-empty path")
-    func getReturnsNonEmpty() throws {
+    @Test
+    func `get() returns non-empty path`() throws {
         let cwd = try Windows.Kernel.Directory.Working.get()
         #expect(!cwd.isEmpty)
     }
 
-    @Test("get(into:) works with buffer")
-    func getIntoBufferWorks() throws {
+    @Test
+    func `get(into:) works with buffer`() throws {
         var buffer = [UInt16](repeating: 0, count: 260)  // MAX_PATH
         let length = try buffer.withUnsafeMutableBufferPointer { bufferPtr in
             try Windows.Kernel.Directory.Working.get(into: bufferPtr)
@@ -64,8 +64,8 @@ extension Windows.Kernel.Directory.Working.Test.Unit {
         #expect(length > 0)
     }
 
-    @Test("get() result matches GetCurrentDirectoryW")
-    func getMatchesWin32() throws {
+    @Test
+    func `get() result matches GetCurrentDirectoryW`() throws {
         let cwd = try Windows.Kernel.Directory.Working.get()
 
         // Get via Win32 API directly
@@ -80,8 +80,8 @@ extension Windows.Kernel.Directory.Working.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Directory.Working.Test.EdgeCase {
-    @Test("get(into:) with small buffer throws")
-    func getSmallBufferThrows() {
+    @Test
+    func `get(into:) with small buffer throws`() {
         var buffer = [UInt16](repeating: 0, count: 1)  // Too small
 
         #expect(throws: Kernel.Directory.Working.Error.self) {

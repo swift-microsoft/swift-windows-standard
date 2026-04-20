@@ -40,18 +40,18 @@ extension Windows.Kernel.Thread.Mutex {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Thread.Mutex.Test.Unit {
-    @Test("Thread.Mutex class exists")
-    func classExists() {
+    @Test
+    func `Thread.Mutex class exists`() {
         _ = Windows.Kernel.Thread.Mutex.self
     }
 
-    @Test("Thread.Mutex.Lock type exists")
-    func lockTypeExists() {
+    @Test
+    func `Thread.Mutex.Lock type exists`() {
         _ = Windows.Kernel.Thread.Mutex.Lock.self
     }
 
-    @Test("Thread.Mutex.Lock.Error type exists")
-    func lockErrorTypeExists() {
+    @Test
+    func `Thread.Mutex.Lock.Error type exists`() {
         _ = Windows.Kernel.Thread.Mutex.Lock.Error.self
     }
 }
@@ -59,14 +59,14 @@ extension Windows.Kernel.Thread.Mutex.Test.Unit {
 // MARK: - Mutex Creation Tests
 
 extension Windows.Kernel.Thread.Mutex.Test.Unit {
-    @Test("Mutex can be created")
-    func mutexCanBeCreated() {
+    @Test
+    func `Mutex can be created`() {
         let mutex = Windows.Kernel.Thread.Mutex()
         _ = mutex
     }
 
-    @Test("Multiple mutexes can be created")
-    func multipleMutexesCanBeCreated() {
+    @Test
+    func `Multiple mutexes can be created`() {
         let mutex1 = Windows.Kernel.Thread.Mutex()
         let mutex2 = Windows.Kernel.Thread.Mutex()
         _ = mutex1
@@ -77,21 +77,21 @@ extension Windows.Kernel.Thread.Mutex.Test.Unit {
 // MARK: - Lock/Unlock Tests
 
 extension Windows.Kernel.Thread.Mutex.Test.Unit {
-    @Test("lock and unlock succeeds")
-    func lockUnlockSucceeds() {
+    @Test
+    func `lock and unlock succeeds`() {
         let mutex = Windows.Kernel.Thread.Mutex()
         mutex.lock()
         mutex.unlock()
     }
 
-    @Test("lock accessor exists")
-    func lockAccessorExists() {
+    @Test
+    func `lock accessor exists`() {
         let mutex = Windows.Kernel.Thread.Mutex()
         _ = mutex.lock
     }
 
-    @Test("lock.immediate throws on contention")
-    func lockImmediateThrowsOnContention() throws {
+    @Test
+    func `lock.immediate throws on contention`() throws {
         let mutex = Windows.Kernel.Thread.Mutex()
         mutex.lock()
         defer { mutex.unlock() }
@@ -106,8 +106,8 @@ extension Windows.Kernel.Thread.Mutex.Test.Unit {
 // MARK: - withLock Tests
 
 extension Windows.Kernel.Thread.Mutex.Test.Unit {
-    @Test("withLock executes closure")
-    func withLockExecutesClosure() {
+    @Test
+    func `withLock executes closure`() {
         let mutex = Windows.Kernel.Thread.Mutex()
         var executed = false
 
@@ -118,8 +118,8 @@ extension Windows.Kernel.Thread.Mutex.Test.Unit {
         #expect(executed)
     }
 
-    @Test("withLock returns value")
-    func withLockReturnsValue() {
+    @Test
+    func `withLock returns value`() {
         let mutex = Windows.Kernel.Thread.Mutex()
 
         let result = mutex.withLock {
@@ -133,8 +133,8 @@ extension Windows.Kernel.Thread.Mutex.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Thread.Mutex.Test.Unit {
-    @Test("Lock.Error.contention exists")
-    func errorContentionExists() {
+    @Test
+    func `Lock.Error.contention exists`() {
         let error = Windows.Kernel.Thread.Mutex.Lock.Error.contention
         if case .contention = error {
             // Expected
@@ -147,8 +147,8 @@ extension Windows.Kernel.Thread.Mutex.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Thread.Mutex.Test.EdgeCase {
-    @Test("lock and unlock multiple times")
-    func lockUnlockMultipleTimes() {
+    @Test
+    func `lock and unlock multiple times`() {
         let mutex = Windows.Kernel.Thread.Mutex()
 
         for _ in 0..<100 {
@@ -157,8 +157,8 @@ extension Windows.Kernel.Thread.Mutex.Test.EdgeCase {
         }
     }
 
-    @Test("withLock with throwing closure propagates error")
-    func withLockThrowingClosurePropagates() {
+    @Test
+    func `withLock with throwing closure propagates error`() {
         struct TestError: Error {}
         let mutex = Windows.Kernel.Thread.Mutex()
 

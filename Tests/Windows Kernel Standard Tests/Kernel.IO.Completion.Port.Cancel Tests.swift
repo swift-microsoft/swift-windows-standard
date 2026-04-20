@@ -30,13 +30,13 @@ import Testing
     // MARK: - Unit Tests
 
     extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
-        @Test("Cancel namespace exists")
-        func namespaceExists() {
+        @Test
+        func `Cancel namespace exists`() {
             _ = Kernel.IO.Completion.Port.Cancel.self
         }
 
-        @Test("Cancel is an enum")
-        func isEnum() {
+        @Test
+        func `Cancel is an enum`() {
             let _: Kernel.IO.Completion.Port.Cancel.Type = Kernel.IO.Completion.Port.Cancel.self
         }
     }
@@ -44,14 +44,14 @@ import Testing
     // MARK: - all() Tests
 
     extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
-        @Test("all does not crash with invalid descriptor")
-        func allWithInvalidDescriptor() {
+        @Test
+        func `all does not crash with invalid descriptor`() {
             // Should not crash - errors are silently ignored
             Kernel.IO.Completion.Port.Cancel.all(Kernel.Descriptor.invalid)()
         }
 
-        @Test("all is fire-and-forget")
-        func allIsFireAndForget() {
+        @Test
+        func `all is fire-and-forget`() {
             // all() returns Void via callAsFunction, so it's truly fire-and-forget
             Kernel.IO.Completion.Port.Cancel.all(Kernel.Descriptor.invalid)()
             // No return value to check - this is intentional
@@ -61,14 +61,14 @@ import Testing
     // MARK: - all.status Tests
 
     extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
-        @Test("all.status returns Bool")
-        func allStatusReturnsBool() {
+        @Test
+        func `all.status returns Bool`() {
             let result = Kernel.IO.Completion.Port.Cancel.all(Kernel.Descriptor.invalid).status
             #expect(result is Bool)
         }
 
-        @Test("all.status with invalid descriptor returns appropriate value")
-        func allStatusInvalidDescriptor() {
+        @Test
+        func `all.status with invalid descriptor returns appropriate value`() {
             let result = Kernel.IO.Completion.Port.Cancel.all(Kernel.Descriptor.invalid).status
             // With invalid descriptor, CancelIoEx fails
             #expect(result == true || result == false)
@@ -78,15 +78,15 @@ import Testing
     // MARK: - pending() Tests
 
     extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
-        @Test("pending does not crash with invalid descriptor")
-        func pendingWithInvalidDescriptor() {
+        @Test
+        func `pending does not crash with invalid descriptor`() {
             var overlapped = Kernel.IO.Completion.Port.Overlapped()
             // Should not crash - errors are silently ignored
             Kernel.IO.Completion.Port.Cancel.pending(Kernel.Descriptor.invalid, overlapped: &overlapped)()
         }
 
-        @Test("pending is fire-and-forget")
-        func pendingIsFireAndForget() {
+        @Test
+        func `pending is fire-and-forget`() {
             var overlapped = Kernel.IO.Completion.Port.Overlapped()
             Kernel.IO.Completion.Port.Cancel.pending(Kernel.Descriptor.invalid, overlapped: &overlapped)()
             // No return value to check - this is intentional
@@ -96,8 +96,8 @@ import Testing
     // MARK: - pending.status Tests
 
     extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
-        @Test("pending.status returns Bool")
-        func pendingStatusReturnsBool() {
+        @Test
+        func `pending.status returns Bool`() {
             var overlapped = Kernel.IO.Completion.Port.Overlapped()
             let result = Kernel.IO.Completion.Port.Cancel.pending(
                 Kernel.Descriptor.invalid,
@@ -106,8 +106,8 @@ import Testing
             #expect(result is Bool)
         }
 
-        @Test("pending.status with invalid descriptor returns appropriate value")
-        func pendingStatusInvalidDescriptor() {
+        @Test
+        func `pending.status with invalid descriptor returns appropriate value`() {
             var overlapped = Kernel.IO.Completion.Port.Overlapped()
             let result = Kernel.IO.Completion.Port.Cancel.pending(
                 Kernel.Descriptor.invalid,
@@ -121,8 +121,8 @@ import Testing
     // MARK: - Edge Cases
 
     extension Kernel.IO.Completion.Port.Cancel.Test.EdgeCase {
-        @Test("Cancel operations are safe to call multiple times")
-        func cancelMultipleTimes() {
+        @Test
+        func `Cancel operations are safe to call multiple times`() {
             var overlapped = Kernel.IO.Completion.Port.Overlapped()
 
             // Call all multiple times - should be safe
@@ -145,8 +145,8 @@ import Testing
             }
         }
 
-        @Test("Cancel with different overlapped instances")
-        func cancelDifferentOverlappeds() {
+        @Test
+        func `Cancel with different overlapped instances`() {
             var overlapped1 = Kernel.IO.Completion.Port.Overlapped()
             var overlapped2 = Kernel.IO.Completion.Port.Overlapped()
             var overlapped3 = Kernel.IO.Completion.Port.Overlapped()
@@ -160,8 +160,8 @@ import Testing
     // MARK: - Error Integration Tests
 
     extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
-        @Test("Cancel uses Error.Code.Lookup.notFound for comparison")
-        func usesNotFoundConstant() {
+        @Test
+        func `Cancel uses Error.Code.Lookup.notFound for comparison`() {
             // Verify that the implementation checks against ERROR_NOT_FOUND
             let notFound = Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
             #expect(notFound == 1168)  // ERROR_NOT_FOUND

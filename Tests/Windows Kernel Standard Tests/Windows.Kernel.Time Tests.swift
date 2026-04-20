@@ -40,8 +40,8 @@ extension Windows.Kernel.Time {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Time.Test.Unit {
-    @Test("Time namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Time namespace exists`() {
         _ = Windows.Kernel.Time.self
     }
 }
@@ -49,15 +49,15 @@ extension Windows.Kernel.Time.Test.Unit {
 // MARK: - System Time Tests
 
 extension Windows.Kernel.Time.Test.Unit {
-    @Test("systemTime returns valid FILETIME")
-    func systemTimeReturnsValid() {
+    @Test
+    func `systemTime returns valid FILETIME`() {
         let ft = Windows.Kernel.Time.systemTime()
         // FILETIME should have non-zero values (we're not in 1601)
         #expect(ft.dwHighDateTime > 0 || ft.dwLowDateTime > 0)
     }
 
-    @Test("realtime returns reasonable value")
-    func realtimeReasonable() {
+    @Test
+    func `realtime returns reasonable value`() {
         let now = Windows.Kernel.Time.realtime()
         // Should be after Jan 1, 2020 (1_577_836_800 seconds since Unix epoch).
         #expect(now.secondsSinceUnixEpoch > 1_577_836_800)
@@ -65,8 +65,8 @@ extension Windows.Kernel.Time.Test.Unit {
         #expect(now.nanosecondFraction < 1_000_000_000)
     }
 
-    @Test("realtime nanosecond fraction aligned to 100-ns boundary")
-    func realtimeNanosecondAlignment() {
+    @Test
+    func `realtime nanosecond fraction aligned to 100-ns boundary`() {
         // Windows FILETIME resolution is 100ns; realtime() encodes it in the
         // nanosecond field, so the nanosecond fraction is a multiple of 100.
         let now = Windows.Kernel.Time.realtime()

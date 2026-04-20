@@ -40,13 +40,13 @@ extension Windows.Kernel.Thread {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Thread.Test.Unit {
-    @Test("Thread namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Thread namespace exists`() {
         _ = Windows.Kernel.Thread.self
     }
 
-    @Test("Thread.Handle type exists")
-    func handleTypeExists() {
+    @Test
+    func `Thread.Handle type exists`() {
         _ = Kernel.Thread.Handle.self
     }
 }
@@ -54,20 +54,20 @@ extension Windows.Kernel.Thread.Test.Unit {
 // MARK: - Current Thread Tests
 
 extension Windows.Kernel.Thread.Test.Unit {
-    @Test("current returns valid handle")
-    func currentReturnsValidHandle() {
+    @Test
+    func `current returns valid handle`() {
         let handle = Windows.Kernel.Thread.current()
         #expect(handle.rawValue != 0)
     }
 
-    @Test("currentID returns non-zero")
-    func currentIDReturnsNonZero() {
+    @Test
+    func `currentID returns non-zero`() {
         let id = Windows.Kernel.Thread.currentID()
         #expect(id > 0)
     }
 
-    @Test("currentID matches GetCurrentThreadId")
-    func currentIDMatchesWin32() {
+    @Test
+    func `currentID matches GetCurrentThreadId`() {
         let id = Windows.Kernel.Thread.currentID()
         let win32Id = GetCurrentThreadId()
         #expect(id == win32Id)
@@ -77,14 +77,14 @@ extension Windows.Kernel.Thread.Test.Unit {
 // MARK: - Yield Tests
 
 extension Windows.Kernel.Thread.Test.Unit {
-    @Test("yield completes without error")
-    func yieldCompletesWithoutError() {
+    @Test
+    func `yield completes without error`() {
         // yield() is a hint, should never fail
         Windows.Kernel.Thread.yield()
     }
 
-    @Test("yield can be called multiple times")
-    func yieldMultipleTimes() {
+    @Test
+    func `yield can be called multiple times`() {
         for _ in 0..<10 {
             Windows.Kernel.Thread.yield()
         }
@@ -94,8 +94,8 @@ extension Windows.Kernel.Thread.Test.Unit {
 // MARK: - Thread Creation Tests
 
 extension Windows.Kernel.Thread.Test.Unit {
-    @Test("create and join thread")
-    func createAndJoinThread() throws {
+    @Test
+    func `create and join thread`() throws {
         var executed = false
 
         let handle = try Windows.Kernel.Thread.create {
@@ -109,8 +109,8 @@ extension Windows.Kernel.Thread.Test.Unit {
         // Note: executed may be false due to race, but thread should complete
     }
 
-    @Test("create multiple threads")
-    func createMultipleThreads() throws {
+    @Test
+    func `create multiple threads`() throws {
         var handles: [Kernel.Thread.Handle] = []
 
         for _ in 0..<5 {
@@ -131,15 +131,15 @@ extension Windows.Kernel.Thread.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Thread.Test.EdgeCase {
-    @Test("currentID is consistent within same thread")
-    func currentIDConsistent() {
+    @Test
+    func `currentID is consistent within same thread`() {
         let id1 = Windows.Kernel.Thread.currentID()
         let id2 = Windows.Kernel.Thread.currentID()
         #expect(id1 == id2)
     }
 
-    @Test("join with timeout returns false on timeout")
-    func joinTimeoutReturnsFalse() throws {
+    @Test
+    func `join with timeout returns false on timeout`() throws {
         // Create a thread that takes a long time
         let handle = try Windows.Kernel.Thread.create {
             Sleep(5000)  // Sleep 5 seconds

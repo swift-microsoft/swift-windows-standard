@@ -40,13 +40,13 @@ extension Windows.Kernel.Pipe {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Pipe.Test.Unit {
-    @Test("Pipe namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Pipe namespace exists`() {
         _ = Windows.Kernel.Pipe.self
     }
 
-    @Test("Pipe.Pair type exists")
-    func pairTypeExists() {
+    @Test
+    func `Pipe.Pair type exists`() {
         _ = Windows.Kernel.Pipe.Pair.self
     }
 }
@@ -54,8 +54,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
 // MARK: - Pipe Creation Tests
 
 extension Windows.Kernel.Pipe.Test.Unit {
-    @Test("create returns valid pair")
-    func createReturnsValidPair() throws {
+    @Test
+    func `create returns valid pair`() throws {
         let pair = try Windows.Kernel.Pipe.create()
 
         #expect(pair.read.isValid)
@@ -67,8 +67,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
         try? Kernel.Close.close(pair.write)
     }
 
-    @Test("create with buffer size")
-    func createWithBufferSize() throws {
+    @Test
+    func `create with buffer size`() throws {
         let pair = try Windows.Kernel.Pipe.create(bufferSize: 4096)
 
         #expect(pair.read.isValid)
@@ -79,8 +79,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
         try? Kernel.Close.close(pair.write)
     }
 
-    @Test("create with inheritance flags")
-    func createWithInheritance() throws {
+    @Test
+    func `create with inheritance flags`() throws {
         let pair = try Windows.Kernel.Pipe.create(
             bufferSize: 0,
             inheritRead: true,
@@ -95,8 +95,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
         try? Kernel.Close.close(pair.write)
     }
 
-    @Test("create multiple pipes are independent")
-    func createMultiplePipes() throws {
+    @Test
+    func `create multiple pipes are independent`() throws {
         let pair1 = try Windows.Kernel.Pipe.create()
         let pair2 = try Windows.Kernel.Pipe.create()
 
@@ -114,8 +114,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
 // MARK: - Pair Properties Tests
 
 extension Windows.Kernel.Pipe.Test.Unit {
-    @Test("Pair.read is accessible")
-    func pairReadAccessible() throws {
+    @Test
+    func `Pair.read is accessible`() throws {
         let pair = try Windows.Kernel.Pipe.create()
         defer {
             try? Kernel.Close.close(pair.read)
@@ -125,8 +125,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
         #expect(pair.read.isValid)
     }
 
-    @Test("Pair.write is accessible")
-    func pairWriteAccessible() throws {
+    @Test
+    func `Pair.write is accessible`() throws {
         let pair = try Windows.Kernel.Pipe.create()
         defer {
             try? Kernel.Close.close(pair.read)
@@ -140,8 +140,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Pipe.Test.EdgeCase {
-    @Test("create and close many pipes")
-    func createAndCloseManyPipes() throws {
+    @Test
+    func `create and close many pipes`() throws {
         for _ in 0..<100 {
             let pair = try Windows.Kernel.Pipe.create()
             try? Kernel.Close.close(pair.read)

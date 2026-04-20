@@ -31,18 +31,18 @@ extension Windows.Kernel.Memory.Map {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Memory.Map.Test.Unit {
-    @Test("Memory.Map namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Memory.Map namespace exists`() {
         _ = Windows.Kernel.Memory.Map.self
     }
 
-    @Test("Memory.Map.Protection type exists")
-    func protectionTypeExists() {
+    @Test
+    func `Memory.Map.Protection type exists`() {
         _ = Kernel.Memory.Map.Protection.self
     }
 
-    @Test("Memory.Map.Flags type exists")
-    func flagsTypeExists() {
+    @Test
+    func `Memory.Map.Flags type exists`() {
         _ = Kernel.Memory.Map.Flags.self
     }
 }
@@ -50,33 +50,33 @@ extension Windows.Kernel.Memory.Map.Test.Unit {
 // MARK: - Protection Tests
 
 extension Windows.Kernel.Memory.Map.Test.Unit {
-    @Test("Protection.read exists")
-    func protectionReadExists() {
+    @Test
+    func `Protection.read exists`() {
         let prot = Kernel.Memory.Map.Protection.read
         #expect(prot.contains(.read))
     }
 
-    @Test("Protection.write exists")
-    func protectionWriteExists() {
+    @Test
+    func `Protection.write exists`() {
         let prot = Kernel.Memory.Map.Protection.write
         #expect(prot.contains(.write))
     }
 
-    @Test("Protection.execute exists")
-    func protectionExecuteExists() {
+    @Test
+    func `Protection.execute exists`() {
         let prot = Kernel.Memory.Map.Protection.execute
         #expect(prot.contains(.execute))
     }
 
-    @Test("Protection.readWrite exists")
-    func protectionReadWriteExists() {
+    @Test
+    func `Protection.readWrite exists`() {
         let prot = Kernel.Memory.Map.Protection.readWrite
         #expect(prot.contains(.read))
         #expect(prot.contains(.write))
     }
 
-    @Test("Protection.readExecute exists")
-    func protectionReadExecuteExists() {
+    @Test
+    func `Protection.readExecute exists`() {
         let prot = Kernel.Memory.Map.Protection.readExecute
         #expect(prot.contains(.read))
         #expect(prot.contains(.execute))
@@ -86,32 +86,32 @@ extension Windows.Kernel.Memory.Map.Test.Unit {
 // MARK: - Windows Protection Conversion Tests
 
 extension Windows.Kernel.Memory.Map.Test.Unit {
-    @Test("Protection.read converts to PAGE_READONLY")
-    func protectionReadConverts() {
+    @Test
+    func `Protection.read converts to PAGE_READONLY`() {
         let prot = Kernel.Memory.Map.Protection.read
         #expect(prot.windowsVirtualProtect == DWORD(PAGE_READONLY))
     }
 
-    @Test("Protection.readWrite converts to PAGE_READWRITE")
-    func protectionReadWriteConverts() {
+    @Test
+    func `Protection.readWrite converts to PAGE_READWRITE`() {
         let prot = Kernel.Memory.Map.Protection.readWrite
         #expect(prot.windowsVirtualProtect == DWORD(PAGE_READWRITE))
     }
 
-    @Test("Protection.execute converts to PAGE_EXECUTE")
-    func protectionExecuteConverts() {
+    @Test
+    func `Protection.execute converts to PAGE_EXECUTE`() {
         let prot = Kernel.Memory.Map.Protection.execute
         #expect(prot.windowsVirtualProtect == DWORD(PAGE_EXECUTE))
     }
 
-    @Test("Protection.readExecute converts to PAGE_EXECUTE_READ")
-    func protectionReadExecuteConverts() {
+    @Test
+    func `Protection.readExecute converts to PAGE_EXECUTE_READ`() {
         let prot = Kernel.Memory.Map.Protection.readExecute
         #expect(prot.windowsVirtualProtect == DWORD(PAGE_EXECUTE_READ))
     }
 
-    @Test("Empty protection converts to PAGE_NOACCESS")
-    func emptyProtectionConverts() {
+    @Test
+    func `Empty protection converts to PAGE_NOACCESS`() {
         let prot: Kernel.Memory.Map.Protection = []
         #expect(prot.windowsVirtualProtect == DWORD(PAGE_NOACCESS))
     }
@@ -120,8 +120,8 @@ extension Windows.Kernel.Memory.Map.Test.Unit {
 // MARK: - Anonymous Mapping Tests
 
 extension Windows.Kernel.Memory.Map.Test.Unit {
-    @Test("mapAnonymous with zero length throws")
-    func mapAnonymousZeroLengthThrows() {
+    @Test
+    func `mapAnonymous with zero length throws`() {
         #expect(throws: Kernel.Memory.Map.Error.self) {
             _ = try Windows.Kernel.Memory.Map.mapAnonymous(
                 length: Kernel.File.Size(0),
@@ -130,8 +130,8 @@ extension Windows.Kernel.Memory.Map.Test.Unit {
         }
     }
 
-    @Test("mapAnonymous with valid length succeeds")
-    func mapAnonymousValidLengthSucceeds() throws {
+    @Test
+    func `mapAnonymous with valid length succeeds`() throws {
         let pageSize = Windows.Kernel.Memory.Allocation.systemPageSize()
         let addr = try Windows.Kernel.Memory.Map.mapAnonymous(
             length: Kernel.File.Size(Int64(pageSize)),
@@ -150,16 +150,16 @@ extension Windows.Kernel.Memory.Map.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Memory.Map.Test.EdgeCase {
-    @Test("Protection can be combined")
-    func protectionCombination() {
+    @Test
+    func `Protection can be combined`() {
         var prot = Kernel.Memory.Map.Protection.read
         prot.insert(.write)
         #expect(prot.contains(.read))
         #expect(prot.contains(.write))
     }
 
-    @Test("map with zero length throws .invalid(.length)")
-    func mapZeroLengthThrows() {
+    @Test
+    func `map with zero length throws .invalid(.length)`() {
         let invalid = Kernel.Descriptor.invalid
 
         do {

@@ -30,13 +30,13 @@ import Testing
     // MARK: - Unit Tests
 
     extension Kernel.IO.Completion.Port.Write.Result.Test.Unit {
-        @Test("Result type exists")
-        func resultExists() {
+        @Test
+        func `Result type exists`() {
             _ = Kernel.IO.Completion.Port.Write.Result.self
         }
 
-        @Test("Result has pending case")
-        func pendingCase() {
+        @Test
+        func `Result has pending case`() {
             let result = Kernel.IO.Completion.Port.Write.Result.pending
             if case .pending = result {
                 // Expected
@@ -45,8 +45,8 @@ import Testing
             }
         }
 
-        @Test("Result has completed case")
-        func completedCase() {
+        @Test
+        func `Result has completed case`() {
             let result = Kernel.IO.Completion.Port.Write.Result.completed(bytes: 100)
             if case .completed(let bytes) = result {
                 #expect(bytes == 100)
@@ -55,14 +55,14 @@ import Testing
             }
         }
 
-        @Test("Result is Sendable")
-        func isSendable() {
+        @Test
+        func `Result is Sendable`() {
             let result: any Sendable = Kernel.IO.Completion.Port.Write.Result.pending
             #expect(result is Kernel.IO.Completion.Port.Write.Result)
         }
 
-        @Test("Result is Equatable")
-        func isEquatable() {
+        @Test
+        func `Result is Equatable`() {
             let a = Kernel.IO.Completion.Port.Write.Result.pending
             let b = Kernel.IO.Completion.Port.Write.Result.pending
             let c = Kernel.IO.Completion.Port.Write.Result.completed(bytes: 0)

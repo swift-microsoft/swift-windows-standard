@@ -31,8 +31,8 @@ extension Windows.Kernel.Memory.Lock {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Memory.Lock.Test.Unit {
-    @Test("Memory.Lock namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Memory.Lock namespace exists`() {
         _ = Windows.Kernel.Memory.Lock.self
     }
 }
@@ -40,8 +40,8 @@ extension Windows.Kernel.Memory.Lock.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Memory.Lock.Test.Unit {
-    @Test("Error type exists")
-    func errorTypeExists() {
+    @Test
+    func `Error type exists`() {
         _ = Kernel.Memory.Lock.Error.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Memory.Lock.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Memory.Lock.Test.EdgeCase {
-    @Test("lock with invalid address throws")
-    func lockInvalidAddressThrows() {
+    @Test
+    func `lock with invalid address throws`() {
         // This test verifies the function signature exists
         // Actual locking with invalid addresses is undefined behavior
         _ = Windows.Kernel.Memory.Lock.lock

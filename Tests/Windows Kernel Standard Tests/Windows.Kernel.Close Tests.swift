@@ -40,8 +40,8 @@ extension Windows.Kernel.Close {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Close.Test.Unit {
-    @Test("Close namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Close namespace exists`() {
         _ = Windows.Kernel.Close.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Close.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Close.Test.Unit {
-    @Test("close with invalid descriptor throws handle error")
-    func closeInvalidDescriptorThrows() {
+    @Test
+    func `close with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Close.Error.self) {
@@ -58,8 +58,8 @@ extension Windows.Kernel.Close.Test.Unit {
         }
     }
 
-    @Test("close with invalid descriptor throws handle(.invalid)")
-    func closeInvalidDescriptorThrowsCorrectError() {
+    @Test
+    func `close with invalid descriptor throws handle(.invalid)`() {
         let invalid = Kernel.Descriptor.invalid
 
         do {
@@ -80,8 +80,8 @@ extension Windows.Kernel.Close.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Close.Test.EdgeCase {
-    @Test("Kernel.Descriptor.invalid is detected")
-    func invalidDescriptorIsDetected() {
+    @Test
+    func `Kernel.Descriptor.invalid is detected`() {
         let invalid = Kernel.Descriptor.invalid
         #expect(!invalid.isValid)
     }

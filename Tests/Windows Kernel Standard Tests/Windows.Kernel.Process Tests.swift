@@ -40,18 +40,18 @@ extension Windows.Kernel.Process {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Process.Test.Unit {
-    @Test("Process namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Process namespace exists`() {
         _ = Windows.Kernel.Process.self
     }
 
-    @Test("Process.Error type exists")
-    func errorTypeExists() {
+    @Test
+    func `Process.Error type exists`() {
         _ = Windows.Kernel.Process.Error.self
     }
 
-    @Test("Process.Info type exists")
-    func infoTypeExists() {
+    @Test
+    func `Process.Info type exists`() {
         _ = Windows.Kernel.Process.Info.self
     }
 }
@@ -59,21 +59,21 @@ extension Windows.Kernel.Process.Test.Unit {
 // MARK: - Current Process Tests
 
 extension Windows.Kernel.Process.Test.Unit {
-    @Test("getCurrentId returns non-zero")
-    func getCurrentIdReturnsNonZero() {
+    @Test
+    func `getCurrentId returns non-zero`() {
         let pid = Windows.Kernel.Process.getCurrentId()
         #expect(pid > 0)
     }
 
-    @Test("getCurrentId matches GetCurrentProcessId")
-    func getCurrentIdMatchesWin32() {
+    @Test
+    func `getCurrentId matches GetCurrentProcessId`() {
         let pid = Windows.Kernel.Process.getCurrentId()
         let win32Pid = GetCurrentProcessId()
         #expect(pid == win32Pid)
     }
 
-    @Test("getCurrentHandle returns non-nil")
-    func getCurrentHandleReturnsNonNil() {
+    @Test
+    func `getCurrentHandle returns non-nil`() {
         let handle = Windows.Kernel.Process.getCurrentHandle()
         #expect(handle != nil)
     }
@@ -82,8 +82,8 @@ extension Windows.Kernel.Process.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Process.Test.Unit {
-    @Test("Error.create exists")
-    func errorCreateExists() {
+    @Test
+    func `Error.create exists`() {
         let error = Windows.Kernel.Process.Error.create(.win32(0))
         if case .create = error {
             // Expected
@@ -92,8 +92,8 @@ extension Windows.Kernel.Process.Test.Unit {
         }
     }
 
-    @Test("Error.wait exists")
-    func errorWaitExists() {
+    @Test
+    func `Error.wait exists`() {
         let error = Windows.Kernel.Process.Error.wait(.win32(0))
         if case .wait = error {
             // Expected
@@ -106,15 +106,15 @@ extension Windows.Kernel.Process.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Process.Test.EdgeCase {
-    @Test("getCurrentId is consistent")
-    func getCurrentIdConsistent() {
+    @Test
+    func `getCurrentId is consistent`() {
         let pid1 = Windows.Kernel.Process.getCurrentId()
         let pid2 = Windows.Kernel.Process.getCurrentId()
         #expect(pid1 == pid2)
     }
 
-    @Test("Info has expected properties")
-    func infoProperties() {
+    @Test
+    func `Info has expected properties`() {
         // Type check only
         _ = \Windows.Kernel.Process.Info.processHandle
         _ = \Windows.Kernel.Process.Info.threadHandle

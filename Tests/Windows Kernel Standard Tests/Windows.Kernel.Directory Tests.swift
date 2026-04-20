@@ -40,13 +40,13 @@ extension Windows.Kernel.Directory {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Directory.Test.Unit {
-    @Test("Directory namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Directory namespace exists`() {
         _ = Windows.Kernel.Directory.self
     }
 
-    @Test("Directory.Iterator type exists")
-    func iteratorTypeExists() {
+    @Test
+    func `Directory.Iterator type exists`() {
         _ = Windows.Kernel.Directory.Iterator.self
     }
 }
@@ -54,19 +54,19 @@ extension Windows.Kernel.Directory.Test.Unit {
 // MARK: - Iterator Tests
 
 extension Windows.Kernel.Directory.Test.Unit {
-    @Test("Iterator has handle property")
-    func iteratorHasHandle() {
+    @Test
+    func `Iterator has handle property`() {
         // Type check only - can't create iterator without real directory
         _ = \Windows.Kernel.Directory.Iterator.handle
     }
 
-    @Test("Iterator has findData property")
-    func iteratorHasFindData() {
+    @Test
+    func `Iterator has findData property`() {
         _ = \Windows.Kernel.Directory.Iterator.findData
     }
 
-    @Test("Iterator has firstEntry property")
-    func iteratorHasFirstEntry() {
+    @Test
+    func `Iterator has firstEntry property`() {
         _ = \Windows.Kernel.Directory.Iterator.firstEntry
     }
 }
@@ -74,8 +74,8 @@ extension Windows.Kernel.Directory.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Directory.Test.Unit {
-    @Test("Error.notFound maps from FILE_NOT_FOUND")
-    func errorNotFoundMapsFromFileNotFound() {
+    @Test
+    func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Directory.Error(_windowsError: Windows.Kernel.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
@@ -84,8 +84,8 @@ extension Windows.Kernel.Directory.Test.Unit {
         }
     }
 
-    @Test("Error.notFound maps from PATH_NOT_FOUND")
-    func errorNotFoundMapsFromPathNotFound() {
+    @Test
+    func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Directory.Error(_windowsError: Windows.Kernel.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
@@ -94,8 +94,8 @@ extension Windows.Kernel.Directory.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMapsFromAccessDenied() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Directory.Error(_windowsError: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -108,16 +108,16 @@ extension Windows.Kernel.Directory.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Directory.Test.EdgeCase {
-    @Test("Entry type has name, inode, type")
-    func entryTypeStructure() {
+    @Test
+    func `Entry type has name, inode, type`() {
         // Check Kernel.Directory.Entry exists with expected properties
         let nameChars: [UInt16] = [0x74, 0x65, 0x73, 0x74]  // "test"
         let entry = Kernel.Directory.Entry(rawName: nameChars, inode: nil, type: .regular)
         #expect(entry.type == .regular)
     }
 
-    @Test("Entry.isDotOrDotDot detects dot entries")
-    func entryDotDetection() {
+    @Test
+    func `Entry.isDotOrDotDot detects dot entries`() {
         let dotName: [UInt16] = [0x2E]  // "."
         let dotEntry = Kernel.Directory.Entry(rawName: dotName, inode: nil, type: .directory)
         #expect(dotEntry.isDotOrDotDot)

@@ -31,13 +31,13 @@ extension Windows.Kernel.Memory.Allocation {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Memory.Allocation.Test.Unit {
-    @Test("Memory.Allocation namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Memory.Allocation namespace exists`() {
         _ = Windows.Kernel.Memory.Allocation.self
     }
 
-    @Test("Memory.Allocation.Error type exists")
-    func errorTypeExists() {
+    @Test
+    func `Memory.Allocation.Error type exists`() {
         _ = Windows.Kernel.Memory.Allocation.Error.self
     }
 }
@@ -45,22 +45,22 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
 // MARK: - System Info Tests
 
 extension Windows.Kernel.Memory.Allocation.Test.Unit {
-    @Test("systemPageSize returns non-zero")
-    func systemPageSizeReturnsNonZero() {
+    @Test
+    func `systemPageSize returns non-zero`() {
         let pageSize = Windows.Kernel.Memory.Allocation.systemPageSize()
         #expect(pageSize > 0)
     }
 
-    @Test("systemPageSize is typically 4096")
-    func systemPageSizeTypically4096() {
+    @Test
+    func `systemPageSize is typically 4096`() {
         let pageSize = Windows.Kernel.Memory.Allocation.systemPageSize()
         // Common page sizes are 4096 or 8192
         #expect(pageSize >= 4096)
         #expect(pageSize <= 65536)  // Reasonable upper bound
     }
 
-    @Test("system granularity exists")
-    func systemGranularityExists() {
+    @Test
+    func `system granularity exists`() {
         let granularity = Windows.Kernel.Memory.Allocation.system
         #expect(granularity.rawValue > 0)
     }
@@ -69,8 +69,8 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
 // MARK: - Allocation Tests
 
 extension Windows.Kernel.Memory.Allocation.Test.Unit {
-    @Test("allocate with zero size throws invalidSize")
-    func allocateZeroSizeThrows() {
+    @Test
+    func `allocate with zero size throws invalidSize`() {
         #expect(throws: Windows.Kernel.Memory.Allocation.Error.self) {
             _ = try Windows.Kernel.Memory.Allocation.allocate(
                 size: 0,
@@ -79,8 +79,8 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
         }
     }
 
-    @Test("allocate with valid size succeeds")
-    func allocateValidSizeSucceeds() throws {
+    @Test
+    func `allocate with valid size succeeds`() throws {
         let pageSize = Int(Windows.Kernel.Memory.Allocation.systemPageSize())
         let addr = try Windows.Kernel.Memory.Allocation.allocate(
             size: pageSize,
@@ -91,8 +91,8 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
         try Windows.Kernel.Memory.Allocation.free(addr: addr)
     }
 
-    @Test("allocate and free round-trip")
-    func allocateFreeRoundTrip() throws {
+    @Test
+    func `allocate and free round-trip`() throws {
         let pageSize = Int(Windows.Kernel.Memory.Allocation.systemPageSize())
 
         for _ in 0..<10 {
@@ -108,14 +108,14 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Memory.Allocation.Test.Unit {
-    @Test("Error.invalidSize exists")
-    func errorInvalidSizeExists() {
+    @Test
+    func `Error.invalidSize exists`() {
         let error = Windows.Kernel.Memory.Allocation.Error.invalidSize
         #expect(error == .invalidSize)
     }
 
-    @Test("Error.alignmentNotSupported exists")
-    func errorAlignmentNotSupportedExists() {
+    @Test
+    func `Error.alignmentNotSupported exists`() {
         let error = Windows.Kernel.Memory.Allocation.Error.alignmentNotSupported
         #expect(error == .alignmentNotSupported)
     }
@@ -124,8 +124,8 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Memory.Allocation.Test.EdgeCase {
-    @Test("allocate large size")
-    func allocateLargeSize() throws {
+    @Test
+    func `allocate large size`() throws {
         // Allocate 1MB
         let size = 1024 * 1024
         let addr = try Windows.Kernel.Memory.Allocation.allocate(

@@ -40,8 +40,8 @@ extension Windows.Kernel.Link {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Link.Test.Unit {
-    @Test("Link namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Link namespace exists`() {
         _ = Windows.Kernel.Link.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Link.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Link.Test.Unit {
-    @Test("Error.notFound maps from FILE_NOT_FOUND")
-    func errorNotFoundFromFileNotFound() {
+    @Test
+    func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Link.Error.current(from: Windows.Kernel.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
@@ -59,8 +59,8 @@ extension Windows.Kernel.Link.Test.Unit {
         }
     }
 
-    @Test("Error.notFound maps from PATH_NOT_FOUND")
-    func errorNotFoundFromPathNotFound() {
+    @Test
+    func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Link.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
@@ -69,8 +69,8 @@ extension Windows.Kernel.Link.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMaps() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Link.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -79,8 +79,8 @@ extension Windows.Kernel.Link.Test.Unit {
         }
     }
 
-    @Test("Error.exists maps from FILE_EXISTS")
-    func errorExistsFromFileExists() {
+    @Test
+    func `Error.exists maps from FILE_EXISTS`() {
         let error = Kernel.Link.Error.current(from: Windows.Kernel.Error.Code.File.exists)
         if case .exists = error {
             // Expected
@@ -89,8 +89,8 @@ extension Windows.Kernel.Link.Test.Unit {
         }
     }
 
-    @Test("Error.noSpace maps from DISK_FULL")
-    func errorNoSpaceMaps() {
+    @Test
+    func `Error.noSpace maps from DISK_FULL`() {
         let error = Kernel.Link.Error.current(from: Windows.Kernel.Error.Code.Storage.diskFull)
         if case .noSpace = error {
             // Expected
@@ -103,8 +103,8 @@ extension Windows.Kernel.Link.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Link.Test.EdgeCase {
-    @Test("link to nonexistent source throws notFound")
-    func linkNonexistentSourceThrows() {
+    @Test
+    func `link to nonexistent source throws notFound`() {
         let sourcePath = "C:\\nonexistent_source_\(GetCurrentProcessId()).tmp"
         let linkPath = "C:\\link_\(GetCurrentProcessId()).tmp"
 

@@ -31,25 +31,25 @@ import Testing
     // MARK: - Unit Tests
 
     extension Kernel.IO.Completion.Port.Key.Test.Unit {
-        @Test("Key type exists")
-        func keyExists() {
+        @Test
+        func `Key type exists`() {
             _ = Kernel.IO.Completion.Port.Key.self
         }
 
-        @Test("Key conforms to RawRepresentable")
-        func isRawRepresentable() {
+        @Test
+        func `Key conforms to RawRepresentable`() {
             let key = Kernel.IO.Completion.Port.Key(rawValue: 42)
             #expect(key.rawValue == 42)
         }
 
-        @Test("Key is Sendable")
-        func isSendable() {
+        @Test
+        func `Key is Sendable`() {
             let key: any Sendable = Kernel.IO.Completion.Port.Key(rawValue: 42)
             #expect(key is Kernel.IO.Completion.Port.Key)
         }
 
-        @Test("Key is Equatable")
-        func isEquatable() {
+        @Test
+        func `Key is Equatable`() {
             let a = Kernel.IO.Completion.Port.Key(rawValue: 42)
             let b = Kernel.IO.Completion.Port.Key(rawValue: 42)
             let c = Kernel.IO.Completion.Port.Key(rawValue: 99)
@@ -57,8 +57,8 @@ import Testing
             #expect(a != c)
         }
 
-        @Test("Key is Hashable")
-        func isHashable() {
+        @Test
+        func `Key is Hashable`() {
             var set = Set<Kernel.IO.Completion.Port.Key>()
             set.insert(Kernel.IO.Completion.Port.Key(rawValue: 1))
             set.insert(Kernel.IO.Completion.Port.Key(rawValue: 2))
@@ -66,19 +66,19 @@ import Testing
             #expect(set.count == 2)
         }
 
-        @Test("Key.zero is zero")
-        func zeroIsZero() {
+        @Test
+        func `Key.zero is zero`() {
             #expect(Kernel.IO.Completion.Port.Key.zero.rawValue == 0)
         }
 
-        @Test("Key from integer literal")
-        func fromIntegerLiteral() {
+        @Test
+        func `Key from integer literal`() {
             let key: Kernel.IO.Completion.Port.Key = 42
             #expect(key.rawValue == 42)
         }
 
-        @Test("Key from ULONG_PTR")
-        func fromULONGPTR() {
+        @Test
+        func `Key from ULONG_PTR`() {
             let key = Kernel.IO.Completion.Port.Key(ULONG_PTR(123))
             #expect(key.rawValue == 123)
         }
@@ -87,14 +87,14 @@ import Testing
     // MARK: - Edge Cases
 
     extension Kernel.IO.Completion.Port.Key.Test.EdgeCase {
-        @Test("Key with max value")
-        func maxValue() {
+        @Test
+        func `Key with max value`() {
             let key = Kernel.IO.Completion.Port.Key(rawValue: ULONG_PTR.max)
             #expect(key.rawValue == ULONG_PTR.max)
         }
 
-        @Test("Key with min value")
-        func minValue() {
+        @Test
+        func `Key with min value`() {
             let key = Kernel.IO.Completion.Port.Key(rawValue: ULONG_PTR.min)
             #expect(key.rawValue == ULONG_PTR.min)
         }

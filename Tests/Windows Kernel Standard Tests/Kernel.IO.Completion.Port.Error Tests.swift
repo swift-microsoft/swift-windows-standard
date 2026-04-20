@@ -31,8 +31,8 @@ import Testing
     // MARK: - Case Existence Tests
 
     extension Kernel.IO.Completion.Port.Error.Test.Unit {
-        @Test("create case exists")
-        func createCase() {
+        @Test
+        func `create case exists`() {
             let code = Kernel.Error.Code.win32(1)
             let error = Kernel.IO.Completion.Port.Error.create(code)
             if case .create(let c) = error {
@@ -42,8 +42,8 @@ import Testing
             }
         }
 
-        @Test("associate case exists")
-        func associateCase() {
+        @Test
+        func `associate case exists`() {
             let code = Kernel.Error.Code.win32(2)
             let error = Kernel.IO.Completion.Port.Error.associate(code)
             if case .associate(let c) = error {
@@ -53,8 +53,8 @@ import Testing
             }
         }
 
-        @Test("dequeue case exists")
-        func dequeueCase() {
+        @Test
+        func `dequeue case exists`() {
             let code = Kernel.Error.Code.win32(3)
             let error = Kernel.IO.Completion.Port.Error.dequeue(code)
             if case .dequeue(let c) = error {
@@ -64,8 +64,8 @@ import Testing
             }
         }
 
-        @Test("post case exists")
-        func postCase() {
+        @Test
+        func `post case exists`() {
             let code = Kernel.Error.Code.win32(4)
             let error = Kernel.IO.Completion.Port.Error.post(code)
             if case .post(let c) = error {
@@ -75,8 +75,8 @@ import Testing
             }
         }
 
-        @Test("read case exists")
-        func readCase() {
+        @Test
+        func `read case exists`() {
             let code = Kernel.Error.Code.win32(5)
             let error = Kernel.IO.Completion.Port.Error.read(code)
             if case .read(let c) = error {
@@ -86,8 +86,8 @@ import Testing
             }
         }
 
-        @Test("write case exists")
-        func writeCase() {
+        @Test
+        func `write case exists`() {
             let code = Kernel.Error.Code.win32(6)
             let error = Kernel.IO.Completion.Port.Error.write(code)
             if case .write(let c) = error {
@@ -97,8 +97,8 @@ import Testing
             }
         }
 
-        @Test("result case exists")
-        func resultCase() {
+        @Test
+        func `result case exists`() {
             let code = Kernel.Error.Code.win32(7)
             let error = Kernel.IO.Completion.Port.Error.result(code)
             if case .result(let c) = error {
@@ -108,8 +108,8 @@ import Testing
             }
         }
 
-        @Test("timeout case exists")
-        func timeoutCase() {
+        @Test
+        func `timeout case exists`() {
             let error = Kernel.IO.Completion.Port.Error.timeout
             if case .timeout = error {
                 // Expected
@@ -122,20 +122,20 @@ import Testing
     // MARK: - Conformance Tests
 
     extension Kernel.IO.Completion.Port.Error.Test.Unit {
-        @Test("Error conforms to Swift.Error")
-        func isSwiftError() {
+        @Test
+        func `Error conforms to Swift.Error`() {
             let error: any Swift.Error = Kernel.IO.Completion.Port.Error.timeout
             #expect(error is Kernel.IO.Completion.Port.Error)
         }
 
-        @Test("Error is Sendable")
-        func isSendable() {
+        @Test
+        func `Error is Sendable`() {
             let value: any Sendable = Kernel.IO.Completion.Port.Error.timeout
             #expect(value is Kernel.IO.Completion.Port.Error)
         }
 
-        @Test("Error is Equatable")
-        func isEquatable() {
+        @Test
+        func `Error is Equatable`() {
             let a = Kernel.IO.Completion.Port.Error.timeout
             let b = Kernel.IO.Completion.Port.Error.timeout
             let c = Kernel.IO.Completion.Port.Error.create(.win32(1))
@@ -143,8 +143,8 @@ import Testing
             #expect(a != c)
         }
 
-        @Test("Error is Hashable")
-        func isHashable() {
+        @Test
+        func `Error is Hashable`() {
             var set = Set<Kernel.IO.Completion.Port.Error>()
             set.insert(.timeout)
             set.insert(.create(.win32(1)))
@@ -156,50 +156,50 @@ import Testing
     // MARK: - Description Tests
 
     extension Kernel.IO.Completion.Port.Error.Test.Unit {
-        @Test("create description contains CreateIoCompletionPort")
-        func createDescription() {
+        @Test
+        func `create description contains CreateIoCompletionPort`() {
             let error = Kernel.IO.Completion.Port.Error.create(.win32(5))
             #expect(error.description.contains("CreateIoCompletionPort"))
         }
 
-        @Test("associate description contains associate")
-        func associateDescription() {
+        @Test
+        func `associate description contains associate`() {
             let error = Kernel.IO.Completion.Port.Error.associate(.win32(5))
             #expect(error.description.contains("associate"))
         }
 
-        @Test("dequeue description contains GetQueuedCompletionStatus")
-        func dequeueDescription() {
+        @Test
+        func `dequeue description contains GetQueuedCompletionStatus`() {
             let error = Kernel.IO.Completion.Port.Error.dequeue(.win32(5))
             #expect(error.description.contains("GetQueuedCompletionStatus"))
         }
 
-        @Test("post description contains PostQueuedCompletionStatus")
-        func postDescription() {
+        @Test
+        func `post description contains PostQueuedCompletionStatus`() {
             let error = Kernel.IO.Completion.Port.Error.post(.win32(5))
             #expect(error.description.contains("PostQueuedCompletionStatus"))
         }
 
-        @Test("read description contains ReadFile")
-        func readDescription() {
+        @Test
+        func `read description contains ReadFile`() {
             let error = Kernel.IO.Completion.Port.Error.read(.win32(5))
             #expect(error.description.contains("ReadFile"))
         }
 
-        @Test("write description contains WriteFile")
-        func writeDescription() {
+        @Test
+        func `write description contains WriteFile`() {
             let error = Kernel.IO.Completion.Port.Error.write(.win32(5))
             #expect(error.description.contains("WriteFile"))
         }
 
-        @Test("result description contains GetOverlappedResult")
-        func resultDescription() {
+        @Test
+        func `result description contains GetOverlappedResult`() {
             let error = Kernel.IO.Completion.Port.Error.result(.win32(5))
             #expect(error.description.contains("GetOverlappedResult"))
         }
 
-        @Test("timeout description contains timed out")
-        func timeoutDescription() {
+        @Test
+        func `timeout description contains timed out`() {
             let error = Kernel.IO.Completion.Port.Error.timeout
             #expect(error.description.contains("timed out"))
         }
@@ -208,8 +208,8 @@ import Testing
     // MARK: - last() Helper Tests
 
     extension Kernel.IO.Completion.Port.Error.Test.Unit {
-        @Test("last returns UInt32")
-        func lastReturnsUInt32() {
+        @Test
+        func `last returns UInt32`() {
             let lastError = Kernel.IO.Completion.Port.Error.last()
             #expect(lastError is UInt32)
         }
@@ -218,32 +218,32 @@ import Testing
     // MARK: - Code Constants Tests
 
     extension Kernel.IO.Completion.Port.Error.Test.Unit {
-        @Test("Code.IO.pending exists")
-        func ioPendingExists() {
+        @Test
+        func `Code.IO.pending exists`() {
             let pending = Kernel.IO.Completion.Port.Error.Code.IO.pending
             #expect(pending is UInt32)
         }
 
-        @Test("Code.Operation.aborted exists")
-        func operationAbortedExists() {
+        @Test
+        func `Code.Operation.aborted exists`() {
             let aborted = Kernel.IO.Completion.Port.Error.Code.Operation.aborted
             #expect(aborted is UInt32)
         }
 
-        @Test("Code.Lookup.notFound exists")
-        func lookupNotFoundExists() {
+        @Test
+        func `Code.Lookup.notFound exists`() {
             let notFound = Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
             #expect(notFound is UInt32)
         }
 
-        @Test("Code.Wait.timeout exists")
-        func waitTimeoutExists() {
+        @Test
+        func `Code.Wait.timeout exists`() {
             let timeout = Kernel.IO.Completion.Port.Error.Code.Wait.timeout
             #expect(timeout is UInt32)
         }
 
-        @Test("Code.Wait.infinite exists")
-        func waitInfiniteExists() {
+        @Test
+        func `Code.Wait.infinite exists`() {
             let infinite = Kernel.IO.Completion.Port.Error.Code.Wait.infinite
             #expect(infinite is UInt32)
         }
@@ -252,15 +252,15 @@ import Testing
     // MARK: - Edge Cases
 
     extension Kernel.IO.Completion.Port.Error.Test.EdgeCase {
-        @Test("All cases with same code are equal")
-        func sameCaseSameCodeEqual() {
+        @Test
+        func `All cases with same code are equal`() {
             let code = Kernel.Error.Code.win32(42)
             #expect(Kernel.IO.Completion.Port.Error.create(code) == Kernel.IO.Completion.Port.Error.create(code))
             #expect(Kernel.IO.Completion.Port.Error.read(code) == Kernel.IO.Completion.Port.Error.read(code))
         }
 
-        @Test("Different cases with same code are not equal")
-        func differentCasesSameCodeNotEqual() {
+        @Test
+        func `Different cases with same code are not equal`() {
             let code = Kernel.Error.Code.win32(42)
             #expect(Kernel.IO.Completion.Port.Error.create(code) != Kernel.IO.Completion.Port.Error.read(code))
             #expect(Kernel.IO.Completion.Port.Error.write(code) != Kernel.IO.Completion.Port.Error.result(code))

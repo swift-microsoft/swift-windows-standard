@@ -31,13 +31,13 @@ extension Windows.Kernel.IO.Write {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.IO.Write.Test.Unit {
-    @Test("IO.Write namespace exists")
-    func namespaceExists() {
+    @Test
+    func `IO.Write namespace exists`() {
         _ = Windows.Kernel.IO.Write.self
     }
 
-    @Test("IO.Write.Error type alias exists")
-    func errorTypeExists() {
+    @Test
+    func `IO.Write.Error type alias exists`() {
         _ = Windows.Kernel.IO.Write.Error.self
     }
 }
@@ -45,8 +45,8 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.IO.Write.Test.Unit {
-    @Test("write with invalid descriptor throws handle error")
-    func writeInvalidDescriptorThrows() {
+    @Test
+    func `write with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
         let data: [UInt8] = [1, 2, 3, 4, 5]
 
@@ -57,8 +57,8 @@ extension Windows.Kernel.IO.Write.Test.Unit {
         }
     }
 
-    @Test("pwrite with invalid descriptor throws handle error")
-    func pwriteInvalidDescriptorThrows() {
+    @Test
+    func `pwrite with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
         let data: [UInt8] = [1, 2, 3, 4, 5]
 
@@ -73,8 +73,8 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 // MARK: - Empty Buffer Tests
 
 extension Windows.Kernel.IO.Write.Test.Unit {
-    @Test("write with empty buffer returns zero")
-    func writeEmptyBufferReturnsZero() throws {
+    @Test
+    func `write with empty buffer returns zero`() throws {
         // Create a temporary file
         let tempPath = "test_write_empty_\(GetCurrentProcessId()).tmp"
         defer { DeleteFileW(tempPath.withCString(encodedAs: UTF16.self) { $0 }) }
@@ -109,8 +109,8 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.IO.Write.Test.EdgeCase {
-    @Test("Error type is Kernel.IO.Write.Error")
-    func errorTypeIsCorrect() {
+    @Test
+    func `Error type is Kernel.IO.Write.Error`() {
         let _: Windows.Kernel.IO.Write.Error.Type = Kernel.IO.Write.Error.self
     }
 }

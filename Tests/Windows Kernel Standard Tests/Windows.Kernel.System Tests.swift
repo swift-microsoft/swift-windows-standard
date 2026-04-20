@@ -40,8 +40,8 @@ extension Windows.Kernel.System {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.System.Test.Unit {
-    @Test("System namespace exists")
-    func namespaceExists() {
+    @Test
+    func `System namespace exists`() {
         _ = Windows.Kernel.System.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.System.Test.Unit {
 // MARK: - Path Max Tests
 
 extension Windows.Kernel.System.Test.Unit {
-    @Test("pathMax returns MAX_PATH")
-    func pathMaxReturnsMaxPath() {
+    @Test
+    func `pathMax returns MAX_PATH`() {
         let pathMax = Windows.Kernel.System.pathMax
         #expect(pathMax.rawValue == 260)  // MAX_PATH
     }
@@ -59,22 +59,22 @@ extension Windows.Kernel.System.Test.Unit {
 // MARK: - Page Size Tests
 
 extension Windows.Kernel.System.Test.Unit {
-    @Test("pageSize returns positive value")
-    func pageSizeReturnsPositive() {
+    @Test
+    func `pageSize returns positive value`() {
         let pageSize = Windows.Kernel.System.pageSize
         #expect(pageSize.rawValue > 0)
     }
 
-    @Test("pageSize is typically 4096")
-    func pageSizeTypically4096() {
+    @Test
+    func `pageSize is typically 4096`() {
         let pageSize = Windows.Kernel.System.pageSize
         // Common values are 4096 or higher
         #expect(pageSize.rawValue >= 4096)
         #expect(pageSize.rawValue <= 65536)
     }
 
-    @Test("pageSize is power of 2")
-    func pageSizeIsPowerOf2() {
+    @Test
+    func `pageSize is power of 2`() {
         let pageSize = Windows.Kernel.System.pageSize
         let value = pageSize.rawValue
         #expect(value > 0 && (value & (value - 1)) == 0)
@@ -84,22 +84,22 @@ extension Windows.Kernel.System.Test.Unit {
 // MARK: - Processor Count Tests
 
 extension Windows.Kernel.System.Test.Unit {
-    @Test("processorCount returns positive value")
-    func processorCountReturnsPositive() {
+    @Test
+    func `processorCount returns positive value`() {
         let count = Windows.Kernel.System.processorCount
         #expect(count.rawValue > 0)
     }
 
-    @Test("processorCount is reasonable")
-    func processorCountReasonable() {
+    @Test
+    func `processorCount is reasonable`() {
         let count = Windows.Kernel.System.processorCount
         // Modern systems have at least 1, rarely more than 256
         #expect(count.rawValue >= 1)
         #expect(count.rawValue <= 1024)
     }
 
-    @Test("processorCount matches GetSystemInfo")
-    func processorCountMatchesWin32() {
+    @Test
+    func `processorCount matches GetSystemInfo`() {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
 
@@ -111,8 +111,8 @@ extension Windows.Kernel.System.Test.Unit {
 // MARK: - Sleep Tests
 
 extension Windows.Kernel.System.Test.Unit {
-    @Test("sleep completes")
-    func sleepCompletes() {
+    @Test
+    func `sleep completes`() {
         let start = GetTickCount64()
         Windows.Kernel.System.sleep(.milliseconds(10))
         let elapsed = GetTickCount64() - start
@@ -120,8 +120,8 @@ extension Windows.Kernel.System.Test.Unit {
         #expect(elapsed >= 9)
     }
 
-    @Test("sleep zero completes immediately")
-    func sleepZero() {
+    @Test
+    func `sleep zero completes immediately`() {
         let start = GetTickCount64()
         Windows.Kernel.System.sleep(.zero)
         let elapsed = GetTickCount64() - start
@@ -133,15 +133,15 @@ extension Windows.Kernel.System.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.System.Test.EdgeCase {
-    @Test("pageSize is consistent")
-    func pageSizeConsistent() {
+    @Test
+    func `pageSize is consistent`() {
         let size1 = Windows.Kernel.System.pageSize
         let size2 = Windows.Kernel.System.pageSize
         #expect(size1.rawValue == size2.rawValue)
     }
 
-    @Test("processorCount is consistent")
-    func processorCountConsistent() {
+    @Test
+    func `processorCount is consistent`() {
         let count1 = Windows.Kernel.System.processorCount
         let count2 = Windows.Kernel.System.processorCount
         #expect(count1.rawValue == count2.rawValue)

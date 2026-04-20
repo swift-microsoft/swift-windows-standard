@@ -32,8 +32,8 @@ extension Windows.Kernel.Unlink {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Unlink.Test.Unit {
-    @Test("Unlink namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Unlink namespace exists`() {
         _ = Windows.Kernel.Unlink.self
     }
 }
@@ -41,8 +41,8 @@ extension Windows.Kernel.Unlink.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Unlink.Test.Unit {
-    @Test("Error.notFound maps from FILE_NOT_FOUND")
-    func errorNotFoundFromFileNotFound() {
+    @Test
+    func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Unlink.Error.current(from: Windows.Kernel.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
@@ -51,8 +51,8 @@ extension Windows.Kernel.Unlink.Test.Unit {
         }
     }
 
-    @Test("Error.notFound maps from PATH_NOT_FOUND")
-    func errorNotFoundFromPathNotFound() {
+    @Test
+    func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Unlink.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
@@ -61,8 +61,8 @@ extension Windows.Kernel.Unlink.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMaps() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Unlink.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -71,8 +71,8 @@ extension Windows.Kernel.Unlink.Test.Unit {
         }
     }
 
-    @Test("Error.busy maps from SHARING_VIOLATION")
-    func errorBusyMaps() {
+    @Test
+    func `Error.busy maps from SHARING_VIOLATION`() {
         let error = Kernel.Unlink.Error.current(from: Windows.Kernel.Error.Code.Access.sharingViolation)
         if case .busy = error {
             // Expected
@@ -85,8 +85,8 @@ extension Windows.Kernel.Unlink.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Unlink.Test.EdgeCase {
-    @Test("unlink nonexistent file throws notFound")
-    func unlinkNonexistentThrows() {
+    @Test
+    func `unlink nonexistent file throws notFound`() {
         let filePath = "C:\\nonexistent_file_\(GetCurrentProcessId()).tmp"
         var path = Array(filePath.utf16) + [0]
 

@@ -40,8 +40,8 @@ extension Windows.Kernel.Symlink {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Symlink.Test.Unit {
-    @Test("Symlink namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Symlink namespace exists`() {
         _ = Windows.Kernel.Symlink.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Symlink.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Symlink.Test.Unit {
-    @Test("Error.notFound maps from FILE_NOT_FOUND")
-    func errorNotFoundFromFileNotFound() {
+    @Test
+    func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Symlink.Error.current(from: Windows.Kernel.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
@@ -59,8 +59,8 @@ extension Windows.Kernel.Symlink.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMaps() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Symlink.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -69,8 +69,8 @@ extension Windows.Kernel.Symlink.Test.Unit {
         }
     }
 
-    @Test("Error.exists maps from FILE_EXISTS")
-    func errorExistsFromFileExists() {
+    @Test
+    func `Error.exists maps from FILE_EXISTS`() {
         let error = Kernel.Symlink.Error.current(from: Windows.Kernel.Error.Code.File.exists)
         if case .exists = error {
             // Expected
@@ -79,8 +79,8 @@ extension Windows.Kernel.Symlink.Test.Unit {
         }
     }
 
-    @Test("Error.noSpace maps from DISK_FULL")
-    func errorNoSpaceMaps() {
+    @Test
+    func `Error.noSpace maps from DISK_FULL`() {
         let error = Kernel.Symlink.Error.current(from: Windows.Kernel.Error.Code.Storage.diskFull)
         if case .noSpace = error {
             // Expected
@@ -89,8 +89,8 @@ extension Windows.Kernel.Symlink.Test.Unit {
         }
     }
 
-    @Test("Error.bufferTooSmall exists")
-    func errorBufferTooSmallExists() {
+    @Test
+    func `Error.bufferTooSmall exists`() {
         let error = Kernel.Symlink.Error.bufferTooSmall
         if case .bufferTooSmall = error {
             // Expected
@@ -103,8 +103,8 @@ extension Windows.Kernel.Symlink.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Symlink.Test.EdgeCase {
-    @Test("symlink may require privileges")
-    func symlinkMayRequirePrivileges() {
+    @Test
+    func `symlink may require privileges`() {
         // Symlinks on Windows typically require:
         // - Administrator privileges, or
         // - Developer Mode enabled

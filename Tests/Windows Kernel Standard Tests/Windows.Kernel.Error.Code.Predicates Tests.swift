@@ -26,53 +26,53 @@ extension Kernel.Error.Code {
 // MARK: - Predicate Unit Tests (Windows)
 
 extension Kernel.Error.Code.Test.Unit {
-    @Test("isNotFound matches ERROR_FILE_NOT_FOUND and ERROR_PATH_NOT_FOUND")
-    func predicateIsNotFound() {
+    @Test
+    func `isNotFound matches ERROR_FILE_NOT_FOUND and ERROR_PATH_NOT_FOUND`() {
         #expect(Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNotFound)
         #expect(Kernel.Error.Code.Windows.ERROR_PATH_NOT_FOUND.isNotFound)
         #expect(!Kernel.Error.Code.Windows.ERROR_ACCESS_DENIED.isNotFound)
     }
 
-    @Test("isPermissionDenied matches ERROR_ACCESS_DENIED")
-    func predicateIsPermissionDenied() {
+    @Test
+    func `isPermissionDenied matches ERROR_ACCESS_DENIED`() {
         #expect(Kernel.Error.Code.Windows.ERROR_ACCESS_DENIED.isPermissionDenied)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isPermissionDenied)
     }
 
-    @Test("isAccessDenied trampolines to isPermissionDenied")
-    func predicateIsAccessDenied() {
+    @Test
+    func `isAccessDenied trampolines to isPermissionDenied`() {
         #expect(Kernel.Error.Code.Windows.ERROR_ACCESS_DENIED.isAccessDenied)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isAccessDenied)
     }
 
-    @Test("isReadOnly matches ERROR_WRITE_PROTECT")
-    func predicateIsReadOnly() {
+    @Test
+    func `isReadOnly matches ERROR_WRITE_PROTECT`() {
         #expect(Kernel.Error.Code.Windows.ERROR_WRITE_PROTECT.isReadOnly)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isReadOnly)
     }
 
-    @Test("isNoSpace matches ERROR_DISK_FULL")
-    func predicateIsNoSpace() {
+    @Test
+    func `isNoSpace matches ERROR_DISK_FULL`() {
         #expect(Kernel.Error.Code.Windows.ERROR_DISK_FULL.isNoSpace)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNoSpace)
     }
 
-    @Test("isNotDirectory matches ERROR_DIRECTORY")
-    func predicateIsNotDirectory() {
+    @Test
+    func `isNotDirectory matches ERROR_DIRECTORY`() {
         #expect(Kernel.Error.Code.Windows.ERROR_DIRECTORY.isNotDirectory)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNotDirectory)
     }
 
-    @Test("isInvalidPath matches ERROR_INVALID_NAME, ERROR_BAD_PATHNAME, ERROR_INVALID_DRIVE")
-    func predicateIsInvalidPath() {
+    @Test
+    func `isInvalidPath matches ERROR_INVALID_NAME, ERROR_BAD_PATHNAME, ERROR_INVALID_DRIVE`() {
         #expect(Kernel.Error.Code.Windows.ERROR_INVALID_NAME.isInvalidPath)
         #expect(Kernel.Error.Code.Windows.ERROR_BAD_PATHNAME.isInvalidPath)
         #expect(Kernel.Error.Code.Windows.ERROR_INVALID_DRIVE.isInvalidPath)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isInvalidPath)
     }
 
-    @Test("isNetworkNotFound matches ERROR_BAD_NETPATH and ERROR_BAD_NET_NAME")
-    func predicateIsNetworkNotFound() {
+    @Test
+    func `isNetworkNotFound matches ERROR_BAD_NETPATH and ERROR_BAD_NET_NAME`() {
         #expect(Kernel.Error.Code.Windows.ERROR_BAD_NETPATH.isNetworkNotFound)
         #expect(Kernel.Error.Code.Windows.ERROR_BAD_NET_NAME.isNetworkNotFound)
         #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNetworkNotFound)

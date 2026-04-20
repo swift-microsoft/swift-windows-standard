@@ -31,21 +31,21 @@ import Testing
     // MARK: - API Unit Tests
 
     extension Kernel.IO.Completion.Port.Test.Unit {
-        @Test("Port namespace exists")
-        func namespaceExists() {
+        @Test
+        func `Port namespace exists`() {
             _ = Kernel.IO.Completion.Port.self
         }
 
-        @Test("create returns valid descriptor")
-        func createReturnsValidDescriptor() throws {
+        @Test
+        func `create returns valid descriptor`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
             #expect(port.rawValue != INVALID_HANDLE_VALUE)
         }
 
-        @Test("create with concurrency parameter")
-        func createWithConcurrency() throws {
+        @Test
+        func `create with concurrency parameter`() throws {
             // Create port with specific thread count
             let port = try Kernel.IO.Completion.Port.create(threads: 4)
             defer { Kernel.IO.Completion.Port.close(port) }
@@ -53,8 +53,8 @@ import Testing
             #expect(port.rawValue != INVALID_HANDLE_VALUE)
         }
 
-        @Test("create multiple ports are independent")
-        func createMultiplePorts() throws {
+        @Test
+        func `create multiple ports are independent`() throws {
             let port1 = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port1) }
 
@@ -64,8 +64,8 @@ import Testing
             #expect(port1.rawValue != port2.rawValue)
         }
 
-        @Test("close completes without error")
-        func closeCompletesWithoutError() throws {
+        @Test
+        func `close completes without error`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             Kernel.IO.Completion.Port.close(port)
             // No throw means success
@@ -75,8 +75,8 @@ import Testing
     // MARK: - Post and Dequeue Tests
 
     extension Kernel.IO.Completion.Port.Test.Unit {
-        @Test("post completion to port")
-        func postCompletion() throws {
+        @Test
+        func `post completion to port`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -88,8 +88,8 @@ import Testing
             )
         }
 
-        @Test("post and dequeue single completion")
-        func postAndDequeueSingle() throws {
+        @Test
+        func `post and dequeue single completion`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -111,8 +111,8 @@ import Testing
             #expect(result.overlapped == nil)
         }
 
-        @Test("post multiple completions and dequeue in order")
-        func postMultipleAndDequeue() throws {
+        @Test
+        func `post multiple completions and dequeue in order`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -133,8 +133,8 @@ import Testing
             }
         }
 
-        @Test("dequeue times out when no completions")
-        func dequeueTimesOut() throws {
+        @Test
+        func `dequeue times out when no completions`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -144,8 +144,8 @@ import Testing
             }
         }
 
-        @Test("dequeue timeout throws correct error")
-        func dequeueTimeoutCorrectError() throws {
+        @Test
+        func `dequeue timeout throws correct error`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -165,8 +165,8 @@ import Testing
     // MARK: - Batch Dequeue Tests
 
     extension Kernel.IO.Completion.Port.Test.Unit {
-        @Test("batch dequeue returns zero on timeout")
-        func batchDequeueTimesOut() throws {
+        @Test
+        func `batch dequeue returns zero on timeout`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -178,8 +178,8 @@ import Testing
             #expect(count == 0)
         }
 
-        @Test("batch dequeue retrieves multiple completions")
-        func batchDequeueMultiple() throws {
+        @Test
+        func `batch dequeue retrieves multiple completions`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -209,8 +209,8 @@ import Testing
             }
         }
 
-        @Test("batch dequeue with smaller buffer than completions")
-        func batchDequeuePartial() throws {
+        @Test
+        func `batch dequeue with smaller buffer than completions`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -237,43 +237,43 @@ import Testing
     // MARK: - Nested Types Tests
 
     extension Kernel.IO.Completion.Port.Test.Unit {
-        @Test("Error type exists")
-        func errorTypeExists() {
+        @Test
+        func `Error type exists`() {
             let _: Kernel.IO.Completion.Port.Error.Type = Kernel.IO.Completion.Port.Error.self
         }
 
-        @Test("Entry type exists")
-        func entryTypeExists() {
+        @Test
+        func `Entry type exists`() {
             let _: Kernel.IO.Completion.Port.Entry.Type = Kernel.IO.Completion.Port.Entry.self
         }
 
-        @Test("Overlapped type exists")
-        func overlappedTypeExists() {
+        @Test
+        func `Overlapped type exists`() {
             let _: Kernel.IO.Completion.Port.Overlapped.Type = Kernel.IO.Completion.Port.Overlapped.self
         }
 
-        @Test("Dequeue type exists")
-        func dequeueTypeExists() {
+        @Test
+        func `Dequeue type exists`() {
             let _: Kernel.IO.Completion.Port.Dequeue.Type = Kernel.IO.Completion.Port.Dequeue.self
         }
 
-        @Test("Cancel type exists")
-        func cancelTypeExists() {
+        @Test
+        func `Cancel type exists`() {
             let _: Kernel.IO.Completion.Port.Cancel.Type = Kernel.IO.Completion.Port.Cancel.self
         }
 
-        @Test("Key type exists")
-        func keyTypeExists() {
+        @Test
+        func `Key type exists`() {
             let _: Kernel.IO.Completion.Port.Key.Type = Kernel.IO.Completion.Port.Key.self
         }
 
-        @Test("Read.Result type exists")
-        func readResultTypeExists() {
+        @Test
+        func `Read.Result type exists`() {
             let _: Kernel.IO.Completion.Port.Read.Result.Type = Kernel.IO.Completion.Port.Read.Result.self
         }
 
-        @Test("Write.Result type exists")
-        func writeResultTypeExists() {
+        @Test
+        func `Write.Result type exists`() {
             let _: Kernel.IO.Completion.Port.Write.Result.Type = Kernel.IO.Completion.Port.Write.Result.self
         }
     }
@@ -281,8 +281,8 @@ import Testing
     // MARK: - Edge Cases
 
     extension Kernel.IO.Completion.Port.Test.EdgeCase {
-        @Test("post with zero bytes")
-        func postZeroBytes() throws {
+        @Test
+        func `post with zero bytes`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -292,8 +292,8 @@ import Testing
             #expect(result.bytes == 0)
         }
 
-        @Test("post with maximum key value")
-        func postMaxKey() throws {
+        @Test
+        func `post with maximum key value`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -304,8 +304,8 @@ import Testing
             #expect(result.key == maxKey)
         }
 
-        @Test("create and immediately close")
-        func createAndImmediatelyClose() throws {
+        @Test
+        func `create and immediately close`() throws {
             for _ in 0..<100 {
                 let port = try Kernel.IO.Completion.Port.create()
                 Kernel.IO.Completion.Port.close(port)

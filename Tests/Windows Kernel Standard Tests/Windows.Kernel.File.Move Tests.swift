@@ -32,8 +32,8 @@ extension Windows.Kernel.Rename {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Rename.Test.Unit {
-    @Test("Rename namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Rename namespace exists`() {
         _ = Windows.Kernel.Rename.self
     }
 }
@@ -41,8 +41,8 @@ extension Windows.Kernel.Rename.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Rename.Test.Unit {
-    @Test("Error.notFound maps from FILE_NOT_FOUND")
-    func errorNotFoundFromFileNotFound() {
+    @Test
+    func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Rename.Error.current(from: Windows.Kernel.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
@@ -51,8 +51,8 @@ extension Windows.Kernel.Rename.Test.Unit {
         }
     }
 
-    @Test("Error.notFound maps from PATH_NOT_FOUND")
-    func errorNotFoundFromPathNotFound() {
+    @Test
+    func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Rename.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
@@ -61,8 +61,8 @@ extension Windows.Kernel.Rename.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMaps() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Rename.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -71,8 +71,8 @@ extension Windows.Kernel.Rename.Test.Unit {
         }
     }
 
-    @Test("Error.exists maps from FILE_EXISTS")
-    func errorExistsFromFileExists() {
+    @Test
+    func `Error.exists maps from FILE_EXISTS`() {
         let error = Kernel.Rename.Error.current(from: Windows.Kernel.Error.Code.File.exists)
         if case .exists = error {
             // Expected
@@ -81,8 +81,8 @@ extension Windows.Kernel.Rename.Test.Unit {
         }
     }
 
-    @Test("Error.busy maps from SHARING_VIOLATION")
-    func errorBusyMaps() {
+    @Test
+    func `Error.busy maps from SHARING_VIOLATION`() {
         let error = Kernel.Rename.Error.current(from: Windows.Kernel.Error.Code.Access.sharingViolation)
         if case .busy = error {
             // Expected
@@ -95,8 +95,8 @@ extension Windows.Kernel.Rename.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Rename.Test.EdgeCase {
-    @Test("rename nonexistent file throws notFound")
-    func renameNonexistentThrows() {
+    @Test
+    func `rename nonexistent file throws notFound`() {
         let oldPath = "C:\\nonexistent_rename_\(GetCurrentProcessId()).tmp"
         let newPath = "C:\\renamed_\(GetCurrentProcessId()).tmp"
 

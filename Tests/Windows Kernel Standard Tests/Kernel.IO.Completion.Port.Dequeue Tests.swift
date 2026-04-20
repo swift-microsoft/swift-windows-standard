@@ -31,18 +31,18 @@ import Testing
     // MARK: - Unit Tests
 
     extension Kernel.IO.Completion.Port.Dequeue.Test.Unit {
-        @Test("Dequeue namespace exists")
-        func namespaceExists() {
+        @Test
+        func `Dequeue namespace exists`() {
             _ = Kernel.IO.Completion.Port.Dequeue.self
         }
 
-        @Test("Dequeue is an enum")
-        func isEnum() {
+        @Test
+        func `Dequeue is an enum`() {
             let _: Kernel.IO.Completion.Port.Dequeue.Type = Kernel.IO.Completion.Port.Dequeue.self
         }
 
-        @Test("Status type exists with ok and platform cases")
-        func statusType() {
+        @Test
+        func `Status type exists with ok and platform cases`() {
             let ok: Kernel.IO.Completion.Port.Dequeue.Status = .ok
             let error: Kernel.IO.Completion.Port.Dequeue.Status = .platform(Kernel.Error(code: .win32(0)))
 
@@ -50,8 +50,8 @@ import Testing
             #expect(error != .ok)
         }
 
-        @Test("Item type exists with expected properties")
-        func itemType() {
+        @Test
+        func `Item type exists with expected properties`() {
             let ov = UnsafeMutablePointer<OVERLAPPED>.allocate(capacity: 1)
             ov.initialize(to: OVERLAPPED())
             defer {
@@ -73,8 +73,8 @@ import Testing
             #expect(item.status == .ok)
         }
 
-        @Test("Item can have nil overlapped")
-        func itemNilOverlapped() {
+        @Test
+        func `Item can have nil overlapped`() {
             let item = Kernel.IO.Completion.Port.Dequeue.Item(
                 bytes: 0,
                 key: .init(rawValue: 0),
@@ -86,8 +86,8 @@ import Testing
             #expect(item.status == .ok)
         }
 
-        @Test("Item with platform error status")
-        func itemWithError() {
+        @Test
+        func `Item with platform error status`() {
             let ov = UnsafeMutablePointer<OVERLAPPED>.allocate(capacity: 1)
             ov.initialize(to: OVERLAPPED())
             defer {
@@ -109,8 +109,8 @@ import Testing
             }
         }
 
-        @Test("single throws .timeout on timeout")
-        func singleTimeout() throws {
+        @Test
+        func `single throws .timeout on timeout`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -122,8 +122,8 @@ import Testing
             }
         }
 
-        @Test("single returns .ok for posted completion with overlapped")
-        func singlePostedCompletionWithOverlapped() throws {
+        @Test
+        func `single returns .ok for posted completion with overlapped`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 
@@ -143,8 +143,8 @@ import Testing
             #expect(item.status == .ok)
         }
 
-        @Test("single returns .ok for posted completion without overlapped")
-        func singlePostedCompletionWithoutOverlapped() throws {
+        @Test
+        func `single returns .ok for posted completion without overlapped`() throws {
             let port = try Kernel.IO.Completion.Port.create()
             defer { Kernel.IO.Completion.Port.close(port) }
 

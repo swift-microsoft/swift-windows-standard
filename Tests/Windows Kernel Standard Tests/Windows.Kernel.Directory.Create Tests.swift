@@ -40,8 +40,8 @@ extension Windows.Kernel.Mkdir {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Mkdir.Test.Unit {
-    @Test("Mkdir namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Mkdir namespace exists`() {
         _ = Windows.Kernel.Mkdir.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Mkdir.Test.Unit {
-    @Test("Error.notFound maps from PATH_NOT_FOUND")
-    func errorNotFoundMaps() {
+    @Test
+    func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
@@ -59,8 +59,8 @@ extension Windows.Kernel.Mkdir.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMaps() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -69,8 +69,8 @@ extension Windows.Kernel.Mkdir.Test.Unit {
         }
     }
 
-    @Test("Error.exists maps from FILE_EXISTS")
-    func errorExistsFromFileExists() {
+    @Test
+    func `Error.exists maps from FILE_EXISTS`() {
         let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.File.exists)
         if case .exists = error {
             // Expected
@@ -79,8 +79,8 @@ extension Windows.Kernel.Mkdir.Test.Unit {
         }
     }
 
-    @Test("Error.exists maps from ALREADY_EXISTS")
-    func errorExistsFromAlreadyExists() {
+    @Test
+    func `Error.exists maps from ALREADY_EXISTS`() {
         let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.File.alreadyExists)
         if case .exists = error {
             // Expected
@@ -89,8 +89,8 @@ extension Windows.Kernel.Mkdir.Test.Unit {
         }
     }
 
-    @Test("Error.noSpace maps from DISK_FULL")
-    func errorNoSpaceMaps() {
+    @Test
+    func `Error.noSpace maps from DISK_FULL`() {
         let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.Storage.diskFull)
         if case .noSpace = error {
             // Expected
@@ -103,8 +103,8 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Mkdir.Test.EdgeCase {
-    @Test("Permissions.directoryDefault exists")
-    func permissionsDirectoryDefaultExists() {
+    @Test
+    func `Permissions.directoryDefault exists`() {
         let perms = Kernel.File.Permissions.directoryDefault
         #expect(perms.owner.read)
         #expect(perms.owner.write)

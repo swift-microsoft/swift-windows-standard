@@ -40,8 +40,8 @@ extension Windows.Kernel.Path.Canonical {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Path.Canonical.Test.Unit {
-    @Test("Path.Canonical namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Path.Canonical namespace exists`() {
         _ = Windows.Kernel.Path.Canonical.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
 // MARK: - Resolve Tests
 
 extension Windows.Kernel.Path.Canonical.Test.Unit {
-    @Test("resolve current directory succeeds")
-    func resolveCurrentDirectorySucceeds() throws {
+    @Test
+    func `resolve current directory succeeds`() throws {
         var path = Array(".".utf16) + [0]
         let result = try path.withUnsafeBufferPointer { pathPtr in
             let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
@@ -60,8 +60,8 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
         #expect(!result.isEmpty)
     }
 
-    @Test("resolve with buffer succeeds")
-    func resolveWithBufferSucceeds() throws {
+    @Test
+    func `resolve with buffer succeeds`() throws {
         var path = Array(".".utf16) + [0]
         var buffer = [UInt16](repeating: 0, count: 260)
 
@@ -75,8 +75,8 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
         #expect(length > 0)
     }
 
-    @Test("resolve absolute path returns same path")
-    func resolveAbsolutePathReturnsSame() throws {
+    @Test
+    func `resolve absolute path returns same path`() throws {
         var path = Array("C:\\Windows".utf16) + [0]
         let result = try path.withUnsafeBufferPointer { pathPtr in
             let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
@@ -91,8 +91,8 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Path.Canonical.Test.EdgeCase {
-    @Test("resolve with small buffer throws")
-    func resolveSmallBufferThrows() {
+    @Test
+    func `resolve with small buffer throws`() {
         var path = Array("C:\\Windows\\System32".utf16) + [0]
         var buffer = [UInt16](repeating: 0, count: 5)  // Too small
 

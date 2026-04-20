@@ -31,30 +31,30 @@ import Testing
     // MARK: - Unit Tests
 
     extension Kernel.IO.Completion.Port.Entry.Test.Unit {
-        @Test("Entry type exists")
-        func entryExists() {
+        @Test
+        func `Entry type exists`() {
             _ = Kernel.IO.Completion.Port.Entry.self
         }
 
-        @Test("Entry can be zero-initialized")
-        func zeroInitialize() {
+        @Test
+        func `Entry can be zero-initialized`() {
             let entry = Kernel.IO.Completion.Port.Entry()
             _ = entry
         }
 
-        @Test("Entry.Bytes type exists")
-        func bytesExists() {
+        @Test
+        func `Entry.Bytes type exists`() {
             _ = Kernel.IO.Completion.Port.Entry.Bytes.self
         }
 
-        @Test("Entry has bytes accessor")
-        func hasBytesAccessor() {
+        @Test
+        func `Entry has bytes accessor`() {
             let entry = Kernel.IO.Completion.Port.Entry()
             _ = entry.bytes
         }
 
-        @Test("Entry has key accessor")
-        func hasKeyAccessor() {
+        @Test
+        func `Entry has key accessor`() {
             let entry = Kernel.IO.Completion.Port.Entry()
             _ = entry.key
         }

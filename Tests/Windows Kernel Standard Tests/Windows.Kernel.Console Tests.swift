@@ -40,23 +40,23 @@ extension Windows.Kernel.Console {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Console.Test.Unit {
-    @Test("Console namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Console namespace exists`() {
         _ = Windows.Kernel.Console.self
     }
 
-    @Test("Console.InputMode type exists")
-    func inputModeTypeExists() {
+    @Test
+    func `Console.InputMode type exists`() {
         _ = Windows.Kernel.Console.InputMode.self
     }
 
-    @Test("Console.OutputMode type exists")
-    func outputModeTypeExists() {
+    @Test
+    func `Console.OutputMode type exists`() {
         _ = Windows.Kernel.Console.OutputMode.self
     }
 
-    @Test("Console.ScreenBufferInfo type exists")
-    func screenBufferInfoTypeExists() {
+    @Test
+    func `Console.ScreenBufferInfo type exists`() {
         _ = Windows.Kernel.Console.ScreenBufferInfo.self
     }
 }
@@ -64,19 +64,19 @@ extension Windows.Kernel.Console.Test.Unit {
 // MARK: - Standard Handle Tests
 
 extension Windows.Kernel.Console.Test.Unit {
-    @Test("standardInput returns handle")
-    func standardInputReturnsHandle() {
+    @Test
+    func `standardInput returns handle`() {
         // May be nil if not running in console
         _ = Windows.Kernel.Console.standardInput()
     }
 
-    @Test("standardOutput returns handle")
-    func standardOutputReturnsHandle() {
+    @Test
+    func `standardOutput returns handle`() {
         _ = Windows.Kernel.Console.standardOutput()
     }
 
-    @Test("standardError returns handle")
-    func standardErrorReturnsHandle() {
+    @Test
+    func `standardError returns handle`() {
         _ = Windows.Kernel.Console.standardError()
     }
 }
@@ -84,40 +84,40 @@ extension Windows.Kernel.Console.Test.Unit {
 // MARK: - Input Mode Tests
 
 extension Windows.Kernel.Console.Test.Unit {
-    @Test("InputMode.enableLineInput exists")
-    func inputModeLineInputExists() {
+    @Test
+    func `InputMode.enableLineInput exists`() {
         let mode = Windows.Kernel.Console.InputMode.enableLineInput
         #expect(mode.rawValue == DWORD(ENABLE_LINE_INPUT))
     }
 
-    @Test("InputMode.enableEchoInput exists")
-    func inputModeEchoInputExists() {
+    @Test
+    func `InputMode.enableEchoInput exists`() {
         let mode = Windows.Kernel.Console.InputMode.enableEchoInput
         #expect(mode.rawValue == DWORD(ENABLE_ECHO_INPUT))
     }
 
-    @Test("InputMode.enableProcessedInput exists")
-    func inputModeProcessedInputExists() {
+    @Test
+    func `InputMode.enableProcessedInput exists`() {
         let mode = Windows.Kernel.Console.InputMode.enableProcessedInput
         #expect(mode.rawValue == DWORD(ENABLE_PROCESSED_INPUT))
     }
 
-    @Test("InputMode.enableVirtualTerminalInput exists")
-    func inputModeVirtualTerminalExists() {
+    @Test
+    func `InputMode.enableVirtualTerminalInput exists`() {
         let mode = Windows.Kernel.Console.InputMode.enableVirtualTerminalInput
         #expect(mode.rawValue == DWORD(ENABLE_VIRTUAL_TERMINAL_INPUT))
     }
 
-    @Test("InputMode.default is combination")
-    func inputModeDefaultIsCombination() {
+    @Test
+    func `InputMode.default is combination`() {
         let mode = Windows.Kernel.Console.InputMode.default
         #expect(mode.contains(.enableLineInput))
         #expect(mode.contains(.enableEchoInput))
         #expect(mode.contains(.enableProcessedInput))
     }
 
-    @Test("InputMode.raw is empty")
-    func inputModeRawIsEmpty() {
+    @Test
+    func `InputMode.raw is empty`() {
         let mode = Windows.Kernel.Console.InputMode.raw
         #expect(mode.rawValue == 0)
     }
@@ -126,33 +126,33 @@ extension Windows.Kernel.Console.Test.Unit {
 // MARK: - Output Mode Tests
 
 extension Windows.Kernel.Console.Test.Unit {
-    @Test("OutputMode.enableProcessedOutput exists")
-    func outputModeProcessedOutputExists() {
+    @Test
+    func `OutputMode.enableProcessedOutput exists`() {
         let mode = Windows.Kernel.Console.OutputMode.enableProcessedOutput
         #expect(mode.rawValue == DWORD(ENABLE_PROCESSED_OUTPUT))
     }
 
-    @Test("OutputMode.enableWrapAtEolOutput exists")
-    func outputModeWrapAtEolExists() {
+    @Test
+    func `OutputMode.enableWrapAtEolOutput exists`() {
         let mode = Windows.Kernel.Console.OutputMode.enableWrapAtEolOutput
         #expect(mode.rawValue == DWORD(ENABLE_WRAP_AT_EOL_OUTPUT))
     }
 
-    @Test("OutputMode.enableVirtualTerminalProcessing exists")
-    func outputModeVirtualTerminalExists() {
+    @Test
+    func `OutputMode.enableVirtualTerminalProcessing exists`() {
         let mode = Windows.Kernel.Console.OutputMode.enableVirtualTerminalProcessing
         #expect(mode.rawValue == DWORD(ENABLE_VIRTUAL_TERMINAL_PROCESSING))
     }
 
-    @Test("OutputMode.default is combination")
-    func outputModeDefaultIsCombination() {
+    @Test
+    func `OutputMode.default is combination`() {
         let mode = Windows.Kernel.Console.OutputMode.default
         #expect(mode.contains(.enableProcessedOutput))
         #expect(mode.contains(.enableWrapAtEolOutput))
     }
 
-    @Test("OutputMode.ansi includes VT processing")
-    func outputModeAnsiIncludesVT() {
+    @Test
+    func `OutputMode.ansi includes VT processing`() {
         let mode = Windows.Kernel.Console.OutputMode.ansi
         #expect(mode.contains(.enableVirtualTerminalProcessing))
     }
@@ -161,24 +161,24 @@ extension Windows.Kernel.Console.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Console.Test.EdgeCase {
-    @Test("InputMode can be combined")
-    func inputModeCombination() {
+    @Test
+    func `InputMode can be combined`() {
         var mode = Windows.Kernel.Console.InputMode.enableLineInput
         mode.insert(.enableEchoInput)
         #expect(mode.contains(.enableLineInput))
         #expect(mode.contains(.enableEchoInput))
     }
 
-    @Test("OutputMode can be combined")
-    func outputModeCombination() {
+    @Test
+    func `OutputMode can be combined`() {
         var mode = Windows.Kernel.Console.OutputMode.enableProcessedOutput
         mode.insert(.enableVirtualTerminalProcessing)
         #expect(mode.contains(.enableProcessedOutput))
         #expect(mode.contains(.enableVirtualTerminalProcessing))
     }
 
-    @Test("isConsole returns bool for invalid handle")
-    func isConsoleInvalidHandle() {
+    @Test
+    func `isConsole returns bool for invalid handle`() {
         let result = Windows.Kernel.Console.isConsole(INVALID_HANDLE_VALUE)
         #expect(!result)
     }

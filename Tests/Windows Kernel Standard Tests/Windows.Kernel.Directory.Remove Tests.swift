@@ -40,8 +40,8 @@ extension Windows.Kernel.Rmdir {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Rmdir.Test.Unit {
-    @Test("Rmdir namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Rmdir namespace exists`() {
         _ = Windows.Kernel.Rmdir.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 // MARK: - Error Mapping Tests
 
 extension Windows.Kernel.Rmdir.Test.Unit {
-    @Test("Error.notFound maps from FILE_NOT_FOUND")
-    func errorNotFoundFromFileNotFound() {
+    @Test
+    func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
@@ -59,8 +59,8 @@ extension Windows.Kernel.Rmdir.Test.Unit {
         }
     }
 
-    @Test("Error.notFound maps from PATH_NOT_FOUND")
-    func errorNotFoundFromPathNotFound() {
+    @Test
+    func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
@@ -69,8 +69,8 @@ extension Windows.Kernel.Rmdir.Test.Unit {
         }
     }
 
-    @Test("Error.permission maps from ACCESS_DENIED")
-    func errorPermissionMaps() {
+    @Test
+    func `Error.permission maps from ACCESS_DENIED`() {
         let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
@@ -79,8 +79,8 @@ extension Windows.Kernel.Rmdir.Test.Unit {
         }
     }
 
-    @Test("Error.notEmpty maps from DIR_NOT_EMPTY")
-    func errorNotEmptyMaps() {
+    @Test
+    func `Error.notEmpty maps from DIR_NOT_EMPTY`() {
         let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.Directory.notEmpty)
         if case .notEmpty = error {
             // Expected
@@ -89,8 +89,8 @@ extension Windows.Kernel.Rmdir.Test.Unit {
         }
     }
 
-    @Test("Error.busy maps from SHARING_VIOLATION")
-    func errorBusyMaps() {
+    @Test
+    func `Error.busy maps from SHARING_VIOLATION`() {
         let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.Access.sharingViolation)
         if case .busy = error {
             // Expected
@@ -103,8 +103,8 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Rmdir.Test.EdgeCase {
-    @Test("rmdir on nonexistent path throws notFound")
-    func rmdirNonexistentThrows() {
+    @Test
+    func `rmdir on nonexistent path throws notFound`() {
         let fakePath = "C:\\nonexistent_dir_12345_\(GetCurrentProcessId())"
         var utf16Path = Array(fakePath.utf16) + [0]
 

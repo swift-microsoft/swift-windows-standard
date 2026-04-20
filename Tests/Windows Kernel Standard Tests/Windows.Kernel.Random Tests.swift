@@ -41,8 +41,8 @@ extension Windows.Kernel.Random {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Random.Test.Unit {
-    @Test("Random namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Random namespace exists`() {
         _ = Windows.Kernel.Random.self
     }
 }
@@ -78,20 +78,20 @@ extension Windows.Kernel.Random.Test.Unit {
 // MARK: - Random Value Tests
 
 extension Windows.Kernel.Random.Test.Unit {
-    @Test("uint64 returns value")
-    func uint64ReturnsValue() {
+    @Test
+    func `uint64 returns value`() {
         let value = Windows.Kernel.Random.uint64()
         #expect(value != nil)
     }
 
-    @Test("uint32 returns value")
-    func uint32ReturnsValue() {
+    @Test
+    func `uint32 returns value`() {
         let value = Windows.Kernel.Random.uint32()
         #expect(value != nil)
     }
 
-    @Test("uint64 produces different values")
-    func uint64ProducesDifferent() {
+    @Test
+    func `uint64 produces different values`() {
         var values: Set<UInt64> = []
         for _ in 0..<10 {
             if let v = Windows.Kernel.Random.uint64() {
@@ -102,8 +102,8 @@ extension Windows.Kernel.Random.Test.Unit {
         #expect(values.count >= 9)
     }
 
-    @Test("uint32 produces different values")
-    func uint32ProducesDifferent() {
+    @Test
+    func `uint32 produces different values`() {
         var values: Set<UInt32> = []
         for _ in 0..<10 {
             if let v = Windows.Kernel.Random.uint32() {

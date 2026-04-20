@@ -31,13 +31,13 @@ extension Windows.Kernel.IO.Read {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.IO.Read.Test.Unit {
-    @Test("IO.Read namespace exists")
-    func namespaceExists() {
+    @Test
+    func `IO.Read namespace exists`() {
         _ = Windows.Kernel.IO.Read.self
     }
 
-    @Test("IO.Read.Error type alias exists")
-    func errorTypeExists() {
+    @Test
+    func `IO.Read.Error type alias exists`() {
         _ = Windows.Kernel.IO.Read.Error.self
     }
 }
@@ -45,8 +45,8 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.IO.Read.Test.Unit {
-    @Test("read with invalid descriptor throws handle error")
-    func readInvalidDescriptorThrows() {
+    @Test
+    func `read with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
         var buffer = [UInt8](repeating: 0, count: 100)
 
@@ -57,8 +57,8 @@ extension Windows.Kernel.IO.Read.Test.Unit {
         }
     }
 
-    @Test("pread with invalid descriptor throws handle error")
-    func preadInvalidDescriptorThrows() {
+    @Test
+    func `pread with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
         var buffer = [UInt8](repeating: 0, count: 100)
 
@@ -73,8 +73,8 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 // MARK: - Empty Buffer Tests
 
 extension Windows.Kernel.IO.Read.Test.Unit {
-    @Test("read with empty buffer returns zero")
-    func readEmptyBufferReturnsZero() throws {
+    @Test
+    func `read with empty buffer returns zero`() throws {
         // Create a temporary file
         let tempPath = "test_read_empty_\(GetCurrentProcessId()).tmp"
         defer { DeleteFileW(tempPath.withCString(encodedAs: UTF16.self) { $0 }) }
@@ -110,8 +110,8 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.IO.Read.Test.EdgeCase {
-    @Test("Kernel.Descriptor.invalid is invalid")
-    func invalidDescriptorIsInvalid() {
+    @Test
+    func `Kernel.Descriptor.invalid is invalid`() {
         let invalid = Kernel.Descriptor.invalid
         #expect(!invalid.isValid)
     }

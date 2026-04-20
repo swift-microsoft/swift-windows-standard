@@ -40,8 +40,8 @@ extension Windows.Kernel.Environment {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Environment.Test.Unit {
-    @Test("Environment namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Environment namespace exists`() {
         _ = Windows.Kernel.Environment.self
     }
 }
@@ -49,8 +49,8 @@ extension Windows.Kernel.Environment.Test.Unit {
 // MARK: - Get Tests
 
 extension Windows.Kernel.Environment.Test.Unit {
-    @Test("get PATH returns value")
-    func getPathReturnsValue() {
+    @Test
+    func `get PATH returns value`() {
         var name = Array("PATH".utf16) + [0]
         let result = name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
@@ -61,8 +61,8 @@ extension Windows.Kernel.Environment.Test.Unit {
         #expect(!result!.isEmpty)
     }
 
-    @Test("get nonexistent variable returns nil")
-    func getNonexistentReturnsNil() {
+    @Test
+    func `get nonexistent variable returns nil`() {
         var name = Array("NONEXISTENT_VAR_12345_\(GetCurrentProcessId())".utf16) + [0]
         let result = name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
@@ -72,8 +72,8 @@ extension Windows.Kernel.Environment.Test.Unit {
         #expect(result == nil)
     }
 
-    @Test("get with buffer works")
-    func getWithBufferWorks() throws {
+    @Test
+    func `get with buffer works`() throws {
         var name = Array("PATH".utf16) + [0]
         var buffer = [UInt16](repeating: 0, count: 32768)  // MAX_ENV_VALUE
 
@@ -91,8 +91,8 @@ extension Windows.Kernel.Environment.Test.Unit {
 // MARK: - Set and Unset Tests
 
 extension Windows.Kernel.Environment.Test.Unit {
-    @Test("set and get round-trip")
-    func setAndGetRoundTrip() throws {
+    @Test
+    func `set and get round-trip`() throws {
         let varName = "TEST_VAR_\(GetCurrentProcessId())"
         let varValue = "test_value_12345"
 
@@ -125,8 +125,8 @@ extension Windows.Kernel.Environment.Test.Unit {
         }
     }
 
-    @Test("unset removes variable")
-    func unsetRemovesVariable() throws {
+    @Test
+    func `unset removes variable`() throws {
         let varName = "TEST_UNSET_VAR_\(GetCurrentProcessId())"
 
         var name = Array(varName.utf16) + [0]
@@ -160,8 +160,8 @@ extension Windows.Kernel.Environment.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Environment.Test.EdgeCase {
-    @Test("unset nonexistent variable succeeds")
-    func unsetNonexistentSucceeds() throws {
+    @Test
+    func `unset nonexistent variable succeeds`() throws {
         let varName = "NONEXISTENT_UNSET_\(GetCurrentProcessId())"
         var name = Array(varName.utf16) + [0]
 
@@ -172,8 +172,8 @@ extension Windows.Kernel.Environment.Test.EdgeCase {
         }
     }
 
-    @Test("get with small buffer throws")
-    func getSmallBufferThrows() {
+    @Test
+    func `get with small buffer throws`() {
         var name = Array("PATH".utf16) + [0]
         var buffer = [UInt16](repeating: 0, count: 1)  // Too small
 

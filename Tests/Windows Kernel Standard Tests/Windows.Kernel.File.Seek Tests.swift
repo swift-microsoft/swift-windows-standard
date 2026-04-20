@@ -32,18 +32,18 @@ extension Windows.Kernel.Seek {
 // MARK: - Namespace Tests
 
 extension Windows.Kernel.Seek.Test.Unit {
-    @Test("Seek namespace exists")
-    func namespaceExists() {
+    @Test
+    func `Seek namespace exists`() {
         _ = Windows.Kernel.Seek.self
     }
 
-    @Test("Seek.Error type alias exists")
-    func errorTypeExists() {
+    @Test
+    func `Seek.Error type alias exists`() {
         _ = Windows.Kernel.Seek.Error.self
     }
 
-    @Test("Seek.Origin type alias exists")
-    func originTypeExists() {
+    @Test
+    func `Seek.Origin type alias exists`() {
         _ = Windows.Kernel.Seek.Origin.self
     }
 }
@@ -51,20 +51,20 @@ extension Windows.Kernel.Seek.Test.Unit {
 // MARK: - Origin Tests
 
 extension Windows.Kernel.Seek.Test.Unit {
-    @Test("Origin.start exists")
-    func originStartExists() {
+    @Test
+    func `Origin.start exists`() {
         let origin = Kernel.Seek.Origin.start
         #expect(origin == .start)
     }
 
-    @Test("Origin.current exists")
-    func originCurrentExists() {
+    @Test
+    func `Origin.current exists`() {
         let origin = Kernel.Seek.Origin.current
         #expect(origin == .current)
     }
 
-    @Test("Origin.end exists")
-    func originEndExists() {
+    @Test
+    func `Origin.end exists`() {
         let origin = Kernel.Seek.Origin.end
         #expect(origin == .end)
     }
@@ -73,20 +73,20 @@ extension Windows.Kernel.Seek.Test.Unit {
 // MARK: - Windows Conversion Tests
 
 extension Windows.Kernel.Seek.Test.Unit {
-    @Test("Origin.start converts to FILE_BEGIN")
-    func originStartConverts() {
+    @Test
+    func `Origin.start converts to FILE_BEGIN`() {
         let origin = Kernel.Seek.Origin.start
         #expect(origin.windowsMoveMethod == DWORD(FILE_BEGIN))
     }
 
-    @Test("Origin.current converts to FILE_CURRENT")
-    func originCurrentConverts() {
+    @Test
+    func `Origin.current converts to FILE_CURRENT`() {
         let origin = Kernel.Seek.Origin.current
         #expect(origin.windowsMoveMethod == DWORD(FILE_CURRENT))
     }
 
-    @Test("Origin.end converts to FILE_END")
-    func originEndConverts() {
+    @Test
+    func `Origin.end converts to FILE_END`() {
         let origin = Kernel.Seek.Origin.end
         #expect(origin.windowsMoveMethod == DWORD(FILE_END))
     }
@@ -95,8 +95,8 @@ extension Windows.Kernel.Seek.Test.Unit {
 // MARK: - Error Tests
 
 extension Windows.Kernel.Seek.Test.Unit {
-    @Test("seek with invalid descriptor throws")
-    func seekInvalidDescriptorThrows() {
+    @Test
+    func `seek with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Seek.Error.self) {
@@ -104,8 +104,8 @@ extension Windows.Kernel.Seek.Test.Unit {
         }
     }
 
-    @Test("tell with invalid descriptor throws")
-    func tellInvalidDescriptorThrows() {
+    @Test
+    func `tell with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Seek.Error.self) {
@@ -117,20 +117,20 @@ extension Windows.Kernel.Seek.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Seek.Test.EdgeCase {
-    @Test("Error.invalidDescriptor exists")
-    func errorInvalidDescriptorExists() {
+    @Test
+    func `Error.invalidDescriptor exists`() {
         let error = Kernel.Seek.Error.invalidDescriptor
         #expect(error == .invalidDescriptor)
     }
 
-    @Test("Error.negativeOffset exists")
-    func errorNegativeOffsetExists() {
+    @Test
+    func `Error.negativeOffset exists`() {
         let error = Kernel.Seek.Error.negativeOffset
         #expect(error == .negativeOffset)
     }
 
-    @Test("Error.notSeekable exists")
-    func errorNotSeekableExists() {
+    @Test
+    func `Error.notSeekable exists`() {
         let error = Kernel.Seek.Error.notSeekable
         #expect(error == .notSeekable)
     }

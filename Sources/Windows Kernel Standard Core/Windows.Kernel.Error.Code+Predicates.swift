@@ -24,6 +24,15 @@
 //     // Handle the "not found" failure uniformly across platforms.
 // }
 // ```
+//
+// The `#if os(Windows)` guard mirrors the sibling `Windows.Kernel.Error.swift`
+// file in this target. The referenced `Kernel.Error.Code.Windows` namespace is
+// itself `#if os(Windows)`-scoped in `Kernel_Error_Primitives`, so the body
+// can only type-check on Windows. This target has no SwiftPM platform
+// condition, so the guard is required for the non-Windows elision; it is NOT
+// an in-function platform switch.
+
+#if os(Windows)
 
 extension Kernel.Error.Code {
     /// Returns `true` if this error code indicates that a requested file or directory does not exist.
@@ -96,3 +105,5 @@ extension Kernel.Error.Code {
             || self == .Windows.ERROR_BAD_NET_NAME
     }
 }
+
+#endif

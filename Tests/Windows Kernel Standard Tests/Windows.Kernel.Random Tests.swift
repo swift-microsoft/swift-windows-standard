@@ -46,36 +46,34 @@ extension Windows.Kernel.Random.Test.Unit {
     }
 }
 
-// MARK: - Fill Tests
+// MARK: - BCryptGenRandom Tests
 
 extension Windows.Kernel.Random.Test.Unit {
-    @Test("fill buffer succeeds")
-    func fillBufferSucceeds() {
+    @Test
+    func `bCryptGenRandom fills buffer without throwing`() throws {
         var buffer = [UInt8](repeating: 0, count: 32)
-        let success = buffer.withUnsafeMutableBytes { bufferPtr in
-            Windows.Kernel.Random.fill(bufferPtr)
+        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
         }
-        #expect(success)
     }
 
-    @Test("fill produces non-zero data")
-    func fillProducesNonZero() {
+    @Test
+    func `bCryptGenRandom produces non-zero bytes`() throws {
         var buffer = [UInt8](repeating: 0, count: 32)
-        _ = buffer.withUnsafeMutableBytes { bufferPtr in
-            Windows.Kernel.Random.fill(bufferPtr)
+        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
         }
         // Very unlikely all 32 bytes are zero
         let allZero = buffer.allSatisfy { $0 == 0 }
         #expect(!allZero)
     }
 
-    @Test("fill empty buffer succeeds")
-    func fillEmptyBufferSucceeds() {
+    @Test
+    func `bCryptGenRandom with empty buffer is a no-op`() throws {
         var buffer: [UInt8] = []
-        let success = buffer.withUnsafeMutableBytes { bufferPtr in
-            Windows.Kernel.Random.fill(bufferPtr)
+        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
         }
-        #expect(success)
     }
 }
 
@@ -121,22 +119,25 @@ extension Windows.Kernel.Random.Test.Unit {
 // MARK: - Edge Cases
 
 extension Windows.Kernel.Random.Test.EdgeCase {
-    @Test("fill large buffer succeeds")
-    func fillLargeBufferSucceeds() {
+    @Test
+    func `bCryptGenRandom fills a one-megabyte buffer`() throws {
         var buffer = [UInt8](repeating: 0, count: 1024 * 1024)  // 1MB
-        let success = buffer.withUnsafeMutableBytes { bufferPtr in
-            Windows.Kernel.Random.fill(bufferPtr)
+        try buffer.withUnsafeMutableBytes { bufferPtr throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(bufferPtr)
         }
-        #expect(success)
     }
 
-    @Test("multiple fills produce different data")
-    func multipleFillsDifferent() {
+    @Test
+    func `successive bCryptGenRandom calls produce different bytes`() throws {
         var buffer1 = [UInt8](repeating: 0, count: 32)
         var buffer2 = [UInt8](repeating: 0, count: 32)
 
-        _ = buffer1.withUnsafeMutableBytes { Windows.Kernel.Random.fill($0) }
-        _ = buffer2.withUnsafeMutableBytes { Windows.Kernel.Random.fill($0) }
+        try buffer1.withUnsafeMutableBytes { buffer throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(buffer)
+        }
+        try buffer2.withUnsafeMutableBytes { buffer throws(Kernel.Random.Error) in
+            try Windows.Kernel.Random.bCryptGenRandom(buffer)
+        }
 
         #expect(buffer1 != buffer2)
     }

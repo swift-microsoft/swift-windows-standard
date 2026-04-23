@@ -22,15 +22,15 @@
 //
 // Drive-letter canonicalization (e.g., `C:\foo` → parent `C:\`) is L3
 // policy per `Path.Scan` documentation — this L2 conformance does the
-// byte scan only. See `Windows.Kernel.Path.View+Path.Modification.swift`
+// byte scan only. See `Windows.Kernel.Path.Borrowed+Path.Modification.swift`
 // for the appending half of the split.
 
-extension Path.View: @retroactive Path.Decomposition {
+extension Path.Borrowed: @retroactive Path.Decomposition {
     public typealias Char = Path.Char
 
     @inlinable
     @_lifetime(copy view)
-    public static func parent(of view: borrowing Path.View) -> Span<Path.Char>? {
+    public static func parent(of view: borrowing Path.Borrowed) -> Span<Path.Char>? {
         guard let lastSep = Path.Scan.lastSeparatorIndex(
             in: view.span,
             primary: 0x5C,
@@ -49,7 +49,7 @@ extension Path.View: @retroactive Path.Decomposition {
 
     @inlinable
     @_lifetime(copy view)
-    public static func component(of view: borrowing Path.View) -> Span<Path.Char> {
+    public static func component(of view: borrowing Path.Borrowed) -> Span<Path.Char> {
         guard let lastSep = Path.Scan.lastSeparatorIndex(
             in: view.span,
             primary: 0x5C,

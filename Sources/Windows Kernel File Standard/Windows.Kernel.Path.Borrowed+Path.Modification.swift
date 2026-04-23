@@ -16,14 +16,14 @@
 // Appending inserts a single `\` (Windows primary separator) between
 // `view` and `other` unless `view` already ends with either `\` or `/` —
 // both separators count for trailing-separator deduplication per Win32
-// convention. See `Windows.Kernel.Path.View+Path.Decomposition.swift`
+// convention. See `Windows.Kernel.Path.Borrowed+Path.Decomposition.swift`
 // for the decomposition half of the split.
 
-extension Path.View: @retroactive Path.Modification {
+extension Path.Borrowed: @retroactive Path.Modification {
     @inlinable
     public static func appending(
-        _ view: borrowing Path.View,
-        _ other: borrowing Path.View
+        _ view: borrowing Path.Borrowed,
+        _ other: borrowing Path.Borrowed
     ) -> Path {
         let selfEndsWithSep: Bool
         if view.count > 0 {

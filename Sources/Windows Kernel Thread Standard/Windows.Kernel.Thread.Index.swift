@@ -12,16 +12,25 @@
 #if os(Windows)
 public import WinSDK
 
-// MARK: - Windows Thread Local Storage
+// MARK: - Windows Thread Local Storage Index
 
 extension Windows.Kernel.Thread {
-    /// Per-thread storage slot — a policy-free wrapper around the Windows
-    /// `TlsAlloc` / `TlsSetValue` / `TlsGetValue` / `TlsFree` family.
+    /// Per-thread storage index — a policy-free wrapper around the
+    /// Windows `TlsAlloc` / `TlsSetValue` / `TlsGetValue` / `TlsFree`
+    /// family.
     ///
-    /// Each `Local` instance owns one platform-allocated TLS index. The
+    /// Spec-mirrors the Windows "TLS index" terminology (`DWORD`
+    /// returned by `TlsAlloc`) per [API-NAME-003]. The L3 unifier
+    /// ``Kernel/Thread/Local`` wraps this raw index with typed payload
+    /// accessors and the `Unmanaged` retain/release dance — per
+    /// [PLAT-ARCH-008f] solution (a), the L2 raw type uses the
+    /// spec-literal name to free `Local` for the L3 typed wrapper.
+    ///
+    /// Each `Index` instance owns one platform-allocated TLS index. The
     /// index is freed on `deinit`. The slot stores an
     /// `UnsafeMutableRawPointer?` per thread; consumers cast to/from
-    /// their typed payload at the boundary.
+    /// their typed payload at the boundary (or use the L3 generic
+    /// `Kernel.Thread.Local<Payload>` which encapsulates the cast).
     ///
     /// ## Threading
     /// - **value (get)**: Returns the calling thread's slot value, or
@@ -40,11 +49,11 @@ extension Windows.Kernel.Thread {
     ///
     /// ## Usage
     /// ```swift
-    /// let local = Windows.Kernel.Thread.Local()
-    /// local.value = UnsafeMutableRawPointer(...)
-    /// // ... synchronous code on the same thread reads `local.value` ...
+    /// let index = Windows.Kernel.Thread.Index()
+    /// index.value = UnsafeMutableRawPointer(...)
+    /// // ... synchronous code on the same thread reads `index.value` ...
     /// ```
-    public final class Local: @unchecked Sendable {
+    public final class Index: @unchecked Sendable {
         private var index: DWORD
 
         /// Allocates a new TLS index.

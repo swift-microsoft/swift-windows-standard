@@ -59,35 +59,35 @@ extension Windows.Kernel.Console {
 extension Windows.Kernel.Console {
     /// Console input mode flags.
     public struct InputMode: OptionSet, Sendable {
-        public let rawValue: DWORD
+        public let rawValue: UInt32
 
-        public init(rawValue: DWORD) {
+        public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
 
         /// Enable line input (read returns when Enter is pressed).
-        public static let enableLineInput = InputMode(rawValue: DWORD(ENABLE_LINE_INPUT))
+        public static let enableLineInput = InputMode(rawValue: UInt32(ENABLE_LINE_INPUT))
 
         /// Echo input characters.
-        public static let enableEchoInput = InputMode(rawValue: DWORD(ENABLE_ECHO_INPUT))
+        public static let enableEchoInput = InputMode(rawValue: UInt32(ENABLE_ECHO_INPUT))
 
         /// Enable Ctrl+C processing.
-        public static let enableProcessedInput = InputMode(rawValue: DWORD(ENABLE_PROCESSED_INPUT))
+        public static let enableProcessedInput = InputMode(rawValue: UInt32(ENABLE_PROCESSED_INPUT))
 
         /// Enable window and mouse events.
-        public static let enableWindowInput = InputMode(rawValue: DWORD(ENABLE_WINDOW_INPUT))
+        public static let enableWindowInput = InputMode(rawValue: UInt32(ENABLE_WINDOW_INPUT))
 
         /// Enable mouse events.
-        public static let enableMouseInput = InputMode(rawValue: DWORD(ENABLE_MOUSE_INPUT))
+        public static let enableMouseInput = InputMode(rawValue: UInt32(ENABLE_MOUSE_INPUT))
 
         /// Enable insert mode.
-        public static let enableInsertMode = InputMode(rawValue: DWORD(ENABLE_INSERT_MODE))
+        public static let enableInsertMode = InputMode(rawValue: UInt32(ENABLE_INSERT_MODE))
 
         /// Enable quick edit mode (mouse selection).
-        public static let enableQuickEditMode = InputMode(rawValue: DWORD(ENABLE_QUICK_EDIT_MODE))
+        public static let enableQuickEditMode = InputMode(rawValue: UInt32(ENABLE_QUICK_EDIT_MODE))
 
         /// Enable virtual terminal input sequences.
-        public static let enableVirtualTerminalInput = InputMode(rawValue: DWORD(ENABLE_VIRTUAL_TERMINAL_INPUT))
+        public static let enableVirtualTerminalInput = InputMode(rawValue: UInt32(ENABLE_VIRTUAL_TERMINAL_INPUT))
 
         /// Default console input mode.
         public static let `default`: InputMode = [.enableLineInput, .enableEchoInput, .enableProcessedInput]
@@ -98,23 +98,23 @@ extension Windows.Kernel.Console {
 
     /// Console output mode flags.
     public struct OutputMode: OptionSet, Sendable {
-        public let rawValue: DWORD
+        public let rawValue: UInt32
 
-        public init(rawValue: DWORD) {
+        public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
 
         /// Process control characters (\n, \t, etc.).
-        public static let enableProcessedOutput = OutputMode(rawValue: DWORD(ENABLE_PROCESSED_OUTPUT))
+        public static let enableProcessedOutput = OutputMode(rawValue: UInt32(ENABLE_PROCESSED_OUTPUT))
 
         /// Wrap at end of line.
-        public static let enableWrapAtEolOutput = OutputMode(rawValue: DWORD(ENABLE_WRAP_AT_EOL_OUTPUT))
+        public static let enableWrapAtEolOutput = OutputMode(rawValue: UInt32(ENABLE_WRAP_AT_EOL_OUTPUT))
 
         /// Enable virtual terminal processing (ANSI escape sequences).
-        public static let enableVirtualTerminalProcessing = OutputMode(rawValue: DWORD(ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+        public static let enableVirtualTerminalProcessing = OutputMode(rawValue: UInt32(ENABLE_VIRTUAL_TERMINAL_PROCESSING))
 
         /// Disable newline auto-return.
-        public static let disableNewlineAutoReturn = OutputMode(rawValue: DWORD(DISABLE_NEWLINE_AUTO_RETURN))
+        public static let disableNewlineAutoReturn = OutputMode(rawValue: UInt32(DISABLE_NEWLINE_AUTO_RETURN))
 
         /// Default console output mode.
         public static let `default`: OutputMode = [.enableProcessedOutput, .enableWrapAtEolOutput]
@@ -131,7 +131,7 @@ extension Windows.Kernel.Console {
     public static func getInputMode(_ handle: HANDLE) -> InputMode? {
         var mode: DWORD = 0
         guard GetConsoleMode(handle, &mode) else { return nil }
-        return InputMode(rawValue: mode)
+        return InputMode(rawValue: UInt32(mode))
     }
 
     /// Sets the console input mode.
@@ -143,7 +143,7 @@ extension Windows.Kernel.Console {
     @inlinable
     @discardableResult
     public static func setInputMode(_ handle: HANDLE, mode: InputMode) -> Bool {
-        SetConsoleMode(handle, mode.rawValue)
+        SetConsoleMode(handle, DWORD(mode.rawValue))
     }
 
     /// Gets the current console output mode.
@@ -154,7 +154,7 @@ extension Windows.Kernel.Console {
     public static func getOutputMode(_ handle: HANDLE) -> OutputMode? {
         var mode: DWORD = 0
         guard GetConsoleMode(handle, &mode) else { return nil }
-        return OutputMode(rawValue: mode)
+        return OutputMode(rawValue: UInt32(mode))
     }
 
     /// Sets the console output mode.
@@ -166,7 +166,7 @@ extension Windows.Kernel.Console {
     @inlinable
     @discardableResult
     public static func setOutputMode(_ handle: HANDLE, mode: OutputMode) -> Bool {
-        SetConsoleMode(handle, mode.rawValue)
+        SetConsoleMode(handle, DWORD(mode.rawValue))
     }
 }
 

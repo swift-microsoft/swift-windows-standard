@@ -147,29 +147,29 @@ extension Windows.Kernel.Memory.Shared {
 extension Windows.Kernel.Memory.Shared {
     /// Shared memory access flags.
     public struct Access: OptionSet, Sendable {
-        public let rawValue: DWORD
+        public let rawValue: UInt32
 
-        public init(rawValue: DWORD) {
+        public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
 
         /// Read access.
-        public static let read = Access(rawValue: DWORD(FILE_MAP_READ))
+        public static let read = Access(rawValue: UInt32(FILE_MAP_READ))
 
         /// Write access.
-        public static let write = Access(rawValue: DWORD(FILE_MAP_WRITE))
+        public static let write = Access(rawValue: UInt32(FILE_MAP_WRITE))
 
         /// Read and write access.
         public static let readWrite: Access = [.read, .write]
 
         /// All access (read, write, copy).
-        public static let all = Access(rawValue: DWORD(FILE_MAP_ALL_ACCESS))
+        public static let all = Access(rawValue: UInt32(FILE_MAP_ALL_ACCESS))
 
         /// Copy-on-write access.
-        public static let copy = Access(rawValue: DWORD(FILE_MAP_COPY))
+        public static let copy = Access(rawValue: UInt32(FILE_MAP_COPY))
 
         /// Execute access (requires PAGE_EXECUTE_* protection).
-        public static let execute = Access(rawValue: DWORD(FILE_MAP_EXECUTE))
+        public static let execute = Access(rawValue: UInt32(FILE_MAP_EXECUTE))
     }
 }
 

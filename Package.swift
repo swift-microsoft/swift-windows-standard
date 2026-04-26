@@ -116,6 +116,12 @@ let package = Package(
                 .product(name: "Kernel Primitives Core", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Memory Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Permission Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
             ]
         ),
 

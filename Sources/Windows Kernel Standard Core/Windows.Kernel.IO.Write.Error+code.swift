@@ -1,0 +1,60 @@
+// ===----------------------------------------------------------------------===//
+//
+// This source file is part of the swift-windows-standard open source project
+//
+// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows-standard project authors
+// Licensed under Apache License v2.0
+//
+// See LICENSE for license information
+//
+// ===----------------------------------------------------------------------===//
+
+#if os(Windows)
+
+// MARK: - Windows Error Code Access
+
+extension Kernel.IO.Write.Error {
+    /// The underlying Windows error code.
+    @inlinable
+    public var code: Kernel.Error.Code {
+        switch self {
+        case .handle(let e): return e.code
+        case .blocking: return .Windows.ERROR_NOT_SUPPORTED
+        case .io(let e): return e.code
+        case .space(let e): return e.code
+        case .memory(let e): return e.code
+        case .platform(let e): return e.code
+        }
+    }
+}
+
+// MARK: - Windows Error Code Mapping
+
+extension Kernel.IO.Write.Error {
+    /// Creates an error from a Windows error code.
+    @usableFromInline
+    internal init(code: Kernel.Error.Code) {
+        if let e = Kernel.Descriptor.Validity.Error(code: code) {
+            self = .handle(e)
+            return
+        }
+        if let e = Kernel.IO.Blocking.Error(code: code) {
+            self = .blocking(e)
+            return
+        }
+        if let e = Kernel.IO.Error(code: code) {
+            self = .io(e)
+            return
+        }
+        if let e = Kernel.Storage.Error(code: code) {
+            self = .space(e)
+            return
+        }
+        if let e = Kernel.Memory.Error(code: code) {
+            self = .memory(e)
+            return
+        }
+        self = .platform(Kernel.Error(code: code))
+    }
+}
+#endif

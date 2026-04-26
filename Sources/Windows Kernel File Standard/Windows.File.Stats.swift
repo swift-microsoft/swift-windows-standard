@@ -134,6 +134,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     /// - Parameter path: The path as a wide string.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+    @_spi(Syscall)
     public static func get(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
         let handle = CreateFileW(
             path,
@@ -172,6 +173,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     /// - Parameter path: The path as a wide string.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+    @_spi(Syscall)
     public static func lget(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
         let handle = CreateFileW(
             path,

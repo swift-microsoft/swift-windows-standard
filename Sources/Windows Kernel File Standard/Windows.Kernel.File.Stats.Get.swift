@@ -159,6 +159,7 @@ extension Windows.Kernel.File {
     ///
     /// - Parameter path: The path as a null-terminated wide string.
     /// - Returns: True if the path exists, false otherwise.
+    @_spi(Syscall)
     @inlinable
     public static func exists(path: UnsafePointer<WCHAR>) -> Bool {
         GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES

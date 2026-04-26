@@ -120,14 +120,14 @@
         ///
         /// - Parameters:
         ///   - port: The port handle.
-        ///   - timeout: Timeout in milliseconds (`INFINITE` = 0xFFFFFFFF).
+        ///   - timeout: Timeout in milliseconds (`Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
         /// - Returns: The dequeued completion item.
         /// - Throws: `.timeout` on timeout, `.dequeue` only on actual port failure.
         ///   Operation failures are returned via `Item.status`.
         @inlinable
         public static func single(
             _ port: Kernel.Descriptor,
-            timeout: DWORD
+            timeout: UInt32
         ) throws(Kernel.IO.Completion.Port.Error) -> Item {
             var bytes: DWORD = 0
             var key: ULONG_PTR = 0
@@ -138,7 +138,7 @@
                 &bytes,
                 &key,
                 &overlapped,
-                timeout
+                DWORD(timeout)
             )
 
             // Helper to convert raw pointer to Swift wrapper pointer
@@ -198,7 +198,7 @@
         public static func batch(
             _ port: Kernel.Descriptor,
             entries: UnsafeMutableBufferPointer<Kernel.IO.Completion.Port.Entry>,
-            timeout: DWORD
+            timeout: UInt32
         ) throws(Kernel.IO.Completion.Port.Error) -> Int {
             guard let base = unsafe entries.baseAddress else { return 0 }
 
@@ -213,7 +213,7 @@
                 rawBase,
                 ULONG(entries.count),
                 &removed,
-                timeout,
+                DWORD(timeout),
                 false  // Not alertable
             )
 

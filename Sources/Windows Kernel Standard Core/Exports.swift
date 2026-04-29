@@ -6,5 +6,4 @@
 @_spi(Syscall) @_exported public import Kernel_IO_Primitives
 @_spi(Syscall) @_exported public import Memory_Primitives
 @_spi(Syscall) @_exported public import Path_Primitives
-@_spi(Syscall) @_exported public import Kernel_Permission_Primitives
 @_spi(Syscall) @_exported public import Kernel_Socket_Primitives

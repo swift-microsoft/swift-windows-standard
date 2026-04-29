@@ -122,7 +122,6 @@ let package = Package(
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
-                .product(name: "Kernel Permission Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
             ]
         ),
@@ -226,7 +225,6 @@ let package = Package(
             name: "Windows Kernel Thread Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Thread Primitives", package: "swift-kernel-primitives"),
             ]
         ),
 

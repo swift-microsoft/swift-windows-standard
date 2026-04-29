@@ -16,7 +16,6 @@ internal import Error_Primitives
 internal import Kernel_File_Primitives
 internal import Path_Primitives
 internal import Kernel_IO_Primitives
-internal import Kernel_Thread_Primitives
 internal import Kernel_Time_Primitives
 internal import Random_Primitives
 internal import Kernel_Environment_Primitives

@@ -11,7 +11,6 @@
 
 #if os(Windows)
 
-public import Kernel_Thread_Primitives
 internal import WinSDK
 
 // MARK: - Set Mask

@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Memory Map Flags
 
-extension Kernel.Memory.Map.Flags {
+extension Memory.Map.Flags {
     /// Shares modifications with other processes mapping the same file.
     ///
     /// On Windows, this is the default behavior for file mappings.
@@ -37,7 +37,7 @@ extension Kernel.Memory.Map.Flags {
 
 // MARK: - Windows Flags Queries
 
-extension Kernel.Memory.Map.Flags {
+extension Memory.Map.Flags {
     /// Returns true if this is an anonymous (no file) mapping.
     @usableFromInline
     internal var isAnonymous: Bool {

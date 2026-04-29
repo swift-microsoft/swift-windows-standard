@@ -13,7 +13,7 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 
 // MARK: - Windows Memory Advice Constants
 //
@@ -21,7 +21,7 @@
 // These constants are provided for API compatibility but the
 // advise() function is a no-op on Windows.
 
-extension Kernel.Memory.Map.Advice {
+extension Memory.Map.Advice {
     /// Normal access pattern (no-op on Windows).
     public static var normal: Self {
         Self(rawValue: 0)

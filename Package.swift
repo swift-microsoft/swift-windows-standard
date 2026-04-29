@@ -90,6 +90,7 @@ let package = Package(
     ],
     dependencies: [
         .package(path: "../../swift-primitives/swift-kernel-primitives"),
+        .package(path: "../../swift-primitives/swift-memory-primitives"),
         .package(path: "../../swift-primitives/swift-clock-primitives"),
         .package(path: "../../swift-primitives/swift-loader-primitives"),
         .package(path: "../../swift-primitives/swift-sequence-primitives"),
@@ -120,7 +121,7 @@ let package = Package(
                 .product(name: "Error Primitives", package: "swift-error-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Memory Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
                 .product(name: "Kernel Permission Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
@@ -192,7 +193,7 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard Core",
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Memory Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Memory Primitives", package: "swift-memory-primitives"),
             ]
         ),
 

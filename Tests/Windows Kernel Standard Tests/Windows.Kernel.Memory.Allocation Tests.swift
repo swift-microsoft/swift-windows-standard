@@ -17,9 +17,9 @@ import Testing
 import Kernel_Descriptor_Primitives
 import Error_Primitives
 import Kernel_File_Primitives
-import Kernel_Memory_Primitives
+import Memory_Primitives
 
-extension Windows.Kernel.Memory.Allocation {
+extension Memory.Allocation {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -30,30 +30,30 @@ extension Windows.Kernel.Memory.Allocation {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Memory.Allocation.Test.Unit {
+extension Memory.Allocation.Test.Unit {
     @Test
     func `Memory.Allocation namespace exists`() {
-        _ = Windows.Kernel.Memory.Allocation.self
+        _ = Memory.Allocation.self
     }
 
     @Test
     func `Memory.Allocation.Error type exists`() {
-        _ = Windows.Kernel.Memory.Allocation.Error.self
+        _ = Memory.Allocation.Error.self
     }
 }
 
 // MARK: - System Info Tests
 
-extension Windows.Kernel.Memory.Allocation.Test.Unit {
+extension Memory.Allocation.Test.Unit {
     @Test
     func `systemPageSize returns non-zero`() {
-        let pageSize = Windows.Kernel.Memory.Allocation.systemPageSize()
+        let pageSize = Memory.Allocation.systemPageSize()
         #expect(pageSize > 0)
     }
 
     @Test
     func `systemPageSize is typically 4096`() {
-        let pageSize = Windows.Kernel.Memory.Allocation.systemPageSize()
+        let pageSize = Memory.Allocation.systemPageSize()
         // Common page sizes are 4096 or 8192
         #expect(pageSize >= 4096)
         #expect(pageSize <= 65536)  // Reasonable upper bound
@@ -61,18 +61,18 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
 
     @Test
     func `system granularity exists`() {
-        let granularity = Windows.Kernel.Memory.Allocation.system
+        let granularity = Memory.Allocation.system
         #expect(granularity.rawValue > 0)
     }
 }
 
 // MARK: - Allocation Tests
 
-extension Windows.Kernel.Memory.Allocation.Test.Unit {
+extension Memory.Allocation.Test.Unit {
     @Test
     func `allocate with zero size throws invalidSize`() {
-        #expect(throws: Windows.Kernel.Memory.Allocation.Error.self) {
-            _ = try Windows.Kernel.Memory.Allocation.allocate(
+        #expect(throws: Memory.Allocation.Error.self) {
+            _ = try Memory.Allocation.allocate(
                 size: 0,
                 protection: .readWrite
             )
@@ -81,60 +81,60 @@ extension Windows.Kernel.Memory.Allocation.Test.Unit {
 
     @Test
     func `allocate with valid size succeeds`() throws {
-        let pageSize = Int(Windows.Kernel.Memory.Allocation.systemPageSize())
-        let addr = try Windows.Kernel.Memory.Allocation.allocate(
+        let pageSize = Int(Memory.Allocation.systemPageSize())
+        let addr = try Memory.Allocation.allocate(
             size: pageSize,
             protection: .readWrite
         )
 
         // Cleanup
-        try Windows.Kernel.Memory.Allocation.free(addr: addr)
+        try Memory.Allocation.free(addr: addr)
     }
 
     @Test
     func `allocate and free round-trip`() throws {
-        let pageSize = Int(Windows.Kernel.Memory.Allocation.systemPageSize())
+        let pageSize = Int(Memory.Allocation.systemPageSize())
 
         for _ in 0..<10 {
-            let addr = try Windows.Kernel.Memory.Allocation.allocate(
+            let addr = try Memory.Allocation.allocate(
                 size: pageSize,
                 protection: .readWrite
             )
-            try Windows.Kernel.Memory.Allocation.free(addr: addr)
+            try Memory.Allocation.free(addr: addr)
         }
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Memory.Allocation.Test.Unit {
+extension Memory.Allocation.Test.Unit {
     @Test
     func `Error.invalidSize exists`() {
-        let error = Windows.Kernel.Memory.Allocation.Error.invalidSize
+        let error = Memory.Allocation.Error.invalidSize
         #expect(error == .invalidSize)
     }
 
     @Test
     func `Error.alignmentNotSupported exists`() {
-        let error = Windows.Kernel.Memory.Allocation.Error.alignmentNotSupported
+        let error = Memory.Allocation.Error.alignmentNotSupported
         #expect(error == .alignmentNotSupported)
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Memory.Allocation.Test.EdgeCase {
+extension Memory.Allocation.Test.EdgeCase {
     @Test
     func `allocate large size`() throws {
         // Allocate 1MB
         let size = 1024 * 1024
-        let addr = try Windows.Kernel.Memory.Allocation.allocate(
+        let addr = try Memory.Allocation.allocate(
             size: size,
             protection: .readWrite
         )
 
         // Cleanup
-        try Windows.Kernel.Memory.Allocation.free(addr: addr)
+        try Memory.Allocation.free(addr: addr)
     }
 }
 

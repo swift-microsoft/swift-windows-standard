@@ -17,9 +17,9 @@ import Testing
 import Kernel_Descriptor_Primitives
 import Error_Primitives
 import Kernel_File_Primitives
-import Kernel_Memory_Primitives
+import Memory_Primitives
 
-extension Windows.Kernel.Memory.Lock {
+extension Memory.Lock {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -30,31 +30,31 @@ extension Windows.Kernel.Memory.Lock {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Memory.Lock.Test.Unit {
+extension Memory.Lock.Test.Unit {
     @Test
     func `Memory.Lock namespace exists`() {
-        _ = Windows.Kernel.Memory.Lock.self
+        _ = Memory.Lock.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Memory.Lock.Test.Unit {
+extension Memory.Lock.Test.Unit {
     @Test
     func `Error type exists`() {
-        _ = Kernel.Memory.Lock.Error.self
+        _ = Memory.Lock.Error.self
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Memory.Lock.Test.EdgeCase {
+extension Memory.Lock.Test.EdgeCase {
     @Test
     func `lock with invalid address throws`() {
         // This test verifies the function signature exists
         // Actual locking with invalid addresses is undefined behavior
-        _ = Windows.Kernel.Memory.Lock.lock
-        _ = Windows.Kernel.Memory.Lock.unlock
+        _ = Memory.Lock.lock
+        _ = Memory.Lock.unlock
     }
 }
 

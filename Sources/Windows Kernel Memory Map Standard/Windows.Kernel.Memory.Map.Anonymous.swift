@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Anonymous Memory Mapping
 
-extension Windows.Kernel.Memory.Map.Anonymous {
+extension Memory.Map.Anonymous {
     /// Creates an anonymous memory mapping.
     ///
     /// Anonymous mappings are not backed by any file. They are initialized to zero.
@@ -28,28 +28,28 @@ extension Windows.Kernel.Memory.Map.Anonymous {
     ///   - length: Number of bytes to map (must be > 0).
     ///   - protection: Memory protection flags (default: read/write).
     /// - Returns: A region describing the mapped memory.
-    /// - Throws: `Kernel.Memory.Map.Error` on failure.
+    /// - Throws: `Memory.Map.Error` on failure.
     ///
     /// ## Example
     ///
     /// ```swift
     /// // Create an anonymous mapping
-    /// let region = try Kernel.Memory.Map.Anonymous.map(length: 4096)
-    /// defer { try? Windows.Kernel.Memory.Map.unmap(addr: region.base, length: region.length, isAnonymous: true) }
+    /// let region = try Memory.Map.Anonymous.map(length: 4096)
+    /// defer { try? Memory.Map.unmap(addr: region.base, length: region.length, isAnonymous: true) }
     ///
     /// // Write to the memory
     /// region.base.mutablePointer.storeBytes(of: 42, as: Int.self)
     /// ```
     public static func map(
         length: Kernel.File.Size,
-        protection: Kernel.Memory.Map.Protection = [.read, .write]
-    ) throws(Kernel.Memory.Map.Error) -> Kernel.Memory.Map.Region {
-        let addr = try Windows.Kernel.Memory.Map.mapAnonymous(
+        protection: Memory.Map.Protection = [.read, .write]
+    ) throws(Memory.Map.Error) -> Memory.Map.Region {
+        let addr = try Memory.Map.mapAnonymous(
             length: length,
             protection: protection
         )
 
-        return Kernel.Memory.Map.Region(base: addr, length: length)
+        return Memory.Map.Region(base: addr, length: length)
     }
 
     /// Creates an anonymous memory mapping at a specific address.
@@ -59,19 +59,19 @@ extension Windows.Kernel.Memory.Map.Anonymous {
     ///   - length: Number of bytes to map.
     ///   - protection: Memory protection flags.
     /// - Returns: A region describing the mapped memory.
-    /// - Throws: `Kernel.Memory.Map.Error` on failure.
+    /// - Throws: `Memory.Map.Error` on failure.
     public static func map(
-        addr: Kernel.Memory.Address,
+        addr: Memory.Address,
         length: Kernel.File.Size,
-        protection: Kernel.Memory.Map.Protection
-    ) throws(Kernel.Memory.Map.Error) -> Kernel.Memory.Map.Region {
-        let mappedAddr = try Windows.Kernel.Memory.Map.mapAnonymous(
+        protection: Memory.Map.Protection
+    ) throws(Memory.Map.Error) -> Memory.Map.Region {
+        let mappedAddr = try Memory.Map.mapAnonymous(
             addr: addr,
             length: length,
             protection: protection
         )
 
-        return Kernel.Memory.Map.Region(base: mappedAddr, length: length)
+        return Memory.Map.Region(base: mappedAddr, length: length)
     }
 }
 

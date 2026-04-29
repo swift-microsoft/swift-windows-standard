@@ -11,7 +11,7 @@
 
 public import Windows_Standard_Core
 
-extension Windows_Standard_Core.Windows.Memory {
+extension Windows_Standard_Core.Memory {
     /// Allocation namespace for Windows memory allocation tracking.
     public enum Allocation: Sendable {}
 }

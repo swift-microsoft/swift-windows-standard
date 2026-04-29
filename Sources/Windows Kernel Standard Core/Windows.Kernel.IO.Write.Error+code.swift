@@ -50,7 +50,7 @@ extension Kernel.IO.Write.Error {
             self = .space(e)
             return
         }
-        if let e = Kernel.Memory.Error(code: code) {
+        if let e = Memory.Error(code: code) {
             self = .memory(e)
             return
         }

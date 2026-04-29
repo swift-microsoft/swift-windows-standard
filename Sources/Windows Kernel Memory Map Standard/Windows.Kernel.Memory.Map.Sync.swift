@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Memory Map Sync
 
-extension Windows.Kernel.Memory.Map {
+extension Memory.Map {
     /// Flushes a range of a mapped view to disk.
     ///
     /// This is the Windows equivalent of POSIX `msync()`.
@@ -26,11 +26,11 @@ extension Windows.Kernel.Memory.Map {
     /// - Parameters:
     ///   - address: Start address of the range to flush.
     ///   - size: Number of bytes to flush. If 0, flushes from address to end of mapping.
-    /// - Throws: `Kernel.Memory.Map.Error` on failure.
+    /// - Throws: `Memory.Map.Error` on failure.
     public static func sync(
-        _ address: Kernel.Memory.Address,
+        _ address: Memory.Address,
         size: Int
-    ) throws(Kernel.Memory.Map.Error) {
+    ) throws(Memory.Map.Error) {
         guard unsafe FlushViewOfFile(address.pointer, SIZE_T(size)) else {
             throw .sync(Error_Primitives.Error.captureLastError())
         }
@@ -39,10 +39,10 @@ extension Windows.Kernel.Memory.Map {
     /// Flushes an entire mapped view to disk.
     ///
     /// - Parameter buffer: The mapped buffer to flush.
-    /// - Throws: `Kernel.Memory.Map.Error` on failure.
+    /// - Throws: `Memory.Map.Error` on failure.
     public static func sync(
         _ buffer: UnsafeRawBufferPointer
-    ) throws(Kernel.Memory.Map.Error) {
+    ) throws(Memory.Map.Error) {
         guard let baseAddress = buffer.baseAddress else { return }
         guard unsafe FlushViewOfFile(baseAddress, SIZE_T(buffer.count)) else {
             throw .sync(Error_Primitives.Error.captureLastError())
@@ -52,10 +52,10 @@ extension Windows.Kernel.Memory.Map {
     /// Flushes a mutable mapped view to disk.
     ///
     /// - Parameter buffer: The mapped buffer to flush.
-    /// - Throws: `Kernel.Memory.Map.Error` on failure.
+    /// - Throws: `Memory.Map.Error` on failure.
     public static func sync(
         _ buffer: UnsafeMutableRawBufferPointer
-    ) throws(Kernel.Memory.Map.Error) {
+    ) throws(Memory.Map.Error) {
         guard let baseAddress = buffer.baseAddress else { return }
         guard unsafe FlushViewOfFile(baseAddress, SIZE_T(buffer.count)) else {
             throw .sync(Error_Primitives.Error.captureLastError())
@@ -65,7 +65,7 @@ extension Windows.Kernel.Memory.Map {
 
 // MARK: - Sync Error Extension
 
-extension Kernel.Memory.Map.Error {
+extension Memory.Map.Error {
     /// Creates an error from a sync failure.
     static func sync(_ code: Error_Primitives.Error.Code) -> Self {
         Self(code: code)

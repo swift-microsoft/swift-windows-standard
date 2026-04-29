@@ -29,7 +29,7 @@ extension Kernel.File.System.Stats.Error {
             self = .permission(e)
             return
         }
-        if let e = Kernel.Memory.Error(code: code) {
+        if let e = Memory.Error(code: code) {
             self = .memory(e)
             return
         }

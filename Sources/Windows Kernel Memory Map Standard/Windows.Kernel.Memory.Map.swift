@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Memory Mapping (raw @_spi(Syscall))
 
-extension Windows.Kernel.Memory.Map {
+extension Memory.Map {
     /// Maps a file into the process address space via HANDLE bit pattern.
     ///
     /// Spec-literal raw `CreateFileMappingW + MapViewOfFile`. The typed L2
@@ -45,7 +45,7 @@ extension Windows.Kernel.Memory.Map {
         protection: Protection,
         flags: Flags,
         offset: Kernel.File.Offset = .zero
-    ) throws(Kernel.Memory.Map.Error) -> Kernel.Memory.Address {
+    ) throws(Memory.Map.Error) -> Memory.Address {
         guard length.isPositive else {
             throw .invalid(.length)
         }
@@ -82,7 +82,7 @@ extension Windows.Kernel.Memory.Map {
             throw .map(Error_Primitives.Error.captureLastError())
         }
 
-        return unsafe Kernel.Memory.Address(baseAddress)
+        return unsafe Memory.Address(baseAddress)
     }
 
     /// Maps a file into the process address space.
@@ -104,7 +104,7 @@ extension Windows.Kernel.Memory.Map {
         protection: Protection,
         flags: Flags,
         offset: Kernel.File.Offset = .zero
-    ) throws(Kernel.Memory.Map.Error) -> Kernel.Memory.Address {
+    ) throws(Memory.Map.Error) -> Memory.Address {
         try map(
             fd: fd._rawValue,
             length: length,
@@ -125,10 +125,10 @@ extension Windows.Kernel.Memory.Map {
     /// - Returns: Pointer to the mapped region.
     /// - Throws: `Error.map` on failure.
     public static func mapAnonymous(
-        addr: Kernel.Memory.Address? = nil,
+        addr: Memory.Address? = nil,
         length: Kernel.File.Size,
         protection: Protection
-    ) throws(Kernel.Memory.Map.Error) -> Kernel.Memory.Address {
+    ) throws(Memory.Map.Error) -> Memory.Address {
         guard length.isPositive else {
             throw .invalid(.length)
         }
@@ -145,7 +145,7 @@ extension Windows.Kernel.Memory.Map {
             throw .map(Error_Primitives.Error.captureLastError())
         }
 
-        return unsafe Kernel.Memory.Address(result)
+        return unsafe Memory.Address(result)
     }
 
     /// Unmaps a previously mapped region.
@@ -156,10 +156,10 @@ extension Windows.Kernel.Memory.Map {
     ///   - isAnonymous: True if this was an anonymous mapping (VirtualAlloc).
     /// - Throws: `Error.unmap` on failure.
     public static func unmap(
-        addr: Kernel.Memory.Address,
+        addr: Memory.Address,
         length: Kernel.File.Size,
         isAnonymous: Bool = false
-    ) throws(Kernel.Memory.Map.Error) {
+    ) throws(Memory.Map.Error) {
         let success: Bool
         if isAnonymous {
             success = unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE))
@@ -179,9 +179,9 @@ extension Windows.Kernel.Memory.Map {
     ///   - length: The length of the region.
     /// - Throws: `Error.sync` on failure.
     public static func sync(
-        addr: Kernel.Memory.Address,
+        addr: Memory.Address,
         length: Kernel.File.Size
-    ) throws(Kernel.Memory.Map.Error) {
+    ) throws(Memory.Map.Error) {
         guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.rawValue)) else {
             throw .sync(Error_Primitives.Error.captureLastError())
         }
@@ -195,10 +195,10 @@ extension Windows.Kernel.Memory.Map {
     ///   - protection: The new protection flags.
     /// - Throws: `Error.protect` on failure.
     public static func protect(
-        addr: Kernel.Memory.Address,
+        addr: Memory.Address,
         length: Kernel.File.Size,
         protection: Protection
-    ) throws(Kernel.Memory.Map.Error) {
+    ) throws(Memory.Map.Error) {
         var oldProtect: DWORD = 0
         guard unsafe VirtualProtect(
             addr.mutablePointer,

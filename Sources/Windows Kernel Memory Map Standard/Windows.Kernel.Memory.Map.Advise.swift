@@ -13,14 +13,14 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 
 // MARK: - Windows Memory Advise (No-Op)
 //
 // Windows does not have an equivalent to POSIX madvise().
 // These functions are provided for API compatibility and are no-ops.
 
-extension Kernel.Memory.Map {
+extension Memory.Map {
     /// Advises the kernel about expected memory access patterns.
     ///
     /// On Windows, this is a no-op since there is no equivalent to `madvise(2)`.
@@ -34,7 +34,7 @@ extension Kernel.Memory.Map {
     public static func advise(
         addr: UnsafeMutableRawPointer,
         length: Kernel.File.Size,
-        advice: Kernel.Memory.Map.Advice
+        advice: Memory.Map.Advice
     ) {
         // No-op on Windows
     }
@@ -51,7 +51,7 @@ extension Kernel.Memory.Map {
     public static func advise(
         addr: UnsafeRawPointer,
         length: Kernel.File.Size,
-        advice: Kernel.Memory.Map.Advice
+        advice: Memory.Map.Advice
     ) {
         // No-op on Windows
     }

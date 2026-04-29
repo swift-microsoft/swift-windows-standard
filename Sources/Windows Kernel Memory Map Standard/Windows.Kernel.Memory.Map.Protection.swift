@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Memory Protection Constants
 
-extension Kernel.Memory.Map.Protection {
+extension Memory.Map.Protection {
     /// Permits reading from mapped pages.
     public static let read = Self(rawValue: 1)
 
@@ -37,7 +37,7 @@ extension Kernel.Memory.Map.Protection {
 
 // MARK: - Windows Protection Conversion
 
-extension Kernel.Memory.Map.Protection {
+extension Memory.Map.Protection {
     /// Converts to Windows VirtualAlloc/VirtualProtect protection flags.
     @usableFromInline
     internal var windowsVirtualProtect: DWORD {

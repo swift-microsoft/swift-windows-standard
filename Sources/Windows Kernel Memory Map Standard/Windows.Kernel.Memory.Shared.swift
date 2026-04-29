@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Shared Memory
 
-extension Windows.Kernel.Memory {
+extension Memory {
     /// Namespace for shared memory operations.
     ///
     /// Windows shared memory is implemented using named file mappings backed
@@ -28,7 +28,7 @@ extension Windows.Kernel.Memory {
 
 // MARK: - Create/Open Shared Memory
 
-extension Windows.Kernel.Memory.Shared {
+extension Memory.Shared {
     /// Creates or opens a named shared memory object.
     ///
     /// This creates a file mapping backed by the system paging file,
@@ -39,12 +39,12 @@ extension Windows.Kernel.Memory.Shared {
     ///   - size: The size of the shared memory region in bytes.
     ///   - protection: Memory protection flags.
     /// - Returns: Handle to the file mapping object.
-    /// - Throws: `Kernel.Memory.Error` on failure.
+    /// - Throws: `Memory.Error` on failure.
     public static func create(
         name: UnsafePointer<WCHAR>,
         size: UInt64,
-        protection: Windows.Kernel.Memory.Map.Protection = .readWrite
-    ) throws(Kernel.Memory.Error) -> HANDLE {
+        protection: Memory.Map.Protection = .readWrite
+    ) throws(Memory.Error) -> HANDLE {
         let sizeHigh = DWORD(size >> 32)
         let sizeLow = DWORD(size & 0xFFFFFFFF)
 
@@ -70,11 +70,11 @@ extension Windows.Kernel.Memory.Shared {
     ///   - name: The name of the shared memory object.
     ///   - access: Desired access (FILE_MAP_READ, FILE_MAP_WRITE, FILE_MAP_ALL_ACCESS).
     /// - Returns: Handle to the file mapping object.
-    /// - Throws: `Kernel.Memory.Error` on failure.
+    /// - Throws: `Memory.Error` on failure.
     public static func open(
         name: UnsafePointer<WCHAR>,
         access: DWORD = DWORD(FILE_MAP_ALL_ACCESS)
-    ) throws(Kernel.Memory.Error) -> HANDLE {
+    ) throws(Memory.Error) -> HANDLE {
         let handle = OpenFileMappingW(
             access,
             false,  // Don't inherit handle
@@ -99,7 +99,7 @@ extension Windows.Kernel.Memory.Shared {
 
 // MARK: - Map/Unmap Shared Memory
 
-extension Windows.Kernel.Memory.Shared {
+extension Memory.Shared {
     /// Maps a view of the shared memory into the process address space.
     ///
     /// - Parameters:
@@ -108,13 +108,13 @@ extension Windows.Kernel.Memory.Shared {
     ///   - offset: Offset into the shared memory to start the view.
     ///   - size: Size of the view (0 for entire mapping from offset).
     /// - Returns: Pointer to the mapped view.
-    /// - Throws: `Kernel.Memory.Error` on failure.
+    /// - Throws: `Memory.Error` on failure.
     public static func map(
         _ handle: HANDLE,
         access: DWORD = DWORD(FILE_MAP_ALL_ACCESS),
         offset: UInt64 = 0,
         size: Int = 0
-    ) throws(Kernel.Memory.Error) -> UnsafeMutableRawPointer {
+    ) throws(Memory.Error) -> UnsafeMutableRawPointer {
         let offsetHigh = DWORD(offset >> 32)
         let offsetLow = DWORD(offset & 0xFFFFFFFF)
 
@@ -144,7 +144,7 @@ extension Windows.Kernel.Memory.Shared {
 
 // MARK: - Access Flags
 
-extension Windows.Kernel.Memory.Shared {
+extension Memory.Shared {
     /// Shared memory access flags.
     public struct Access: OptionSet, Sendable {
         public let rawValue: UInt32
@@ -175,7 +175,7 @@ extension Windows.Kernel.Memory.Shared {
 
 // MARK: - Error Extension
 
-extension Kernel.Memory.Map.Error {
+extension Memory.Map.Error {
     /// Error from file mapping creation.
     static func create(_ code: Error_Primitives.Error.Code) -> Self {
         Self(code: code)

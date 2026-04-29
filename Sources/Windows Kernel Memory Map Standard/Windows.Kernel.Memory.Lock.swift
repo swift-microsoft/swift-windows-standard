@@ -13,12 +13,12 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Memory Locking
 
-extension Windows.Kernel.Memory.Lock {
+extension Memory.Lock {
     /// Locks a region of memory into physical RAM.
     ///
     /// Prevents the system from paging out the memory to disk.
@@ -27,12 +27,12 @@ extension Windows.Kernel.Memory.Lock {
     /// - Parameters:
     ///   - address: The base address of the region.
     ///   - length: The number of bytes to lock.
-    /// - Throws: `Kernel.Memory.Lock.Error` on failure.
+    /// - Throws: `Memory.Lock.Error` on failure.
     @unsafe
     public static func lock(
         address: UnsafeRawPointer,
         length: Kernel.File.Size
-    ) throws(Kernel.Memory.Lock.Error) {
+    ) throws(Memory.Lock.Error) {
         guard VirtualLock(UnsafeMutableRawPointer(mutating: address), SIZE_T(length.rawValue)) else {
             throw .lock(Error_Primitives.Error.captureLastError())
         }
@@ -46,12 +46,12 @@ extension Windows.Kernel.Memory.Lock {
     /// - Parameters:
     ///   - address: The base address of the region.
     ///   - length: The number of bytes to unlock.
-    /// - Throws: `Kernel.Memory.Lock.Error` on failure.
+    /// - Throws: `Memory.Lock.Error` on failure.
     @unsafe
     public static func unlock(
         address: UnsafeRawPointer,
         length: Kernel.File.Size
-    ) throws(Kernel.Memory.Lock.Error) {
+    ) throws(Memory.Lock.Error) {
         guard VirtualUnlock(UnsafeMutableRawPointer(mutating: address), SIZE_T(length.rawValue)) else {
             throw .unlock(Error_Primitives.Error.captureLastError())
         }

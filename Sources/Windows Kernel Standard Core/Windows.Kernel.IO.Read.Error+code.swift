@@ -45,7 +45,7 @@ extension Kernel.IO.Read.Error {
             self = .io(e)
             return
         }
-        if let e = Kernel.Memory.Error(code: code) {
+        if let e = Memory.Error(code: code) {
             self = .memory(e)
             return
         }

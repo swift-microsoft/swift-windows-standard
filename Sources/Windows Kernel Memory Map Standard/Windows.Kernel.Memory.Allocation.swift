@@ -13,13 +13,13 @@
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
 @_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
-@_spi(Syscall) public import Kernel_Memory_Primitives
+@_spi(Syscall) public import Memory_Primitives
 public import WinSDK
 public import Binary_Primitives
 
 // MARK: - Windows Virtual Memory Allocation
 
-extension Windows.Kernel.Memory.Allocation {
+extension Memory.Allocation {
     /// Allocates virtual memory.
     ///
     /// - Parameters:
@@ -27,12 +27,12 @@ extension Windows.Kernel.Memory.Allocation {
     ///   - size: Number of bytes to allocate.
     ///   - protection: Memory protection flags.
     /// - Returns: Pointer to the allocated memory.
-    /// - Throws: `Kernel.Memory.Allocation.Error` on failure.
+    /// - Throws: `Memory.Allocation.Error` on failure.
     public static func allocate(
-        addr: Kernel.Memory.Address? = nil,
+        addr: Memory.Address? = nil,
         size: Int,
-        protection: Kernel.Memory.Map.Protection
-    ) throws(Error) -> Kernel.Memory.Address {
+        protection: Memory.Map.Protection
+    ) throws(Error) -> Memory.Address {
         guard size > 0 else {
             throw .invalidSize
         }
@@ -48,15 +48,15 @@ extension Windows.Kernel.Memory.Allocation {
             throw .current()
         }
 
-        return unsafe Kernel.Memory.Address(result)
+        return unsafe Memory.Address(result)
     }
 
     /// Frees virtual memory.
     ///
     /// - Parameter addr: The base address of the allocation.
-    /// - Throws: `Kernel.Memory.Allocation.Error` on failure.
+    /// - Throws: `Memory.Allocation.Error` on failure.
     public static func free(
-        addr: Kernel.Memory.Address
+        addr: Memory.Address
     ) throws(Error) {
         guard unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE)) else {
             throw .free(Error_Primitives.Error.captureLastError())
@@ -72,12 +72,12 @@ extension Windows.Kernel.Memory.Allocation {
     ///   - alignment: Required alignment (must be a power of 2).
     ///   - protection: Memory protection flags.
     /// - Returns: Pointer to the aligned memory.
-    /// - Throws: `Kernel.Memory.Allocation.Error` on failure.
+    /// - Throws: `Memory.Allocation.Error` on failure.
     public static func allocateAligned(
         size: Int,
         alignment: Int,
-        protection: Kernel.Memory.Map.Protection
-    ) throws(Error) -> Kernel.Memory.Address {
+        protection: Memory.Map.Protection
+    ) throws(Error) -> Memory.Address {
         // Windows VirtualAlloc returns page-aligned memory
         // For larger alignments, we need to allocate extra and align manually
         let pageSize = Int(systemPageSize())
@@ -120,18 +120,18 @@ extension Windows.Kernel.Memory.Allocation {
     ///
     /// On Windows, this is typically 64KB, larger than page size.
     /// Use this for memory mapping offset alignment.
-    public static var system: Kernel.Memory.Allocation.Granularity {
+    public static var system: Memory.Allocation.Granularity {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
         let granularity = Int(sysInfo.dwAllocationGranularity)
         // Safe: allocation granularity is always a power of 2
-        return Kernel.Memory.Allocation.Granularity(try! Memory.Alignment(granularity))
+        return Memory.Allocation.Granularity(try! Memory.Alignment(granularity))
     }
 }
 
 // MARK: - Error Type
 
-extension Windows.Kernel.Memory.Allocation {
+extension Memory.Allocation {
     /// Errors from memory allocation operations.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Invalid size requested.
@@ -153,7 +153,7 @@ extension Windows.Kernel.Memory.Allocation {
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Memory.Allocation.Error {
+extension Memory.Allocation.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

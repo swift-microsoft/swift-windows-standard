@@ -159,7 +159,6 @@ let package = Package(
             name: "Windows Kernel Environment Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Environment Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),

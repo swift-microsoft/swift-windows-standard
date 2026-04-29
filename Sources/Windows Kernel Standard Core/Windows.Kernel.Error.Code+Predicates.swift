@@ -13,8 +13,8 @@
 //
 // These accessors let consumers describe a failure condition in domain terms
 // (`isNotFound`, `isPermissionDenied`, …) instead of hand-switching between
-// `Kernel.Error.Code.Windows.*` and `Kernel.Error.Code.POSIX.*`. The POSIX
-// bodies live in `ISO 9945.Kernel.Error.Code+Predicates.swift` in
+// `Error_Primitives.Error.Code.Windows.*` and `Error_Primitives.Error.Code.POSIX.*`. The POSIX
+// bodies live in `ISO 9945.Error_Primitives.Error.Code+Predicates.swift` in
 // swift-iso-9945; each package contributes the branch that is correct for its
 // platform. Consumers see a single unified API via the re-export chain exposed
 // by `import Kernel`.
@@ -25,16 +25,16 @@
 // }
 // ```
 //
-// The `#if os(Windows)` guard mirrors the sibling `Windows.Kernel.Error.swift`
-// file in this target. The referenced `Kernel.Error.Code.Windows` namespace is
-// itself `#if os(Windows)`-scoped in `Kernel_Error_Primitives`, so the body
+// The `#if os(Windows)` guard mirrors the sibling `Error_Primitives.Error.swift`
+// file in this target. The referenced `Error_Primitives.Error.Code.Windows` namespace is
+// itself `#if os(Windows)`-scoped in `Error_Primitives`, so the body
 // can only type-check on Windows. This target has no SwiftPM platform
 // condition, so the guard is required for the non-Windows elision; it is NOT
 // an in-function platform switch.
 
 #if os(Windows)
 
-extension Kernel.Error.Code {
+extension Error_Primitives.Error.Code {
     /// Returns `true` if this error code indicates that a requested file or directory does not exist.
     ///
     /// Maps to `ERROR_FILE_NOT_FOUND` and `ERROR_PATH_NOT_FOUND` on Windows.

@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_IO_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
 public import WinSDK
@@ -58,7 +58,7 @@ extension Windows.Kernel.IO.Read {
         if !success {
             let error = GetLastError()
             // ERROR_HANDLE_EOF is not an error, just EOF
-            if error == Windows.Kernel.Error.Code.IO.handleEOF {
+            if error == Error_Primitives.Error.Code.IO.handleEOF {
                 return 0
             }
             throw .current()
@@ -126,7 +126,7 @@ extension Windows.Kernel.IO.Read {
 
         if !readSuccess {
             let error = GetLastError()
-            if error == Windows.Kernel.Error.Code.IO.handleEOF {
+            if error == Error_Primitives.Error.Code.IO.handleEOF {
                 return 0
             }
             throw .current()
@@ -241,7 +241,7 @@ extension Kernel.IO.Read.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        Self(code: Windows.Kernel.Error.captureLastError())
+        Self(code: Error_Primitives.Error.captureLastError())
     }
 }
 

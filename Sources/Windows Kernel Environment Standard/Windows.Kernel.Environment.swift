@@ -35,7 +35,7 @@ extension Windows.Kernel.Environment {
 
         // If result > buffer.count, buffer was too small
         if result > buffer.count {
-            throw .platform(Kernel.Error(code: .win32(DWORD(ERROR_INSUFFICIENT_BUFFER))))
+            throw .platform(Error_Primitives.Error(code: .win32(DWORD(ERROR_INSUFFICIENT_BUFFER))))
         }
 
         return Int(result)
@@ -106,7 +106,7 @@ extension Kernel.Environment.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        Self(code: Windows.Kernel.Error.captureLastError())
+        Self(code: Error_Primitives.Error.captureLastError())
     }
 }
 

@@ -21,7 +21,7 @@
 extension Kernel.IO.Blocking.Error {
     /// Always returns `nil` on Windows.
     @inlinable
-    public init?(code: Kernel.Error.Code) {
+    public init?(code: Error_Primitives.Error.Code) {
         return nil
     }
 }

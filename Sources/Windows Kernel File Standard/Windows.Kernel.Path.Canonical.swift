@@ -53,7 +53,7 @@ extension Windows.Kernel.Path.Canonical {
 
         // If result > buffer.count, the buffer was too small
         if result > buffer.count {
-            throw .platform(Kernel.Error(code: .win32(DWORD(ERROR_INSUFFICIENT_BUFFER))))
+            throw .platform(Error_Primitives.Error(code: .win32(DWORD(ERROR_INSUFFICIENT_BUFFER))))
         }
 
         return Int(result)
@@ -104,11 +104,11 @@ extension Kernel.Path.Canonical.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        let code = Windows.Kernel.Error.captureLastError()
+        let code = Error_Primitives.Error.captureLastError()
         if let e = Kernel.Path.Resolution.Error(code: code) {
             return .path(e)
         }
-        return .platform(Kernel.Error(code: code))
+        return .platform(Error_Primitives.Error(code: code))
     }
 }
 

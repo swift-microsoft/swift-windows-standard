@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
 @_spi(Syscall) public import Kernel_Memory_Primitives
 public import WinSDK
@@ -34,7 +34,7 @@ extension Windows.Kernel.Memory.Lock {
         length: Kernel.File.Size
     ) throws(Kernel.Memory.Lock.Error) {
         guard VirtualLock(UnsafeMutableRawPointer(mutating: address), SIZE_T(length.rawValue)) else {
-            throw .lock(Windows.Kernel.Error.captureLastError())
+            throw .lock(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -53,7 +53,7 @@ extension Windows.Kernel.Memory.Lock {
         length: Kernel.File.Size
     ) throws(Kernel.Memory.Lock.Error) {
         guard VirtualUnlock(UnsafeMutableRawPointer(mutating: address), SIZE_T(length.rawValue)) else {
-            throw .unlock(Windows.Kernel.Error.captureLastError())
+            throw .unlock(Error_Primitives.Error.captureLastError())
         }
     }
 }

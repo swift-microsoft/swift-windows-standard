@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_IO_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
 public import WinSDK
@@ -248,7 +248,7 @@ extension Kernel.IO.Write.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        Self(code: Windows.Kernel.Error.captureLastError())
+        Self(code: Error_Primitives.Error.captureLastError())
     }
 }
 

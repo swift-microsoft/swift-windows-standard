@@ -113,7 +113,7 @@ extension Windows.Kernel.File {
         var info = BY_HANDLE_FILE_INFORMATION()
 
         guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
-            throw .get(Windows.Kernel.Error.captureLastError())
+            throw .get(Error_Primitives.Error.captureLastError())
         }
 
         return Stats(info)

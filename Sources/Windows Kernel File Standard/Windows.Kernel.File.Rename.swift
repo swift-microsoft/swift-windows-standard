@@ -27,20 +27,20 @@ extension Windows.Kernel.File {
 extension Windows.Kernel.File.Rename {
     /// Error type for rename operations.
     public struct Error: Swift.Error, Sendable {
-        public let code: Windows.Kernel.Error.Code
+        public let code: Error_Primitives.Error.Code
 
-        public init(code: Windows.Kernel.Error.Code) {
+        public init(code: Error_Primitives.Error.Code) {
             self.code = code
         }
 
         /// Destination file already exists.
-        public static let destinationExists = Error(code: .init(win32: Windows.Kernel.Error.Code.File.alreadyExists))
+        public static let destinationExists = Error(code: .init(win32: Error_Primitives.Error.Code.File.alreadyExists))
 
         /// Permission denied.
-        public static let permissionDenied = Error(code: .init(win32: Windows.Kernel.Error.Code.Access.denied))
+        public static let permissionDenied = Error(code: .init(win32: Error_Primitives.Error.Code.Access.denied))
 
         /// File is in use by another process.
-        public static let sharingViolation = Error(code: .init(win32: Windows.Kernel.Error.Code.Access.sharingViolation))
+        public static let sharingViolation = Error(code: .init(win32: Error_Primitives.Error.Code.Access.sharingViolation))
 
         /// The operation is not supported (e.g., struct layout unavailable).
         public static let notSupported = Error(code: .init(win32: 0x32)) // ERROR_NOT_SUPPORTED
@@ -48,7 +48,7 @@ extension Windows.Kernel.File.Rename {
         /// Creates an error from the current Win32 last error.
         @usableFromInline
         internal static func current() -> Self {
-            Self(code: Windows.Kernel.Error.captureLastError())
+            Self(code: Error_Primitives.Error.captureLastError())
         }
 
         /// Whether this error represents a transient condition that may succeed on retry.
@@ -60,9 +60,9 @@ extension Windows.Kernel.File.Rename {
         public var isTransient: Bool {
             guard let win32 = code.win32 else { return false }
             switch win32 {
-            case Windows.Kernel.Error.Code.Access.denied,
-                 Windows.Kernel.Error.Code.Access.sharingViolation,
-                 Windows.Kernel.Error.Code.Access.lockViolation:
+            case Error_Primitives.Error.Code.Access.denied,
+                 Error_Primitives.Error.Code.Access.sharingViolation,
+                 Error_Primitives.Error.Code.Access.lockViolation:
                 return true
             default:
                 return false
@@ -73,8 +73,8 @@ extension Windows.Kernel.File.Rename {
         public var isDestinationExists: Bool {
             guard let win32 = code.win32 else { return false }
             switch win32 {
-            case Windows.Kernel.Error.Code.File.exists,
-                 Windows.Kernel.Error.Code.File.alreadyExists:
+            case Error_Primitives.Error.Code.File.exists,
+                 Error_Primitives.Error.Code.File.alreadyExists:
                 return true
             default:
                 return false

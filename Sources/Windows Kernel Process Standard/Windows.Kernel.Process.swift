@@ -129,7 +129,7 @@ extension Windows.Kernel.Process {
         )
 
         guard success else {
-            throw .create(Windows.Kernel.Error.captureLastError())
+            throw .create(Error_Primitives.Error.captureLastError())
         }
 
         return Info(
@@ -171,7 +171,7 @@ extension Windows.Kernel.Process {
         )
 
         guard success else {
-            throw .create(Windows.Kernel.Error.captureLastError())
+            throw .create(Error_Primitives.Error.captureLastError())
         }
 
         return Info(
@@ -189,13 +189,13 @@ extension Windows.Kernel.Process {
     /// Errors from process operations.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Process creation failed.
-        case create(Kernel.Error.Code)
+        case create(Error_Primitives.Error.Code)
 
         /// Wait operation failed.
-        case wait(Kernel.Error.Code)
+        case wait(Error_Primitives.Error.Code)
 
         /// Platform error.
-        case platform(Kernel.Error)
+        case platform(Error_Primitives.Error)
     }
 }
 

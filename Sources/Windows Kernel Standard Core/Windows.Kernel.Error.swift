@@ -10,11 +10,11 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import Kernel_Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
-extension Windows.Kernel.Error {
-    /// Captures current Win32 last error as a `Kernel.Error.Code`.
+extension Error_Primitives.Error {
+    /// Captures current Win32 last error as a `Error_Primitives.Error.Code`.
     ///
     /// Must be called immediately after a failing Win32 API call, before any other API call.
     ///
@@ -23,18 +23,18 @@ extension Windows.Kernel.Error {
     /// ```swift
     /// let handle = CreateFileW(...)
     /// guard handle != INVALID_HANDLE_VALUE else {
-    ///     throw SomeError(code: Kernel.Error.captureLastError())
+    ///     throw SomeError(code: Error_Primitives.Error.captureLastError())
     /// }
     /// ```
     @inlinable
-    public static func captureLastError() -> Kernel.Error.Code {
+    public static func captureLastError() -> Error_Primitives.Error.Code {
         .win32(GetLastError())
     }
 }
 
 // MARK: - Common Win32 Error Code Constants
 
-extension Windows.Kernel.Error {
+extension Error_Primitives.Error {
     /// Common Win32 error codes for semantic matching.
     public enum Code {
         /// File/path errors.

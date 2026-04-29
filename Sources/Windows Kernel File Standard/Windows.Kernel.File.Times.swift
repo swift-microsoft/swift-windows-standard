@@ -55,7 +55,7 @@ extension Windows.Kernel.File.Times {
         }
 
         guard success else {
-            throw .platform(Kernel.Error(code: Windows.Kernel.Error.captureLastError()))
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }
     }
 
@@ -310,7 +310,7 @@ extension Windows.Kernel.File {
         )
 
         guard success else {
-            throw .get(Windows.Kernel.Error.captureLastError())
+            throw .get(Error_Primitives.Error.captureLastError())
         }
 
         return BasicInfo(info)
@@ -342,7 +342,7 @@ extension Windows.Kernel.File {
         )
 
         guard success else {
-            throw .platform(Kernel.Error(code: Windows.Kernel.Error.captureLastError()))
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }
     }
 

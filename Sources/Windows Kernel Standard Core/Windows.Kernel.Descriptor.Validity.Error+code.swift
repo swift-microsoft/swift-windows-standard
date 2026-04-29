@@ -21,7 +21,7 @@ extension Kernel.Descriptor.Validity.Error {
     /// - Parameter code: The platform error code.
     /// - Returns: A handle error, or `nil` if not applicable.
     @inlinable
-    public init?(code: Kernel.Error.Code) {
+    public init?(code: Error_Primitives.Error.Code) {
         switch code {
         case .Windows.ERROR_INVALID_HANDLE:
             self = .invalid

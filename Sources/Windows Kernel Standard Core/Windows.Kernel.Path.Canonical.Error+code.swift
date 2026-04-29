@@ -18,7 +18,7 @@ public import Path_Primitives
 extension Path.Canonical.Error {
     /// Creates an error from a Windows error code.
     @usableFromInline
-    internal init(code: Kernel.Error.Code) {
+    internal init(code: Error_Primitives.Error.Code) {
         if let e = Path.Resolution.Error(code: code) {
             self = .path(e)
             return
@@ -27,7 +27,7 @@ extension Path.Canonical.Error {
             self = .permission(e)
             return
         }
-        self = .platform(Kernel.Error(code: code))
+        self = .platform(Error_Primitives.Error(code: code))
     }
 }
 #endif

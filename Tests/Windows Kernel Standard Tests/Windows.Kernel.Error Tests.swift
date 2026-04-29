@@ -16,7 +16,7 @@ import Testing
 @testable import Windows_Kernel_Standard
 import Kernel_Primitives_Core
 import Kernel_Descriptor_Primitives
-import Kernel_Error_Primitives
+import Error_Primitives
 import Kernel_File_Primitives
 import Kernel_Path_Primitives
 import Kernel_IO_Primitives
@@ -28,7 +28,7 @@ import Kernel_Environment_Primitives
 import Kernel_Process_Primitives
 import Kernel_System_Primitives
 
-extension Windows.Kernel.Error {
+extension Error_Primitives.Error {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -39,85 +39,85 @@ extension Windows.Kernel.Error {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Error.Test.Unit {
+extension Error_Primitives.Error.Test.Unit {
     @Test
-    func `Kernel.Error namespace exists`() {
-        _ = Windows.Kernel.Error.self
+    func `Error_Primitives.Error namespace exists`() {
+        _ = Error_Primitives.Error.self
     }
 
     @Test
-    func `Kernel.Error.Code type exists`() {
-        _ = Kernel.Error.Code.self
+    func `Error_Primitives.Error.Code type exists`() {
+        _ = Error_Primitives.Error.Code.self
     }
 }
 
 // MARK: - Capture Tests
 
-extension Windows.Kernel.Error.Test.Unit {
+extension Error_Primitives.Error.Test.Unit {
     @Test
     func `captureLastError returns Code`() {
         // Set a known error
         SetLastError(DWORD(ERROR_FILE_NOT_FOUND))
 
-        let code = Windows.Kernel.Error.captureLastError()
-        #expect(code.win32 == Windows.Kernel.Error.Code.File.notFound)
+        let code = Error_Primitives.Error.captureLastError()
+        #expect(code.win32 == Error_Primitives.Error.Code.File.notFound)
     }
 
     @Test
     func `captureLastError with no error returns success`() {
         SetLastError(0)  // ERROR_SUCCESS
 
-        let code = Windows.Kernel.Error.captureLastError()
+        let code = Error_Primitives.Error.captureLastError()
         #expect(code.win32 == 0)
     }
 }
 
 // MARK: - Error Code Constants Tests
 
-extension Windows.Kernel.Error.Test.Unit {
+extension Error_Primitives.Error.Test.Unit {
     @Test
     func `Code.File.notFound exists`() {
-        let code = Windows.Kernel.Error.Code.File.notFound
+        let code = Error_Primitives.Error.Code.File.notFound
         #expect(code == DWORD(ERROR_FILE_NOT_FOUND))
     }
 
     @Test
     func `Code.File.pathNotFound exists`() {
-        let code = Windows.Kernel.Error.Code.File.pathNotFound
+        let code = Error_Primitives.Error.Code.File.pathNotFound
         #expect(code == DWORD(ERROR_PATH_NOT_FOUND))
     }
 
     @Test
     func `Code.Access.denied exists`() {
-        let code = Windows.Kernel.Error.Code.Access.denied
+        let code = Error_Primitives.Error.Code.Access.denied
         #expect(code == DWORD(ERROR_ACCESS_DENIED))
     }
 
     @Test
     func `Code.Handle.invalid exists`() {
-        let code = Windows.Kernel.Error.Code.Handle.invalid
+        let code = Error_Primitives.Error.Code.Handle.invalid
         #expect(code == DWORD(ERROR_INVALID_HANDLE))
     }
 }
 
 // MARK: - Error Code Conversion Tests
 
-extension Windows.Kernel.Error.Test.Unit {
+extension Error_Primitives.Error.Test.Unit {
     @Test
     func `Code.win32 creates correct code`() {
-        let code = Kernel.Error.Code.win32(DWORD(ERROR_FILE_NOT_FOUND))
+        let code = Error_Primitives.Error.Code.win32(DWORD(ERROR_FILE_NOT_FOUND))
         #expect(code.win32 == DWORD(ERROR_FILE_NOT_FOUND))
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Error.Test.EdgeCase {
+extension Error_Primitives.Error.Test.EdgeCase {
     @Test
     func `captureLastError is non-destructive`() {
         SetLastError(DWORD(ERROR_ACCESS_DENIED))
 
-        let code1 = Windows.Kernel.Error.captureLastError()
+        let code1 = Error_Primitives.Error.captureLastError()
         let code2 = GetLastError()
 
         // GetLastError should still return the same value

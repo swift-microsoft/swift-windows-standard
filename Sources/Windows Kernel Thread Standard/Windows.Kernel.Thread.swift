@@ -51,7 +51,7 @@ extension Windows.Kernel.Thread {
         guard let handle else {
             context.deinitialize(count: 1)
             context.deallocate()
-            throw .create(Windows.Kernel.Error.captureLastError())
+            throw .create(Error_Primitives.Error.captureLastError())
         }
 
         return Kernel.Thread.Handle(_handle: handle)

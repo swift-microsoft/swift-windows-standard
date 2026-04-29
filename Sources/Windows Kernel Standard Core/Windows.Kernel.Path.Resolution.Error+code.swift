@@ -21,7 +21,7 @@ extension Path.Resolution.Error {
     /// - Parameter code: The platform error code.
     /// - Returns: The semantic error, or nil if the code doesn't map to a path resolution error.
     @inlinable
-    public init?(code: Kernel.Error.Code) {
+    public init?(code: Error_Primitives.Error.Code) {
         switch code {
         case .Windows.ERROR_FILE_NOT_FOUND, .Windows.ERROR_PATH_NOT_FOUND:
             self = .notFound

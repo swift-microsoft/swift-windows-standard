@@ -15,7 +15,7 @@ import Testing
 
     @testable import Windows_Kernel_Standard
     import Kernel_Descriptor_Primitives
-    import Kernel_Error_Primitives
+    import Error_Primitives
     import Kernel_IO_Primitives
     import Kernel_File_Primitives
 
@@ -44,7 +44,7 @@ import Testing
         @Test
         func `Status type exists with ok and platform cases`() {
             let ok: Kernel.IO.Completion.Port.Dequeue.Status = .ok
-            let error: Kernel.IO.Completion.Port.Dequeue.Status = .platform(Kernel.Error(code: .win32(0)))
+            let error: Kernel.IO.Completion.Port.Dequeue.Status = .platform(Error_Primitives.Error(code: .win32(0)))
 
             #expect(ok == .ok)
             #expect(error != .ok)
@@ -99,7 +99,7 @@ import Testing
                 bytes: 0,
                 key: .init(rawValue: 0),
                 overlapped: ov,
-                status: .platform(Kernel.Error(code: .win32(5)))
+                status: .platform(Error_Primitives.Error(code: .win32(5)))
             )
 
             if case .platform(let error) = item.status {

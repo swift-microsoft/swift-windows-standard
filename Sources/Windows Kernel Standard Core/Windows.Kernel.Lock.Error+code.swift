@@ -19,7 +19,7 @@ extension Kernel.Lock.Error {
     /// - Parameter code: The kernel error code.
     /// - Returns: A lock error, or `nil` if not applicable.
     @inlinable
-    public init?(code: Kernel.Error.Code) {
+    public init?(code: Error_Primitives.Error.Code) {
         switch code {
         case .Windows.ERROR_LOCK_VIOLATION:
             self = .contention

@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
 @_spi(Syscall) public import Kernel_Memory_Primitives
 public import WinSDK
@@ -32,7 +32,7 @@ extension Windows.Kernel.Memory.Map {
         size: Int
     ) throws(Kernel.Memory.Map.Error) {
         guard unsafe FlushViewOfFile(address.pointer, SIZE_T(size)) else {
-            throw .sync(Windows.Kernel.Error.captureLastError())
+            throw .sync(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -45,7 +45,7 @@ extension Windows.Kernel.Memory.Map {
     ) throws(Kernel.Memory.Map.Error) {
         guard let baseAddress = buffer.baseAddress else { return }
         guard unsafe FlushViewOfFile(baseAddress, SIZE_T(buffer.count)) else {
-            throw .sync(Windows.Kernel.Error.captureLastError())
+            throw .sync(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -58,7 +58,7 @@ extension Windows.Kernel.Memory.Map {
     ) throws(Kernel.Memory.Map.Error) {
         guard let baseAddress = buffer.baseAddress else { return }
         guard unsafe FlushViewOfFile(baseAddress, SIZE_T(buffer.count)) else {
-            throw .sync(Windows.Kernel.Error.captureLastError())
+            throw .sync(Error_Primitives.Error.captureLastError())
         }
     }
 }
@@ -67,7 +67,7 @@ extension Windows.Kernel.Memory.Map {
 
 extension Kernel.Memory.Map.Error {
     /// Creates an error from a sync failure.
-    static func sync(_ code: Kernel.Error.Code) -> Self {
+    static func sync(_ code: Error_Primitives.Error.Code) -> Self {
         Self(code: code)
     }
 }

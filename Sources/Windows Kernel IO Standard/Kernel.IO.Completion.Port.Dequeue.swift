@@ -11,7 +11,7 @@
 
 #if os(Windows)
     public import Kernel_Descriptor_Primitives
-    public import Kernel_Error_Primitives
+    public import Error_Primitives
     public import Kernel_IO_Primitives
     public import Kernel_File_Primitives
     public import WinSDK
@@ -63,7 +63,7 @@
             case ok
 
             /// The I/O operation completed with a platform error.
-            case platform(Kernel.Error)
+            case platform(Error_Primitives.Error)
         }
     }
 
@@ -176,7 +176,7 @@
                     bytes: UInt32(bytes),
                     key: Kernel.IO.Completion.Port.Key(rawValue: key),
                     overlapped: toOverlapped(overlapped),
-                    status: .platform(Kernel.Error(code: .win32(error)))
+                    status: .platform(Error_Primitives.Error(code: .win32(error)))
                 )
             }
 

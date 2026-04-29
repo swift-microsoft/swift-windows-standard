@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
 @_spi(Syscall) public import Kernel_Memory_Primitives
 public import WinSDK
@@ -58,7 +58,7 @@ extension Windows.Kernel.Memory.Shared {
         )
 
         guard let handle, handle != INVALID_HANDLE_VALUE else {
-            throw .map(.create(Windows.Kernel.Error.captureLastError()))
+            throw .map(.create(Error_Primitives.Error.captureLastError()))
         }
 
         return handle
@@ -82,7 +82,7 @@ extension Windows.Kernel.Memory.Shared {
         )
 
         guard let handle, handle != INVALID_HANDLE_VALUE else {
-            throw .map(.open(Windows.Kernel.Error.captureLastError()))
+            throw .map(.open(Error_Primitives.Error.captureLastError()))
         }
 
         return handle
@@ -125,7 +125,7 @@ extension Windows.Kernel.Memory.Shared {
             offsetLow,
             SIZE_T(size)
         ) else {
-            throw .map(.mapView(Windows.Kernel.Error.captureLastError()))
+            throw .map(.mapView(Error_Primitives.Error.captureLastError()))
         }
 
         return ptr
@@ -177,17 +177,17 @@ extension Windows.Kernel.Memory.Shared {
 
 extension Kernel.Memory.Map.Error {
     /// Error from file mapping creation.
-    static func create(_ code: Kernel.Error.Code) -> Self {
+    static func create(_ code: Error_Primitives.Error.Code) -> Self {
         Self(code: code)
     }
 
     /// Error from opening existing file mapping.
-    static func open(_ code: Kernel.Error.Code) -> Self {
+    static func open(_ code: Error_Primitives.Error.Code) -> Self {
         Self(code: code)
     }
 
     /// Error from mapping a view.
-    static func mapView(_ code: Kernel.Error.Code) -> Self {
+    static func mapView(_ code: Error_Primitives.Error.Code) -> Self {
         Self(code: code)
     }
 }

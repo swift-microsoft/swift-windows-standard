@@ -125,24 +125,24 @@ extension Kernel.File.Move.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        let code = Windows.Kernel.Error.captureLastError()
+        let code = Error_Primitives.Error.captureLastError()
         guard let win32Code = code.win32 else {
-            return .platform(Kernel.Error(code: code))
+            return .platform(Error_Primitives.Error(code: code))
         }
 
         switch win32Code {
-        case Windows.Kernel.Error.Code.File.notFound,
-             Windows.Kernel.Error.Code.File.pathNotFound:
+        case Error_Primitives.Error.Code.File.notFound,
+             Error_Primitives.Error.Code.File.pathNotFound:
             return .notFound
-        case Windows.Kernel.Error.Code.Access.denied:
+        case Error_Primitives.Error.Code.Access.denied:
             return .permission
-        case Windows.Kernel.Error.Code.File.exists,
-             Windows.Kernel.Error.Code.File.alreadyExists:
+        case Error_Primitives.Error.Code.File.exists,
+             Error_Primitives.Error.Code.File.alreadyExists:
             return .exists
-        case Windows.Kernel.Error.Code.Access.sharingViolation:
+        case Error_Primitives.Error.Code.Access.sharingViolation:
             return .busy
         default:
-            return .platform(Kernel.Error(code: code))
+            return .platform(Error_Primitives.Error(code: code))
         }
     }
 }

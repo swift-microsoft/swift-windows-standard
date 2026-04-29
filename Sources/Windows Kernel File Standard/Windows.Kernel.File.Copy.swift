@@ -24,25 +24,25 @@ extension Windows.Kernel.File {
 extension Windows.Kernel.File.Copy {
     /// Error type for file copy operations.
     public struct Error: Swift.Error, Sendable {
-        public let code: Windows.Kernel.Error.Code
+        public let code: Error_Primitives.Error.Code
 
-        public init(code: Windows.Kernel.Error.Code) {
+        public init(code: Error_Primitives.Error.Code) {
             self.code = code
         }
 
         /// Source file was not found.
-        public static let sourceNotFound = Error(code: .init(win32: Windows.Kernel.Error.Code.File.notFound))
+        public static let sourceNotFound = Error(code: .init(win32: Error_Primitives.Error.Code.File.notFound))
 
         /// Destination file already exists.
-        public static let destinationExists = Error(code: .init(win32: Windows.Kernel.Error.Code.File.alreadyExists))
+        public static let destinationExists = Error(code: .init(win32: Error_Primitives.Error.Code.File.alreadyExists))
 
         /// Permission denied.
-        public static let permissionDenied = Error(code: .init(win32: Windows.Kernel.Error.Code.Access.denied))
+        public static let permissionDenied = Error(code: .init(win32: Error_Primitives.Error.Code.Access.denied))
 
         /// Creates an error from the current Win32 last error.
         @usableFromInline
         internal static func current() -> Self {
-            Self(code: Windows.Kernel.Error.captureLastError())
+            Self(code: Error_Primitives.Error.captureLastError())
         }
     }
 }

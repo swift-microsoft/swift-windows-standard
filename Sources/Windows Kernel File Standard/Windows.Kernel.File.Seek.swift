@@ -139,17 +139,17 @@ extension Windows.Kernel.File.Seek {
 extension Kernel.File.Seek.Error {
     /// Creates an error from the current Win32 last error.
     internal static func current() -> Self {
-        let code = Windows.Kernel.Error.captureLastError()
+        let code = Error_Primitives.Error.captureLastError()
         guard let win32Code = code.win32 else {
             return .platform(code: code)
         }
 
         switch win32Code {
-        case Windows.Kernel.Error.Code.Handle.invalid:
+        case Error_Primitives.Error.Code.Handle.invalid:
             return .invalidDescriptor
-        case Windows.Kernel.Error.Code.General.invalidParameter:
+        case Error_Primitives.Error.Code.General.invalidParameter:
             return .negativeOffset
-        case Windows.Kernel.Error.Code.IO.brokenPipe:
+        case Error_Primitives.Error.Code.IO.brokenPipe:
             return .notSeekable
         default:
             return .platform(code: code)

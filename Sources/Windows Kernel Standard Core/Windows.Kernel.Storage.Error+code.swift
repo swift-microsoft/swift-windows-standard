@@ -21,7 +21,7 @@ extension Kernel.Storage.Error {
     /// - Parameter code: The platform error code.
     /// - Returns: A storage error, or `nil` if not applicable.
     @inlinable
-    public init?(code: Kernel.Error.Code) {
+    public init?(code: Error_Primitives.Error.Code) {
         switch code {
         case .Windows.ERROR_DISK_FULL:
             self = .exhausted

@@ -14,9 +14,9 @@ import Testing
 
 @testable import Windows_Kernel_Standard
 import Kernel_Primitives_Core
-import Kernel_Error_Primitives
+import Error_Primitives
 
-extension Kernel.Error.Code {
+extension Error_Primitives.Error.Code {
     @Suite
     struct Test {
         @Suite struct Unit {}
@@ -25,57 +25,57 @@ extension Kernel.Error.Code {
 
 // MARK: - Predicate Unit Tests (Windows)
 
-extension Kernel.Error.Code.Test.Unit {
+extension Error_Primitives.Error.Code.Test.Unit {
     @Test
     func `isNotFound matches ERROR_FILE_NOT_FOUND and ERROR_PATH_NOT_FOUND`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNotFound)
-        #expect(Kernel.Error.Code.Windows.ERROR_PATH_NOT_FOUND.isNotFound)
-        #expect(!Kernel.Error.Code.Windows.ERROR_ACCESS_DENIED.isNotFound)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNotFound)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_PATH_NOT_FOUND.isNotFound)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_ACCESS_DENIED.isNotFound)
     }
 
     @Test
     func `isPermissionDenied matches ERROR_ACCESS_DENIED`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_ACCESS_DENIED.isPermissionDenied)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isPermissionDenied)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_ACCESS_DENIED.isPermissionDenied)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isPermissionDenied)
     }
 
     @Test
     func `isAccessDenied trampolines to isPermissionDenied`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_ACCESS_DENIED.isAccessDenied)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isAccessDenied)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_ACCESS_DENIED.isAccessDenied)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isAccessDenied)
     }
 
     @Test
     func `isReadOnly matches ERROR_WRITE_PROTECT`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_WRITE_PROTECT.isReadOnly)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isReadOnly)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_WRITE_PROTECT.isReadOnly)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isReadOnly)
     }
 
     @Test
     func `isNoSpace matches ERROR_DISK_FULL`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_DISK_FULL.isNoSpace)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNoSpace)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_DISK_FULL.isNoSpace)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNoSpace)
     }
 
     @Test
     func `isNotDirectory matches ERROR_DIRECTORY`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_DIRECTORY.isNotDirectory)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNotDirectory)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_DIRECTORY.isNotDirectory)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNotDirectory)
     }
 
     @Test
     func `isInvalidPath matches ERROR_INVALID_NAME, ERROR_BAD_PATHNAME, ERROR_INVALID_DRIVE`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_INVALID_NAME.isInvalidPath)
-        #expect(Kernel.Error.Code.Windows.ERROR_BAD_PATHNAME.isInvalidPath)
-        #expect(Kernel.Error.Code.Windows.ERROR_INVALID_DRIVE.isInvalidPath)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isInvalidPath)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_INVALID_NAME.isInvalidPath)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_BAD_PATHNAME.isInvalidPath)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_INVALID_DRIVE.isInvalidPath)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isInvalidPath)
     }
 
     @Test
     func `isNetworkNotFound matches ERROR_BAD_NETPATH and ERROR_BAD_NET_NAME`() {
-        #expect(Kernel.Error.Code.Windows.ERROR_BAD_NETPATH.isNetworkNotFound)
-        #expect(Kernel.Error.Code.Windows.ERROR_BAD_NET_NAME.isNetworkNotFound)
-        #expect(!Kernel.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNetworkNotFound)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_BAD_NETPATH.isNetworkNotFound)
+        #expect(Error_Primitives.Error.Code.Windows.ERROR_BAD_NET_NAME.isNetworkNotFound)
+        #expect(!Error_Primitives.Error.Code.Windows.ERROR_FILE_NOT_FOUND.isNetworkNotFound)
     }
 }
 

@@ -12,7 +12,7 @@
 internal import Windows_Standard_Core
 internal import Kernel_Primitives_Core
 internal import Kernel_Descriptor_Primitives
-internal import Kernel_Error_Primitives
+internal import Error_Primitives
 internal import Kernel_File_Primitives
 internal import Kernel_Path_Primitives
 internal import Kernel_IO_Primitives
@@ -282,7 +282,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
 extension Kernel.File.Stats.Error {
     /// Creates an error from a Windows error code.
     internal init(_windowsError error: DWORD) {
-        let errorCode = Kernel.Error.Code.win32(error)
+        let errorCode = Error_Primitives.Error.Code.win32(error)
         if let e = Kernel.Descriptor.Validity.Error(code: errorCode) {
             self = .handle(e)
             return
@@ -291,7 +291,7 @@ extension Kernel.File.Stats.Error {
             self = .io(e)
             return
         }
-        self = .platform(Kernel.Error(code: errorCode))
+        self = .platform(Error_Primitives.Error(code: errorCode))
     }
 }
 

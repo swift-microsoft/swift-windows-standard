@@ -12,7 +12,7 @@
 #if os(Windows)
 public import WinSDK
 public import Kernel_Random_Primitives
-public import Kernel_Error_Primitives
+public import Error_Primitives
 
 // MARK: - Windows BCryptGenRandom syscall
 

@@ -16,7 +16,7 @@ import Testing
 @testable import Windows_Kernel_Standard
 import Kernel_Primitives_Core
 import Kernel_Descriptor_Primitives
-import Kernel_Error_Primitives
+import Error_Primitives
 import Kernel_File_Primitives
 import Kernel_Path_Primitives
 import Kernel_IO_Primitives
@@ -51,7 +51,7 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 extension Windows.Kernel.Rmdir.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
-        let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.File.notFound)
+        let error = Kernel.Rmdir.Error.current(from: Error_Primitives.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -61,7 +61,7 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 
     @Test
     func `Error.notFound maps from PATH_NOT_FOUND`() {
-        let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
+        let error = Kernel.Rmdir.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -71,7 +71,7 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 
     @Test
     func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
+        let error = Kernel.Rmdir.Error.current(from: Error_Primitives.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
         } else {
@@ -81,7 +81,7 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 
     @Test
     func `Error.notEmpty maps from DIR_NOT_EMPTY`() {
-        let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.Directory.notEmpty)
+        let error = Kernel.Rmdir.Error.current(from: Error_Primitives.Error.Code.Directory.notEmpty)
         if case .notEmpty = error {
             // Expected
         } else {
@@ -91,7 +91,7 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 
     @Test
     func `Error.busy maps from SHARING_VIOLATION`() {
-        let error = Kernel.Rmdir.Error.current(from: Windows.Kernel.Error.Code.Access.sharingViolation)
+        let error = Kernel.Rmdir.Error.current(from: Error_Primitives.Error.Code.Access.sharingViolation)
         if case .busy = error {
             // Expected
         } else {

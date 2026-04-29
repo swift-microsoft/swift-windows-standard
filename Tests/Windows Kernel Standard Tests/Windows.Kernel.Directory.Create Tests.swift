@@ -16,7 +16,7 @@ import Testing
 @testable import Windows_Kernel_Standard
 import Kernel_Primitives_Core
 import Kernel_Descriptor_Primitives
-import Kernel_Error_Primitives
+import Error_Primitives
 import Kernel_File_Primitives
 import Kernel_Path_Primitives
 import Kernel_IO_Primitives
@@ -51,7 +51,7 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 extension Windows.Kernel.Mkdir.Test.Unit {
     @Test
     func `Error.notFound maps from PATH_NOT_FOUND`() {
-        let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.File.pathNotFound)
+        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -61,7 +61,7 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.Access.denied)
+        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
         } else {
@@ -71,7 +71,7 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.exists maps from FILE_EXISTS`() {
-        let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.File.exists)
+        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.exists)
         if case .exists = error {
             // Expected
         } else {
@@ -81,7 +81,7 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.exists maps from ALREADY_EXISTS`() {
-        let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.File.alreadyExists)
+        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.alreadyExists)
         if case .exists = error {
             // Expected
         } else {
@@ -91,7 +91,7 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.noSpace maps from DISK_FULL`() {
-        let error = Kernel.Mkdir.Error.current(from: Windows.Kernel.Error.Code.Storage.diskFull)
+        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
         if case .noSpace = error {
             // Expected
         } else {

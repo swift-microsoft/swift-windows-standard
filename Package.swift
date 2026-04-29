@@ -94,8 +94,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-loader-primitives"),
         .package(path: "../../swift-primitives/swift-sequence-primitives"),
         .package(path: "../../swift-primitives/swift-standard-library-extensions"),
-        // SDG(wraps): Windows syscalls wrap GetLastError
-        // .package(path: "../swift-error-primitives"),
+        .package(path: "../../swift-primitives/swift-error-primitives"),
     ],
     targets: [
         // MARK: - Core
@@ -115,7 +114,7 @@ let package = Package(
                 .target(name: "Windows Standard Core"),
                 .product(name: "Kernel Primitives Core", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Descriptor Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Error Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Error Primitives", package: "swift-error-primitives"),
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Memory Primitives", package: "swift-kernel-primitives"),

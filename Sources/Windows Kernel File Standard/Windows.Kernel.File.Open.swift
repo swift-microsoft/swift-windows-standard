@@ -112,7 +112,7 @@ extension Kernel.File.Open.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        Self(code: Windows.Kernel.Error.captureLastError())
+        Self(code: Error_Primitives.Error.captureLastError())
     }
 }
 

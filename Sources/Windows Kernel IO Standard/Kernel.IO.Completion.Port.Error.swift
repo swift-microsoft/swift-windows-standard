@@ -11,7 +11,7 @@
 
 #if os(Windows)
     public import Kernel_Descriptor_Primitives
-    public import Kernel_Error_Primitives
+    public import Error_Primitives
     public import Kernel_IO_Primitives
     public import Kernel_File_Primitives
     public import WinSDK
@@ -20,8 +20,8 @@
         /// Errors from I/O completion port operations.
         ///
         /// Low-level errors from Windows I/O completion port operations. Each case wraps
-        /// the underlying `Kernel.Error.Code` (Win32 error code) for
-        /// platform-specific details. Convert to `Kernel.Error` for
+        /// the underlying `Error_Primitives.Error.Code` (Win32 error code) for
+        /// platform-specific details. Convert to `Error_Primitives.Error` for
         /// semantic error handling.
         ///
         /// ## Usage
@@ -36,7 +36,7 @@
         ///     case .timeout:
         ///         // Handle timeout
         ///     default:
-        ///         throw Kernel.Error(error)  // Convert to semantic error
+        ///         throw Error_Primitives.Error(error)  // Convert to semantic error
         ///     }
         /// }
         /// ```
@@ -51,43 +51,43 @@
             ///
             /// Returned by `CreateIoCompletionPort` when creating a new port.
             /// Common causes: system resource exhaustion.
-            case create(Kernel.Error.Code)
+            case create(Error_Primitives.Error.Code)
 
             /// Failed to associate a handle with the port.
             ///
             /// Returned by `CreateIoCompletionPort` when associating a handle.
             /// Common causes: handle already associated, invalid handle.
-            case associate(Kernel.Error.Code)
+            case associate(Error_Primitives.Error.Code)
 
             /// Failed to dequeue completion entries.
             ///
             /// Returned by `GetQueuedCompletionStatus[Ex]`. May indicate
             /// the port was closed or an invalid handle was used.
-            case dequeue(Kernel.Error.Code)
+            case dequeue(Error_Primitives.Error.Code)
 
             /// Failed to post a completion packet.
             ///
             /// Returned by `PostQueuedCompletionStatus`. May indicate
             /// the port is invalid or full.
-            case post(Kernel.Error.Code)
+            case post(Error_Primitives.Error.Code)
 
             /// Failed to initiate an asynchronous read.
             ///
             /// Returned by `ReadFile` when the async operation could not
             /// be started. Does not include `ERROR_IO_PENDING` (which is normal).
-            case read(Kernel.Error.Code)
+            case read(Error_Primitives.Error.Code)
 
             /// Failed to initiate an asynchronous write.
             ///
             /// Returned by `WriteFile` when the async operation could not
             /// be started. Does not include `ERROR_IO_PENDING` (which is normal).
-            case write(Kernel.Error.Code)
+            case write(Error_Primitives.Error.Code)
 
             /// Failed to get the result of an overlapped operation.
             ///
             /// Returned by `GetOverlappedResult` when the operation
             /// failed or the parameters were invalid.
-            case result(Kernel.Error.Code)
+            case result(Error_Primitives.Error.Code)
 
             /// The wait operation timed out.
             ///

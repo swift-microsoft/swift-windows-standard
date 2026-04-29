@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Kernel_Descriptor_Primitives
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_File_Primitives
 @_spi(Syscall) public import Kernel_Memory_Primitives
 public import WinSDK
@@ -62,7 +62,7 @@ extension Windows.Kernel.Memory.Map {
         )
 
         guard let mappingHandle, mappingHandle != INVALID_HANDLE_VALUE else {
-            throw .map(Windows.Kernel.Error.captureLastError())
+            throw .map(Error_Primitives.Error.captureLastError())
         }
 
         // Map view of file
@@ -79,7 +79,7 @@ extension Windows.Kernel.Memory.Map {
         _ = CloseHandle(mappingHandle)
 
         guard let baseAddress else {
-            throw .map(Windows.Kernel.Error.captureLastError())
+            throw .map(Error_Primitives.Error.captureLastError())
         }
 
         return unsafe Kernel.Memory.Address(baseAddress)
@@ -142,7 +142,7 @@ extension Windows.Kernel.Memory.Map {
         )
 
         guard let result else {
-            throw .map(Windows.Kernel.Error.captureLastError())
+            throw .map(Error_Primitives.Error.captureLastError())
         }
 
         return unsafe Kernel.Memory.Address(result)
@@ -168,7 +168,7 @@ extension Windows.Kernel.Memory.Map {
         }
 
         guard success else {
-            throw .unmap(Windows.Kernel.Error.captureLastError())
+            throw .unmap(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -183,7 +183,7 @@ extension Windows.Kernel.Memory.Map {
         length: Kernel.File.Size
     ) throws(Kernel.Memory.Map.Error) {
         guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.rawValue)) else {
-            throw .sync(Windows.Kernel.Error.captureLastError())
+            throw .sync(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -206,7 +206,7 @@ extension Windows.Kernel.Memory.Map {
             protection.windowsVirtualProtect,
             &oldProtect
         ) else {
-            throw .protect(Windows.Kernel.Error.captureLastError())
+            throw .protect(Error_Primitives.Error.captureLastError())
         }
     }
 }

@@ -29,7 +29,7 @@ extension Kernel.File.Clone.Error {
     ///
     /// - Note: This is SPI for platform-specific packages.
     @_spi(Syscall)
-    public init(code: Kernel.Error.Code, operation: Operation) {
+    public init(code: Error_Primitives.Error.Code, operation: Operation) {
         switch code {
         case _ where code == .Windows.ERROR_FILE_NOT_FOUND:
             self = .sourceNotFound

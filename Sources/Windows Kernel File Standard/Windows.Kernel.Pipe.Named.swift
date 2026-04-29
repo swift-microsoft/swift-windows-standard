@@ -156,7 +156,7 @@ extension Windows.Kernel.Pipe.Named {
             return false  // Already connected
         }
 
-        throw .platform(Kernel.Error(code: .win32(error)))
+        throw .platform(Error_Primitives.Error(code: .win32(error)))
     }
 
     /// Disconnects the server end of a named pipe via HANDLE bit pattern.

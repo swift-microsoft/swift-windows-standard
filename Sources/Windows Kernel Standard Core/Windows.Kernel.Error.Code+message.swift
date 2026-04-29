@@ -10,16 +10,16 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import Kernel_Error_Primitives
+public import Error_Primitives
 internal import WinSDK
 
 // MARK: - Win32 message lookup via FormatMessageW
 
-// FormatMessageW is a Win32-spec API over an L1 type (`Kernel.Error.Code`).
+// FormatMessageW is a Win32-spec API over an L1 type (`Error_Primitives.Error.Code`).
 // Its canonical home is L2, not L3, per [PLAT-ARCH-008c]. L3 consumers reach
 // this through the `Windows_Kernel_Standard` umbrella re-export.
 
-extension Kernel.Error.Code {
+extension Error_Primitives.Error.Code {
     /// Returns the Win32 error message for `.win32` codes via `FormatMessageW`.
     ///
     /// - Returns: The system-provided error description with trailing

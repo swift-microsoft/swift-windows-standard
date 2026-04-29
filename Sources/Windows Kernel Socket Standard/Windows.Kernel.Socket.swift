@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_Socket_Primitives
 public import WinSDK
 
@@ -55,7 +55,7 @@ extension Windows.Kernel.Socket {
         var wsaData = WSADATA()
         let result = WSAStartup(MAKEWORD(2, 2), &wsaData)
         guard result == 0 else {
-            throw .startup(Kernel.Error.Code.win32(DWORD(result)))
+            throw .startup(Error_Primitives.Error.Code.win32(DWORD(result)))
         }
     }
 

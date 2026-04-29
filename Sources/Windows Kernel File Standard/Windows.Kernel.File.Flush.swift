@@ -81,14 +81,14 @@ extension Kernel.File.Flush.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        let code = Windows.Kernel.Error.captureLastError()
+        let code = Error_Primitives.Error.captureLastError()
         if let e = Kernel.Descriptor.Validity.Error(code: code) {
             return .handle(e)
         }
         if let e = Kernel.IO.Error(code: code) {
             return .io(e)
         }
-        return .platform(Kernel.Error(code: code))
+        return .platform(Error_Primitives.Error(code: code))
     }
 }
 

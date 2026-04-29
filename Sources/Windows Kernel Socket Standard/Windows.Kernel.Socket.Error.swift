@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Kernel_Error_Primitives
+@_spi(Syscall) public import Error_Primitives
 @_spi(Syscall) public import Kernel_Socket_Primitives
 public import WinSDK
 
@@ -20,46 +20,46 @@ extension Windows.Kernel.Socket {
     /// Errors from Winsock2 socket operations.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Winsock startup failed.
-        case startup(Kernel.Error.Code)
+        case startup(Error_Primitives.Error.Code)
 
         /// Socket creation failed.
-        case create(Kernel.Error.Code)
+        case create(Error_Primitives.Error.Code)
 
         /// Socket close failed.
-        case close(Kernel.Error.Code)
+        case close(Error_Primitives.Error.Code)
 
         /// Bind operation failed.
-        case bind(Kernel.Error.Code)
+        case bind(Error_Primitives.Error.Code)
 
         /// Listen operation failed.
-        case listen(Kernel.Error.Code)
+        case listen(Error_Primitives.Error.Code)
 
         /// Accept operation failed.
-        case accept(Kernel.Error.Code)
+        case accept(Error_Primitives.Error.Code)
 
         /// Connect operation failed.
-        case connect(Kernel.Error.Code)
+        case connect(Error_Primitives.Error.Code)
 
         /// Send operation failed.
-        case send(Kernel.Error.Code)
+        case send(Error_Primitives.Error.Code)
 
         /// Receive operation failed.
-        case receive(Kernel.Error.Code)
+        case receive(Error_Primitives.Error.Code)
 
         /// Shutdown operation failed.
-        case shutdown(Kernel.Error.Code)
+        case shutdown(Error_Primitives.Error.Code)
 
         /// Get socket option failed.
-        case getOption(Kernel.Error.Code)
+        case getOption(Error_Primitives.Error.Code)
 
         /// Set socket option failed.
-        case setOption(Kernel.Error.Code)
+        case setOption(Error_Primitives.Error.Code)
 
         /// Get peer name failed.
-        case getPeerName(Kernel.Error.Code)
+        case getPeerName(Error_Primitives.Error.Code)
 
         /// Get socket name failed.
-        case getSockName(Kernel.Error.Code)
+        case getSockName(Error_Primitives.Error.Code)
     }
 }
 
@@ -102,9 +102,9 @@ extension Windows.Kernel.Socket.Error: CustomStringConvertible {
 
 // MARK: - Error Capture
 
-/// Captures the current Winsock error as a Kernel.Error.Code.
+/// Captures the current Winsock error as a Error_Primitives.Error.Code.
 @usableFromInline
-internal func captureLastSocketError() -> Kernel.Error.Code {
+internal func captureLastSocketError() -> Error_Primitives.Error.Code {
     .win32(DWORD(WSAGetLastError()))
 }
 

@@ -16,7 +16,7 @@
 extension Kernel.Socket.Error {
     /// The underlying Windows error code.
     @inlinable
-    public var code: Kernel.Error.Code {
+    public var code: Error_Primitives.Error.Code {
         switch self {
         case .handle(let e): return e.code
         case .platform(let e): return e.code
@@ -29,12 +29,12 @@ extension Kernel.Socket.Error {
 extension Kernel.Socket.Error {
     /// Creates an error from a Windows error code.
     @inlinable
-    public init(code: Kernel.Error.Code) {
+    public init(code: Error_Primitives.Error.Code) {
         if let e = Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
             return
         }
-        self = .platform(Kernel.Error(code: code))
+        self = .platform(Error_Primitives.Error(code: code))
     }
 }
 #endif

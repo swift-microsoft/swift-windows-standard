@@ -102,7 +102,7 @@ extension Windows.Kernel.File {
         to attributes: Attributes
     ) throws(Kernel.File.Attributes.Error) {
         guard SetFileAttributesW(path, attributes.rawValue) else {
-            throw .platform(Kernel.Error(code: Windows.Kernel.Error.captureLastError()))
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }
     }
 

@@ -178,15 +178,15 @@ extension Kernel.Directory.Error {
     /// Creates an error from a Windows error code.
     internal init(_windowsError error: DWORD) {
         switch error {
-        case Windows.Kernel.Error.Code.File.notFound,
-             Windows.Kernel.Error.Code.File.pathNotFound:
+        case Error_Primitives.Error.Code.File.notFound,
+             Error_Primitives.Error.Code.File.pathNotFound:
             self = .notFound
-        case Windows.Kernel.Error.Code.Access.denied:
+        case Error_Primitives.Error.Code.Access.denied:
             self = .permission
-        case Windows.Kernel.Error.Code.Directory.notEmpty:
+        case Error_Primitives.Error.Code.Directory.notEmpty:
             self = .notDirectory  // Path is not a directory
         default:
-            self = .platform(Kernel.Error(code: .win32(error)))
+            self = .platform(Error_Primitives.Error(code: .win32(error)))
         }
     }
 }

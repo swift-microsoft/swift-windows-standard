@@ -131,7 +131,6 @@ let package = Package(
             name: "Windows Kernel Clock Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Clock Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Clock Primitives", package: "swift-clock-primitives"),
             ]
         ),

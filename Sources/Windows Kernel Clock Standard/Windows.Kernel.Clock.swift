@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Clock Operations
 
-extension Kernel.Clock.Continuous {
+extension Clock.Continuous {
     /// Returns the current instant on the continuous clock.
     ///
     /// Uses `QueryPerformanceCounter` which advances during system sleep,
@@ -40,7 +40,7 @@ extension Kernel.Clock.Continuous {
     }
 }
 
-extension Kernel.Clock.Suspending {
+extension Clock.Suspending {
     /// Returns the current instant on the suspending clock.
     ///
     /// Uses `QueryUnbiasedInterruptTime` which pauses during system sleep,

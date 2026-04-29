@@ -30,7 +30,7 @@ extension Windows.Kernel.Time {
     ///
     /// Package-scoped helper used to implement the typed wall-clock surface.
     /// Not part of the public API — consumers use `Kernel.Time.realtime()` for
-    /// typed wall-clock reads and `Kernel.Clock.Continuous.now()` for monotonic
+    /// typed wall-clock reads and `Clock.Continuous.now` for monotonic
     /// readings.
     package static func systemTimeRaw() -> UInt64 {
         var fileTime = FILETIME()

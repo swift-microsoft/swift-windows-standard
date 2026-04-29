@@ -16,9 +16,9 @@
 extension Clock.Continuous: _Concurrency.Clock {
     /// The current instant according to the continuous clock.
     ///
-    /// Delegates directly to `Kernel.Clock.Continuous.now()`, which
+    /// Delegates directly to `Clock.Continuous.now`, which
     /// wraps `QueryPerformanceCounter` on Windows.
-    public var now: Instant { Kernel.Clock.Continuous.now() }
+    public var now: Instant { Clock.Continuous.now }
 
     /// The current instant according to the continuous clock (static convenience).
     public static var now: Instant { Self().now }
@@ -26,7 +26,7 @@ extension Clock.Continuous: _Concurrency.Clock {
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
-        while Kernel.Clock.Continuous.now() < deadline {
+        while Clock.Continuous.now < deadline {
             try Task.checkCancellation()
             try await Task.sleep(for: .nanoseconds(1_000_000))
         }
@@ -38,9 +38,9 @@ extension Clock.Continuous: _Concurrency.Clock {
 extension Clock.Suspending: _Concurrency.Clock {
     /// The current instant according to the suspending clock.
     ///
-    /// Delegates directly to `Kernel.Clock.Suspending.now()`, which
+    /// Delegates directly to `Clock.Suspending.now`, which
     /// wraps `QueryUnbiasedInterruptTime` on Windows.
-    public var now: Instant { Kernel.Clock.Suspending.now() }
+    public var now: Instant { Clock.Suspending.now }
 
     /// The current instant according to the suspending clock (static convenience).
     public static var now: Instant { Self().now }
@@ -48,7 +48,7 @@ extension Clock.Suspending: _Concurrency.Clock {
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
-        while Kernel.Clock.Suspending.now() < deadline {
+        while Clock.Suspending.now < deadline {
             try Task.checkCancellation()
             try await Task.sleep(for: .nanoseconds(1_000_000))
         }

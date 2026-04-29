@@ -21,7 +21,7 @@ import Kernel_File_Primitives
 import Path_Primitives
 import Kernel_IO_Primitives
 import Kernel_Thread_Primitives
-import Kernel_Clock_Primitives
+import Clock_Primitives
 import Kernel_Time_Primitives
 import Random_Primitives
 import Kernel_Environment_Primitives

@@ -23,7 +23,7 @@ extension Windows.Kernel.File.Delete {
     /// - Parameter path: The path of the file to delete.
     /// - Throws: `Kernel.File.Delete.Error` on failure.
     public static func delete(
-        path: borrowing Kernel.Path
+        path: borrowing Path
     ) throws(Kernel.File.Delete.Error) {
         try path.withUnsafeCString { ptr throws(Kernel.File.Delete.Error) in
             try delete(unsafePath: ptr)

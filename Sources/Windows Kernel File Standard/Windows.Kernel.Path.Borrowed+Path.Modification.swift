@@ -16,7 +16,7 @@
 // Appending inserts a single `\` (Windows primary separator) between
 // `view` and `other` unless `view` already ends with either `\` or `/` —
 // both separators count for trailing-separator deduplication per Win32
-// convention. See `Windows.Kernel.Path.Borrowed+Path.Decomposition.swift`
+// convention. See `Path.Borrowed+Path.Decomposition.swift`
 // for the decomposition half of the split.
 
 extension Path.Borrowed: @retroactive Path.Modification {

@@ -17,7 +17,7 @@ extension Kernel.File.System.Stats.Error {
     /// Creates an error from a Windows error code.
     @usableFromInline
     internal init(code: Error_Primitives.Error.Code) {
-        if let e = Kernel.Path.Resolution.Error(code: code) {
+        if let e = Path.Resolution.Error(code: code) {
             self = .path(e)
             return
         }

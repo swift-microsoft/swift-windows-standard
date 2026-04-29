@@ -106,8 +106,8 @@ extension Windows.Kernel.File.Rename {
     ///   - replaceExisting: If true, replaces existing destination file.
     /// - Throws: `Windows.Kernel.File.Rename.Error` on failure.
     public static func atomic(
-        from source: borrowing Kernel.Path,
-        to destination: borrowing Kernel.Path,
+        from source: borrowing Path,
+        to destination: borrowing Path,
         replaceExisting: Bool
     ) throws(Error) {
         try source.withUnsafeCString { srcPtr throws(Error) in

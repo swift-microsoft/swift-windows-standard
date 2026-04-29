@@ -14,19 +14,19 @@ public import WinSDK
 
 // MARK: - Windows GetFullPathNameW syscall
 
-extension Windows.Kernel.Path.Canonical {
+extension Path.Canonical {
     /// Resolves a path to its canonical (absolute) form.
     ///
     /// - Parameters:
     ///   - path: The path to resolve.
     ///   - buffer: Buffer to receive the canonical path (UTF-16).
     /// - Returns: The number of characters written (excluding null terminator).
-    /// - Throws: `Kernel.Path.Canonical.Error` on failure.
+    /// - Throws: `Path.Canonical.Error` on failure.
     public static func resolve(
-        path: borrowing Kernel.Path,
+        path: borrowing Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Kernel.Path.Canonical.Error) -> Int {
-        try path.withUnsafeCString { ptr throws(Kernel.Path.Canonical.Error) in
+    ) throws(Path.Canonical.Error) -> Int {
+        try path.withUnsafeCString { ptr throws(Path.Canonical.Error) in
             try resolve(unsafePath: ptr, into: buffer)
         }
     }
@@ -37,11 +37,11 @@ extension Windows.Kernel.Path.Canonical {
     ///   - unsafePath: The path as a null-terminated wide string.
     ///   - buffer: Buffer to receive the canonical path (UTF-16).
     /// - Returns: The number of characters written (excluding null terminator).
-    /// - Throws: `Kernel.Path.Canonical.Error` on failure.
+    /// - Throws: `Path.Canonical.Error` on failure.
     public static func resolve(
         unsafePath: UnsafePointer<Path.Char>,
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Kernel.Path.Canonical.Error) -> Int {
+    ) throws(Path.Canonical.Error) -> Int {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         let wbuffer = UnsafeMutableRawPointer(buffer.baseAddress!).assumingMemoryBound(to: WCHAR.self)
 
@@ -63,11 +63,11 @@ extension Windows.Kernel.Path.Canonical {
     ///
     /// - Parameter path: The path to resolve.
     /// - Returns: The canonical path as UTF-16 code units.
-    /// - Throws: `Kernel.Path.Canonical.Error` on failure.
+    /// - Throws: `Path.Canonical.Error` on failure.
     public static func resolve(
-        path: borrowing Kernel.Path
-    ) throws(Kernel.Path.Canonical.Error) -> [UInt16] {
-        try path.withUnsafeCString { ptr throws(Kernel.Path.Canonical.Error) in
+        path: borrowing Path
+    ) throws(Path.Canonical.Error) -> [UInt16] {
+        try path.withUnsafeCString { ptr throws(Path.Canonical.Error) in
             try resolve(unsafePath: ptr)
         }
     }
@@ -76,10 +76,10 @@ extension Windows.Kernel.Path.Canonical {
     ///
     /// - Parameter unsafePath: The path as a null-terminated wide string.
     /// - Returns: The canonical path as UTF-16 code units.
-    /// - Throws: `Kernel.Path.Canonical.Error` on failure.
+    /// - Throws: `Path.Canonical.Error` on failure.
     public static func resolve(
         unsafePath: UnsafePointer<Path.Char>
-    ) throws(Kernel.Path.Canonical.Error) -> [UInt16] {
+    ) throws(Path.Canonical.Error) -> [UInt16] {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
 
         // First call to get required size
@@ -100,12 +100,12 @@ extension Windows.Kernel.Path.Canonical {
 
 // MARK: - Error Construction
 
-extension Kernel.Path.Canonical.Error {
+extension Path.Canonical.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
         let code = Error_Primitives.Error.captureLastError()
-        if let e = Kernel.Path.Resolution.Error(code: code) {
+        if let e = Path.Resolution.Error(code: code) {
             return .path(e)
         }
         return .platform(Error_Primitives.Error(code: code))

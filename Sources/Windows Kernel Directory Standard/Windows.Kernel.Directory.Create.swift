@@ -22,7 +22,7 @@ extension Windows.Kernel.Directory.Create {
     ///   - permissions: POSIX permissions (ignored on Windows, uses default security).
     /// - Throws: `Kernel.Directory.Create.Error` on failure.
     public static func create(
-        path: borrowing Kernel.Path,
+        path: borrowing Path,
         permissions: Kernel.File.Permissions = .directoryDefault
     ) throws(Kernel.Directory.Create.Error) {
         try path.withUnsafeCString { ptr throws(Kernel.Directory.Create.Error) in

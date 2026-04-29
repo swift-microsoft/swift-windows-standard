@@ -26,8 +26,8 @@ extension Windows.Kernel.Link.Symbolic {
     ///   - isDirectory: If true, creates a directory symlink.
     /// - Throws: `Kernel.Link.Symbolic.Error` on failure.
     public static func create(
-        target: borrowing Kernel.Path,
-        linkPath: borrowing Kernel.Path,
+        target: borrowing Path,
+        linkPath: borrowing Path,
         isDirectory: Bool = false
     ) throws(Kernel.Link.Symbolic.Error) {
         try target.withUnsafeCString { targetPtr throws(Kernel.Link.Symbolic.Error) in
@@ -74,7 +74,7 @@ extension Windows.Kernel.Link.Symbolic {
     /// - Returns: The number of characters written (excluding null terminator).
     /// - Throws: `Kernel.Link.Symbolic.Error` on failure.
     public static func readTarget(
-        path: borrowing Kernel.Path,
+        path: borrowing Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Kernel.Link.Symbolic.Error) -> Int {
         try path.withUnsafeCString { ptr throws(Kernel.Link.Symbolic.Error) in

@@ -18,7 +18,7 @@ extension Kernel.File.Open.Error {
     @_spi(Syscall)
     @inlinable
     public init(code: Error_Primitives.Error.Code) {
-        if let e = Kernel.Path.Resolution.Error(code: code) {
+        if let e = Path.Resolution.Error(code: code) {
             self = .path(e)
             return
         }

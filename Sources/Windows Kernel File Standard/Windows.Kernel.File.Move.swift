@@ -51,8 +51,8 @@ extension Windows.Kernel.File.Move {
     ///   - replaceExisting: If true, replaces an existing file at newPath.
     /// - Throws: `Kernel.File.Move.Error` on failure.
     public static func move(
-        from oldPath: borrowing Kernel.Path,
-        to newPath: borrowing Kernel.Path,
+        from oldPath: borrowing Path,
+        to newPath: borrowing Path,
         replaceExisting: Bool = false
     ) throws(Kernel.File.Move.Error) {
         let options: Options = replaceExisting ? .replaceExisting : []
@@ -67,8 +67,8 @@ extension Windows.Kernel.File.Move {
     ///   - options: Move options (replaceExisting, writeThrough, etc.).
     /// - Throws: `Kernel.File.Move.Error` on failure.
     public static func move(
-        from oldPath: borrowing Kernel.Path,
-        to newPath: borrowing Kernel.Path,
+        from oldPath: borrowing Path,
+        to newPath: borrowing Path,
         options: Options
     ) throws(Kernel.File.Move.Error) {
         try oldPath.withUnsafeCString { oldPtr throws(Kernel.File.Move.Error) in

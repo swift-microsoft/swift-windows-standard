@@ -22,8 +22,8 @@ extension Windows.Kernel.Link {
     ///   - linkPath: The path of the hard link to create.
     /// - Throws: `Kernel.Link.Error` on failure.
     public static func create(
-        source: borrowing Kernel.Path,
-        linkPath: borrowing Kernel.Path
+        source: borrowing Path,
+        linkPath: borrowing Path
     ) throws(Kernel.Link.Error) {
         try source.withUnsafeCString { sourcePtr throws(Kernel.Link.Error) in
             try linkPath.withUnsafeCString { linkPtr throws(Kernel.Link.Error) in

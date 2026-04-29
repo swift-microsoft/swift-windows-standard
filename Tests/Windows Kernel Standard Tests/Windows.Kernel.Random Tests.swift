@@ -19,7 +19,7 @@ import Kernel_Primitives_Core
 import Kernel_Descriptor_Primitives
 import Error_Primitives
 import Kernel_File_Primitives
-import Kernel_Path_Primitives
+import Path_Primitives
 import Kernel_IO_Primitives
 import Kernel_Thread_Primitives
 import Kernel_Clock_Primitives

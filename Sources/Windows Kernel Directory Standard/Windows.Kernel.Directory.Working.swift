@@ -63,7 +63,7 @@ extension Windows.Kernel.Directory.Working {
     /// - Parameter path: The new working directory path.
     /// - Throws: `Kernel.Directory.Working.Error` on failure.
     public static func set(
-        path: borrowing Kernel.Path
+        path: borrowing Path
     ) throws(Kernel.Directory.Working.Error) {
         try path.withUnsafeCString { ptr throws(Kernel.Directory.Working.Error) in
             try set(unsafePath: ptr)

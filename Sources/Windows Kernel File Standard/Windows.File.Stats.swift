@@ -14,7 +14,7 @@ internal import Kernel_Primitives_Core
 internal import Kernel_Descriptor_Primitives
 internal import Error_Primitives
 internal import Kernel_File_Primitives
-internal import Kernel_Path_Primitives
+internal import Path_Primitives
 internal import Kernel_IO_Primitives
 internal import Kernel_Thread_Primitives
 internal import Kernel_Time_Primitives
@@ -123,7 +123,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     /// - Parameter path: The path to stat.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func get(path: borrowing Kernel.Path) throws(Error) -> Self {
+    public static func get(path: borrowing Path) throws(Error) -> Self {
         try path.withUnsafeCString { ptr throws(Error) in
             try get(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
         }
@@ -162,7 +162,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     /// - Parameter path: The path to stat.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func lget(path: borrowing Kernel.Path) throws(Error) -> Self {
+    public static func lget(path: borrowing Path) throws(Error) -> Self {
         try path.withUnsafeCString { ptr throws(Error) in
             try lget(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
         }

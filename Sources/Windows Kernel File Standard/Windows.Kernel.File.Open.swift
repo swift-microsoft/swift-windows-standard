@@ -42,7 +42,7 @@ extension Windows.Kernel.File.Open {
     /// - Throws: ``Kernel/File/Open/Error`` on failure.
     @inlinable
     public static func open(
-        path: borrowing Kernel.Path,
+        path: borrowing Path,
         mode: Kernel.File.Open.Mode,
         options: Kernel.File.Open.Options,
         permissions: Kernel.File.Permissions = .standard

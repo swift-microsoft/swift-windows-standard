@@ -96,6 +96,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-standard-library-extensions"),
         .package(path: "../../swift-primitives/swift-error-primitives"),
         .package(path: "../../swift-primitives/swift-random-primitives"),
+        .package(path: "../../swift-primitives/swift-path-primitives"),
     ],
     targets: [
         // MARK: - Core
@@ -119,7 +120,7 @@ let package = Package(
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Memory Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Path Primitives", package: "swift-path-primitives"),
                 .product(name: "Kernel Permission Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Socket Primitives", package: "swift-kernel-primitives"),
             ]
@@ -149,7 +150,7 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard Core",
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
 
@@ -169,7 +170,7 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard Core",
                 .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Path Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Path Primitives", package: "swift-path-primitives"),
                 .product(name: "Kernel IO Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Kernel Time Primitives", package: "swift-kernel-primitives"),
             ]

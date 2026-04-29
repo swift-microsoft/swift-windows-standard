@@ -63,7 +63,7 @@ extension Windows.Kernel.Directory.Iterator {
     /// - Returns: An iterator for the directory contents.
     /// - Throws: `Kernel.Directory.Error` on failure.
     public static func open(
-        path: borrowing Kernel.Path
+        path: borrowing Path
     ) throws(Kernel.Directory.Error) -> Self {
         try path.withUnsafeCString { ptr throws(Kernel.Directory.Error) in
             try open(unsafePath: ptr)
@@ -76,7 +76,7 @@ extension Windows.Kernel.Directory.Iterator {
     /// - Returns: An iterator for the directory contents.
     /// - Throws: `Kernel.Directory.Error` on failure.
     public static func open(
-        unsafePath: UnsafePointer<Kernel.Path.Char>
+        unsafePath: UnsafePointer<Path.Char>
     ) throws(Kernel.Directory.Error) -> Self {
         // Append \* to the path for FindFirstFileW pattern
         let pathChars = unsafePath

@@ -22,7 +22,7 @@
 //
 // Drive-letter canonicalization (e.g., `C:\foo` → parent `C:\`) is L3
 // policy per `Path.Scan` documentation — this L2 conformance does the
-// byte scan only. See `Windows.Kernel.Path.Borrowed+Path.Modification.swift`
+// byte scan only. See `Path.Borrowed+Path.Modification.swift`
 // for the appending half of the split.
 
 extension Path.Borrowed: @retroactive Path.Decomposition {

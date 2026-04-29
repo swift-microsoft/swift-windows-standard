@@ -68,8 +68,8 @@ extension Windows.Kernel.File.Copy {
     ///   - overwrite: If true, overwrites existing destination file.
     /// - Throws: `Windows.Kernel.File.Copy.Error` on failure.
     public static func copy(
-        from source: borrowing Kernel.Path,
-        to destination: borrowing Kernel.Path,
+        from source: borrowing Path,
+        to destination: borrowing Path,
         overwrite: Bool = false
     ) throws(Error) {
         try source.withUnsafeCString { srcPtr throws(Error) in

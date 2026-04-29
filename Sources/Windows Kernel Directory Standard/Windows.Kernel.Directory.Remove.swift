@@ -20,7 +20,7 @@ extension Windows.Kernel.Directory.Remove {
     /// - Parameter path: The path of the directory to remove.
     /// - Throws: `Kernel.Directory.Remove.Error` on failure.
     public static func remove(
-        path: borrowing Kernel.Path
+        path: borrowing Path
     ) throws(Kernel.Directory.Remove.Error) {
         try path.withUnsafeCString { ptr throws(Kernel.Directory.Remove.Error) in
             try remove(unsafePath: ptr)

@@ -18,7 +18,7 @@ import Kernel_Primitives_Core
 import Kernel_Descriptor_Primitives
 import Error_Primitives
 import Kernel_File_Primitives
-import Kernel_Path_Primitives
+import Path_Primitives
 import Kernel_IO_Primitives
 import Kernel_Thread_Primitives
 import Kernel_Clock_Primitives
@@ -28,7 +28,7 @@ import Kernel_Environment_Primitives
 import Kernel_Process_Primitives
 import Kernel_System_Primitives
 
-extension Windows.Kernel.Path.Canonical {
+extension Path.Canonical {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -39,22 +39,22 @@ extension Windows.Kernel.Path.Canonical {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Path.Canonical.Test.Unit {
+extension Path.Canonical.Test.Unit {
     @Test
     func `Path.Canonical namespace exists`() {
-        _ = Windows.Kernel.Path.Canonical.self
+        _ = Path.Canonical.self
     }
 }
 
 // MARK: - Resolve Tests
 
-extension Windows.Kernel.Path.Canonical.Test.Unit {
+extension Path.Canonical.Test.Unit {
     @Test
     func `resolve current directory succeeds`() throws {
         var path = Array(".".utf16) + [0]
         let result = try path.withUnsafeBufferPointer { pathPtr in
             let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-            return try Windows.Kernel.Path.Canonical.resolve(unsafePath: wpath)
+            return try Path.Canonical.resolve(unsafePath: wpath)
         }
 
         #expect(!result.isEmpty)
@@ -68,7 +68,7 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
         let length = try path.withUnsafeBufferPointer { pathPtr in
             try buffer.withUnsafeMutableBufferPointer { bufferPtr in
                 let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                return try Windows.Kernel.Path.Canonical.resolve(unsafePath: wpath, into: bufferPtr)
+                return try Path.Canonical.resolve(unsafePath: wpath, into: bufferPtr)
             }
         }
 
@@ -80,7 +80,7 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
         var path = Array("C:\\Windows".utf16) + [0]
         let result = try path.withUnsafeBufferPointer { pathPtr in
             let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-            return try Windows.Kernel.Path.Canonical.resolve(unsafePath: wpath)
+            return try Path.Canonical.resolve(unsafePath: wpath)
         }
 
         let resultString = String(decoding: result, as: UTF16.self)
@@ -90,17 +90,17 @@ extension Windows.Kernel.Path.Canonical.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Path.Canonical.Test.EdgeCase {
+extension Path.Canonical.Test.EdgeCase {
     @Test
     func `resolve with small buffer throws`() {
         var path = Array("C:\\Windows\\System32".utf16) + [0]
         var buffer = [UInt16](repeating: 0, count: 5)  // Too small
 
-        #expect(throws: Kernel.Path.Canonical.Error.self) {
+        #expect(throws: Path.Canonical.Error.self) {
             try path.withUnsafeBufferPointer { pathPtr in
                 try buffer.withUnsafeMutableBufferPointer { bufferPtr in
                     let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    _ = try Windows.Kernel.Path.Canonical.resolve(unsafePath: wpath, into: bufferPtr)
+                    _ = try Path.Canonical.resolve(unsafePath: wpath, into: bufferPtr)
                 }
             }
         }

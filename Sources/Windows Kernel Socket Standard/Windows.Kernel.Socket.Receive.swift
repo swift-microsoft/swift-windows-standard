@@ -59,8 +59,32 @@ extension Windows.Kernel.Socket {
         length: Int,
         flags: ReceiveFlags = .none
     ) throws(Error) -> Int {
+        try receive(socket._rawValue, buffer: buffer, length: length, flags: flags)
+    }
+
+    /// Receives data from a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `recv`. The typed L2 convenience
+    /// (`receive(_:buffer:length:flags:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - buffer: Buffer to receive data into.
+    ///   - length: Maximum number of bytes to receive.
+    ///   - flags: Receive flags.
+    /// - Returns: Number of bytes received, or 0 if the connection was closed.
+    /// - Throws: `Error.receive` on failure.
+    @_spi(Syscall)
+    public static func receive(
+        _ socket: UInt,
+        buffer: UnsafeMutableRawPointer,
+        length: Int,
+        flags: ReceiveFlags = .none
+    ) throws(Error) -> Int {
         let result = recv(
-            SOCKET(socket._rawValue),
+            SOCKET(socket),
             buffer.assumingMemoryBound(to: CChar.self),
             Int32(length),
             flags.rawValue
@@ -113,8 +137,44 @@ extension Windows.Kernel.Socket {
         srcAddr: UnsafeMutablePointer<sockaddr>,
         srcAddrLength: UnsafeMutablePointer<Int32>
     ) throws(Error) -> Int {
+        try receiveFrom(
+            socket._rawValue,
+            buffer: buffer,
+            length: length,
+            flags: flags,
+            srcAddr: srcAddr,
+            srcAddrLength: srcAddrLength
+        )
+    }
+
+    /// Receives data on a SOCKET bit pattern and retrieves the source address.
+    ///
+    /// Spec-literal raw `recvfrom`. The typed L2 convenience
+    /// (`receiveFrom(_:buffer:length:flags:srcAddr:srcAddrLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - buffer: Buffer to receive data into.
+    ///   - length: Maximum number of bytes to receive.
+    ///   - flags: Receive flags.
+    ///   - srcAddr: Pointer to receive the source address.
+    ///   - srcAddrLength: On input, size of the address buffer.
+    ///                    On output, actual size of the returned address.
+    /// - Returns: Number of bytes received.
+    /// - Throws: `Error.receive` on failure.
+    @_spi(Syscall)
+    public static func receiveFrom(
+        _ socket: UInt,
+        buffer: UnsafeMutableRawPointer,
+        length: Int,
+        flags: ReceiveFlags = .none,
+        srcAddr: UnsafeMutablePointer<sockaddr>,
+        srcAddrLength: UnsafeMutablePointer<Int32>
+    ) throws(Error) -> Int {
         let result = recvfrom(
-            SOCKET(socket._rawValue),
+            SOCKET(socket),
             buffer.assumingMemoryBound(to: CChar.self),
             Int32(length),
             flags.rawValue,

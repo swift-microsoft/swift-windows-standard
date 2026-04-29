@@ -43,6 +43,24 @@ extension Windows.Kernel.Socket {
         _ socket: borrowing Kernel.Socket.Descriptor,
         how: Kernel.Socket.Shutdown.How
     ) throws(Error) {
+        try shutdown(socket._rawValue, how: how)
+    }
+
+    /// Shuts down part of a full-duplex connection on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `shutdown`. The typed L2 convenience
+    /// (`shutdown(_:how:)` taking `borrowing Kernel.Socket.Descriptor`)
+    /// delegates to this raw SPI internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - how: Which operations to disable.
+    /// - Throws: `Error.shutdown` on failure.
+    @_spi(Syscall)
+    public static func shutdown(
+        _ socket: UInt,
+        how: Kernel.Socket.Shutdown.How
+    ) throws(Error) {
         let sdHow: Int32
         switch how {
         case .read:
@@ -53,7 +71,7 @@ extension Windows.Kernel.Socket {
             sdHow = SD_BOTH
         }
 
-        let result = WinSDK.shutdown(SOCKET(socket._rawValue), sdHow)
+        let result = WinSDK.shutdown(SOCKET(socket), sdHow)
         guard result == 0 else {
             throw .shutdown(captureLastSocketError())
         }

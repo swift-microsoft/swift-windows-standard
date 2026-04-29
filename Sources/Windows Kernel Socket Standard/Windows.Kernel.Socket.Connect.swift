@@ -40,7 +40,28 @@ extension Windows.Kernel.Socket {
         address: UnsafePointer<sockaddr>,
         addressLength: Int32
     ) throws(Error) {
-        let result = WinSDK.connect(SOCKET(socket._rawValue), address, addressLength)
+        try connect(socket._rawValue, address: address, addressLength: addressLength)
+    }
+
+    /// Connects a SOCKET bit pattern to a remote address.
+    ///
+    /// Spec-literal raw `connect`. The typed L2 convenience
+    /// (`connect(_:address:addressLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - address: Pointer to the remote address.
+    ///   - addressLength: Size of the address structure.
+    /// - Throws: `Error.connect` on failure.
+    @_spi(Syscall)
+    public static func connect(
+        _ socket: UInt,
+        address: UnsafePointer<sockaddr>,
+        addressLength: Int32
+    ) throws(Error) {
+        let result = WinSDK.connect(SOCKET(socket), address, addressLength)
         guard result == 0 else {
             throw .connect(captureLastSocketError())
         }

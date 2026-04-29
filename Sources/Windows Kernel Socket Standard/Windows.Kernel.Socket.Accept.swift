@@ -14,13 +14,61 @@
 @_spi(Syscall) public import Kernel_Socket_Primitives
 public import WinSDK
 
-// MARK: - Socket Accept
+// MARK: - Socket Accept (raw @_spi(Syscall))
 
 extension Windows.Kernel.Socket {
+    /// Accepts an incoming connection on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `accept`. The typed L2 convenience (`accept(_:)`
+    /// taking `borrowing Kernel.Socket.Descriptor`) delegates to this raw
+    /// SPI internally via `socket._rawValue`.
+    ///
+    /// - Parameter socket: SOCKET bit pattern (listening).
+    /// - Returns: New connected SOCKET bit pattern.
+    /// - Throws: `Error.accept` on failure.
+    @_spi(Syscall)
+    public static func accept(
+        _ socket: UInt
+    ) throws(Error) -> UInt {
+        let clientSocket = WinSDK.accept(SOCKET(socket), nil, nil)
+        guard clientSocket != INVALID_SOCKET else {
+            throw .accept(captureLastSocketError())
+        }
+        return UInt(clientSocket)
+    }
+
+    /// Accepts an incoming connection on a SOCKET bit pattern, retrieving the client address.
+    ///
+    /// Spec-literal raw `accept`. The typed L2 convenience
+    /// (`accept(_:address:addressLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern (listening).
+    ///   - address: Pointer to receive the client address.
+    ///   - addressLength: On input, the size of the address buffer.
+    ///                    On output, the actual size of the returned address.
+    /// - Returns: New connected SOCKET bit pattern.
+    /// - Throws: `Error.accept` on failure.
+    @_spi(Syscall)
+    public static func accept(
+        _ socket: UInt,
+        address: UnsafeMutablePointer<sockaddr>,
+        addressLength: UnsafeMutablePointer<Int32>
+    ) throws(Error) -> UInt {
+        let clientSocket = WinSDK.accept(SOCKET(socket), address, addressLength)
+        guard clientSocket != INVALID_SOCKET else {
+            throw .accept(captureLastSocketError())
+        }
+        return UInt(clientSocket)
+    }
+
     /// Accepts an incoming connection on a listening socket.
     ///
-    /// Extracts the first connection request from the queue of pending
-    /// connections and creates a new socket for that connection.
+    /// Typed L2 form. Delegates to the raw `accept(_:)` SPI via
+    /// `socket._rawValue` and reconstructs the result via
+    /// `Kernel.Socket.Descriptor(_rawValue:)`.
     ///
     /// - Parameter socket: The listening socket.
     /// - Returns: The new connected socket descriptor.
@@ -34,14 +82,15 @@ extension Windows.Kernel.Socket {
     public static func accept(
         _ socket: borrowing Kernel.Socket.Descriptor
     ) throws(Error) -> Kernel.Socket.Descriptor {
-        let clientSocket = WinSDK.accept(SOCKET(socket._rawValue), nil, nil)
-        guard clientSocket != INVALID_SOCKET else {
-            throw .accept(captureLastSocketError())
-        }
-        return Kernel.Socket.Descriptor(_rawValue: UInt(clientSocket))
+        let raw = try accept(socket._rawValue)
+        return Kernel.Socket.Descriptor(_rawValue: raw)
     }
 
     /// Accepts an incoming connection and retrieves the client address.
+    ///
+    /// Typed L2 form. Delegates to the raw `accept(_:address:addressLength:)`
+    /// SPI via `socket._rawValue` and reconstructs the result via
+    /// `Kernel.Socket.Descriptor(_rawValue:)`.
     ///
     /// - Parameters:
     ///   - socket: The listening socket.
@@ -55,11 +104,8 @@ extension Windows.Kernel.Socket {
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
     ) throws(Error) -> Kernel.Socket.Descriptor {
-        let clientSocket = WinSDK.accept(SOCKET(socket._rawValue), address, addressLength)
-        guard clientSocket != INVALID_SOCKET else {
-            throw .accept(captureLastSocketError())
-        }
-        return Kernel.Socket.Descriptor(_rawValue: UInt(clientSocket))
+        let raw = try accept(socket._rawValue, address: address, addressLength: addressLength)
+        return Kernel.Socket.Descriptor(_rawValue: raw)
     }
 }
 

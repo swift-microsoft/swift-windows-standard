@@ -109,8 +109,33 @@ extension Windows.Kernel.Socket {
         value: UnsafeMutableRawPointer,
         length: UnsafeMutablePointer<Int32>
     ) throws(Error) {
+        try getOption(socket._rawValue, level: level, name: name, value: value, length: length)
+    }
+
+    /// Gets a socket option on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `getsockopt`. The typed L2 convenience
+    /// (`getOption(_:level:name:value:length:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - level: Option level (socket, TCP, IP, etc.).
+    ///   - name: Option name.
+    ///   - value: Pointer to receive the option value.
+    ///   - length: On input, size of the value buffer. On output, actual size.
+    /// - Throws: `Error.getOption` on failure.
+    @_spi(Syscall)
+    public static func getOption(
+        _ socket: UInt,
+        level: OptionLevel,
+        name: OptionName,
+        value: UnsafeMutableRawPointer,
+        length: UnsafeMutablePointer<Int32>
+    ) throws(Error) {
         let result = getsockopt(
-            SOCKET(socket._rawValue),
+            SOCKET(socket),
             level.rawValue,
             name.rawValue,
             value.assumingMemoryBound(to: CChar.self),
@@ -137,8 +162,33 @@ extension Windows.Kernel.Socket {
         value: UnsafeRawPointer,
         length: Int32
     ) throws(Error) {
+        try setOption(socket._rawValue, level: level, name: name, value: value, length: length)
+    }
+
+    /// Sets a socket option on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `setsockopt`. The typed L2 convenience
+    /// (`setOption(_:level:name:value:length:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - level: Option level (socket, TCP, IP, etc.).
+    ///   - name: Option name.
+    ///   - value: Pointer to the option value.
+    ///   - length: Size of the option value.
+    /// - Throws: `Error.setOption` on failure.
+    @_spi(Syscall)
+    public static func setOption(
+        _ socket: UInt,
+        level: OptionLevel,
+        name: OptionName,
+        value: UnsafeRawPointer,
+        length: Int32
+    ) throws(Error) {
         let result = setsockopt(
-            SOCKET(socket._rawValue),
+            SOCKET(socket),
             level.rawValue,
             name.rawValue,
             value.assumingMemoryBound(to: CChar.self),
@@ -340,7 +390,29 @@ extension Windows.Kernel.Socket {
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
     ) throws(Error) {
-        let result = getsockname(SOCKET(socket._rawValue), address, addressLength)
+        try getSockName(socket._rawValue, address: address, addressLength: addressLength)
+    }
+
+    /// Gets the local address on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `getsockname`. The typed L2 convenience
+    /// (`getSockName(_:address:addressLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - address: Pointer to receive the address.
+    ///   - addressLength: On input, size of the address buffer.
+    ///                    On output, actual size of the returned address.
+    /// - Throws: `Error.getSockName` on failure.
+    @_spi(Syscall)
+    public static func getSockName(
+        _ socket: UInt,
+        address: UnsafeMutablePointer<sockaddr>,
+        addressLength: UnsafeMutablePointer<Int32>
+    ) throws(Error) {
+        let result = getsockname(SOCKET(socket), address, addressLength)
         guard result == 0 else {
             throw .getSockName(captureLastSocketError())
         }
@@ -359,7 +431,29 @@ extension Windows.Kernel.Socket {
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
     ) throws(Error) {
-        let result = getpeername(SOCKET(socket._rawValue), address, addressLength)
+        try getPeerName(socket._rawValue, address: address, addressLength: addressLength)
+    }
+
+    /// Gets the remote address on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `getpeername`. The typed L2 convenience
+    /// (`getPeerName(_:address:addressLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - address: Pointer to receive the address.
+    ///   - addressLength: On input, size of the address buffer.
+    ///                    On output, actual size of the returned address.
+    /// - Throws: `Error.getPeerName` on failure.
+    @_spi(Syscall)
+    public static func getPeerName(
+        _ socket: UInt,
+        address: UnsafeMutablePointer<sockaddr>,
+        addressLength: UnsafeMutablePointer<Int32>
+    ) throws(Error) {
+        let result = getpeername(SOCKET(socket), address, addressLength)
         guard result == 0 else {
             throw .getPeerName(captureLastSocketError())
         }

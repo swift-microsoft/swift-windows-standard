@@ -38,7 +38,25 @@ extension Windows.Kernel.Socket {
         _ socket: borrowing Kernel.Socket.Descriptor,
         backlog: Kernel.Socket.Backlog
     ) throws(Error) {
-        let result = WinSDK.listen(SOCKET(socket._rawValue), backlog.rawValue)
+        try listen(socket._rawValue, backlog: backlog)
+    }
+
+    /// Places a SOCKET bit pattern in listening state.
+    ///
+    /// Spec-literal raw `listen`. The typed L2 convenience
+    /// (`listen(_:backlog:)` taking `borrowing Kernel.Socket.Descriptor`)
+    /// delegates to this raw SPI internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - backlog: Maximum length of the pending connections queue.
+    /// - Throws: `Error.listen` on failure.
+    @_spi(Syscall)
+    public static func listen(
+        _ socket: UInt,
+        backlog: Kernel.Socket.Backlog
+    ) throws(Error) {
+        let result = WinSDK.listen(SOCKET(socket), backlog.rawValue)
         guard result == 0 else {
             throw .listen(captureLastSocketError())
         }

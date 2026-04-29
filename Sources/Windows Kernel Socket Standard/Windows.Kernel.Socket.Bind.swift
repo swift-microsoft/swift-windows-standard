@@ -51,7 +51,28 @@ extension Windows.Kernel.Socket {
         address: UnsafePointer<sockaddr>,
         addressLength: Int32
     ) throws(Error) {
-        let result = WinSDK.bind(SOCKET(socket._rawValue), address, addressLength)
+        try bind(socket._rawValue, address: address, addressLength: addressLength)
+    }
+
+    /// Binds a SOCKET bit pattern to a local address.
+    ///
+    /// Spec-literal raw `bind`. The typed L2 convenience
+    /// (`bind(_:address:addressLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - address: Pointer to the address structure.
+    ///   - addressLength: Size of the address structure.
+    /// - Throws: `Error.bind` on failure.
+    @_spi(Syscall)
+    public static func bind(
+        _ socket: UInt,
+        address: UnsafePointer<sockaddr>,
+        addressLength: Int32
+    ) throws(Error) {
+        let result = WinSDK.bind(SOCKET(socket), address, addressLength)
         guard result == 0 else {
             throw .bind(captureLastSocketError())
         }

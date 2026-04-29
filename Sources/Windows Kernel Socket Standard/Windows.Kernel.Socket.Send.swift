@@ -55,8 +55,32 @@ extension Windows.Kernel.Socket {
         length: Int,
         flags: SendFlags = .none
     ) throws(Error) -> Int {
+        try send(socket._rawValue, buffer: buffer, length: length, flags: flags)
+    }
+
+    /// Sends data on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `send`. The typed L2 convenience
+    /// (`send(_:buffer:length:flags:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - buffer: Pointer to the data to send.
+    ///   - length: Number of bytes to send.
+    ///   - flags: Send flags.
+    /// - Returns: Number of bytes sent (may be less than `length`).
+    /// - Throws: `Error.send` on failure.
+    @_spi(Syscall)
+    public static func send(
+        _ socket: UInt,
+        buffer: UnsafeRawPointer,
+        length: Int,
+        flags: SendFlags = .none
+    ) throws(Error) -> Int {
         let result = WinSDK.send(
-            SOCKET(socket._rawValue),
+            SOCKET(socket),
             buffer.assumingMemoryBound(to: CChar.self),
             Int32(length),
             flags.rawValue
@@ -108,8 +132,43 @@ extension Windows.Kernel.Socket {
         destAddr: UnsafePointer<sockaddr>,
         destAddrLength: Int32
     ) throws(Error) -> Int {
+        try sendTo(
+            socket._rawValue,
+            buffer: buffer,
+            length: length,
+            flags: flags,
+            destAddr: destAddr,
+            destAddrLength: destAddrLength
+        )
+    }
+
+    /// Sends data to a destination on a SOCKET bit pattern.
+    ///
+    /// Spec-literal raw `sendto`. The typed L2 convenience
+    /// (`sendTo(_:buffer:length:flags:destAddr:destAddrLength:)` taking
+    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// internally via `socket._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - socket: SOCKET bit pattern.
+    ///   - buffer: Pointer to the data to send.
+    ///   - length: Number of bytes to send.
+    ///   - flags: Send flags.
+    ///   - destAddr: Destination address.
+    ///   - destAddrLength: Size of the destination address structure.
+    /// - Returns: Number of bytes sent.
+    /// - Throws: `Error.send` on failure.
+    @_spi(Syscall)
+    public static func sendTo(
+        _ socket: UInt,
+        buffer: UnsafeRawPointer,
+        length: Int,
+        flags: SendFlags = .none,
+        destAddr: UnsafePointer<sockaddr>,
+        destAddrLength: Int32
+    ) throws(Error) -> Int {
         let result = sendto(
-            SOCKET(socket._rawValue),
+            SOCKET(socket),
             buffer.assumingMemoryBound(to: CChar.self),
             Int32(length),
             flags.rawValue,

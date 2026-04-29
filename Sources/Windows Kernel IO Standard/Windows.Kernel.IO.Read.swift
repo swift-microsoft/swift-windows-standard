@@ -16,33 +16,39 @@
 @_spi(Syscall) public import Kernel_File_Primitives
 public import WinSDK
 
-// MARK: - Windows ReadFile syscall (synchronous)
+// MARK: - Windows ReadFile syscall (raw @_spi(Syscall))
 
 extension Windows.Kernel.IO.Read {
-    /// Reads bytes from a file descriptor.
+    /// Reads bytes from a raw Windows HANDLE bit pattern.
     ///
-    /// This is the synchronous read variant for non-overlapped handles.
-    /// For async I/O with completion ports, use the IOCP-specific read functions.
+    /// Spec-literal raw `ReadFile`. The typed L2 convenience
+    /// (`Windows.Kernel.IO.Read.read(_:into:)` taking `Kernel.Descriptor`)
+    /// delegates to this raw SPI internally via `descriptor._rawValue` after
+    /// a fast-fail validity check.
+    ///
+    /// This is the synchronous read variant for non-overlapped handles. For
+    /// async I/O with completion ports, use the IOCP-specific read functions.
     ///
     /// - Parameters:
-    ///   - descriptor: The file descriptor to read from.
+    ///   - handle: HANDLE bit pattern.
     ///   - buffer: The buffer to read into.
     /// - Returns: Number of bytes read. Returns 0 on EOF.
-    /// - Throws: `Kernel.IO.Read.Error` on failure.
+    /// - Throws: ``Kernel/IO/Read/Error`` on failure.
+    @_spi(Syscall)
     public static func read(
-        _ descriptor: Kernel.Descriptor,
+        _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer
     ) throws(Error) -> Int {
         guard let baseAddress = buffer.baseAddress else {
             return 0
         }
-        guard descriptor.isValid else {
+        guard let pointer = UnsafeMutableRawPointer(bitPattern: handle) else {
             throw .handle(.invalid)
         }
 
         var bytesRead: DWORD = 0
         let success = ReadFile(
-            descriptor.handle,
+            pointer,
             baseAddress,
             DWORD(buffer.count),
             &bytesRead,
@@ -61,27 +67,32 @@ extension Windows.Kernel.IO.Read {
         return Int(bytesRead)
     }
 
-    /// Reads bytes from a file descriptor at a specific offset.
+    /// Reads bytes from a raw Windows HANDLE bit pattern at a specific offset.
     ///
-    /// Uses SetFilePointerEx + ReadFile for positioned reads.
-    /// This does NOT modify the file pointer atomically on Windows
-    /// (unlike POSIX pread). Use external synchronization if needed.
+    /// Spec-literal raw `SetFilePointerEx + ReadFile`. The typed L2
+    /// convenience (`Windows.Kernel.IO.Read.pread(_:into:at:)` taking
+    /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `descriptor._rawValue` after a fast-fail validity check.
+    ///
+    /// This does NOT modify the file pointer atomically on Windows (unlike
+    /// POSIX pread). Use external synchronization if needed.
     ///
     /// - Parameters:
-    ///   - descriptor: The file descriptor to read from.
+    ///   - handle: HANDLE bit pattern.
     ///   - buffer: The buffer to read into.
     ///   - offset: The file offset to read from.
     /// - Returns: Number of bytes read. Returns 0 on EOF.
-    /// - Throws: `Kernel.IO.Read.Error` on failure.
+    /// - Throws: ``Kernel/IO/Read/Error`` on failure.
+    @_spi(Syscall)
     public static func pread(
-        _ descriptor: Kernel.Descriptor,
+        _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer,
         at offset: Kernel.File.Offset
     ) throws(Error) -> Int {
         guard let baseAddress = buffer.baseAddress else {
             return 0
         }
-        guard descriptor.isValid else {
+        guard let pointer = UnsafeMutableRawPointer(bitPattern: handle) else {
             throw .handle(.invalid)
         }
 
@@ -89,21 +100,21 @@ extension Windows.Kernel.IO.Read {
         var currentPos: LARGE_INTEGER = LARGE_INTEGER()
         var zero: LARGE_INTEGER = LARGE_INTEGER()
         zero.QuadPart = 0
-        guard SetFilePointerEx(descriptor.handle, zero, &currentPos, DWORD(FILE_CURRENT)) else {
+        guard SetFilePointerEx(pointer, zero, &currentPos, DWORD(FILE_CURRENT)) else {
             throw .current()
         }
 
         // Seek to offset
         var targetPos: LARGE_INTEGER = LARGE_INTEGER()
         targetPos.QuadPart = offset.rawValue
-        guard SetFilePointerEx(descriptor.handle, targetPos, nil, DWORD(FILE_BEGIN)) else {
+        guard SetFilePointerEx(pointer, targetPos, nil, DWORD(FILE_BEGIN)) else {
             throw .current()
         }
 
         // Read
         var bytesRead: DWORD = 0
         let readSuccess = ReadFile(
-            descriptor.handle,
+            pointer,
             baseAddress,
             DWORD(buffer.count),
             &bytesRead,
@@ -111,7 +122,7 @@ extension Windows.Kernel.IO.Read {
         )
 
         // Restore position regardless of read result
-        _ = SetFilePointerEx(descriptor.handle, currentPos, nil, DWORD(FILE_BEGIN))
+        _ = SetFilePointerEx(pointer, currentPos, nil, DWORD(FILE_BEGIN))
 
         if !readSuccess {
             let error = GetLastError()
@@ -122,6 +133,59 @@ extension Windows.Kernel.IO.Read {
         }
 
         return Int(bytesRead)
+    }
+}
+
+// MARK: - Typed Convenience
+
+extension Windows.Kernel.IO.Read {
+    /// Reads bytes from a file descriptor.
+    ///
+    /// Typed L2 form. Delegates to the raw `read(_:into:)` SPI via
+    /// `descriptor._rawValue` after a fast-fail validity check.
+    ///
+    /// This is the synchronous read variant for non-overlapped handles. For
+    /// async I/O with completion ports, use the IOCP-specific read functions.
+    ///
+    /// - Parameters:
+    ///   - descriptor: The file descriptor to read from.
+    ///   - buffer: The buffer to read into.
+    /// - Returns: Number of bytes read. Returns 0 on EOF.
+    /// - Throws: ``Kernel/IO/Read/Error`` on failure.
+    public static func read(
+        _ descriptor: Kernel.Descriptor,
+        into buffer: UnsafeMutableRawBufferPointer
+    ) throws(Error) -> Int {
+        guard descriptor.isValid else {
+            throw .handle(.invalid)
+        }
+        return try read(descriptor._rawValue, into: buffer)
+    }
+
+    /// Reads bytes from a file descriptor at a specific offset.
+    ///
+    /// Typed L2 form. Delegates to the raw `pread(_:into:at:)` SPI via
+    /// `descriptor._rawValue` after a fast-fail validity check.
+    ///
+    /// Uses SetFilePointerEx + ReadFile for positioned reads. This does NOT
+    /// modify the file pointer atomically on Windows (unlike POSIX pread).
+    /// Use external synchronization if needed.
+    ///
+    /// - Parameters:
+    ///   - descriptor: The file descriptor to read from.
+    ///   - buffer: The buffer to read into.
+    ///   - offset: The file offset to read from.
+    /// - Returns: Number of bytes read. Returns 0 on EOF.
+    /// - Throws: ``Kernel/IO/Read/Error`` on failure.
+    public static func pread(
+        _ descriptor: Kernel.Descriptor,
+        into buffer: UnsafeMutableRawBufferPointer,
+        at offset: Kernel.File.Offset
+    ) throws(Error) -> Int {
+        guard descriptor.isValid else {
+            throw .handle(.invalid)
+        }
+        return try pread(descriptor._rawValue, into: buffer, at: offset)
     }
 }
 

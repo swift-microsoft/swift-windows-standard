@@ -110,23 +110,28 @@
         }
     }
 
-    // MARK: - Operations
+    // MARK: - Operations (raw @_spi(Syscall))
 
     extension Kernel.IO.Completion.Port.Dequeue {
-        /// Dequeues a single completion packet.
+        /// Dequeues a single completion packet from a port HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `GetQueuedCompletionStatus`. The typed L2
+        /// convenience (`single(_:timeout:)` taking `Kernel.Descriptor`)
+        /// delegates to this raw SPI internally via `descriptor._rawValue`.
         ///
         /// - Note: This operation **blocks the calling thread** until a completion
         ///   arrives or the timeout expires. For non-blocking polling, use `timeout: 0`.
         ///
         /// - Parameters:
-        ///   - port: The port handle.
+        ///   - port: Port HANDLE bit pattern.
         ///   - timeout: Timeout in milliseconds (`Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
         /// - Returns: The dequeued completion item.
         /// - Throws: `.timeout` on timeout, `.dequeue` only on actual port failure.
         ///   Operation failures are returned via `Item.status`.
+        @_spi(Syscall)
         @inlinable
         public static func single(
-            _ port: Kernel.Descriptor,
+            _ port: UInt,
             timeout: UInt32
         ) throws(Kernel.IO.Completion.Port.Error) -> Item {
             var bytes: DWORD = 0
@@ -134,7 +139,7 @@
             var overlapped: LPOVERLAPPED? = nil
 
             let ok = unsafe GetQueuedCompletionStatus(
-                port.rawValue,
+                UnsafeMutableRawPointer(bitPattern: port)!,
                 &bytes,
                 &key,
                 &overlapped,
@@ -179,10 +184,90 @@
             throw .dequeue(.win32(error))
         }
 
-        /// Dequeues multiple completion packets (batch).
+        /// Dequeues multiple completion packets (batch) from a port HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `GetQueuedCompletionStatusEx`. The typed L2
+        /// convenience (`batch(_:entries:timeout:)` taking `Kernel.Descriptor`)
+        /// delegates to this raw SPI internally via `descriptor._rawValue`.
         ///
         /// More efficient than calling `single` in a loop when multiple
         /// completions are expected.
+        ///
+        /// - Note: This operation **blocks the calling thread** until at least one
+        ///   completion arrives or the timeout expires. For non-blocking polling, use `timeout: 0`.
+        ///
+        /// - Parameters:
+        ///   - port: Port HANDLE bit pattern.
+        ///   - entries: Buffer for completion entries.
+        ///   - timeout: Timeout in milliseconds.
+        /// - Returns: Number of entries dequeued (0 on timeout).
+        /// - Throws: `Error.dequeue` on failure.
+        @_spi(Syscall)
+        @unsafe
+        @inlinable
+        public static func batch(
+            _ port: UInt,
+            entries: UnsafeMutableBufferPointer<Kernel.IO.Completion.Port.Entry>,
+            timeout: UInt32
+        ) throws(Kernel.IO.Completion.Port.Error) -> Int {
+            guard let base = unsafe entries.baseAddress else { return 0 }
+
+            // Entry is a transparent wrapper around OVERLAPPED_ENTRY,
+            // so we can safely reinterpret the buffer pointer
+            let rawBase = unsafe UnsafeMutableRawPointer(base)
+                .assumingMemoryBound(to: OVERLAPPED_ENTRY.self)
+
+            var removed: ULONG = 0
+            let result = unsafe GetQueuedCompletionStatusEx(
+                UnsafeMutableRawPointer(bitPattern: port)!,
+                rawBase,
+                ULONG(entries.count),
+                &removed,
+                DWORD(timeout),
+                false  // Not alertable
+            )
+
+            if !result {
+                let error = GetLastError()
+                if error == WAIT_TIMEOUT {
+                    return 0
+                }
+                throw .dequeue(.win32(UInt32(error)))
+            }
+
+            return Int(removed)
+        }
+    }
+
+    // MARK: - Typed Convenience
+
+    extension Kernel.IO.Completion.Port.Dequeue {
+        /// Dequeues a single completion packet.
+        ///
+        /// Typed L2 form. Delegates to the raw `single(_:timeout:)` SPI via
+        /// `descriptor._rawValue`.
+        ///
+        /// - Note: This operation **blocks the calling thread** until a completion
+        ///   arrives or the timeout expires. For non-blocking polling, use `timeout: 0`.
+        ///
+        /// - Parameters:
+        ///   - port: The port handle.
+        ///   - timeout: Timeout in milliseconds (`Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
+        /// - Returns: The dequeued completion item.
+        /// - Throws: `.timeout` on timeout, `.dequeue` only on actual port failure.
+        ///   Operation failures are returned via `Item.status`.
+        @inlinable
+        public static func single(
+            _ port: Kernel.Descriptor,
+            timeout: UInt32
+        ) throws(Kernel.IO.Completion.Port.Error) -> Item {
+            try single(port._rawValue, timeout: timeout)
+        }
+
+        /// Dequeues multiple completion packets (batch).
+        ///
+        /// Typed L2 form. Delegates to the raw `batch(_:entries:timeout:)`
+        /// SPI via `descriptor._rawValue`.
         ///
         /// - Note: This operation **blocks the calling thread** until at least one
         ///   completion arrives or the timeout expires. For non-blocking polling, use `timeout: 0`.
@@ -200,32 +285,7 @@
             entries: UnsafeMutableBufferPointer<Kernel.IO.Completion.Port.Entry>,
             timeout: UInt32
         ) throws(Kernel.IO.Completion.Port.Error) -> Int {
-            guard let base = unsafe entries.baseAddress else { return 0 }
-
-            // Entry is a transparent wrapper around OVERLAPPED_ENTRY,
-            // so we can safely reinterpret the buffer pointer
-            let rawBase = unsafe UnsafeMutableRawPointer(base)
-                .assumingMemoryBound(to: OVERLAPPED_ENTRY.self)
-
-            var removed: ULONG = 0
-            let result = unsafe GetQueuedCompletionStatusEx(
-                port.rawValue,
-                rawBase,
-                ULONG(entries.count),
-                &removed,
-                DWORD(timeout),
-                false  // Not alertable
-            )
-
-            if !result {
-                let error = GetLastError()
-                if error == WAIT_TIMEOUT {
-                    return 0
-                }
-                throw .dequeue(.win32(UInt32(error)))
-            }
-
-            return Int(removed)
+            try unsafe batch(port._rawValue, entries: entries, timeout: timeout)
         }
     }
 

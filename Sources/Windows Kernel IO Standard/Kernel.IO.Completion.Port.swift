@@ -38,7 +38,7 @@
         }
     }
 
-    // MARK: - Syscalls
+    // MARK: - Syscalls (raw @_spi(Syscall))
 
     extension Kernel.IO.Completion.Port {
         /// Creates a new I/O completion port.
@@ -63,24 +63,30 @@
             return Kernel.Descriptor(rawValue: handle)
         }
 
-        /// Associates a file handle with the completion port.
+        /// Associates a file handle bit pattern with a completion port bit pattern.
+        ///
+        /// Spec-literal raw `CreateIoCompletionPort`. The typed L2 convenience
+        /// (`associate(_:handle:key:)` taking `Kernel.Descriptor`) delegates
+        /// to this raw SPI internally via `descriptor._rawValue` after a
+        /// fast-fail validity check.
         ///
         /// The file handle must have been opened with `FILE_FLAG_OVERLAPPED`.
         ///
         /// - Parameters:
-        ///   - port: The port handle.
-        ///   - handle: The file handle to associate.
+        ///   - port: Port HANDLE bit pattern.
+        ///   - handle: File HANDLE bit pattern to associate.
         ///   - key: Application-defined value returned with completions.
         /// - Throws: `Error.associate` if association fails.
+        @_spi(Syscall)
         @inlinable
         public static func associate(
-            _ port: Kernel.Descriptor,
-            handle: Kernel.Descriptor,
+            _ port: UInt,
+            handle: UInt,
             key: Key
         ) throws(Error) {
             let result = CreateIoCompletionPort(
-                handle.rawValue,
-                port.rawValue,
+                UnsafeMutableRawPointer(bitPattern: handle)!,
+                UnsafeMutableRawPointer(bitPattern: port)!,
                 key.rawValue,
                 0
             )
@@ -89,27 +95,30 @@
             }
         }
 
-        /// Posts a completion packet to the port.
+        /// Posts a completion packet to a port HANDLE bit pattern.
         ///
-        /// This can be used to wake up a thread waiting on the port,
-        /// or to manually signal completion of an operation.
+        /// Spec-literal raw `PostQueuedCompletionStatus`. The typed L2
+        /// convenience (`post(_:bytes:key:overlapped:)` taking
+        /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `descriptor._rawValue` after a fast-fail validity check.
         ///
         /// - Parameters:
-        ///   - port: The port handle.
+        ///   - port: Port HANDLE bit pattern.
         ///   - bytes: Number of bytes to report.
         ///   - key: The completion key to return.
         ///   - overlapped: The overlapped pointer to return (can be nil).
         /// - Throws: `Error.post` on failure.
+        @_spi(Syscall)
         @unsafe
         @inlinable
         public static func post(
-            _ port: Kernel.Descriptor,
+            _ port: UInt,
             bytes: DWORD = 0,
             key: Key = .zero,
             overlapped: LPOVERLAPPED? = nil
         ) throws(Error) {
             let result = unsafe PostQueuedCompletionStatus(
-                port.rawValue,
+                UnsafeMutableRawPointer(bitPattern: port)!,
                 bytes,
                 key.rawValue,
                 overlapped
@@ -119,37 +128,48 @@
             }
         }
 
-        /// Closes the completion port.
+        /// Closes a port HANDLE bit pattern.
         ///
-        /// Uses `Kernel.Close.close()` for consistency. This operation is
-        /// **fire-and-forget**: errors are ignored. Any threads blocked in
+        /// Spec-literal raw delegate to `Windows.Kernel.Close.close(_:)`. The
+        /// typed L2 convenience (`close(_:)` taking `Kernel.Descriptor`)
+        /// delegates to this raw SPI internally via `descriptor._rawValue`
+        /// after a fast-fail validity check.
+        ///
+        /// Fire-and-forget: errors are ignored. Any threads blocked in
         /// `Dequeue` will receive an error on their next dequeue attempt.
         ///
-        /// - Parameter port: The port handle to close.
+        /// - Parameter port: The port HANDLE bit pattern to close.
+        @_spi(Syscall)
         @inlinable
-        public static func close(_ port: Kernel.Descriptor) {
-            try? Kernel.Close.close(port)
+        public static func close(_ port: UInt) {
+            _ = Windows.Kernel.Close.close(port)
         }
 
-        /// Initiates an overlapped read operation.
+        /// Initiates an overlapped read on a HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `ReadFile` over an overlapped structure. The
+        /// typed L2 convenience (`read(_:into:overlapped:)` taking
+        /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `descriptor._rawValue` after a fast-fail validity check.
         ///
         /// - Parameters:
-        ///   - handle: The file handle (must be opened with FILE_FLAG_OVERLAPPED).
+        ///   - handle: File HANDLE bit pattern (must be opened with FILE_FLAG_OVERLAPPED).
         ///   - buffer: The buffer to read into.
         ///   - overlapped: The overlapped structure for this operation.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
+        @_spi(Syscall)
         @unsafe
         @inlinable
         public static func read(
-            _ handle: Kernel.Descriptor,
+            _ handle: UInt,
             into buffer: UnsafeMutableRawBufferPointer,
             overlapped: inout Overlapped
         ) throws(Error) -> Read.Result {
             var count: DWORD = 0
             let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
                 ReadFile(
-                    handle.rawValue,
+                    UnsafeMutableRawPointer(bitPattern: handle)!,
                     buffer.baseAddress,
                     DWORD(buffer.count),
                     &count,
@@ -169,25 +189,31 @@
             throw .read(.win32(UInt32(error)))
         }
 
-        /// Initiates an overlapped write operation.
+        /// Initiates an overlapped write on a HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `WriteFile` over an overlapped structure. The
+        /// typed L2 convenience (`write(_:from:overlapped:)` taking
+        /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `descriptor._rawValue` after a fast-fail validity check.
         ///
         /// - Parameters:
-        ///   - handle: The file handle (must be opened with FILE_FLAG_OVERLAPPED).
+        ///   - handle: File HANDLE bit pattern (must be opened with FILE_FLAG_OVERLAPPED).
         ///   - buffer: The buffer to write from.
         ///   - overlapped: The overlapped structure for this operation.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
+        @_spi(Syscall)
         @unsafe
         @inlinable
         public static func write(
-            _ handle: Kernel.Descriptor,
+            _ handle: UInt,
             from buffer: UnsafeRawBufferPointer,
             overlapped: inout Overlapped
         ) throws(Error) -> Write.Result {
             var count: DWORD = 0
             let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
                 WriteFile(
-                    handle.rawValue,
+                    UnsafeMutableRawPointer(bitPattern: handle)!,
                     buffer.baseAddress,
                     DWORD(buffer.count),
                     &count,
@@ -207,7 +233,150 @@
             throw .write(.win32(UInt32(error)))
         }
 
+        /// Gets the result of a completed overlapped operation on a HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `GetOverlappedResult`. The typed L2 convenience
+        /// (`result(_:overlapped:wait:)` taking `Kernel.Descriptor`)
+        /// delegates to this raw SPI internally via `descriptor._rawValue`
+        /// after a fast-fail validity check.
+        ///
+        /// - Parameters:
+        ///   - handle: File HANDLE bit pattern.
+        ///   - overlapped: The overlapped structure.
+        ///   - wait: If `true`, blocks until the operation completes.
+        /// - Returns: The number of bytes transferred.
+        /// - Throws: `Error.result` on failure.
+        @_spi(Syscall)
+        @inlinable
+        public static func result(
+            _ handle: UInt,
+            overlapped: inout Overlapped,
+            wait: Bool = false
+        ) throws(Error) -> UInt32 {
+            var count: DWORD = 0
+            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+                GetOverlappedResult(
+                    UnsafeMutableRawPointer(bitPattern: handle)!,
+                    rawPtr,
+                    &count,
+                    wait
+                )
+            }
+
+            if success {
+                return count
+            }
+
+            throw .result(.captureLastError())
+        }
+    }
+
+    // MARK: - Typed Convenience
+
+    extension Kernel.IO.Completion.Port {
+        /// Associates a file handle with the completion port.
+        ///
+        /// Typed L2 form. Delegates to the raw `associate(_:handle:key:)` SPI
+        /// via `descriptor._rawValue`. The file handle must have been opened
+        /// with `FILE_FLAG_OVERLAPPED`.
+        ///
+        /// - Parameters:
+        ///   - port: The port handle.
+        ///   - handle: The file handle to associate.
+        ///   - key: Application-defined value returned with completions.
+        /// - Throws: `Error.associate` if association fails.
+        @inlinable
+        public static func associate(
+            _ port: Kernel.Descriptor,
+            handle: Kernel.Descriptor,
+            key: Key
+        ) throws(Error) {
+            try associate(port._rawValue, handle: handle._rawValue, key: key)
+        }
+
+        /// Posts a completion packet to the port.
+        ///
+        /// Typed L2 form. Delegates to the raw `post(_:bytes:key:overlapped:)`
+        /// SPI via `descriptor._rawValue`. This can be used to wake up a
+        /// thread waiting on the port, or to manually signal completion of
+        /// an operation.
+        ///
+        /// - Parameters:
+        ///   - port: The port handle.
+        ///   - bytes: Number of bytes to report.
+        ///   - key: The completion key to return.
+        ///   - overlapped: The overlapped pointer to return (can be nil).
+        /// - Throws: `Error.post` on failure.
+        @unsafe
+        @inlinable
+        public static func post(
+            _ port: Kernel.Descriptor,
+            bytes: DWORD = 0,
+            key: Key = .zero,
+            overlapped: LPOVERLAPPED? = nil
+        ) throws(Error) {
+            try unsafe post(port._rawValue, bytes: bytes, key: key, overlapped: overlapped)
+        }
+
+        /// Closes the completion port.
+        ///
+        /// Typed L2 form. Delegates to the raw `close(_:)` SPI via
+        /// `descriptor._rawValue`. Fire-and-forget: errors are ignored.
+        /// Any threads blocked in `Dequeue` will receive an error on their
+        /// next dequeue attempt.
+        ///
+        /// - Parameter port: The port handle to close.
+        @inlinable
+        public static func close(_ port: Kernel.Descriptor) {
+            close(port._rawValue)
+        }
+
+        /// Initiates an overlapped read operation.
+        ///
+        /// Typed L2 form. Delegates to the raw `read(_:into:overlapped:)` SPI
+        /// via `descriptor._rawValue`.
+        ///
+        /// - Parameters:
+        ///   - handle: The file handle (must be opened with FILE_FLAG_OVERLAPPED).
+        ///   - buffer: The buffer to read into.
+        ///   - overlapped: The overlapped structure for this operation.
+        /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
+        /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
+        @unsafe
+        @inlinable
+        public static func read(
+            _ handle: Kernel.Descriptor,
+            into buffer: UnsafeMutableRawBufferPointer,
+            overlapped: inout Overlapped
+        ) throws(Error) -> Read.Result {
+            try unsafe read(handle._rawValue, into: buffer, overlapped: &overlapped)
+        }
+
+        /// Initiates an overlapped write operation.
+        ///
+        /// Typed L2 form. Delegates to the raw `write(_:from:overlapped:)` SPI
+        /// via `descriptor._rawValue`.
+        ///
+        /// - Parameters:
+        ///   - handle: The file handle (must be opened with FILE_FLAG_OVERLAPPED).
+        ///   - buffer: The buffer to write from.
+        ///   - overlapped: The overlapped structure for this operation.
+        /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
+        /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
+        @unsafe
+        @inlinable
+        public static func write(
+            _ handle: Kernel.Descriptor,
+            from buffer: UnsafeRawBufferPointer,
+            overlapped: inout Overlapped
+        ) throws(Error) -> Write.Result {
+            try unsafe write(handle._rawValue, from: buffer, overlapped: &overlapped)
+        }
+
         /// Gets the result of a completed overlapped operation.
+        ///
+        /// Typed L2 form. Delegates to the raw `result(_:overlapped:wait:)`
+        /// SPI via `descriptor._rawValue`.
         ///
         /// - Parameters:
         ///   - handle: The file handle.
@@ -221,21 +390,7 @@
             overlapped: inout Overlapped,
             wait: Bool = false
         ) throws(Error) -> UInt32 {
-            var count: DWORD = 0
-            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
-                GetOverlappedResult(
-                    handle.rawValue,
-                    rawPtr,
-                    &count,
-                    wait
-                )
-            }
-
-            if success {
-                return count
-            }
-
-            throw .result(.captureLastError())
+            try result(handle._rawValue, overlapped: &overlapped, wait: wait)
         }
     }
 

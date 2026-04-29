@@ -11,8 +11,7 @@
 
 #if os(Windows)
 public import WinSDK
-public import Kernel_Random_Primitives
-public import Error_Primitives
+public import Random_Primitives
 
 // MARK: - Windows BCryptGenRandom syscall
 
@@ -21,10 +20,10 @@ extension Windows.Kernel.Random {
     /// `BCryptGenRandom` from the Windows CNG (Cryptography Next Generation) API.
     ///
     /// - Parameter buffer: The buffer to fill with random bytes.
-    /// - Throws: `Kernel.Random.Error` on NTSTATUS failure.
+    /// - Throws: `Random.Error` on NTSTATUS failure.
     public static func bCryptGenRandom(
         _ buffer: UnsafeMutableRawBufferPointer
-    ) throws(Kernel.Random.Error) {
+    ) throws(Random.Error) {
         guard let baseAddress = buffer.baseAddress, buffer.count > 0 else { return }
 
         let status = BCryptGenRandom(
@@ -35,7 +34,7 @@ extension Windows.Kernel.Random {
         )
 
         if status != 0 {
-            throw .platform(.win32(DWORD(bitPattern: status)))
+            throw .systemError(status)
         }
     }
 
@@ -43,12 +42,12 @@ extension Windows.Kernel.Random {
     /// `BCryptGenRandom`.
     ///
     /// - Parameter span: The span to fill with random bytes.
-    /// - Throws: `Kernel.Random.Error` on NTSTATUS failure.
+    /// - Throws: `Random.Error` on NTSTATUS failure.
     @inlinable
     public static func bCryptGenRandom(
         _ span: inout MutableSpan<UInt8>
-    ) throws(Kernel.Random.Error) {
-        try span.withUnsafeMutableBytes { buffer throws(Kernel.Random.Error) in
+    ) throws(Random.Error) {
+        try span.withUnsafeMutableBytes { buffer throws(Random.Error) in
             try bCryptGenRandom(buffer)
         }
     }
@@ -59,7 +58,7 @@ extension Windows.Kernel.Random {
     public static func uint64() -> UInt64? {
         var value: UInt64 = 0
         do {
-            try withUnsafeMutableBytes(of: &value) { buffer throws(Kernel.Random.Error) in
+            try withUnsafeMutableBytes(of: &value) { buffer throws(Random.Error) in
                 try bCryptGenRandom(buffer)
             }
             return value
@@ -74,7 +73,7 @@ extension Windows.Kernel.Random {
     public static func uint32() -> UInt32? {
         var value: UInt32 = 0
         do {
-            try withUnsafeMutableBytes(of: &value) { buffer throws(Kernel.Random.Error) in
+            try withUnsafeMutableBytes(of: &value) { buffer throws(Random.Error) in
                 try bCryptGenRandom(buffer)
             }
             return value

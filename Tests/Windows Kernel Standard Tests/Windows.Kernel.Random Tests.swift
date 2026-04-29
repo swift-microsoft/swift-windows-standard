@@ -24,7 +24,7 @@ import Kernel_IO_Primitives
 import Kernel_Thread_Primitives
 import Kernel_Clock_Primitives
 import Kernel_Time_Primitives
-import Kernel_Random_Primitives
+import Random_Primitives
 import Kernel_Environment_Primitives
 import Kernel_Process_Primitives
 import Kernel_System_Primitives
@@ -51,17 +51,17 @@ extension Windows.Kernel.Random.Test.Unit {
 
 extension Windows.Kernel.Random.Test.Unit {
     @Test
-    func `bCryptGenRandom fills buffer without throwing`() throws(Kernel.Random.Error) {
+    func `bCryptGenRandom fills buffer without throwing`() throws(Random.Error) {
         var buffer: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)  // 32 bytes
-        try withUnsafeMutableBytes(of: &buffer) { raw throws(Kernel.Random.Error) in
+        try withUnsafeMutableBytes(of: &buffer) { raw throws(Random.Error) in
             try Windows.Kernel.Random.bCryptGenRandom(raw)
         }
     }
 
     @Test
-    func `bCryptGenRandom produces non-zero bytes`() throws(Kernel.Random.Error) {
+    func `bCryptGenRandom produces non-zero bytes`() throws(Random.Error) {
         var buffer: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)  // 32 bytes
-        try withUnsafeMutableBytes(of: &buffer) { raw throws(Kernel.Random.Error) in
+        try withUnsafeMutableBytes(of: &buffer) { raw throws(Random.Error) in
             try Windows.Kernel.Random.bCryptGenRandom(raw)
         }
         // Very unlikely all 32 bytes are zero
@@ -69,7 +69,7 @@ extension Windows.Kernel.Random.Test.Unit {
     }
 
     @Test
-    func `bCryptGenRandom with empty buffer is a no-op`() throws(Kernel.Random.Error) {
+    func `bCryptGenRandom with empty buffer is a no-op`() throws(Random.Error) {
         let buffer = UnsafeMutableRawBufferPointer(start: nil, count: 0)
         try Windows.Kernel.Random.bCryptGenRandom(buffer)
     }
@@ -118,7 +118,7 @@ extension Windows.Kernel.Random.Test.Unit {
 
 extension Windows.Kernel.Random.Test.EdgeCase {
     @Test
-    func `bCryptGenRandom fills a one-megabyte buffer`() throws(Kernel.Random.Error) {
+    func `bCryptGenRandom fills a one-megabyte buffer`() throws(Random.Error) {
         let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 1024 * 1024, alignment: 1)
         defer { buffer.deallocate() }
         buffer.initializeMemory(as: UInt8.self, repeating: 0)
@@ -126,14 +126,14 @@ extension Windows.Kernel.Random.Test.EdgeCase {
     }
 
     @Test
-    func `successive bCryptGenRandom calls produce different bytes`() throws(Kernel.Random.Error) {
+    func `successive bCryptGenRandom calls produce different bytes`() throws(Random.Error) {
         var first: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)
         var second: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)
 
-        try withUnsafeMutableBytes(of: &first) { raw throws(Kernel.Random.Error) in
+        try withUnsafeMutableBytes(of: &first) { raw throws(Random.Error) in
             try Windows.Kernel.Random.bCryptGenRandom(raw)
         }
-        try withUnsafeMutableBytes(of: &second) { raw throws(Kernel.Random.Error) in
+        try withUnsafeMutableBytes(of: &second) { raw throws(Random.Error) in
             try Windows.Kernel.Random.bCryptGenRandom(raw)
         }
 

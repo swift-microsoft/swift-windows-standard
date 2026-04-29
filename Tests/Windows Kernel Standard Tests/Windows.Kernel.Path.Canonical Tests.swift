@@ -23,7 +23,7 @@ import Kernel_IO_Primitives
 import Kernel_Thread_Primitives
 import Kernel_Clock_Primitives
 import Kernel_Time_Primitives
-import Kernel_Random_Primitives
+import Random_Primitives
 import Kernel_Environment_Primitives
 import Kernel_Process_Primitives
 import Kernel_System_Primitives

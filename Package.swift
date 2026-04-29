@@ -95,6 +95,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-sequence-primitives"),
         .package(path: "../../swift-primitives/swift-standard-library-extensions"),
         .package(path: "../../swift-primitives/swift-error-primitives"),
+        .package(path: "../../swift-primitives/swift-random-primitives"),
     ],
     targets: [
         // MARK: - Core
@@ -218,7 +219,7 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard Core",
                 .product(name: "Kernel System Primitives", package: "swift-kernel-primitives"),
-                .product(name: "Kernel Random Primitives", package: "swift-kernel-primitives"),
+                .product(name: "Random Primitives", package: "swift-random-primitives"),
             ]
         ),
 

@@ -43,11 +43,11 @@ extension Windows.Kernel.File.Flush {
     /// Typed L2 form. Delegates to the raw `flush(_:)` SPI via
     /// `descriptor._rawValue` after a fast-fail validity check.
     ///
-    /// Per Escalation 3 resolution (2026-04-29): NO `@_disfavoredOverload`
-    /// is required. Empirical re-check confirmed
-    /// `Kernel.File.Flush+CrossPlatform.Windows.swift` defines `data(_:)` and
-    /// `directory(path:)` only — no method-name overlap with this file's
-    /// `flush(_:)`/`flushData(_:)`. Per [PLAT-ARCH-008e] empty-tier
+    /// No favored-overload-disabling attribute is required on this typed
+    /// form. Empirical re-check (Escalation 3 resolution, 2026-04-29):
+    /// `Kernel.File.Flush+CrossPlatform.Windows.swift` defines `data(_:)`
+    /// and `directory(path:)` only — no method-name overlap with this
+    /// file's `flush(_:)`/`flushData(_:)`. Per [PLAT-ARCH-008e] empty-tier
     /// exception, the unifier `Kernel.File.Flush.flush(_:)` is inherited
     /// from this L2 form via `Windows.Kernel == Kernel` namespace identity.
     ///

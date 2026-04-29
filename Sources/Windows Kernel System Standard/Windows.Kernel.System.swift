@@ -14,14 +14,14 @@ public import WinSDK
 
 // MARK: - Windows System Information
 
-extension Windows.Kernel.System {
+extension System {
     /// Platform path length limit.
     ///
     /// Windows has MAX_PATH (260) for legacy APIs, but modern APIs support
     /// longer paths (up to 32,767 characters with \\?\ prefix).
     /// Returns the legacy limit for compatibility.
-    public static var pathMax: Kernel.System.Path.Length {
-        Kernel.System.Path.Length(__unchecked: (), Cardinal(UInt(260)))  // MAX_PATH
+    public static var pathMax: System.Path.Length {
+        System.Path.Length(__unchecked: (), Cardinal(UInt(260)))  // MAX_PATH
     }
 
     /// Memory page size in bytes.

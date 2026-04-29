@@ -27,7 +27,7 @@ import Kernel_Time_Primitives
 import Random_Primitives
 import Kernel_Environment_Primitives
 import Kernel_Process_Primitives
-import Kernel_System_Primitives
+import System_Primitives
 
 extension Windows.Kernel.Random {
     enum Test {

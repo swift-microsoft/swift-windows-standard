@@ -196,17 +196,34 @@ extension Windows_Standard_Core.Windows.File.Stats {
         return Self(_from: info)
     }
 
+    /// Gets Windows-specific file metadata for a HANDLE bit pattern.
+    ///
+    /// Spec-literal raw `GetFileInformationByHandle`. The typed L2
+    /// convenience (`get(descriptor:)` taking `Kernel.Descriptor`) delegates
+    /// to this raw SPI internally via `descriptor._rawValue`.
+    ///
+    /// - Parameter handle: HANDLE bit pattern.
+    /// - Returns: Windows file metadata including creation time.
+    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+    @_spi(Syscall)
+    public static func get(handle: UInt) throws(Error) -> Self {
+        var info = BY_HANDLE_FILE_INFORMATION()
+        guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
+            throw Error(_windowsError: GetLastError())
+        }
+        return Self(_from: info)
+    }
+
     /// Gets Windows-specific file metadata for an open file descriptor.
+    ///
+    /// Typed L2 form. Delegates to the raw `get(handle:)` SPI via
+    /// `descriptor._rawValue`.
     ///
     /// - Parameter descriptor: The file descriptor to stat.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
     public static func get(descriptor: Kernel.Descriptor) throws(Error) -> Self {
-        var info = BY_HANDLE_FILE_INFORMATION()
-        guard GetFileInformationByHandle(descriptor.handle, &info) else {
-            throw Error(_windowsError: GetLastError())
-        }
-        return Self(_from: info)
+        try get(handle: descriptor._rawValue)
     }
 }
 

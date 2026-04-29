@@ -12,13 +12,44 @@
 #if os(Windows)
 public import WinSDK
 
-// MARK: - Windows FlushFileBuffers syscall
+// MARK: - Windows FlushFileBuffers syscall (raw @_spi(Syscall))
+
+extension Windows.Kernel.File.Flush {
+    /// Flushes file buffers to disk for a HANDLE bit pattern.
+    ///
+    /// Spec-literal raw `FlushFileBuffers`. The typed L2 convenience
+    /// (`flush(_:)` taking `Kernel.Descriptor`) delegates to this raw SPI
+    /// internally via `descriptor._rawValue` after a fast-fail validity
+    /// check.
+    ///
+    /// Ensures that all buffered data for the specified file has been
+    /// written to the underlying storage device.
+    ///
+    /// - Parameter handle: HANDLE bit pattern.
+    /// - Throws: `Kernel.File.Flush.Error` on failure.
+    @_spi(Syscall)
+    public static func flush(_ handle: UInt) throws(Kernel.File.Flush.Error) {
+        guard FlushFileBuffers(UnsafeMutableRawPointer(bitPattern: handle)!) else {
+            throw .current()
+        }
+    }
+}
+
+// MARK: - Typed Convenience
 
 extension Windows.Kernel.File.Flush {
     /// Flushes file buffers to disk.
     ///
-    /// Ensures that all buffered data for the specified file has been written
-    /// to the underlying storage device.
+    /// Typed L2 form. Delegates to the raw `flush(_:)` SPI via
+    /// `descriptor._rawValue` after a fast-fail validity check.
+    ///
+    /// Per Escalation 3 resolution (2026-04-29): NO `@_disfavoredOverload`
+    /// is required. Empirical re-check confirmed
+    /// `Kernel.File.Flush+CrossPlatform.Windows.swift` defines `data(_:)` and
+    /// `directory(path:)` only — no method-name overlap with this file's
+    /// `flush(_:)`/`flushData(_:)`. Per [PLAT-ARCH-008e] empty-tier
+    /// exception, the unifier `Kernel.File.Flush.flush(_:)` is inherited
+    /// from this L2 form via `Windows.Kernel == Kernel` namespace identity.
     ///
     /// - Parameter descriptor: The file descriptor to flush.
     /// - Throws: `Kernel.File.Flush.Error` on failure.
@@ -26,16 +57,16 @@ extension Windows.Kernel.File.Flush {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
-
-        guard FlushFileBuffers(descriptor.handle) else {
-            throw .current()
-        }
+        try flush(descriptor._rawValue)
     }
 
     /// Flushes file data to disk (same as flush on Windows).
     ///
-    /// On Windows, there is no distinction between flushing data and metadata.
-    /// Both operations flush all data and metadata.
+    /// Typed L2 form. Delegates to the raw `flush(_:)` SPI via
+    /// `descriptor._rawValue` after a fast-fail validity check.
+    ///
+    /// On Windows, there is no distinction between flushing data and
+    /// metadata. Both operations flush all data and metadata.
     ///
     /// - Parameter descriptor: The file descriptor to flush.
     /// - Throws: `Kernel.File.Flush.Error` on failure.

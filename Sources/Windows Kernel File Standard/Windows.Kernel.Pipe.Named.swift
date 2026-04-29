@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
+@_spi(Syscall) public import Kernel_Descriptor_Primitives
 public import WinSDK
 
 // MARK: - Windows Named Pipe Operations
@@ -133,15 +134,20 @@ extension Windows.Kernel.Pipe.Named {
         return Kernel.Descriptor.borrowing(handle: handle)
     }
 
-    /// Waits for a client to connect to the named pipe.
+    /// Waits for a client to connect to a named pipe via HANDLE bit pattern.
     ///
-    /// - Parameter pipe: The named pipe handle (server side).
+    /// Spec-literal raw `ConnectNamedPipe`. The typed L2 convenience
+    /// (`connect(_:)` taking `Kernel.Descriptor`) delegates to this raw SPI
+    /// internally via `descriptor._rawValue`.
+    ///
+    /// - Parameter handle: HANDLE bit pattern (server side).
     /// - Returns: `true` if a client connected, `false` if already connected.
     /// - Throws: `Kernel.Pipe.Error` on failure.
+    @_spi(Syscall)
     public static func connect(
-        _ pipe: Kernel.Descriptor
+        _ handle: UInt
     ) throws(Kernel.Pipe.Error) -> Bool {
-        if ConnectNamedPipe(pipe.handle, nil) {
+        if ConnectNamedPipe(UnsafeMutableRawPointer(bitPattern: handle)!, nil) {
             return true
         }
 
@@ -153,16 +159,48 @@ extension Windows.Kernel.Pipe.Named {
         throw .platform(Kernel.Error(code: .win32(error)))
     }
 
+    /// Disconnects the server end of a named pipe via HANDLE bit pattern.
+    ///
+    /// Spec-literal raw `DisconnectNamedPipe`. The typed L2 convenience
+    /// (`disconnect(_:)` taking `Kernel.Descriptor`) delegates to this raw
+    /// SPI internally via `descriptor._rawValue`.
+    ///
+    /// - Parameter handle: HANDLE bit pattern (server side).
+    /// - Throws: `Kernel.Pipe.Error` on failure.
+    @_spi(Syscall)
+    public static func disconnect(
+        _ handle: UInt
+    ) throws(Kernel.Pipe.Error) {
+        guard DisconnectNamedPipe(UnsafeMutableRawPointer(bitPattern: handle)!) else {
+            throw .current()
+        }
+    }
+
+    /// Waits for a client to connect to the named pipe.
+    ///
+    /// Typed L2 form. Delegates to the raw `connect(_:)` SPI via
+    /// `descriptor._rawValue`.
+    ///
+    /// - Parameter pipe: The named pipe handle (server side).
+    /// - Returns: `true` if a client connected, `false` if already connected.
+    /// - Throws: `Kernel.Pipe.Error` on failure.
+    public static func connect(
+        _ pipe: Kernel.Descriptor
+    ) throws(Kernel.Pipe.Error) -> Bool {
+        try connect(pipe._rawValue)
+    }
+
     /// Disconnects the server end of a named pipe.
+    ///
+    /// Typed L2 form. Delegates to the raw `disconnect(_:)` SPI via
+    /// `descriptor._rawValue`.
     ///
     /// - Parameter pipe: The named pipe handle (server side).
     /// - Throws: `Kernel.Pipe.Error` on failure.
     public static func disconnect(
         _ pipe: Kernel.Descriptor
     ) throws(Kernel.Pipe.Error) {
-        guard DisconnectNamedPipe(pipe.handle) else {
-            throw .current()
-        }
+        try disconnect(pipe._rawValue)
     }
 }
 
@@ -214,38 +252,49 @@ extension Windows.Kernel.Pipe.Named {
 // MARK: - Pipe State
 
 extension Windows.Kernel.Pipe.Named {
-    /// Gets information about a named pipe.
+    /// Gets information about a named pipe via HANDLE bit pattern.
     ///
-    /// - Parameter pipe: The pipe handle.
+    /// Spec-literal raw `GetNamedPipeInfo + GetNamedPipeHandleStateW`. The
+    /// typed L2 convenience (`getInfo(_:)` taking `Kernel.Descriptor`)
+    /// delegates to this raw SPI internally via `descriptor._rawValue`.
+    ///
+    /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: Tuple of (currentInstances, maxInstances), or `nil` on failure.
-    public static func getInfo(_ pipe: Kernel.Descriptor) -> (current: DWORD, max: DWORD)? {
+    @_spi(Syscall)
+    public static func getInfo(_ handle: UInt) -> (current: DWORD, max: DWORD)? {
         var flags: DWORD = 0
         var outBufferSize: DWORD = 0
         var inBufferSize: DWORD = 0
         var maxInstances: DWORD = 0
 
-        guard GetNamedPipeInfo(pipe.handle, &flags, &outBufferSize, &inBufferSize, &maxInstances) else {
+        let pipePtr = UnsafeMutableRawPointer(bitPattern: handle)!
+        guard GetNamedPipeInfo(pipePtr, &flags, &outBufferSize, &inBufferSize, &maxInstances) else {
             return nil
         }
 
         // Get current instances via handle state
         var state: DWORD = 0
         var curInstances: DWORD = 0
-        guard GetNamedPipeHandleStateW(pipe.handle, &state, &curInstances, nil, nil, nil, 0) else {
+        guard GetNamedPipeHandleStateW(pipePtr, &state, &curInstances, nil, nil, nil, 0) else {
             return (0, maxInstances)
         }
 
         return (curInstances, maxInstances)
     }
 
-    /// Peeks at data in a named pipe without removing it.
+    /// Peeks at data in a named pipe via HANDLE bit pattern without removing it.
+    ///
+    /// Spec-literal raw `PeekNamedPipe`. The typed L2 convenience
+    /// (`peek(_:into:)` taking `Kernel.Descriptor`) delegates to this raw
+    /// SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameters:
-    ///   - pipe: The pipe handle.
+    ///   - handle: HANDLE bit pattern.
     ///   - buffer: Buffer to receive peeked data (can be nil).
     /// - Returns: Tuple of (bytesRead, totalBytesAvailable, bytesLeftInMessage).
+    @_spi(Syscall)
     public static func peek(
-        _ pipe: Kernel.Descriptor,
+        _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer? = nil
     ) -> (read: DWORD, available: DWORD, leftInMessage: DWORD)? {
         var bytesRead: DWORD = 0
@@ -253,7 +302,7 @@ extension Windows.Kernel.Pipe.Named {
         var leftInMessage: DWORD = 0
 
         let result = PeekNamedPipe(
-            pipe.handle,
+            UnsafeMutableRawPointer(bitPattern: handle)!,
             buffer?.baseAddress,
             DWORD(buffer?.count ?? 0),
             &bytesRead,
@@ -263,6 +312,33 @@ extension Windows.Kernel.Pipe.Named {
 
         guard result else { return nil }
         return (bytesRead, totalAvailable, leftInMessage)
+    }
+
+    /// Gets information about a named pipe.
+    ///
+    /// Typed L2 form. Delegates to the raw `getInfo(_:)` SPI via
+    /// `descriptor._rawValue`.
+    ///
+    /// - Parameter pipe: The pipe handle.
+    /// - Returns: Tuple of (currentInstances, maxInstances), or `nil` on failure.
+    public static func getInfo(_ pipe: Kernel.Descriptor) -> (current: DWORD, max: DWORD)? {
+        getInfo(pipe._rawValue)
+    }
+
+    /// Peeks at data in a named pipe without removing it.
+    ///
+    /// Typed L2 form. Delegates to the raw `peek(_:into:)` SPI via
+    /// `descriptor._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - pipe: The pipe handle.
+    ///   - buffer: Buffer to receive peeked data (can be nil).
+    /// - Returns: Tuple of (bytesRead, totalBytesAvailable, bytesLeftInMessage).
+    public static func peek(
+        _ pipe: Kernel.Descriptor,
+        into buffer: UnsafeMutableRawBufferPointer? = nil
+    ) -> (read: DWORD, available: DWORD, leftInMessage: DWORD)? {
+        peek(pipe._rawValue, into: buffer)
     }
 }
 

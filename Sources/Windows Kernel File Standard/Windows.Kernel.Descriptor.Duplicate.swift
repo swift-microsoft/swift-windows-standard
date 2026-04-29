@@ -10,15 +10,58 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
+@_spi(Syscall) public import Kernel_Descriptor_Primitives
 public import WinSDK
 
-// MARK: - Windows DuplicateHandle syscall
+// MARK: - Windows DuplicateHandle syscall (raw @_spi(Syscall))
+
+extension Windows.Kernel.Descriptor.Duplicate {
+    /// Duplicates a HANDLE bit pattern.
+    ///
+    /// Spec-literal raw `DuplicateHandle`. The typed L2 convenience
+    /// (`duplicate(_:)` taking `Kernel.Descriptor`) delegates to this raw
+    /// SPI internally via `descriptor._rawValue` after a fast-fail validity
+    /// check.
+    ///
+    /// Creates a duplicate of the specified handle with the same access
+    /// rights. The new handle refers to the same underlying kernel object.
+    ///
+    /// - Parameter handle: HANDLE bit pattern to duplicate.
+    /// - Returns: The duplicated HANDLE bit pattern.
+    /// - Throws: `Kernel.Descriptor.Duplicate.Error` on failure.
+    @_spi(Syscall)
+    public static func duplicate(_ handle: UInt) throws(Kernel.Descriptor.Duplicate.Error) -> UInt {
+        let currentProcess = GetCurrentProcess()
+        var newHandle: HANDLE? = nil
+
+        let success = DuplicateHandle(
+            currentProcess,
+            UnsafeMutableRawPointer(bitPattern: handle)!,
+            currentProcess,
+            &newHandle,
+            0,
+            false,
+            DWORD(DUPLICATE_SAME_ACCESS)
+        )
+
+        guard success, let newHandle else {
+            throw .current()
+        }
+
+        return UInt(bitPattern: newHandle)
+    }
+}
+
+// MARK: - Typed Convenience
 
 extension Windows.Kernel.Descriptor.Duplicate {
     /// Duplicates a handle.
     ///
-    /// Creates a duplicate of the specified handle with the same access rights.
-    /// The new handle refers to the same underlying kernel object.
+    /// Typed L2 form. Delegates to the raw `duplicate(_:)` SPI via
+    /// `descriptor._rawValue` after a fast-fail validity check.
+    ///
+    /// Creates a duplicate of the specified handle with the same access
+    /// rights. The new handle refers to the same underlying kernel object.
     ///
     /// - Parameter descriptor: The handle to duplicate.
     /// - Returns: The duplicated handle.
@@ -27,31 +70,16 @@ extension Windows.Kernel.Descriptor.Duplicate {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
-
-        let currentProcess = GetCurrentProcess()
-        var newHandle: HANDLE? = nil
-
-        let success = DuplicateHandle(
-            currentProcess,
-            descriptor.handle,
-            currentProcess,
-            &newHandle,
-            0,
-            false,
-            DWORD(DUPLICATE_SAME_ACCESS)
-        )
-
-        guard success, let handle = newHandle else {
-            throw .current()
-        }
-
-        return Kernel.Descriptor.borrowing(handle: handle)
+        let newHandle = try duplicate(descriptor._rawValue)
+        return Kernel.Descriptor.borrowing(handle: HANDLE(bitPattern: newHandle)!)
     }
 
     /// Duplicates a handle to a specific target handle value.
     ///
-    /// On Windows, this closes the target handle first if it's valid,
-    /// then duplicates the source to it.
+    /// Typed L2 form. Delegates to the raw `duplicate(_:)` SPI via
+    /// `descriptor._rawValue` after a fast-fail validity check. On Windows,
+    /// this closes the target handle first if it's valid, then duplicates
+    /// the source to it.
     ///
     /// - Parameters:
     ///   - descriptor: The source handle to duplicate.
@@ -66,9 +94,9 @@ extension Windows.Kernel.Descriptor.Duplicate {
             throw .handle(.invalid)
         }
 
-        // Close target if valid
+        // Close target if valid (raw form via target._rawValue)
         if target.isValid {
-            _ = CloseHandle(target.handle)
+            _ = Kernel.Close.close(target._rawValue)
         }
 
         return try duplicate(descriptor)

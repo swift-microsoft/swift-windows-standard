@@ -16,25 +16,31 @@
 @_spi(Syscall) public import Kernel_Memory_Primitives
 public import WinSDK
 
-// MARK: - Windows Memory Mapping
+// MARK: - Windows Memory Mapping (raw @_spi(Syscall))
 
 extension Windows.Kernel.Memory.Map {
-    /// Maps a file into the process address space.
+    /// Maps a file into the process address space via HANDLE bit pattern.
+    ///
+    /// Spec-literal raw `CreateFileMappingW + MapViewOfFile`. The typed L2
+    /// convenience (`map(fd:length:protection:flags:offset:)` taking
+    /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `descriptor._rawValue`.
     ///
     /// Windows memory mapping requires two steps:
     /// 1. CreateFileMappingW to create a file mapping object
     /// 2. MapViewOfFile to map a view of that object
     ///
     /// - Parameters:
-    ///   - fd: The file descriptor to map.
+    ///   - handle: HANDLE bit pattern.
     ///   - length: Number of bytes to map (must be > 0).
     ///   - protection: Memory protection flags.
     ///   - flags: Mapping flags (shared/private).
     ///   - offset: Offset into the file.
     /// - Returns: Pointer to the mapped region.
     /// - Throws: `Error.map` on failure.
+    @_spi(Syscall)
     public static func map(
-        fd: Kernel.Descriptor,
+        fd handle: UInt,
         length: Kernel.File.Size,
         protection: Protection,
         flags: Flags,
@@ -47,7 +53,7 @@ extension Windows.Kernel.Memory.Map {
         // Create file mapping object
         let fileMappingProtect = protection.windowsFileMapProtect
         let mappingHandle = CreateFileMappingW(
-            fd.handle,
+            UnsafeMutableRawPointer(bitPattern: handle)!,
             nil,
             fileMappingProtect,
             DWORD((offset.rawValue + length.rawValue) >> 32),
@@ -77,6 +83,35 @@ extension Windows.Kernel.Memory.Map {
         }
 
         return unsafe Kernel.Memory.Address(baseAddress)
+    }
+
+    /// Maps a file into the process address space.
+    ///
+    /// Typed L2 form. Delegates to the raw `map(fd:length:protection:flags:offset:)`
+    /// SPI via `descriptor._rawValue`.
+    ///
+    /// - Parameters:
+    ///   - fd: The file descriptor to map.
+    ///   - length: Number of bytes to map (must be > 0).
+    ///   - protection: Memory protection flags.
+    ///   - flags: Mapping flags (shared/private).
+    ///   - offset: Offset into the file.
+    /// - Returns: Pointer to the mapped region.
+    /// - Throws: `Error.map` on failure.
+    public static func map(
+        fd: Kernel.Descriptor,
+        length: Kernel.File.Size,
+        protection: Protection,
+        flags: Flags,
+        offset: Kernel.File.Offset = .zero
+    ) throws(Kernel.Memory.Map.Error) -> Kernel.Memory.Address {
+        try map(
+            fd: fd._rawValue,
+            length: length,
+            protection: protection,
+            flags: flags,
+            offset: offset
+        )
     }
 
     /// Maps anonymous memory.

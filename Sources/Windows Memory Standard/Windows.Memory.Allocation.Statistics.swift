@@ -14,7 +14,7 @@ public import Windows_Standard_Core
 import CWindowsMemoryShim
 #endif
 
-extension Windows_Standard_Core.Windows.Memory.Allocation {
+extension Windows.Memory.Allocation {
     /// Memory allocation statistics for Windows.
     ///
     /// Uses Windows heap query APIs to capture allocation state.
@@ -42,7 +42,7 @@ extension Windows_Standard_Core.Windows.Memory.Allocation {
     }
 }
 
-extension Windows_Standard_Core.Windows.Memory.Allocation.Statistics {
+extension Windows.Memory.Allocation.Statistics {
     /// Capture current allocation statistics.
     ///
     /// Uses Windows heap query APIs to retrieve memory allocation

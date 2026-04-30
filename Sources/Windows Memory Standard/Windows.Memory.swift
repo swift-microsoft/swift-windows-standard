@@ -11,7 +11,7 @@
 
 public import Windows_Standard_Core
 
-extension Windows_Standard_Core.Windows {
+extension Windows {
     /// Memory namespace for Windows-specific memory operations.
     public enum Memory: Sendable {}
 }

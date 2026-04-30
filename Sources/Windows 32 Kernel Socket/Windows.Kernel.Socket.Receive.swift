@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Socket Receive
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Receive flags.
     public struct ReceiveFlags: OptionSet, Sendable {
         public let rawValue: Int32
@@ -53,7 +53,7 @@ extension Windows.Kernel.Socket {
     /// - Zero: Connection closed gracefully (EOF).
     /// - Error: Connection error or socket error.
     public static func receive(
-        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
         buffer: UnsafeMutableRawPointer,
         length: Int,
         flags: ReceiveFlags = .none
@@ -65,7 +65,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `recv`. The typed L2 convenience
     /// (`receive(_:buffer:length:flags:)` taking
-    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -103,7 +103,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: Number of bytes received.
     /// - Throws: `Error.receive` on failure.
     public static func receive(
-        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
         buffer: UnsafeMutableBufferPointer<UInt8>,
         flags: ReceiveFlags = .none
     ) throws(Error) -> Int {
@@ -129,7 +129,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: Number of bytes received.
     /// - Throws: `Error.receive` on failure.
     public static func receiveFrom(
-        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
         buffer: UnsafeMutableRawPointer,
         length: Int,
         flags: ReceiveFlags = .none,
@@ -150,7 +150,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `recvfrom`. The typed L2 convenience
     /// (`receiveFrom(_:buffer:length:flags:srcAddr:srcAddrLength:)` taking
-    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:

@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Dup {
+extension Windows.`32`.Kernel.Dup {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,22 +31,22 @@ extension Windows.Kernel.Dup {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Dup.Test.Unit {
+extension Windows.`32`.Kernel.Dup.Test.Unit {
     @Test
     func `Dup namespace exists`() {
-        _ = Windows.Kernel.Dup.self
+        _ = Windows.`32`.Kernel.Dup.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Dup.Test.Unit {
+extension Windows.`32`.Kernel.Dup.Test.Unit {
     @Test
     func `dup with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Dup.Error.self) {
-            _ = try Windows.Kernel.Dup.dup(invalid)
+            _ = try Windows.`32`.Kernel.Dup.dup(invalid)
         }
     }
 
@@ -56,7 +56,7 @@ extension Windows.Kernel.Dup.Test.Unit {
         let target = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Dup.Error.self) {
-            _ = try Windows.Kernel.Dup.dup2(invalid, to: target)
+            _ = try Windows.`32`.Kernel.Dup.dup2(invalid, to: target)
         }
     }
 
@@ -65,7 +65,7 @@ extension Windows.Kernel.Dup.Test.Unit {
         let invalid = Kernel.Descriptor.invalid
 
         do {
-            _ = try Windows.Kernel.Dup.dup(invalid)
+            _ = try Windows.`32`.Kernel.Dup.dup(invalid)
             Issue.record("Expected error")
         } catch let error as Kernel.Dup.Error {
             if case .handle(.invalid) = error {
@@ -81,7 +81,7 @@ extension Windows.Kernel.Dup.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Dup.Test.EdgeCase {
+extension Windows.`32`.Kernel.Dup.Test.EdgeCase {
     @Test
     func `dup2 with invalid target still tries to dup`() {
         // When source is invalid but target is also invalid,
@@ -89,7 +89,7 @@ extension Windows.Kernel.Dup.Test.EdgeCase {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Dup.Error.self) {
-            _ = try Windows.Kernel.Dup.dup2(invalid, to: invalid)
+            _ = try Windows.`32`.Kernel.Dup.dup2(invalid, to: invalid)
         }
     }
 }

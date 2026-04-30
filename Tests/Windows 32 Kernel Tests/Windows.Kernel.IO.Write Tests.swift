@@ -16,7 +16,7 @@ import Testing
 @testable import Windows_32_Kernel
 import Error_Primitives
 
-extension Windows.Kernel.IO.Write {
+extension Windows.`32`.Kernel.IO.Write {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -27,21 +27,21 @@ extension Windows.Kernel.IO.Write {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.IO.Write.Test.Unit {
+extension Windows.`32`.Kernel.IO.Write.Test.Unit {
     @Test
     func `IO.Write namespace exists`() {
-        _ = Windows.Kernel.IO.Write.self
+        _ = Windows.`32`.Kernel.IO.Write.self
     }
 
     @Test
     func `IO.Write.Error type alias exists`() {
-        _ = Windows.Kernel.IO.Write.Error.self
+        _ = Windows.`32`.Kernel.IO.Write.Error.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.IO.Write.Test.Unit {
+extension Windows.`32`.Kernel.IO.Write.Test.Unit {
     @Test
     func `write with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
@@ -49,7 +49,7 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 
         #expect(throws: Kernel.IO.Write.Error.self) {
             try data.withUnsafeBytes { bufferPtr in
-                _ = try Windows.Kernel.IO.Write.write(invalid, from: bufferPtr)
+                _ = try Windows.`32`.Kernel.IO.Write.write(invalid, from: bufferPtr)
             }
         }
     }
@@ -61,7 +61,7 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 
         #expect(throws: Kernel.IO.Write.Error.self) {
             try data.withUnsafeBytes { bufferPtr in
-                _ = try Windows.Kernel.IO.Write.pwrite(invalid, from: bufferPtr, at: Kernel.File.Offset(0))
+                _ = try Windows.`32`.Kernel.IO.Write.pwrite(invalid, from: bufferPtr, at: Kernel.File.Offset(0))
             }
         }
     }
@@ -69,7 +69,7 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 
 // MARK: - Empty Buffer Tests
 
-extension Windows.Kernel.IO.Write.Test.Unit {
+extension Windows.`32`.Kernel.IO.Write.Test.Unit {
     @Test
     func `write with empty buffer returns zero`() throws {
         // Create a temporary file
@@ -96,7 +96,7 @@ extension Windows.Kernel.IO.Write.Test.Unit {
         // Write with empty buffer
         let emptyData: [UInt8] = []
         let bytesWritten = try emptyData.withUnsafeBytes { bufferPtr in
-            try Windows.Kernel.IO.Write.write(descriptor, from: bufferPtr)
+            try Windows.`32`.Kernel.IO.Write.write(descriptor, from: bufferPtr)
         }
 
         #expect(bytesWritten == 0)
@@ -105,10 +105,10 @@ extension Windows.Kernel.IO.Write.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.IO.Write.Test.EdgeCase {
+extension Windows.`32`.Kernel.IO.Write.Test.EdgeCase {
     @Test
     func `Error type is Kernel.IO.Write.Error`() {
-        let _: Windows.Kernel.IO.Write.Error.Type = Kernel.IO.Write.Error.self
+        let _: Windows.`32`.Kernel.IO.Write.Error.Type = Kernel.IO.Write.Error.self
     }
 }
 

@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Named Pipe Operations
 
-extension Windows.Kernel.Pipe {
+extension Windows.`32`.Kernel.Pipe {
     /// Named pipe configuration.
     public struct Named {
         private init() {}
@@ -23,7 +23,7 @@ extension Windows.Kernel.Pipe {
 
 // MARK: - Pipe Mode
 
-extension Windows.Kernel.Pipe.Named {
+extension Windows.`32`.Kernel.Pipe.Named {
     /// Named pipe open mode flags.
     public struct OpenMode: OptionSet, Sendable {
         public let rawValue: DWORD
@@ -93,7 +93,7 @@ extension Windows.Kernel.Pipe.Named {
 
 // MARK: - Server Operations
 
-extension Windows.Kernel.Pipe.Named {
+extension Windows.`32`.Kernel.Pipe.Named {
     /// Creates a named pipe server instance.
     ///
     /// - Parameters:
@@ -105,7 +105,7 @@ extension Windows.Kernel.Pipe.Named {
     ///   - inBufferSize: Input buffer size in bytes.
     ///   - defaultTimeout: Default timeout in milliseconds (0 for 50ms default).
     /// - Returns: Handle to the pipe, or throws on failure.
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     public static func create(
         name: UnsafePointer<WCHAR>,
         openMode: OpenMode = .accessDuplex,
@@ -114,7 +114,7 @@ extension Windows.Kernel.Pipe.Named {
         outBufferSize: DWORD = 4096,
         inBufferSize: DWORD = 4096,
         defaultTimeout: DWORD = 0
-    ) throws(Windows.Kernel.Pipe.Error) -> Windows.Kernel.Descriptor {
+    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Windows.`32`.Kernel.Descriptor {
         let handle = CreateNamedPipeW(
             name,
             openMode.rawValue,
@@ -130,22 +130,22 @@ extension Windows.Kernel.Pipe.Named {
             throw .current()
         }
 
-        return Windows.Kernel.Descriptor.borrowing(handle: handle)
+        return Windows.`32`.Kernel.Descriptor.borrowing(handle: handle)
     }
 
     /// Waits for a client to connect to a named pipe via HANDLE bit pattern.
     ///
     /// Spec-literal raw `ConnectNamedPipe`. The typed L2 convenience
-    /// (`connect(_:)` taking `Windows.Kernel.Descriptor`) delegates to this raw SPI
+    /// (`connect(_:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI
     /// internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern (server side).
     /// - Returns: `true` if a client connected, `false` if already connected.
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     @_spi(Syscall)
     public static func connect(
         _ handle: UInt
-    ) throws(Windows.Kernel.Pipe.Error) -> Bool {
+    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Bool {
         if ConnectNamedPipe(UnsafeMutableRawPointer(bitPattern: handle)!, nil) {
             return true
         }
@@ -161,15 +161,15 @@ extension Windows.Kernel.Pipe.Named {
     /// Disconnects the server end of a named pipe via HANDLE bit pattern.
     ///
     /// Spec-literal raw `DisconnectNamedPipe`. The typed L2 convenience
-    /// (`disconnect(_:)` taking `Windows.Kernel.Descriptor`) delegates to this raw
+    /// (`disconnect(_:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to this raw
     /// SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern (server side).
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     @_spi(Syscall)
     public static func disconnect(
         _ handle: UInt
-    ) throws(Windows.Kernel.Pipe.Error) {
+    ) throws(Windows.`32`.Kernel.Pipe.Error) {
         guard DisconnectNamedPipe(UnsafeMutableRawPointer(bitPattern: handle)!) else {
             throw .current()
         }
@@ -182,10 +182,10 @@ extension Windows.Kernel.Pipe.Named {
     ///
     /// - Parameter pipe: The named pipe handle (server side).
     /// - Returns: `true` if a client connected, `false` if already connected.
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     public static func connect(
-        _ pipe: Windows.Kernel.Descriptor
-    ) throws(Windows.Kernel.Pipe.Error) -> Bool {
+        _ pipe: Windows.`32`.Kernel.Descriptor
+    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Bool {
         try connect(pipe._rawValue)
     }
 
@@ -195,28 +195,28 @@ extension Windows.Kernel.Pipe.Named {
     /// `descriptor._rawValue`.
     ///
     /// - Parameter pipe: The named pipe handle (server side).
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     public static func disconnect(
-        _ pipe: Windows.Kernel.Descriptor
-    ) throws(Windows.Kernel.Pipe.Error) {
+        _ pipe: Windows.`32`.Kernel.Descriptor
+    ) throws(Windows.`32`.Kernel.Pipe.Error) {
         try disconnect(pipe._rawValue)
     }
 }
 
 // MARK: - Client Operations
 
-extension Windows.Kernel.Pipe.Named {
+extension Windows.`32`.Kernel.Pipe.Named {
     /// Connects to a named pipe server.
     ///
     /// - Parameters:
     ///   - name: The pipe name (e.g., `\\.\pipe\mypipe`).
     ///   - access: Desired access (read, write, or both).
     /// - Returns: Handle to the connected pipe.
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     public static func open(
         name: UnsafePointer<WCHAR>,
-        access: Windows.Kernel.File.Open.Mode = [.read, .write]
-    ) throws(Windows.Kernel.Pipe.Error) -> Windows.Kernel.Descriptor {
+        access: Windows.`32`.Kernel.File.Open.Mode = [.read, .write]
+    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Windows.`32`.Kernel.Descriptor {
         let handle = CreateFileW(
             name,
             access.windowsDesiredAccess,
@@ -231,7 +231,7 @@ extension Windows.Kernel.Pipe.Named {
             throw .current()
         }
 
-        return Windows.Kernel.Descriptor.borrowing(handle: handle)
+        return Windows.`32`.Kernel.Descriptor.borrowing(handle: handle)
     }
 
     /// Waits for a named pipe to become available.
@@ -250,11 +250,11 @@ extension Windows.Kernel.Pipe.Named {
 
 // MARK: - Pipe State
 
-extension Windows.Kernel.Pipe.Named {
+extension Windows.`32`.Kernel.Pipe.Named {
     /// Gets information about a named pipe via HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetNamedPipeInfo + GetNamedPipeHandleStateW`. The
-    /// typed L2 convenience (`getInfo(_:)` taking `Windows.Kernel.Descriptor`)
+    /// typed L2 convenience (`getInfo(_:)` taking `Windows.`32`.Kernel.Descriptor`)
     /// delegates to this raw SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
@@ -284,7 +284,7 @@ extension Windows.Kernel.Pipe.Named {
     /// Peeks at data in a named pipe via HANDLE bit pattern without removing it.
     ///
     /// Spec-literal raw `PeekNamedPipe`. The typed L2 convenience
-    /// (`peek(_:into:)` taking `Windows.Kernel.Descriptor`) delegates to this raw
+    /// (`peek(_:into:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to this raw
     /// SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameters:
@@ -320,7 +320,7 @@ extension Windows.Kernel.Pipe.Named {
     ///
     /// - Parameter pipe: The pipe handle.
     /// - Returns: Tuple of (currentInstances, maxInstances), or `nil` on failure.
-    public static func getInfo(_ pipe: Windows.Kernel.Descriptor) -> (current: DWORD, max: DWORD)? {
+    public static func getInfo(_ pipe: Windows.`32`.Kernel.Descriptor) -> (current: DWORD, max: DWORD)? {
         getInfo(pipe._rawValue)
     }
 
@@ -334,7 +334,7 @@ extension Windows.Kernel.Pipe.Named {
     ///   - buffer: Buffer to receive peeked data (can be nil).
     /// - Returns: Tuple of (bytesRead, totalBytesAvailable, bytesLeftInMessage).
     public static func peek(
-        _ pipe: Windows.Kernel.Descriptor,
+        _ pipe: Windows.`32`.Kernel.Descriptor,
         into buffer: UnsafeMutableRawBufferPointer? = nil
     ) -> (read: DWORD, available: DWORD, leftInMessage: DWORD)? {
         peek(pipe._rawValue, into: buffer)

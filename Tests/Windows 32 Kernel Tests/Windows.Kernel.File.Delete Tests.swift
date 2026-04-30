@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.Kernel.Unlink {
+extension Windows.`32`.Kernel.Unlink {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,16 +28,16 @@ extension Windows.Kernel.Unlink {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Unlink.Test.Unit {
+extension Windows.`32`.Kernel.Unlink.Test.Unit {
     @Test
     func `Unlink namespace exists`() {
-        _ = Windows.Kernel.Unlink.self
+        _ = Windows.`32`.Kernel.Unlink.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Unlink.Test.Unit {
+extension Windows.`32`.Kernel.Unlink.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Unlink.Error.current(from: Error_Primitives.Error.Code.File.notFound)
@@ -81,7 +81,7 @@ extension Windows.Kernel.Unlink.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Unlink.Test.EdgeCase {
+extension Windows.`32`.Kernel.Unlink.Test.EdgeCase {
     @Test
     func `unlink nonexistent file throws notFound`() {
         let filePath = "C:\\nonexistent_file_\(GetCurrentProcessId()).tmp"
@@ -90,7 +90,7 @@ extension Windows.Kernel.Unlink.Test.EdgeCase {
         #expect(throws: Kernel.Unlink.Error.self) {
             try path.withUnsafeBufferPointer { pathPtr in
                 let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                try Windows.Kernel.Unlink.unlink(unsafePath: wpath)
+                try Windows.`32`.Kernel.Unlink.unlink(unsafePath: wpath)
             }
         }
     }

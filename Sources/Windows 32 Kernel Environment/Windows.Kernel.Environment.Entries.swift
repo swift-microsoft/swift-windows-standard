@@ -15,7 +15,7 @@ public import Sequence_Primitives
 
 // MARK: - Windows Environment Enumeration
 
-extension Windows.Kernel.Environment {
+extension Windows.`32`.Kernel.Environment {
     /// An iterator over all environment variables.
     ///
     /// Uses `GetEnvironmentStringsW` to retrieve the environment block
@@ -23,7 +23,7 @@ extension Windows.Kernel.Environment {
     ///
     /// ## Usage
     /// ```swift
-    /// for entry in Windows.Kernel.Environment.Entries() {
+    /// for entry in Windows.`32`.Kernel.Environment.Entries() {
     ///     if let (name, value) = entry.parsed {
     ///         print("\(name)=\(value)")
     ///     }
@@ -54,7 +54,7 @@ extension Windows.Kernel.Environment {
 
 // MARK: - Entry Type
 
-extension Windows.Kernel.Environment.Entries {
+extension Windows.`32`.Kernel.Environment.Entries {
     /// A single environment variable entry.
     public struct Entry: Sendable {
         /// The raw UTF-16 string (NAME=VALUE format).
@@ -87,7 +87,7 @@ extension Windows.Kernel.Environment.Entries {
 
 // MARK: - Iterator
 
-extension Windows.Kernel.Environment.Entries {
+extension Windows.`32`.Kernel.Environment.Entries {
     /// Iterator over environment variable entries.
     public struct Iterator: Sequence.Iterator.`Protocol`, IteratorProtocol {
         private var current: LPWCH
@@ -152,7 +152,7 @@ extension Windows.Kernel.Environment.Entries {
 
 // MARK: - Convenience
 
-extension Windows.Kernel.Environment {
+extension Windows.`32`.Kernel.Environment {
     /// Returns all environment variables as a dictionary.
     ///
     /// - Returns: Dictionary of name-value pairs, or `nil` on failure.

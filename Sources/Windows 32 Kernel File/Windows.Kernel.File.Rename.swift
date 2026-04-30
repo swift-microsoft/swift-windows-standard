@@ -12,9 +12,9 @@
 #if os(Windows)
 public import WinSDK
 
-// MARK: - Windows.Kernel.File.Rename Namespace
+// MARK: - Windows.`32`.Kernel.File.Rename Namespace
 
-extension Windows.Kernel.File {
+extension Windows.`32`.Kernel.File {
     /// Atomic file rename operations using SetFileInformationByHandle.
     ///
     /// This provides more control over rename semantics than MoveFileExW,
@@ -24,7 +24,7 @@ extension Windows.Kernel.File {
 
 // MARK: - Rename Error
 
-extension Windows.Kernel.File.Rename {
+extension Windows.`32`.Kernel.File.Rename {
     /// Error type for rename operations.
     public struct Error: Swift.Error, Sendable {
         public let code: Error_Primitives.Error.Code
@@ -85,7 +85,7 @@ extension Windows.Kernel.File.Rename {
 
 // MARK: - Atomic Rename
 
-extension Windows.Kernel.File.Rename {
+extension Windows.`32`.Kernel.File.Rename {
     /// Atomically renames a file using SetFileInformationByHandle.
     ///
     /// This method opens the source file with DELETE permission, then uses
@@ -104,7 +104,7 @@ extension Windows.Kernel.File.Rename {
     ///   - source: Path to the source file.
     ///   - destination: Path to the destination.
     ///   - replaceExisting: If true, replaces existing destination file.
-    /// - Throws: `Windows.Kernel.File.Rename.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Rename.Error` on failure.
     public static func atomic(
         from source: borrowing Path,
         to destination: borrowing Path,
@@ -127,7 +127,7 @@ extension Windows.Kernel.File.Rename {
     ///   - source: Source path as null-terminated wide string.
     ///   - destination: Destination path as null-terminated wide string.
     ///   - replaceExisting: If true, replaces existing destination file.
-    /// - Throws: `Windows.Kernel.File.Rename.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Rename.Error` on failure.
     public static func atomic(
         from source: UnsafePointer<Path.Char>,
         to destination: UnsafePointer<Path.Char>,

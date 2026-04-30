@@ -16,7 +16,7 @@ import Testing
 @testable import Windows_32_Kernel
 import Error_Primitives
 
-extension Windows.Kernel.Socket.Error {
+extension Windows.`32`.Kernel.Socket.Error {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -27,11 +27,11 @@ extension Windows.Kernel.Socket.Error {
 
 // MARK: - Case Existence Tests
 
-extension Windows.Kernel.Socket.Error.Test.Unit {
+extension Windows.`32`.Kernel.Socket.Error.Test.Unit {
     @Test
     func `startup case exists`() {
         let code = Error_Primitives.Error.Code.win32(1)
-        let error = Windows.Kernel.Socket.Error.startup(code)
+        let error = Windows.`32`.Kernel.Socket.Error.startup(code)
         if case .startup(let c) = error {
             #expect(c == code)
         } else {
@@ -42,7 +42,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `create case exists`() {
         let code = Error_Primitives.Error.Code.win32(2)
-        let error = Windows.Kernel.Socket.Error.create(code)
+        let error = Windows.`32`.Kernel.Socket.Error.create(code)
         if case .create(let c) = error {
             #expect(c == code)
         } else {
@@ -53,7 +53,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `close case exists`() {
         let code = Error_Primitives.Error.Code.win32(3)
-        let error = Windows.Kernel.Socket.Error.close(code)
+        let error = Windows.`32`.Kernel.Socket.Error.close(code)
         if case .close(let c) = error {
             #expect(c == code)
         } else {
@@ -64,7 +64,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `bind case exists`() {
         let code = Error_Primitives.Error.Code.win32(4)
-        let error = Windows.Kernel.Socket.Error.bind(code)
+        let error = Windows.`32`.Kernel.Socket.Error.bind(code)
         if case .bind(let c) = error {
             #expect(c == code)
         } else {
@@ -75,7 +75,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `listen case exists`() {
         let code = Error_Primitives.Error.Code.win32(5)
-        let error = Windows.Kernel.Socket.Error.listen(code)
+        let error = Windows.`32`.Kernel.Socket.Error.listen(code)
         if case .listen(let c) = error {
             #expect(c == code)
         } else {
@@ -86,7 +86,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `accept case exists`() {
         let code = Error_Primitives.Error.Code.win32(6)
-        let error = Windows.Kernel.Socket.Error.accept(code)
+        let error = Windows.`32`.Kernel.Socket.Error.accept(code)
         if case .accept(let c) = error {
             #expect(c == code)
         } else {
@@ -97,7 +97,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `connect case exists`() {
         let code = Error_Primitives.Error.Code.win32(7)
-        let error = Windows.Kernel.Socket.Error.connect(code)
+        let error = Windows.`32`.Kernel.Socket.Error.connect(code)
         if case .connect(let c) = error {
             #expect(c == code)
         } else {
@@ -108,7 +108,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `send case exists`() {
         let code = Error_Primitives.Error.Code.win32(8)
-        let error = Windows.Kernel.Socket.Error.send(code)
+        let error = Windows.`32`.Kernel.Socket.Error.send(code)
         if case .send(let c) = error {
             #expect(c == code)
         } else {
@@ -119,7 +119,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `receive case exists`() {
         let code = Error_Primitives.Error.Code.win32(9)
-        let error = Windows.Kernel.Socket.Error.receive(code)
+        let error = Windows.`32`.Kernel.Socket.Error.receive(code)
         if case .receive(let c) = error {
             #expect(c == code)
         } else {
@@ -130,7 +130,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `shutdown case exists`() {
         let code = Error_Primitives.Error.Code.win32(10)
-        let error = Windows.Kernel.Socket.Error.shutdown(code)
+        let error = Windows.`32`.Kernel.Socket.Error.shutdown(code)
         if case .shutdown(let c) = error {
             #expect(c == code)
         } else {
@@ -141,7 +141,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `getOption case exists`() {
         let code = Error_Primitives.Error.Code.win32(11)
-        let error = Windows.Kernel.Socket.Error.getOption(code)
+        let error = Windows.`32`.Kernel.Socket.Error.getOption(code)
         if case .getOption(let c) = error {
             #expect(c == code)
         } else {
@@ -152,7 +152,7 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
     @Test
     func `setOption case exists`() {
         let code = Error_Primitives.Error.Code.win32(12)
-        let error = Windows.Kernel.Socket.Error.setOption(code)
+        let error = Windows.`32`.Kernel.Socket.Error.setOption(code)
         if case .setOption(let c) = error {
             #expect(c == code)
         } else {
@@ -163,24 +163,24 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
 
 // MARK: - Conformance Tests
 
-extension Windows.Kernel.Socket.Error.Test.Unit {
+extension Windows.`32`.Kernel.Socket.Error.Test.Unit {
     @Test
     func `Error conforms to Swift.Error`() {
-        let error: any Swift.Error = Windows.Kernel.Socket.Error.create(.win32(1))
-        #expect(error is Windows.Kernel.Socket.Error)
+        let error: any Swift.Error = Windows.`32`.Kernel.Socket.Error.create(.win32(1))
+        #expect(error is Windows.`32`.Kernel.Socket.Error)
     }
 
     @Test
     func `Error is Sendable`() {
-        let value: any Sendable = Windows.Kernel.Socket.Error.create(.win32(1))
-        #expect(value is Windows.Kernel.Socket.Error)
+        let value: any Sendable = Windows.`32`.Kernel.Socket.Error.create(.win32(1))
+        #expect(value is Windows.`32`.Kernel.Socket.Error)
     }
 
     @Test
     func `Error is Equatable`() {
-        let a = Windows.Kernel.Socket.Error.create(.win32(1))
-        let b = Windows.Kernel.Socket.Error.create(.win32(1))
-        let c = Windows.Kernel.Socket.Error.bind(.win32(1))
+        let a = Windows.`32`.Kernel.Socket.Error.create(.win32(1))
+        let b = Windows.`32`.Kernel.Socket.Error.create(.win32(1))
+        let c = Windows.`32`.Kernel.Socket.Error.bind(.win32(1))
         #expect(a == b)
         #expect(a != c)
     }
@@ -188,135 +188,135 @@ extension Windows.Kernel.Socket.Error.Test.Unit {
 
 // MARK: - Description Tests
 
-extension Windows.Kernel.Socket.Error.Test.Unit {
+extension Windows.`32`.Kernel.Socket.Error.Test.Unit {
     @Test
     func `startup description contains WSAStartup`() {
-        let error = Windows.Kernel.Socket.Error.startup(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.startup(.win32(5))
         #expect(error.description.contains("WSAStartup"))
     }
 
     @Test
     func `create description contains socket`() {
-        let error = Windows.Kernel.Socket.Error.create(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.create(.win32(5))
         #expect(error.description.contains("socket"))
     }
 
     @Test
     func `close description contains closesocket`() {
-        let error = Windows.Kernel.Socket.Error.close(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.close(.win32(5))
         #expect(error.description.contains("closesocket"))
     }
 
     @Test
     func `bind description contains bind`() {
-        let error = Windows.Kernel.Socket.Error.bind(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.bind(.win32(5))
         #expect(error.description.contains("bind"))
     }
 
     @Test
     func `listen description contains listen`() {
-        let error = Windows.Kernel.Socket.Error.listen(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.listen(.win32(5))
         #expect(error.description.contains("listen"))
     }
 
     @Test
     func `accept description contains accept`() {
-        let error = Windows.Kernel.Socket.Error.accept(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.accept(.win32(5))
         #expect(error.description.contains("accept"))
     }
 
     @Test
     func `connect description contains connect`() {
-        let error = Windows.Kernel.Socket.Error.connect(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.connect(.win32(5))
         #expect(error.description.contains("connect"))
     }
 
     @Test
     func `send description contains send`() {
-        let error = Windows.Kernel.Socket.Error.send(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.send(.win32(5))
         #expect(error.description.contains("send"))
     }
 
     @Test
     func `receive description contains recv`() {
-        let error = Windows.Kernel.Socket.Error.receive(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.receive(.win32(5))
         #expect(error.description.contains("recv"))
     }
 
     @Test
     func `shutdown description contains shutdown`() {
-        let error = Windows.Kernel.Socket.Error.shutdown(.win32(5))
+        let error = Windows.`32`.Kernel.Socket.Error.shutdown(.win32(5))
         #expect(error.description.contains("shutdown"))
     }
 }
 
 // MARK: - Error Code Constants Tests
 
-extension Windows.Kernel.Socket.Error.Test.Unit {
+extension Windows.`32`.Kernel.Socket.Error.Test.Unit {
     @Test
     func `Code.Connection.refused exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Connection.refused
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Connection.refused
         #expect(code == WSAECONNREFUSED)
     }
 
     @Test
     func `Code.Connection.reset exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Connection.reset
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Connection.reset
         #expect(code == WSAECONNRESET)
     }
 
     @Test
     func `Code.Connection.timedOut exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Connection.timedOut
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Connection.timedOut
         #expect(code == WSAETIMEDOUT)
     }
 
     @Test
     func `Code.Address.inUse exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Address.inUse
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Address.inUse
         #expect(code == WSAEADDRINUSE)
     }
 
     @Test
     func `Code.Operation.wouldBlock exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Operation.wouldBlock
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Operation.wouldBlock
         #expect(code == WSAEWOULDBLOCK)
     }
 
     @Test
     func `Code.State.notSocket exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.State.notSocket
+        let code = Windows.`32`.Kernel.Socket.Error.Code.State.notSocket
         #expect(code == WSAENOTSOCK)
     }
 
     @Test
     func `Code.Buffer.messageTooLong exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Buffer.messageTooLong
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Buffer.messageTooLong
         #expect(code == WSAEMSGSIZE)
     }
 
     @Test
     func `Code.Startup.notInitialized exists`() {
-        let code = Windows.Kernel.Socket.Error.Code.Startup.notInitialized
+        let code = Windows.`32`.Kernel.Socket.Error.Code.Startup.notInitialized
         #expect(code == WSANOTINITIALISED)
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Socket.Error.Test.EdgeCase {
+extension Windows.`32`.Kernel.Socket.Error.Test.EdgeCase {
     @Test
     func `Same case same code are equal`() {
         let code = Error_Primitives.Error.Code.win32(42)
-        #expect(Windows.Kernel.Socket.Error.create(code) == Windows.Kernel.Socket.Error.create(code))
-        #expect(Windows.Kernel.Socket.Error.bind(code) == Windows.Kernel.Socket.Error.bind(code))
+        #expect(Windows.`32`.Kernel.Socket.Error.create(code) == Windows.`32`.Kernel.Socket.Error.create(code))
+        #expect(Windows.`32`.Kernel.Socket.Error.bind(code) == Windows.`32`.Kernel.Socket.Error.bind(code))
     }
 
     @Test
     func `Different cases same code are not equal`() {
         let code = Error_Primitives.Error.Code.win32(42)
-        #expect(Windows.Kernel.Socket.Error.create(code) != Windows.Kernel.Socket.Error.bind(code))
-        #expect(Windows.Kernel.Socket.Error.send(code) != Windows.Kernel.Socket.Error.receive(code))
+        #expect(Windows.`32`.Kernel.Socket.Error.create(code) != Windows.`32`.Kernel.Socket.Error.bind(code))
+        #expect(Windows.`32`.Kernel.Socket.Error.send(code) != Windows.`32`.Kernel.Socket.Error.receive(code))
     }
 }
 

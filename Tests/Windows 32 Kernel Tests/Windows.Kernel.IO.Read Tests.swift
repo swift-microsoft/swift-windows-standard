@@ -16,7 +16,7 @@ import Testing
 @testable import Windows_32_Kernel
 import Error_Primitives
 
-extension Windows.Kernel.IO.Read {
+extension Windows.`32`.Kernel.IO.Read {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -27,21 +27,21 @@ extension Windows.Kernel.IO.Read {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.IO.Read.Test.Unit {
+extension Windows.`32`.Kernel.IO.Read.Test.Unit {
     @Test
     func `IO.Read namespace exists`() {
-        _ = Windows.Kernel.IO.Read.self
+        _ = Windows.`32`.Kernel.IO.Read.self
     }
 
     @Test
     func `IO.Read.Error type alias exists`() {
-        _ = Windows.Kernel.IO.Read.Error.self
+        _ = Windows.`32`.Kernel.IO.Read.Error.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.IO.Read.Test.Unit {
+extension Windows.`32`.Kernel.IO.Read.Test.Unit {
     @Test
     func `read with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
@@ -49,7 +49,7 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 
         #expect(throws: Kernel.IO.Read.Error.self) {
             try buffer.withUnsafeMutableBytes { bufferPtr in
-                _ = try Windows.Kernel.IO.Read.read(invalid, into: bufferPtr)
+                _ = try Windows.`32`.Kernel.IO.Read.read(invalid, into: bufferPtr)
             }
         }
     }
@@ -61,7 +61,7 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 
         #expect(throws: Kernel.IO.Read.Error.self) {
             try buffer.withUnsafeMutableBytes { bufferPtr in
-                _ = try Windows.Kernel.IO.Read.pread(invalid, into: bufferPtr, at: Kernel.File.Offset(0))
+                _ = try Windows.`32`.Kernel.IO.Read.pread(invalid, into: bufferPtr, at: Kernel.File.Offset(0))
             }
         }
     }
@@ -69,7 +69,7 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 
 // MARK: - Empty Buffer Tests
 
-extension Windows.Kernel.IO.Read.Test.Unit {
+extension Windows.`32`.Kernel.IO.Read.Test.Unit {
     @Test
     func `read with empty buffer returns zero`() throws {
         // Create a temporary file
@@ -97,7 +97,7 @@ extension Windows.Kernel.IO.Read.Test.Unit {
         // Read with empty buffer
         var emptyBuffer: [UInt8] = []
         let bytesRead = try emptyBuffer.withUnsafeMutableBytes { bufferPtr in
-            try Windows.Kernel.IO.Read.read(descriptor, into: bufferPtr)
+            try Windows.`32`.Kernel.IO.Read.read(descriptor, into: bufferPtr)
         }
 
         #expect(bytesRead == 0)
@@ -106,7 +106,7 @@ extension Windows.Kernel.IO.Read.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.IO.Read.Test.EdgeCase {
+extension Windows.`32`.Kernel.IO.Read.Test.EdgeCase {
     @Test
     func `Kernel.Descriptor.invalid is invalid`() {
         let invalid = Kernel.Descriptor.invalid

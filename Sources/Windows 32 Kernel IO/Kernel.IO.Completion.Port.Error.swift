@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import WinSDK
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Errors from I/O completion port operations.
         ///
         /// Low-level errors from Windows I/O completion port operations. Each case wraps
@@ -25,8 +25,8 @@
         ///
         /// ```swift
         /// do {
-        ///     let port = try Windows.Kernel.IO.Completion.Port.create()
-        /// } catch let error as Windows.Kernel.IO.Completion.Port.Error {
+        ///     let port = try Windows.`32`.Kernel.IO.Completion.Port.create()
+        /// } catch let error as Windows.`32`.Kernel.IO.Completion.Port.Error {
         ///     switch error {
         ///     case .create(let code):
         ///         print("CreateIoCompletionPort failed: \(code)")
@@ -96,7 +96,7 @@
 
     // MARK: - CustomStringConvertible
 
-    extension Windows.Kernel.IO.Completion.Port.Error: CustomStringConvertible {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error: CustomStringConvertible {
         public var description: Swift.String {
             switch self {
             case .create(let code):
@@ -121,7 +121,7 @@
 
     // MARK: - Last Error Helper
 
-    extension Windows.Kernel.IO.Completion.Port.Error {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error {
         /// Gets the last Windows error code.
         ///
         /// Exposed so swift-io doesn't need to import WinSDK.
@@ -133,7 +133,7 @@
 
     // MARK: - Windows Error Code Constants
 
-    extension Windows.Kernel.IO.Completion.Port.Error {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error {
         /// Windows error code constants.
         public enum Code {
             /// I/O-related error codes.

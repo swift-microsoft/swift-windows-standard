@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Environment {
+extension Windows.`32`.Kernel.Environment {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,22 +31,22 @@ extension Windows.Kernel.Environment {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Environment.Test.Unit {
+extension Windows.`32`.Kernel.Environment.Test.Unit {
     @Test
     func `Environment namespace exists`() {
-        _ = Windows.Kernel.Environment.self
+        _ = Windows.`32`.Kernel.Environment.self
     }
 }
 
 // MARK: - Get Tests
 
-extension Windows.Kernel.Environment.Test.Unit {
+extension Windows.`32`.Kernel.Environment.Test.Unit {
     @Test
     func `get PATH returns value`() {
         var name = Array("PATH".utf16) + [0]
         let result = name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            return Windows.Kernel.Environment.get(name: wname)
+            return Windows.`32`.Kernel.Environment.get(name: wname)
         }
 
         #expect(result != nil)
@@ -58,7 +58,7 @@ extension Windows.Kernel.Environment.Test.Unit {
         var name = Array("NONEXISTENT_VAR_12345_\(GetCurrentProcessId())".utf16) + [0]
         let result = name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            return Windows.Kernel.Environment.get(name: wname)
+            return Windows.`32`.Kernel.Environment.get(name: wname)
         }
 
         #expect(result == nil)
@@ -72,7 +72,7 @@ extension Windows.Kernel.Environment.Test.Unit {
         let length = try name.withUnsafeBufferPointer { namePtr in
             try buffer.withUnsafeMutableBufferPointer { bufferPtr in
                 let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-                return try Windows.Kernel.Environment.get(name: wname, into: bufferPtr)
+                return try Windows.`32`.Kernel.Environment.get(name: wname, into: bufferPtr)
             }
         }
 
@@ -82,7 +82,7 @@ extension Windows.Kernel.Environment.Test.Unit {
 
 // MARK: - Set and Unset Tests
 
-extension Windows.Kernel.Environment.Test.Unit {
+extension Windows.`32`.Kernel.Environment.Test.Unit {
     @Test
     func `set and get round-trip`() throws {
         let varName = "TEST_VAR_\(GetCurrentProcessId())"
@@ -96,14 +96,14 @@ extension Windows.Kernel.Environment.Test.Unit {
             try value.withUnsafeBufferPointer { valuePtr in
                 let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
                 let wvalue = UnsafeRawPointer(valuePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-                try Windows.Kernel.Environment.set(name: wname, value: wvalue)
+                try Windows.`32`.Kernel.Environment.set(name: wname, value: wvalue)
             }
         }
 
         // Get
         let result = name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            return Windows.Kernel.Environment.get(name: wname)
+            return Windows.`32`.Kernel.Environment.get(name: wname)
         }
 
         #expect(result != nil)
@@ -113,7 +113,7 @@ extension Windows.Kernel.Environment.Test.Unit {
         // Clean up
         try name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            try Windows.Kernel.Environment.unset(name: wname)
+            try Windows.`32`.Kernel.Environment.unset(name: wname)
         }
     }
 
@@ -129,20 +129,20 @@ extension Windows.Kernel.Environment.Test.Unit {
             try value.withUnsafeBufferPointer { valuePtr in
                 let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
                 let wvalue = UnsafeRawPointer(valuePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-                try Windows.Kernel.Environment.set(name: wname, value: wvalue)
+                try Windows.`32`.Kernel.Environment.set(name: wname, value: wvalue)
             }
         }
 
         // Unset
         try name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            try Windows.Kernel.Environment.unset(name: wname)
+            try Windows.`32`.Kernel.Environment.unset(name: wname)
         }
 
         // Verify gone
         let result = name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            return Windows.Kernel.Environment.get(name: wname)
+            return Windows.`32`.Kernel.Environment.get(name: wname)
         }
 
         #expect(result == nil)
@@ -151,7 +151,7 @@ extension Windows.Kernel.Environment.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Environment.Test.EdgeCase {
+extension Windows.`32`.Kernel.Environment.Test.EdgeCase {
     @Test
     func `unset nonexistent variable succeeds`() throws {
         let varName = "NONEXISTENT_UNSET_\(GetCurrentProcessId())"
@@ -160,7 +160,7 @@ extension Windows.Kernel.Environment.Test.EdgeCase {
         // Should not throw - variable already doesn't exist
         try name.withUnsafeBufferPointer { namePtr in
             let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-            try Windows.Kernel.Environment.unset(name: wname)
+            try Windows.`32`.Kernel.Environment.unset(name: wname)
         }
     }
 
@@ -173,7 +173,7 @@ extension Windows.Kernel.Environment.Test.EdgeCase {
             try name.withUnsafeBufferPointer { namePtr in
                 try buffer.withUnsafeMutableBufferPointer { bufferPtr in
                     let wname = UnsafeRawPointer(namePtr.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-                    _ = try Windows.Kernel.Environment.get(name: wname, into: bufferPtr)
+                    _ = try Windows.`32`.Kernel.Environment.get(name: wname, into: bufferPtr)
                 }
             }
         }

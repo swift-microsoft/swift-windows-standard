@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Link {
+extension Windows.`32`.Kernel.Link {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,16 +31,16 @@ extension Windows.Kernel.Link {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Link.Test.Unit {
+extension Windows.`32`.Kernel.Link.Test.Unit {
     @Test
     func `Link namespace exists`() {
-        _ = Windows.Kernel.Link.self
+        _ = Windows.`32`.Kernel.Link.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Link.Test.Unit {
+extension Windows.`32`.Kernel.Link.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.notFound)
@@ -94,7 +94,7 @@ extension Windows.Kernel.Link.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Link.Test.EdgeCase {
+extension Windows.`32`.Kernel.Link.Test.EdgeCase {
     @Test
     func `link to nonexistent source throws notFound`() {
         let sourcePath = "C:\\nonexistent_source_\(GetCurrentProcessId()).tmp"
@@ -108,7 +108,7 @@ extension Windows.Kernel.Link.Test.EdgeCase {
                 try link.withUnsafeBufferPointer { linkPtr in
                     let wsource = UnsafeRawPointer(sourcePtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.Kernel.Link.link(source: wsource, link: wlink)
+                    try Windows.`32`.Kernel.Link.link(source: wsource, link: wlink)
                 }
             }
         }

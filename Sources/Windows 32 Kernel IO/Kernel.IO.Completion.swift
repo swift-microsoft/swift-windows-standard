@@ -12,7 +12,7 @@
 #if os(Windows)
     public import Error_Primitives
 
-    extension Windows.Kernel.IO {
+    extension Windows.`32`.Kernel.IO {
         /// Completion-related types for asynchronous I/O.
         ///
         /// Contains I/O completion port and related mechanisms.

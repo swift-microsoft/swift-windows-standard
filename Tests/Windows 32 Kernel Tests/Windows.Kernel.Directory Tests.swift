@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Directory {
+extension Windows.`32`.Kernel.Directory {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,41 +31,41 @@ extension Windows.Kernel.Directory {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Directory.Test.Unit {
+extension Windows.`32`.Kernel.Directory.Test.Unit {
     @Test
     func `Directory namespace exists`() {
-        _ = Windows.Kernel.Directory.self
+        _ = Windows.`32`.Kernel.Directory.self
     }
 
     @Test
     func `Directory.Iterator type exists`() {
-        _ = Windows.Kernel.Directory.Iterator.self
+        _ = Windows.`32`.Kernel.Directory.Iterator.self
     }
 }
 
 // MARK: - Iterator Tests
 
-extension Windows.Kernel.Directory.Test.Unit {
+extension Windows.`32`.Kernel.Directory.Test.Unit {
     @Test
     func `Iterator has handle property`() {
         // Type check only - can't create iterator without real directory
-        _ = \Windows.Kernel.Directory.Iterator.handle
+        _ = \Windows.`32`.Kernel.Directory.Iterator.handle
     }
 
     @Test
     func `Iterator has findData property`() {
-        _ = \Windows.Kernel.Directory.Iterator.findData
+        _ = \Windows.`32`.Kernel.Directory.Iterator.findData
     }
 
     @Test
     func `Iterator has firstEntry property`() {
-        _ = \Windows.Kernel.Directory.Iterator.firstEntry
+        _ = \Windows.`32`.Kernel.Directory.Iterator.firstEntry
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Directory.Test.Unit {
+extension Windows.`32`.Kernel.Directory.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Directory.Error(_windowsError: Error_Primitives.Error.Code.File.notFound)
@@ -99,7 +99,7 @@ extension Windows.Kernel.Directory.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Directory.Test.EdgeCase {
+extension Windows.`32`.Kernel.Directory.Test.EdgeCase {
     @Test
     func `Entry type has name, inode, type`() {
         // Check Kernel.Directory.Entry exists with expected properties

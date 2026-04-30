@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Socket Error Type
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Errors from Winsock2 socket operations.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Winsock startup failed.
@@ -64,7 +64,7 @@ extension Windows.Kernel.Socket {
 
 // MARK: - CustomStringConvertible
 
-extension Windows.Kernel.Socket.Error: CustomStringConvertible {
+extension Windows.`32`.Kernel.Socket.Error: CustomStringConvertible {
     public var description: Swift.String {
         switch self {
         case .startup(let code):
@@ -109,7 +109,7 @@ internal func captureLastSocketError() -> Error_Primitives.Error.Code {
 
 // MARK: - Common Winsock Error Codes
 
-extension Windows.Kernel.Socket.Error {
+extension Windows.`32`.Kernel.Socket.Error {
     /// Common Winsock error codes.
     public enum Code {
         /// Connection errors.

@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Pipe {
+extension Windows.`32`.Kernel.Pipe {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,24 +31,24 @@ extension Windows.Kernel.Pipe {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Pipe.Test.Unit {
+extension Windows.`32`.Kernel.Pipe.Test.Unit {
     @Test
     func `Pipe namespace exists`() {
-        _ = Windows.Kernel.Pipe.self
+        _ = Windows.`32`.Kernel.Pipe.self
     }
 
     @Test
     func `Pipe.Pair type exists`() {
-        _ = Windows.Kernel.Pipe.Pair.self
+        _ = Windows.`32`.Kernel.Pipe.Pair.self
     }
 }
 
 // MARK: - Pipe Creation Tests
 
-extension Windows.Kernel.Pipe.Test.Unit {
+extension Windows.`32`.Kernel.Pipe.Test.Unit {
     @Test
     func `create returns valid pair`() throws {
-        let pair = try Windows.Kernel.Pipe.create()
+        let pair = try Windows.`32`.Kernel.Pipe.create()
 
         #expect(pair.read.isValid)
         #expect(pair.write.isValid)
@@ -61,7 +61,7 @@ extension Windows.Kernel.Pipe.Test.Unit {
 
     @Test
     func `create with buffer size`() throws {
-        let pair = try Windows.Kernel.Pipe.create(bufferSize: 4096)
+        let pair = try Windows.`32`.Kernel.Pipe.create(bufferSize: 4096)
 
         #expect(pair.read.isValid)
         #expect(pair.write.isValid)
@@ -73,7 +73,7 @@ extension Windows.Kernel.Pipe.Test.Unit {
 
     @Test
     func `create with inheritance flags`() throws {
-        let pair = try Windows.Kernel.Pipe.create(
+        let pair = try Windows.`32`.Kernel.Pipe.create(
             bufferSize: 0,
             inheritRead: true,
             inheritWrite: false
@@ -89,8 +89,8 @@ extension Windows.Kernel.Pipe.Test.Unit {
 
     @Test
     func `create multiple pipes are independent`() throws {
-        let pair1 = try Windows.Kernel.Pipe.create()
-        let pair2 = try Windows.Kernel.Pipe.create()
+        let pair1 = try Windows.`32`.Kernel.Pipe.create()
+        let pair2 = try Windows.`32`.Kernel.Pipe.create()
 
         #expect(pair1.read.rawValue != pair2.read.rawValue)
         #expect(pair1.write.rawValue != pair2.write.rawValue)
@@ -105,10 +105,10 @@ extension Windows.Kernel.Pipe.Test.Unit {
 
 // MARK: - Pair Properties Tests
 
-extension Windows.Kernel.Pipe.Test.Unit {
+extension Windows.`32`.Kernel.Pipe.Test.Unit {
     @Test
     func `Pair.read is accessible`() throws {
-        let pair = try Windows.Kernel.Pipe.create()
+        let pair = try Windows.`32`.Kernel.Pipe.create()
         defer {
             try? Kernel.Close.close(pair.read)
             try? Kernel.Close.close(pair.write)
@@ -119,7 +119,7 @@ extension Windows.Kernel.Pipe.Test.Unit {
 
     @Test
     func `Pair.write is accessible`() throws {
-        let pair = try Windows.Kernel.Pipe.create()
+        let pair = try Windows.`32`.Kernel.Pipe.create()
         defer {
             try? Kernel.Close.close(pair.read)
             try? Kernel.Close.close(pair.write)
@@ -131,11 +131,11 @@ extension Windows.Kernel.Pipe.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Pipe.Test.EdgeCase {
+extension Windows.`32`.Kernel.Pipe.Test.EdgeCase {
     @Test
     func `create and close many pipes`() throws {
         for _ in 0..<100 {
-            let pair = try Windows.Kernel.Pipe.create()
+            let pair = try Windows.`32`.Kernel.Pipe.create()
             try? Kernel.Close.close(pair.read)
             try? Kernel.Close.close(pair.write)
         }

@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.Kernel.Sync {
+extension Windows.`32`.Kernel.Sync {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,22 +28,22 @@ extension Windows.Kernel.Sync {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Sync.Test.Unit {
+extension Windows.`32`.Kernel.Sync.Test.Unit {
     @Test
     func `Sync namespace exists`() {
-        _ = Windows.Kernel.Sync.self
+        _ = Windows.`32`.Kernel.Sync.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Sync.Test.Unit {
+extension Windows.`32`.Kernel.Sync.Test.Unit {
     @Test
     func `sync with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Sync.Error.self) {
-            try Windows.Kernel.Sync.sync(invalid)
+            try Windows.`32`.Kernel.Sync.sync(invalid)
         }
     }
 
@@ -52,20 +52,20 @@ extension Windows.Kernel.Sync.Test.Unit {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Sync.Error.self) {
-            try Windows.Kernel.Sync.datasync(invalid)
+            try Windows.`32`.Kernel.Sync.datasync(invalid)
         }
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Sync.Test.EdgeCase {
+extension Windows.`32`.Kernel.Sync.Test.EdgeCase {
     @Test
     func `datasync is alias for sync on Windows`() {
         // On Windows, datasync and sync are the same operation
         // This test just verifies both functions exist
-        _ = Windows.Kernel.Sync.sync
-        _ = Windows.Kernel.Sync.datasync
+        _ = Windows.`32`.Kernel.Sync.sync
+        _ = Windows.`32`.Kernel.Sync.datasync
     }
 }
 

@@ -15,7 +15,7 @@ public import Random_Primitives
 
 // MARK: - Windows BCryptGenRandom syscall
 
-extension Windows.Kernel.Random {
+extension Windows.`32`.Kernel.Random {
     /// Fills a buffer with cryptographically secure random bytes using
     /// `BCryptGenRandom` from the Windows CNG (Cryptography Next Generation) API.
     ///

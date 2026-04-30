@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Socket Listen
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Places a socket in listening state.
     ///
     /// Marks the socket as a passive socket that will accept incoming
@@ -29,13 +29,13 @@ extension Windows.Kernel.Socket {
     /// ## Example
     ///
     /// ```swift
-    /// let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
+    /// let sock = try Windows.`32`.Kernel.Socket.create(family: .inet, type: .stream)
     /// // ... bind socket ...
-    /// try Windows.Kernel.Socket.listen(sock, backlog: .default)
+    /// try Windows.`32`.Kernel.Socket.listen(sock, backlog: .default)
     /// ```
     public static func listen(
-        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
-        backlog: Windows.Kernel.Socket.Backlog
+        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
+        backlog: Windows.`32`.Kernel.Socket.Backlog
     ) throws(Error) {
         try listen(socket._rawValue, backlog: backlog)
     }
@@ -43,7 +43,7 @@ extension Windows.Kernel.Socket {
     /// Places a SOCKET bit pattern in listening state.
     ///
     /// Spec-literal raw `listen`. The typed L2 convenience
-    /// (`listen(_:backlog:)` taking `borrowing Windows.Kernel.Socket.Descriptor`)
+    /// (`listen(_:backlog:)` taking `borrowing Windows.`32`.Kernel.Socket.Descriptor`)
     /// delegates to this raw SPI internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -53,7 +53,7 @@ extension Windows.Kernel.Socket {
     @_spi(Syscall)
     public static func listen(
         _ socket: UInt,
-        backlog: Windows.Kernel.Socket.Backlog
+        backlog: Windows.`32`.Kernel.Socket.Backlog
     ) throws(Error) {
         let result = WinSDK.listen(SOCKET(socket), backlog.rawValue)
         guard result == 0 else {
@@ -64,12 +64,12 @@ extension Windows.Kernel.Socket {
 
 // MARK: - Backlog Platform Values
 
-extension Windows.Kernel.Socket.Backlog {
+extension Windows.`32`.Kernel.Socket.Backlog {
     /// Maximum backlog value on Windows.
     ///
     /// `SOMAXCONN` is typically 0x7FFFFFFF on modern Windows.
-    public static var max: Windows.Kernel.Socket.Backlog {
-        Windows.Kernel.Socket.Backlog(rawValue: SOMAXCONN)
+    public static var max: Windows.`32`.Kernel.Socket.Backlog {
+        Windows.`32`.Kernel.Socket.Backlog(rawValue: SOMAXCONN)
     }
 }
 

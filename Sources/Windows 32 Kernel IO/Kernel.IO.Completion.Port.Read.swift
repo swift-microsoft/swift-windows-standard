@@ -12,7 +12,7 @@
 #if os(Windows)
     public import Error_Primitives
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Namespace for read operation types.
         ///
         /// ## See Also

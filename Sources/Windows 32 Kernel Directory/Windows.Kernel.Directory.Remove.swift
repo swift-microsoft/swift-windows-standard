@@ -14,15 +14,15 @@ public import WinSDK
 
 // MARK: - Windows RemoveDirectoryW syscall
 
-extension Windows.Kernel.Directory.Remove {
+extension Windows.`32`.Kernel.Directory.Remove {
     /// Removes an empty directory.
     ///
     /// - Parameter path: The path of the directory to remove.
-    /// - Throws: `Windows.Kernel.Directory.Remove.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Directory.Remove.Error` on failure.
     public static func remove(
         path: borrowing Path
-    ) throws(Windows.Kernel.Directory.Remove.Error) {
-        try path.withUnsafeCString { ptr throws(Windows.Kernel.Directory.Remove.Error) in
+    ) throws(Windows.`32`.Kernel.Directory.Remove.Error) {
+        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Directory.Remove.Error) in
             try remove(unsafePath: ptr)
         }
     }
@@ -30,10 +30,10 @@ extension Windows.Kernel.Directory.Remove {
     /// Removes an empty directory using an unsafe wide string.
     ///
     /// - Parameter unsafePath: The path as a null-terminated wide string.
-    /// - Throws: `Windows.Kernel.Directory.Remove.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Directory.Remove.Error` on failure.
     public static func remove(
         unsafePath: UnsafePointer<Path.Char>
-    ) throws(Windows.Kernel.Directory.Remove.Error) {
+    ) throws(Windows.`32`.Kernel.Directory.Remove.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard RemoveDirectoryW(wpath) else {
             throw .current()
@@ -43,7 +43,7 @@ extension Windows.Kernel.Directory.Remove {
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Directory.Remove.Error {
+extension Windows.`32`.Kernel.Directory.Remove.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

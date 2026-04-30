@@ -14,12 +14,12 @@ public import WinSDK
 
 // MARK: - Windows File Time Operations (raw @_spi(Syscall))
 
-extension Windows.Kernel.File.Times {
+extension Windows.`32`.Kernel.File.Times {
     /// Sets file times for a HANDLE bit pattern.
     ///
     /// Spec-literal raw `SetFileTime`. The typed L2 convenience
     /// (`set(creation:access:modification:on descriptor:)` taking
-    /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
     /// `descriptor._rawValue`.
     ///
     /// This is the Windows equivalent of POSIX `utimensat()`.
@@ -29,14 +29,14 @@ extension Windows.Kernel.File.Times {
     ///   - creationTime: New creation time, or nil to leave unchanged.
     ///   - lastAccessTime: New last access time, or nil to leave unchanged.
     ///   - lastWriteTime: New last write time, or nil to leave unchanged.
-    /// - Throws: `Windows.Kernel.File.Times.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Times.Error` on failure.
     @_spi(Syscall)
     public static func set(
         creation creationTime: FILETIME? = nil,
         access lastAccessTime: FILETIME? = nil,
         modification lastWriteTime: FILETIME? = nil,
         on handle: UInt
-    ) throws(Windows.Kernel.File.Times.Error) {
+    ) throws(Windows.`32`.Kernel.File.Times.Error) {
         var creation = creationTime
         var access = lastAccessTime
         var write = lastWriteTime
@@ -63,7 +63,7 @@ extension Windows.Kernel.File.Times {
     ///
     /// Spec-literal raw `SetFileTime`. The typed L2 convenience
     /// (`set(creation:access:modification:on descriptor:)` UnsafePointer
-    /// overload taking `Windows.Kernel.Descriptor`) delegates to this raw SPI
+    /// overload taking `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI
     /// internally via `descriptor._rawValue`.
     ///
     /// - Parameters:
@@ -92,7 +92,7 @@ extension Windows.Kernel.File.Times {
     /// Gets file times for a HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetFileTime`. The typed L2 convenience
-    /// (`getTimes(_:)` taking `Windows.Kernel.Descriptor`) delegates to this raw
+    /// (`getTimes(_:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to this raw
     /// SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
@@ -115,7 +115,7 @@ extension Windows.Kernel.File.Times {
 
 // MARK: - Windows File Time Operations (typed convenience)
 
-extension Windows.Kernel.File.Times {
+extension Windows.`32`.Kernel.File.Times {
     /// Sets file times (creation, access, modification).
     ///
     /// Typed L2 form. Delegates to the raw `set(creation:access:modification:on:)`
@@ -127,13 +127,13 @@ extension Windows.Kernel.File.Times {
     ///   - creationTime: New creation time, or nil to leave unchanged.
     ///   - lastAccessTime: New last access time, or nil to leave unchanged.
     ///   - lastWriteTime: New last write time, or nil to leave unchanged.
-    /// - Throws: `Windows.Kernel.File.Times.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Times.Error` on failure.
     public static func set(
         creation creationTime: FILETIME? = nil,
         access lastAccessTime: FILETIME? = nil,
         modification lastWriteTime: FILETIME? = nil,
-        on descriptor: Windows.Kernel.Descriptor
-    ) throws(Windows.Kernel.File.Times.Error) {
+        on descriptor: Windows.`32`.Kernel.Descriptor
+    ) throws(Windows.`32`.Kernel.File.Times.Error) {
         try set(
             creation: creationTime,
             access: lastAccessTime,
@@ -159,7 +159,7 @@ extension Windows.Kernel.File.Times {
         creation creationTime: UnsafePointer<FILETIME>?,
         access lastAccessTime: UnsafePointer<FILETIME>?,
         modification lastWriteTime: UnsafePointer<FILETIME>?,
-        on descriptor: Windows.Kernel.Descriptor
+        on descriptor: Windows.`32`.Kernel.Descriptor
     ) -> Bool {
         set(
             creation: creationTime,
@@ -177,7 +177,7 @@ extension Windows.Kernel.File.Times {
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: Tuple of (creationTime, lastAccessTime, lastWriteTime), or nil on failure.
     public static func getTimes(
-        _ descriptor: Windows.Kernel.Descriptor
+        _ descriptor: Windows.`32`.Kernel.Descriptor
     ) -> (creation: FILETIME, access: FILETIME, write: FILETIME)? {
         getTimes(descriptor._rawValue)
     }
@@ -185,8 +185,8 @@ extension Windows.Kernel.File.Times {
 
 // MARK: - FILETIME Helpers
 
-extension Windows.Kernel.File {
-    /// Converts a typed `Windows.Kernel.Time` (Unix-epoch instant) to Windows FILETIME.
+extension Windows.`32`.Kernel.File {
+    /// Converts a typed `Windows.`32`.Kernel.Time` (Unix-epoch instant) to Windows FILETIME.
     ///
     /// FILETIME is 100-nanosecond intervals since January 1, 1601 UTC.
     /// The typed input is decomposed internally; callers never see raw
@@ -194,7 +194,7 @@ extension Windows.Kernel.File {
     ///
     /// - Parameter time: The wall-clock instant to convert.
     /// - Returns: The equivalent FILETIME.
-    public static func fileTimeFromUnix(_ time: Windows.Kernel.Time) -> FILETIME {
+    public static func fileTimeFromUnix(_ time: Windows.`32`.Kernel.Time) -> FILETIME {
         // Difference between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
         let epochDifference: UInt64 = 116_444_736_000_000_000
 
@@ -236,7 +236,7 @@ extension Windows.Kernel.File {
 
 // MARK: - Basic Info Operations (FILE_BASIC_INFO)
 
-extension Windows.Kernel.File {
+extension Windows.`32`.Kernel.File {
     /// Basic file information including timestamps and attributes.
     ///
     /// This wraps the Windows `FILE_BASIC_INFO` structure for use with
@@ -285,12 +285,12 @@ extension Windows.Kernel.File {
     }
 }
 
-extension Windows.Kernel.File {
+extension Windows.`32`.Kernel.File {
     /// Gets basic file information for a HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetFileInformationByHandleEx` with `FileBasicInfo`.
     /// The typed L2 convenience (`getBasicInfo(_:)` taking
-    /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
     /// `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
@@ -299,7 +299,7 @@ extension Windows.Kernel.File {
     @_spi(Syscall)
     public static func getBasicInfo(
         _ handle: UInt
-    ) throws(Windows.Kernel.File.Stats.Error) -> BasicInfo {
+    ) throws(Windows.`32`.Kernel.File.Stats.Error) -> BasicInfo {
         var info = FILE_BASIC_INFO()
 
         let success = GetFileInformationByHandleEx(
@@ -320,7 +320,7 @@ extension Windows.Kernel.File {
     ///
     /// Spec-literal raw `SetFileInformationByHandle` with `FileBasicInfo`.
     /// The typed L2 convenience (`setBasicInfo(_:_:)` taking
-    /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
     /// `descriptor._rawValue`.
     ///
     /// - Parameters:
@@ -331,7 +331,7 @@ extension Windows.Kernel.File {
     public static func setBasicInfo(
         _ handle: UInt,
         _ info: BasicInfo
-    ) throws(Windows.Kernel.File.Attributes.Error) {
+    ) throws(Windows.`32`.Kernel.File.Attributes.Error) {
         var fileInfo = info.toFileBasicInfo()
 
         let success = SetFileInformationByHandle(
@@ -356,8 +356,8 @@ extension Windows.Kernel.File {
     /// - Returns: The basic file info.
     /// - Throws: Error on failure.
     public static func getBasicInfo(
-        _ descriptor: Windows.Kernel.Descriptor
-    ) throws(Windows.Kernel.File.Stats.Error) -> BasicInfo {
+        _ descriptor: Windows.`32`.Kernel.Descriptor
+    ) throws(Windows.`32`.Kernel.File.Stats.Error) -> BasicInfo {
         try getBasicInfo(descriptor._rawValue)
     }
 
@@ -372,9 +372,9 @@ extension Windows.Kernel.File {
     ///   - info: The basic file info to set.
     /// - Throws: Error on failure.
     public static func setBasicInfo(
-        _ descriptor: Windows.Kernel.Descriptor,
+        _ descriptor: Windows.`32`.Kernel.Descriptor,
         _ info: BasicInfo
-    ) throws(Windows.Kernel.File.Attributes.Error) {
+    ) throws(Windows.`32`.Kernel.File.Attributes.Error) {
         try setBasicInfo(descriptor._rawValue, info)
     }
 
@@ -387,8 +387,8 @@ extension Windows.Kernel.File {
     ///   - destination: The destination file descriptor.
     /// - Throws: Error on failure.
     public static func copyBasicInfo(
-        from source: Windows.Kernel.Descriptor,
-        to destination: Windows.Kernel.Descriptor
+        from source: Windows.`32`.Kernel.Descriptor,
+        to destination: Windows.`32`.Kernel.Descriptor
     ) throws {
         let info = try getBasicInfo(source)
         try setBasicInfo(destination, info)
@@ -397,11 +397,11 @@ extension Windows.Kernel.File {
 
 // MARK: - Touch Operation
 
-extension Windows.Kernel.File {
+extension Windows.`32`.Kernel.File {
     /// Updates the last access and modification times to now on a HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetSystemTimeAsFileTime + SetFileTime`. The typed
-    /// L2 convenience (`touch(_:)` taking `Windows.Kernel.Descriptor`) delegates to
+    /// L2 convenience (`touch(_:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to
     /// this raw SPI internally via `descriptor._rawValue`.
     ///
     /// This is equivalent to the `touch` command.
@@ -422,7 +422,7 @@ extension Windows.Kernel.File {
     ///
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: True on success, false on failure.
-    public static func touch(_ descriptor: Windows.Kernel.Descriptor) -> Bool {
+    public static func touch(_ descriptor: Windows.`32`.Kernel.Descriptor) -> Bool {
         touch(descriptor._rawValue)
     }
 }

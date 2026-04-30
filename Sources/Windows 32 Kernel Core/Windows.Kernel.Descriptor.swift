@@ -13,7 +13,7 @@
 internal import WinSDK
 #endif
 
-extension Windows.Kernel {
+extension Windows.`32`.Kernel {
     /// Windows file/object descriptor (HANDLE).
     ///
     /// `~Copyable` move-only wrapper around the Windows `HANDLE` (UInt-shaped).
@@ -26,7 +26,7 @@ extension Windows.Kernel {
     ///
     /// Raw value access is available only via `@_spi(Syscall)` for syscall
     /// implementation layers. Application code should use the unified API in
-    /// swift-kernel, where `Windows.Kernel.Descriptor` is a typealias to this type
+    /// swift-kernel, where `Windows.`32`.Kernel.Descriptor` is a typealias to this type
     /// on Windows.
     public struct Descriptor: ~Copyable, Sendable {
         @usableFromInline
@@ -59,7 +59,7 @@ extension Windows.Kernel {
 
 // MARK: - SPI for Syscall Layers
 
-extension Windows.Kernel.Descriptor {
+extension Windows.`32`.Kernel.Descriptor {
     /// Creates a descriptor from a raw Windows `HANDLE` value.
     @_spi(Syscall)
     @inlinable

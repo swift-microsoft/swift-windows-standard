@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Process Operations
 
-extension Windows.Kernel.Process {
+extension Windows.`32`.Kernel.Process {
     /// Gets the current process ID.
     ///
     /// - Returns: The current process ID.
@@ -70,7 +70,7 @@ extension Windows.Kernel.Process {
 
 // MARK: - Process Creation
 
-extension Windows.Kernel.Process {
+extension Windows.`32`.Kernel.Process {
     /// Information about a created process.
     public struct Info {
         /// Handle to the new process.
@@ -185,7 +185,7 @@ extension Windows.Kernel.Process {
 
 // MARK: - Error Type
 
-extension Windows.Kernel.Process {
+extension Windows.`32`.Kernel.Process {
     /// Errors from process operations.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// Process creation failed.

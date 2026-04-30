@@ -31,7 +31,7 @@ extension Memory.Map {
     @unsafe
     public static func advise(
         addr: UnsafeMutableRawPointer,
-        length: Windows.Kernel.File.Size,
+        length: Windows.`32`.Kernel.File.Size,
         advice: Memory.Map.Advice
     ) {
         // No-op on Windows
@@ -48,7 +48,7 @@ extension Memory.Map {
     @unsafe
     public static func advise(
         addr: UnsafeRawPointer,
-        length: Windows.Kernel.File.Size,
+        length: Windows.`32`.Kernel.File.Size,
         advice: Memory.Map.Advice
     ) {
         // No-op on Windows

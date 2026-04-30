@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Thread Local Storage Index
 
-extension Windows.Kernel.Thread {
+extension Windows.`32`.Kernel.Thread {
     /// Per-thread storage index — a policy-free wrapper around the
     /// Windows `TlsAlloc` / `TlsSetValue` / `TlsGetValue` / `TlsFree`
     /// family.
@@ -30,7 +30,7 @@ extension Windows.Kernel.Thread {
     /// index is freed on `deinit`. The slot stores an
     /// `UnsafeMutableRawPointer?` per thread; consumers cast to/from
     /// their typed payload at the boundary (or use the L3 generic
-    /// `Windows.Kernel.Thread.Local<Payload>` which encapsulates the cast).
+    /// `Windows.`32`.Kernel.Thread.Local<Payload>` which encapsulates the cast).
     ///
     /// ## Threading
     /// - **value (get)**: Returns the calling thread's slot value, or
@@ -49,7 +49,7 @@ extension Windows.Kernel.Thread {
     ///
     /// ## Usage
     /// ```swift
-    /// let index = Windows.Kernel.Thread.Index()
+    /// let index = Windows.`32`.Kernel.Thread.Index()
     /// index.value = UnsafeMutableRawPointer(...)
     /// // ... synchronous code on the same thread reads `index.value` ...
     /// ```

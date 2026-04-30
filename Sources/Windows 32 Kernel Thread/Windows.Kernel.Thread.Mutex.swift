@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Thread Mutex
 
-extension Windows.Kernel.Thread {
+extension Windows.`32`.Kernel.Thread {
     /// A low-level mutex for thread synchronization.
     ///
     /// This is a policy-free wrapper around Windows `SRWLOCK` (Slim Reader/Writer Lock)
@@ -31,7 +31,7 @@ extension Windows.Kernel.Thread {
     ///
     /// ## Usage
     /// ```swift
-    /// let mutex = Windows.Kernel.Thread.Mutex()
+    /// let mutex = Windows.`32`.Kernel.Thread.Mutex()
     /// mutex.lock()
     /// defer { mutex.unlock() }
     /// // ... critical section ...
@@ -51,7 +51,7 @@ extension Windows.Kernel.Thread {
 
 // MARK: - Lock Operations
 
-extension Windows.Kernel.Thread.Mutex {
+extension Windows.`32`.Kernel.Thread.Mutex {
     /// Releases the mutex, allowing other threads to acquire it.
     ///
     /// ## Precondition
@@ -69,12 +69,12 @@ extension Windows.Kernel.Thread.Mutex {
 
 // MARK: - Lock Accessor
 
-extension Windows.Kernel.Thread.Mutex {
+extension Windows.`32`.Kernel.Thread.Mutex {
     /// Lock operation accessor with variants.
     public struct Lock: Sendable {
-        let mutex: Windows.Kernel.Thread.Mutex
+        let mutex: Windows.`32`.Kernel.Thread.Mutex
 
-        init(mutex: Windows.Kernel.Thread.Mutex) {
+        init(mutex: Windows.`32`.Kernel.Thread.Mutex) {
             self.mutex = mutex
         }
 
@@ -126,7 +126,7 @@ extension Windows.Kernel.Thread.Mutex {
 
 // MARK: - Internal Access for Condition
 
-extension Windows.Kernel.Thread.Mutex {
+extension Windows.`32`.Kernel.Thread.Mutex {
     /// Provides access to the underlying platform mutex pointer.
     ///
     /// This is internal API for `Condition` to use when waiting.

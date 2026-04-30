@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import WinSDK
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Tracks the state of an asynchronous I/O operation on Windows.
         ///
         /// Every asynchronous I/O operation requires an `OVERLAPPED` structure
@@ -24,18 +24,18 @@
         /// ## Usage
         ///
         /// ```swift
-        /// var overlapped = Windows.Kernel.IO.Completion.Port.Overlapped()
+        /// var overlapped = Windows.`32`.Kernel.IO.Completion.Port.Overlapped()
         /// overlapped.offset = position
         ///
         /// // Start async read (overlapped must stay alive until completion)
-        /// try Windows.Kernel.IO.Completion.Port.read(
+        /// try Windows.`32`.Kernel.IO.Completion.Port.read(
         ///     handle,
         ///     buffer: buffer,
         ///     overlapped: &overlapped
         /// )
         ///
         /// // Later, retrieve completion
-        /// let entry = try Windows.Kernel.IO.Completion.Port.Dequeue.single(port, timeout: .infinite)
+        /// let entry = try Windows.`32`.Kernel.IO.Completion.Port.Dequeue.single(port, timeout: .infinite)
         /// let count = entry.bytes.transferred
         /// ```
         ///
@@ -46,7 +46,7 @@
         ///
         /// ```swift
         /// struct MyOperation {
-        ///     var overlapped: Windows.Kernel.IO.Completion.Port.Overlapped
+        ///     var overlapped: Windows.`32`.Kernel.IO.Completion.Port.Overlapped
         ///     var buffer: [UInt8]
         ///     var callback: (Int) -> Void
         /// }
@@ -72,7 +72,7 @@
 
     // MARK: - Accessors
 
-    extension Windows.Kernel.IO.Completion.Port.Overlapped {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Overlapped {
         /// The 64-bit file offset for positioned I/O.
         @inlinable
         public var offset: Int64 {

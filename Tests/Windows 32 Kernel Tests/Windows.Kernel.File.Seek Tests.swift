@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.Kernel.Seek {
+extension Windows.`32`.Kernel.Seek {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,26 +28,26 @@ extension Windows.Kernel.Seek {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.Seek.Test.Unit {
     @Test
     func `Seek namespace exists`() {
-        _ = Windows.Kernel.Seek.self
+        _ = Windows.`32`.Kernel.Seek.self
     }
 
     @Test
     func `Seek.Error type alias exists`() {
-        _ = Windows.Kernel.Seek.Error.self
+        _ = Windows.`32`.Kernel.Seek.Error.self
     }
 
     @Test
     func `Seek.Origin type alias exists`() {
-        _ = Windows.Kernel.Seek.Origin.self
+        _ = Windows.`32`.Kernel.Seek.Origin.self
     }
 }
 
 // MARK: - Origin Tests
 
-extension Windows.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.Seek.Test.Unit {
     @Test
     func `Origin.start exists`() {
         let origin = Kernel.Seek.Origin.start
@@ -69,7 +69,7 @@ extension Windows.Kernel.Seek.Test.Unit {
 
 // MARK: - Windows Conversion Tests
 
-extension Windows.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.Seek.Test.Unit {
     @Test
     func `Origin.start converts to FILE_BEGIN`() {
         let origin = Kernel.Seek.Origin.start
@@ -91,13 +91,13 @@ extension Windows.Kernel.Seek.Test.Unit {
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.Seek.Test.Unit {
     @Test
     func `seek with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Seek.Error.self) {
-            _ = try Windows.Kernel.Seek.seek(invalid, offset: 0, origin: .start)
+            _ = try Windows.`32`.Kernel.Seek.seek(invalid, offset: 0, origin: .start)
         }
     }
 
@@ -106,14 +106,14 @@ extension Windows.Kernel.Seek.Test.Unit {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Seek.Error.self) {
-            _ = try Windows.Kernel.Seek.tell(invalid)
+            _ = try Windows.`32`.Kernel.Seek.tell(invalid)
         }
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Seek.Test.EdgeCase {
+extension Windows.`32`.Kernel.Seek.Test.EdgeCase {
     @Test
     func `Error.invalidDescriptor exists`() {
         let error = Kernel.Seek.Error.invalidDescriptor

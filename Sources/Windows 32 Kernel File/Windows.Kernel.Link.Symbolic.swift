@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows CreateSymbolicLinkW syscall
 
-extension Windows.Kernel.Link.Symbolic {
+extension Windows.`32`.Kernel.Link.Symbolic {
     /// Creates a symbolic link.
     ///
     /// On Windows, creating symbolic links typically requires administrator
@@ -24,14 +24,14 @@ extension Windows.Kernel.Link.Symbolic {
     ///   - target: The path the symlink points to.
     ///   - linkPath: The path of the symbolic link to create.
     ///   - isDirectory: If true, creates a directory symlink.
-    /// - Throws: `Windows.Kernel.Link.Symbolic.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Link.Symbolic.Error` on failure.
     public static func create(
         target: borrowing Path,
         linkPath: borrowing Path,
         isDirectory: Bool = false
-    ) throws(Windows.Kernel.Link.Symbolic.Error) {
-        try target.withUnsafeCString { targetPtr throws(Windows.Kernel.Link.Symbolic.Error) in
-            try linkPath.withUnsafeCString { linkPtr throws(Windows.Kernel.Link.Symbolic.Error) in
+    ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) {
+        try target.withUnsafeCString { targetPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
+            try linkPath.withUnsafeCString { linkPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
                 try create(
                     target: targetPtr,
                     linkPath: linkPtr,
@@ -47,12 +47,12 @@ extension Windows.Kernel.Link.Symbolic {
     ///   - target: The target path as a null-terminated wide string.
     ///   - linkPath: The link path as a null-terminated wide string.
     ///   - isDirectory: If true, creates a directory symlink.
-    /// - Throws: `Windows.Kernel.Link.Symbolic.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Link.Symbolic.Error` on failure.
     public static func create(
         target: UnsafePointer<Path.Char>,
         linkPath: UnsafePointer<Path.Char>,
         isDirectory: Bool = false
-    ) throws(Windows.Kernel.Link.Symbolic.Error) {
+    ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) {
         let wTarget = UnsafeRawPointer(target).assumingMemoryBound(to: WCHAR.self)
         let wLink = UnsafeRawPointer(linkPath).assumingMemoryBound(to: WCHAR.self)
 
@@ -72,12 +72,12 @@ extension Windows.Kernel.Link.Symbolic {
     ///   - path: The path of the symbolic link.
     ///   - buffer: Buffer to receive the target path (UTF-16).
     /// - Returns: The number of characters written (excluding null terminator).
-    /// - Throws: `Windows.Kernel.Link.Symbolic.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Link.Symbolic.Error` on failure.
     public static func readTarget(
         path: borrowing Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Windows.Kernel.Link.Symbolic.Error) -> Int {
-        try path.withUnsafeCString { ptr throws(Windows.Kernel.Link.Symbolic.Error) in
+    ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) -> Int {
+        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
             try readTarget(unsafePath: ptr, into: buffer)
         }
     }
@@ -88,11 +88,11 @@ extension Windows.Kernel.Link.Symbolic {
     ///   - unsafePath: The symlink path as a null-terminated wide string.
     ///   - buffer: Buffer to receive the target path (UTF-16).
     /// - Returns: The number of characters written (excluding null terminator).
-    /// - Throws: `Windows.Kernel.Link.Symbolic.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Link.Symbolic.Error` on failure.
     public static func readTarget(
         unsafePath: UnsafePointer<Path.Char>,
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Windows.Kernel.Link.Symbolic.Error) -> Int {
+    ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) -> Int {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
 
         // Open the symlink with FILE_FLAG_OPEN_REPARSE_POINT
@@ -134,7 +134,7 @@ extension Windows.Kernel.Link.Symbolic {
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Link.Symbolic.Error {
+extension Windows.`32`.Kernel.Link.Symbolic.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

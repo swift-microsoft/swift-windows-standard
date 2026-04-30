@@ -9,14 +9,14 @@
 //
 // ===----------------------------------------------------------------------===//
 
-extension Windows.Kernel.Close {
+extension Windows.`32`.Kernel.Close {
     public enum Error: Swift.Error, Sendable {
-        case handle(Windows.Kernel.Descriptor.Validity.Error)
+        case handle(Windows.`32`.Kernel.Descriptor.Validity.Error)
         case platform(Error_Primitives.Error)
     }
 }
 
-extension Windows.Kernel.Close.Error: Equatable {
+extension Windows.`32`.Kernel.Close.Error: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case (.handle(let l), .handle(let r)): return l == r
@@ -26,7 +26,7 @@ extension Windows.Kernel.Close.Error: Equatable {
     }
 }
 
-extension Windows.Kernel.Close.Error: CustomStringConvertible {
+extension Windows.`32`.Kernel.Close.Error: CustomStringConvertible {
     public var description: Swift.String {
         switch self {
         case .handle(let e): return "handle: \(e)"

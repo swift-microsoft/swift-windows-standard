@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.Kernel.File.Open {
+extension Windows.`32`.Kernel.File.Open {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,10 +28,10 @@ extension Windows.Kernel.File.Open {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.File.Open.Test.Unit {
+extension Windows.`32`.Kernel.File.Open.Test.Unit {
     @Test
     func `File.Open namespace exists`() {
-        _ = Windows.Kernel.File.Open.self
+        _ = Windows.`32`.Kernel.File.Open.self
     }
 
     @Test
@@ -52,7 +52,7 @@ extension Windows.Kernel.File.Open.Test.Unit {
 
 // MARK: - Mode Tests
 
-extension Windows.Kernel.File.Open.Test.Unit {
+extension Windows.`32`.Kernel.File.Open.Test.Unit {
     @Test
     func `Mode.read exists`() {
         let mode = Kernel.File.Open.Mode.read
@@ -77,7 +77,7 @@ extension Windows.Kernel.File.Open.Test.Unit {
 
 // MARK: - Options Tests
 
-extension Windows.Kernel.File.Open.Test.Unit {
+extension Windows.`32`.Kernel.File.Open.Test.Unit {
     @Test
     func `Options.create exists`() {
         let options = Kernel.File.Open.Options.create
@@ -129,7 +129,7 @@ extension Windows.Kernel.File.Open.Test.Unit {
 
 // MARK: - Windows Conversion Tests
 
-extension Windows.Kernel.File.Open.Test.Unit {
+extension Windows.`32`.Kernel.File.Open.Test.Unit {
     @Test
     func `Mode.read converts to GENERIC_READ`() {
         let mode = Kernel.File.Open.Mode.read
@@ -192,7 +192,7 @@ extension Windows.Kernel.File.Open.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.File.Open.Test.EdgeCase {
+extension Windows.`32`.Kernel.File.Open.Test.EdgeCase {
     @Test
     func `Mode can be combined`() {
         var mode = Kernel.File.Open.Mode.read

@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Socket Bind
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Binds a socket to a local address.
     ///
     /// Associates the socket with a local address and port. Required for
@@ -37,7 +37,7 @@ extension Windows.Kernel.Socket {
     ///
     /// try withUnsafePointer(to: &addr) { ptr in
     ///     try ptr.withMemoryRebound(to: sockaddr.self, capacity: 1) { addrPtr in
-    ///         try Windows.Kernel.Socket.bind(
+    ///         try Windows.`32`.Kernel.Socket.bind(
     ///             socket,
     ///             address: addrPtr,
     ///             addressLength: Int32(MemoryLayout<sockaddr_in>.size)
@@ -46,7 +46,7 @@ extension Windows.Kernel.Socket {
     /// }
     /// ```
     public static func bind(
-        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
         address: UnsafePointer<sockaddr>,
         addressLength: Int32
     ) throws(Error) {
@@ -57,7 +57,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `bind`. The typed L2 convenience
     /// (`bind(_:address:addressLength:)` taking
-    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -80,7 +80,7 @@ extension Windows.Kernel.Socket {
 
 // MARK: - Address Helpers
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Converts a port number to network byte order.
     @inlinable
     public static func htons(_ port: UInt16) -> UInt16 {

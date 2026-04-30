@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Access
 
-extension Windows.Kernel.File.Flush.Error {
+extension Windows.`32`.Kernel.File.Flush.Error {
     /// The underlying Windows error code.
     @inlinable
     public var code: Error_Primitives.Error.Code {

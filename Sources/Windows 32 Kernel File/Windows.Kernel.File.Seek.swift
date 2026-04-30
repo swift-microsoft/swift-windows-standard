@@ -14,11 +14,11 @@ public import WinSDK
 
 // MARK: - Windows SetFilePointerEx syscall (raw @_spi(Syscall))
 
-extension Windows.Kernel.File.Seek {
+extension Windows.`32`.Kernel.File.Seek {
     /// Repositions the file offset of a HANDLE bit pattern.
     ///
     /// Spec-literal raw `SetFilePointerEx`. The typed L2 convenience
-    /// (`seek(_:offset:origin:)` taking `Windows.Kernel.Descriptor`) delegates to
+    /// (`seek(_:offset:origin:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to
     /// this raw SPI internally via `descriptor._rawValue` after a fast-fail
     /// validity check.
     ///
@@ -27,7 +27,7 @@ extension Windows.Kernel.File.Seek {
     ///   - offset: The offset value.
     ///   - origin: The reference point for the offset.
     /// - Returns: The resulting offset from the beginning of the file.
-    /// - Throws: `Windows.Kernel.File.Seek.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Seek.Error` on failure.
     @_spi(Syscall)
     @discardableResult
     public static func seek(
@@ -56,12 +56,12 @@ extension Windows.Kernel.File.Seek {
     /// Gets the current file offset for a HANDLE bit pattern.
     ///
     /// Composes raw `seek(_:offset:origin:)` with `offset: 0, origin: .current`.
-    /// The typed L2 convenience (`tell(_:)` taking `Windows.Kernel.Descriptor`)
+    /// The typed L2 convenience (`tell(_:)` taking `Windows.`32`.Kernel.Descriptor`)
     /// delegates to this raw SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: The current offset from the beginning of the file.
-    /// - Throws: `Windows.Kernel.File.Seek.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Seek.Error` on failure.
     @_spi(Syscall)
     public static func tell(_ handle: UInt) throws(Error) -> Int64 {
         try seek(handle, offset: 0, origin: .current)
@@ -70,7 +70,7 @@ extension Windows.Kernel.File.Seek {
 
 // MARK: - Typed Convenience
 
-extension Windows.Kernel.File.Seek {
+extension Windows.`32`.Kernel.File.Seek {
     /// Repositions the file offset of a file descriptor.
     ///
     /// Typed L2 form. Delegates to the raw `seek(_:offset:origin:)` SPI via
@@ -81,10 +81,10 @@ extension Windows.Kernel.File.Seek {
     ///   - offset: The offset value.
     ///   - origin: The reference point for the offset.
     /// - Returns: The resulting offset from the beginning of the file.
-    /// - Throws: `Windows.Kernel.File.Seek.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Seek.Error` on failure.
     @discardableResult
     public static func seek(
-        _ descriptor: Windows.Kernel.Descriptor,
+        _ descriptor: Windows.`32`.Kernel.Descriptor,
         offset: Int64,
         origin: Origin
     ) throws(Error) -> Int64 {
@@ -101,8 +101,8 @@ extension Windows.Kernel.File.Seek {
     ///
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: The current offset from the beginning of the file.
-    /// - Throws: `Windows.Kernel.File.Seek.Error` on failure.
-    public static func tell(_ descriptor: Windows.Kernel.Descriptor) throws(Error) -> Int64 {
+    /// - Throws: `Windows.`32`.Kernel.File.Seek.Error` on failure.
+    public static func tell(_ descriptor: Windows.`32`.Kernel.Descriptor) throws(Error) -> Int64 {
         guard descriptor.isValid else {
             throw .invalidDescriptor
         }
@@ -112,7 +112,7 @@ extension Windows.Kernel.File.Seek {
 
 // MARK: - Origin Windows Conversion
 
-extension Windows.Kernel.File.Seek.Origin {
+extension Windows.`32`.Kernel.File.Seek.Origin {
     /// Converts the origin to Windows move method.
     @usableFromInline
     internal var windowsMoveMethod: DWORD {
@@ -129,14 +129,14 @@ extension Windows.Kernel.File.Seek.Origin {
 
 // MARK: - Type Aliases
 
-extension Windows.Kernel.File.Seek {
-    public typealias Error = Windows.Kernel.File.Seek.Error
-    public typealias Origin = Windows.Kernel.File.Seek.Origin
+extension Windows.`32`.Kernel.File.Seek {
+    public typealias Error = Windows.`32`.Kernel.File.Seek.Error
+    public typealias Origin = Windows.`32`.Kernel.File.Seek.Origin
 }
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.File.Seek.Error {
+extension Windows.`32`.Kernel.File.Seek.Error {
     /// Creates an error from the current Win32 last error.
     internal static func current() -> Self {
         let code = Error_Primitives.Error.captureLastError()

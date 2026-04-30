@@ -14,19 +14,19 @@ public import WinSDK
 
 // MARK: - Windows CreateHardLinkW syscall
 
-extension Windows.Kernel.Link {
+extension Windows.`32`.Kernel.Link {
     /// Creates a hard link to an existing file.
     ///
     /// - Parameters:
     ///   - source: The path of the existing file.
     ///   - linkPath: The path of the hard link to create.
-    /// - Throws: `Windows.Kernel.Link.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Link.Error` on failure.
     public static func create(
         source: borrowing Path,
         linkPath: borrowing Path
-    ) throws(Windows.Kernel.Link.Error) {
-        try source.withUnsafeCString { sourcePtr throws(Windows.Kernel.Link.Error) in
-            try linkPath.withUnsafeCString { linkPtr throws(Windows.Kernel.Link.Error) in
+    ) throws(Windows.`32`.Kernel.Link.Error) {
+        try source.withUnsafeCString { sourcePtr throws(Windows.`32`.Kernel.Link.Error) in
+            try linkPath.withUnsafeCString { linkPtr throws(Windows.`32`.Kernel.Link.Error) in
                 try create(source: sourcePtr, linkPath: linkPtr)
             }
         }
@@ -37,11 +37,11 @@ extension Windows.Kernel.Link {
     /// - Parameters:
     ///   - source: The source file path as a null-terminated wide string.
     ///   - linkPath: The link path as a null-terminated wide string.
-    /// - Throws: `Windows.Kernel.Link.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Link.Error` on failure.
     public static func create(
         source: UnsafePointer<Path.Char>,
         linkPath: UnsafePointer<Path.Char>
-    ) throws(Windows.Kernel.Link.Error) {
+    ) throws(Windows.`32`.Kernel.Link.Error) {
         let wSource = UnsafeRawPointer(source).assumingMemoryBound(to: WCHAR.self)
         let wLink = UnsafeRawPointer(linkPath).assumingMemoryBound(to: WCHAR.self)
 
@@ -53,7 +53,7 @@ extension Windows.Kernel.Link {
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Link.Error {
+extension Windows.`32`.Kernel.Link.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

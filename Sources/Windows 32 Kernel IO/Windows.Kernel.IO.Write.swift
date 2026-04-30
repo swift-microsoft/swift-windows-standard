@@ -15,11 +15,11 @@ public import WinSDK
 
 // MARK: - Windows WriteFile syscall (raw @_spi(Syscall))
 
-extension Windows.Kernel.IO.Write {
+extension Windows.`32`.Kernel.IO.Write {
     /// Writes bytes to a raw Windows HANDLE bit pattern at the current file offset.
     ///
     /// Spec-literal raw `WriteFile`. The typed L2 convenience
-    /// (`Windows.Kernel.IO.Write.write(_:from:)` taking `Windows.Kernel.Descriptor`)
+    /// (`Windows.`32`.Kernel.IO.Write.write(_:from:)` taking `Windows.`32`.Kernel.Descriptor`)
     /// delegates to this raw SPI internally via `descriptor._rawValue` after
     /// a fast-fail validity check.
     ///
@@ -77,8 +77,8 @@ extension Windows.Kernel.IO.Write {
     /// Writes bytes to a raw Windows HANDLE bit pattern at a specific offset without changing the file position.
     ///
     /// Spec-literal raw `SetFilePointerEx + WriteFile`. The typed L2
-    /// convenience (`Windows.Kernel.IO.Write.pwrite(_:from:at:)` taking
-    /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// convenience (`Windows.`32`.Kernel.IO.Write.pwrite(_:from:at:)` taking
+    /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
     /// `descriptor._rawValue` after a fast-fail validity check.
     ///
     /// This does NOT modify the file pointer atomically on Windows (unlike
@@ -102,7 +102,7 @@ extension Windows.Kernel.IO.Write {
     public static func pwrite(
         _ handle: UInt,
         from buffer: UnsafeRawBufferPointer,
-        at offset: Windows.Kernel.File.Offset
+        at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {
         guard let baseAddress = buffer.baseAddress else {
             return 0
@@ -149,7 +149,7 @@ extension Windows.Kernel.IO.Write {
 
 // MARK: - Typed Convenience
 
-extension Windows.Kernel.IO.Write {
+extension Windows.`32`.Kernel.IO.Write {
     /// Writes bytes to a file descriptor at the current file offset.
     ///
     /// Typed L2 form. Delegates to the raw `write(_:from:)` SPI via
@@ -161,7 +161,7 @@ extension Windows.Kernel.IO.Write {
     /// - Returns: Number of bytes written (may be less than `buffer.count`).
     /// - Throws: ``Kernel/IO/Write/Error`` on failure.
     public static func write(
-        _ descriptor: Windows.Kernel.Descriptor,
+        _ descriptor: Windows.`32`.Kernel.Descriptor,
         from buffer: UnsafeRawBufferPointer
     ) throws(Error) -> Int {
         guard descriptor.isValid else {
@@ -182,9 +182,9 @@ extension Windows.Kernel.IO.Write {
     /// - Returns: Number of bytes written (may be less than `buffer.count`).
     /// - Throws: ``Kernel/IO/Write/Error`` on failure.
     public static func pwrite(
-        _ descriptor: Windows.Kernel.Descriptor,
+        _ descriptor: Windows.`32`.Kernel.Descriptor,
         from buffer: UnsafeRawBufferPointer,
-        at offset: Windows.Kernel.File.Offset
+        at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {
         guard descriptor.isValid else {
             throw .handle(.invalid)
@@ -195,17 +195,17 @@ extension Windows.Kernel.IO.Write {
 
 // MARK: - Span Adapters
 
-extension Windows.Kernel.IO.Write {
+extension Windows.`32`.Kernel.IO.Write {
     /// Writes bytes from a span to a file descriptor.
     ///
     /// - Parameters:
     ///   - descriptor: The file descriptor to write to.
     ///   - span: The span containing bytes to write.
     /// - Returns: Number of bytes written.
-    /// - Throws: `Windows.Kernel.IO.Write.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.IO.Write.Error` on failure.
     @inlinable
     public static func write(
-        _ descriptor: Windows.Kernel.Descriptor,
+        _ descriptor: Windows.`32`.Kernel.Descriptor,
         from span: Span<UInt8>
     ) throws(Error) -> Int {
         try span.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) throws(Error) -> Int in
@@ -220,12 +220,12 @@ extension Windows.Kernel.IO.Write {
     ///   - span: The span containing bytes to write.
     ///   - offset: The file offset to write at.
     /// - Returns: Number of bytes written.
-    /// - Throws: `Windows.Kernel.IO.Write.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.IO.Write.Error` on failure.
     @inlinable
     public static func pwrite(
-        _ descriptor: Windows.Kernel.Descriptor,
+        _ descriptor: Windows.`32`.Kernel.Descriptor,
         from span: Span<UInt8>,
-        at offset: Windows.Kernel.File.Offset
+        at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {
         try span.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) throws(Error) -> Int in
             try pwrite(descriptor, from: buffer, at: offset)
@@ -235,13 +235,13 @@ extension Windows.Kernel.IO.Write {
 
 // MARK: - Error Type Alias
 
-extension Windows.Kernel.IO.Write {
-    public typealias Error = Windows.Kernel.IO.Write.Error
+extension Windows.`32`.Kernel.IO.Write {
+    public typealias Error = Windows.`32`.Kernel.IO.Write.Error
 }
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.IO.Write.Error {
+extension Windows.`32`.Kernel.IO.Write.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

@@ -11,7 +11,7 @@
 
 public import Windows_32_Kernel
 
-extension Windows.Kernel {
+extension Windows.`32`.Kernel {
     /// Namespace for Windows-specific test utilities.
     ///
     /// Host for helpers shared across `Windows Kernel Standard Tests` and any

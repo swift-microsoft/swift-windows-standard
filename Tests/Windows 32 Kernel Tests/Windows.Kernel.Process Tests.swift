@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Process {
+extension Windows.`32`.Kernel.Process {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,52 +31,52 @@ extension Windows.Kernel.Process {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Process.Test.Unit {
+extension Windows.`32`.Kernel.Process.Test.Unit {
     @Test
     func `Process namespace exists`() {
-        _ = Windows.Kernel.Process.self
+        _ = Windows.`32`.Kernel.Process.self
     }
 
     @Test
     func `Process.Error type exists`() {
-        _ = Windows.Kernel.Process.Error.self
+        _ = Windows.`32`.Kernel.Process.Error.self
     }
 
     @Test
     func `Process.Info type exists`() {
-        _ = Windows.Kernel.Process.Info.self
+        _ = Windows.`32`.Kernel.Process.Info.self
     }
 }
 
 // MARK: - Current Process Tests
 
-extension Windows.Kernel.Process.Test.Unit {
+extension Windows.`32`.Kernel.Process.Test.Unit {
     @Test
     func `getCurrentId returns non-zero`() {
-        let pid = Windows.Kernel.Process.getCurrentId()
+        let pid = Windows.`32`.Kernel.Process.getCurrentId()
         #expect(pid > 0)
     }
 
     @Test
     func `getCurrentId matches GetCurrentProcessId`() {
-        let pid = Windows.Kernel.Process.getCurrentId()
+        let pid = Windows.`32`.Kernel.Process.getCurrentId()
         let win32Pid = GetCurrentProcessId()
         #expect(pid == win32Pid)
     }
 
     @Test
     func `getCurrentHandle returns non-nil`() {
-        let handle = Windows.Kernel.Process.getCurrentHandle()
+        let handle = Windows.`32`.Kernel.Process.getCurrentHandle()
         #expect(handle != nil)
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Process.Test.Unit {
+extension Windows.`32`.Kernel.Process.Test.Unit {
     @Test
     func `Error.create exists`() {
-        let error = Windows.Kernel.Process.Error.create(.win32(0))
+        let error = Windows.`32`.Kernel.Process.Error.create(.win32(0))
         if case .create = error {
             // Expected
         } else {
@@ -86,7 +86,7 @@ extension Windows.Kernel.Process.Test.Unit {
 
     @Test
     func `Error.wait exists`() {
-        let error = Windows.Kernel.Process.Error.wait(.win32(0))
+        let error = Windows.`32`.Kernel.Process.Error.wait(.win32(0))
         if case .wait = error {
             // Expected
         } else {
@@ -97,21 +97,21 @@ extension Windows.Kernel.Process.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Process.Test.EdgeCase {
+extension Windows.`32`.Kernel.Process.Test.EdgeCase {
     @Test
     func `getCurrentId is consistent`() {
-        let pid1 = Windows.Kernel.Process.getCurrentId()
-        let pid2 = Windows.Kernel.Process.getCurrentId()
+        let pid1 = Windows.`32`.Kernel.Process.getCurrentId()
+        let pid2 = Windows.`32`.Kernel.Process.getCurrentId()
         #expect(pid1 == pid2)
     }
 
     @Test
     func `Info has expected properties`() {
         // Type check only
-        _ = \Windows.Kernel.Process.Info.processHandle
-        _ = \Windows.Kernel.Process.Info.threadHandle
-        _ = \Windows.Kernel.Process.Info.processId
-        _ = \Windows.Kernel.Process.Info.threadId
+        _ = \Windows.`32`.Kernel.Process.Info.processHandle
+        _ = \Windows.`32`.Kernel.Process.Info.threadHandle
+        _ = \Windows.`32`.Kernel.Process.Info.processId
+        _ = \Windows.`32`.Kernel.Process.Info.threadId
     }
 }
 

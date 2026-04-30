@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Mkdir {
+extension Windows.`32`.Kernel.Mkdir {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,16 +31,16 @@ extension Windows.Kernel.Mkdir {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Mkdir.Test.Unit {
+extension Windows.`32`.Kernel.Mkdir.Test.Unit {
     @Test
     func `Mkdir namespace exists`() {
-        _ = Windows.Kernel.Mkdir.self
+        _ = Windows.`32`.Kernel.Mkdir.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Mkdir.Test.Unit {
+extension Windows.`32`.Kernel.Mkdir.Test.Unit {
     @Test
     func `Error.notFound maps from PATH_NOT_FOUND`() {
         let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
@@ -94,7 +94,7 @@ extension Windows.Kernel.Mkdir.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Mkdir.Test.EdgeCase {
+extension Windows.`32`.Kernel.Mkdir.Test.EdgeCase {
     @Test
     func `Permissions.directoryDefault exists`() {
         let perms = Kernel.File.Permissions.directoryDefault

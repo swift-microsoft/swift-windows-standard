@@ -12,16 +12,16 @@
 #if os(Windows)
 public import WinSDK
 
-// MARK: - Windows.Kernel.File.Copy Namespace
+// MARK: - Windows.`32`.Kernel.File.Copy Namespace
 
-extension Windows.Kernel.File {
+extension Windows.`32`.Kernel.File {
     /// File copy operations.
     public enum Copy {}
 }
 
 // MARK: - Copy Error
 
-extension Windows.Kernel.File.Copy {
+extension Windows.`32`.Kernel.File.Copy {
     /// Error type for file copy operations.
     public struct Error: Swift.Error, Sendable {
         public let code: Error_Primitives.Error.Code
@@ -49,7 +49,7 @@ extension Windows.Kernel.File.Copy {
 
 // MARK: - Copy Operations
 
-extension Windows.Kernel.File.Copy {
+extension Windows.`32`.Kernel.File.Copy {
     /// Copies a file from source to destination.
     ///
     /// ## Threading
@@ -66,7 +66,7 @@ extension Windows.Kernel.File.Copy {
     ///   - source: The source file path.
     ///   - destination: The destination file path.
     ///   - overwrite: If true, overwrites existing destination file.
-    /// - Throws: `Windows.Kernel.File.Copy.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Copy.Error` on failure.
     public static func copy(
         from source: borrowing Path,
         to destination: borrowing Path,
@@ -89,7 +89,7 @@ extension Windows.Kernel.File.Copy {
     ///   - source: Source path as null-terminated wide string.
     ///   - destination: Destination path as null-terminated wide string.
     ///   - overwrite: If true, overwrites existing destination file.
-    /// - Throws: `Windows.Kernel.File.Copy.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.File.Copy.Error` on failure.
     public static func copy(
         from source: UnsafePointer<Path.Char>,
         to destination: UnsafePointer<Path.Char>,

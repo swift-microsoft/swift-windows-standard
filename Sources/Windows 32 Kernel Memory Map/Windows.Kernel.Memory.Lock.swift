@@ -29,7 +29,7 @@ extension Memory.Lock {
     @unsafe
     public static func lock(
         address: UnsafeRawPointer,
-        length: Windows.Kernel.File.Size
+        length: Windows.`32`.Kernel.File.Size
     ) throws(Memory.Lock.Error) {
         guard VirtualLock(UnsafeMutableRawPointer(mutating: address), SIZE_T(length.rawValue)) else {
             throw .lock(Error_Primitives.Error.captureLastError())
@@ -48,7 +48,7 @@ extension Memory.Lock {
     @unsafe
     public static func unlock(
         address: UnsafeRawPointer,
-        length: Windows.Kernel.File.Size
+        length: Windows.`32`.Kernel.File.Size
     ) throws(Memory.Lock.Error) {
         guard VirtualUnlock(UnsafeMutableRawPointer(mutating: address), SIZE_T(length.rawValue)) else {
             throw .unlock(Error_Primitives.Error.captureLastError())

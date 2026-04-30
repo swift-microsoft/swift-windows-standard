@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows file open mode conversion
 
-extension Windows.Kernel.File.Open.Mode {
+extension Windows.`32`.Kernel.File.Open.Mode {
     /// Converts the mode to Windows desired access flags.
     ///
     /// Maps the portable `Mode` flags to Win32 `GENERIC_READ` and `GENERIC_WRITE`.

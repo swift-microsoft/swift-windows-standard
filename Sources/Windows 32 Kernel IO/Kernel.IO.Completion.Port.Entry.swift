@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import WinSDK
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// A completion entry returned by the I/O completion port.
         ///
         /// Represents a single completed I/O operation. When dequeuing completions
@@ -23,8 +23,8 @@
         /// ## Usage
         ///
         /// ```swift
-        /// var entries = [Windows.Kernel.IO.Completion.Port.Entry](repeating: .init(), count: 64)
-        /// let count = try Windows.Kernel.IO.Completion.Port.Dequeue.batch(
+        /// var entries = [Windows.`32`.Kernel.IO.Completion.Port.Entry](repeating: .init(), count: 64)
+        /// let count = try Windows.`32`.Kernel.IO.Completion.Port.Dequeue.batch(
         ///     port,
         ///     entries: &entries,
         ///     timeout: .milliseconds(100)
@@ -59,7 +59,7 @@
 
     // MARK: - Accessors
 
-    extension Windows.Kernel.IO.Completion.Port.Entry {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Entry {
         /// Pointer to the Overlapped structure for this completion.
         ///
         /// Returns `nil` for synthetic completions posted via `PostQueuedCompletionStatus`
@@ -69,22 +69,22 @@
         /// This is safe because `Overlapped` is a transparent wrapper around `OVERLAPPED`.
         @unsafe
         @inlinable
-        public var overlapped: UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>? {
+        public var overlapped: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>? {
             guard let rawPtr = unsafe raw.lpOverlapped else { return nil }
             return unsafe UnsafeMutableRawPointer(rawPtr)
-                .assumingMemoryBound(to: Windows.Kernel.IO.Completion.Port.Overlapped.self)
+                .assumingMemoryBound(to: Windows.`32`.Kernel.IO.Completion.Port.Overlapped.self)
         }
 
         /// The completion key associated with the file handle.
         @inlinable
-        public var key: Windows.Kernel.IO.Completion.Port.Key {
-            Windows.Kernel.IO.Completion.Port.Key(rawValue: raw.lpCompletionKey)
+        public var key: Windows.`32`.Kernel.IO.Completion.Port.Key {
+            Windows.`32`.Kernel.IO.Completion.Port.Key(rawValue: raw.lpCompletionKey)
         }
     }
 
     // MARK: - Bytes Accessor
 
-    extension Windows.Kernel.IO.Completion.Port.Entry {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Entry {
         /// Accessor for byte-related properties.
         public var bytes: Bytes { Bytes(entry: self) }
     }

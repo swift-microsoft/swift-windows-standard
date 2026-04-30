@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-extension Windows.Kernel.Descriptor {
+extension Windows.`32`.Kernel.Descriptor {
     /// Validity domain for Windows handles.
     public enum Validity: Sendable {}
 }

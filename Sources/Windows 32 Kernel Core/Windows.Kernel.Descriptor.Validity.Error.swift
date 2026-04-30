@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-extension Windows.Kernel.Descriptor.Validity {
+extension Windows.`32`.Kernel.Descriptor.Validity {
     /// Windows handle validity errors.
     public enum Error: Swift.Error, Sendable, Equatable, Hashable {
         /// The handle is invalid (`ERROR_INVALID_HANDLE`).
@@ -20,7 +20,7 @@ extension Windows.Kernel.Descriptor.Validity {
     }
 }
 
-extension Windows.Kernel.Descriptor.Validity.Error: CustomStringConvertible {
+extension Windows.`32`.Kernel.Descriptor.Validity.Error: CustomStringConvertible {
     public var description: Swift.String {
         switch self {
         case .invalid:

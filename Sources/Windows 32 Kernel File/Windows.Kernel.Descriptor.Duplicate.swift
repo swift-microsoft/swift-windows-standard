@@ -15,11 +15,11 @@ public import WinSDK
 
 // MARK: - Windows DuplicateHandle syscall (raw @_spi(Syscall))
 
-extension Windows.Kernel.Descriptor.Duplicate {
+extension Windows.`32`.Kernel.Descriptor.Duplicate {
     /// Duplicates a HANDLE bit pattern.
     ///
     /// Spec-literal raw `DuplicateHandle`. The typed L2 convenience
-    /// (`duplicate(_:)` taking `Windows.Kernel.Descriptor`) delegates to this
+    /// (`duplicate(_:)` taking `Windows.`32`.Kernel.Descriptor`) delegates to this
     /// raw SPI internally via `descriptor._rawValue` after a fast-fail
     /// validity check.
     ///
@@ -28,7 +28,7 @@ extension Windows.Kernel.Descriptor.Duplicate {
     ///
     /// - Parameter handle: HANDLE bit pattern to duplicate.
     /// - Returns: The duplicated HANDLE bit pattern.
-    /// - Throws: `Windows.Kernel.Descriptor.Duplicate.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Descriptor.Duplicate.Error` on failure.
     @_spi(Syscall)
     public static func duplicate(_ handle: UInt) throws(Error) -> UInt {
         let currentProcess = GetCurrentProcess()
@@ -54,7 +54,7 @@ extension Windows.Kernel.Descriptor.Duplicate {
 
 // MARK: - Typed Convenience
 
-extension Windows.Kernel.Descriptor.Duplicate {
+extension Windows.`32`.Kernel.Descriptor.Duplicate {
     /// Duplicates a handle.
     ///
     /// Typed L2 form. Delegates to the raw `duplicate(_:)` SPI via
@@ -62,24 +62,24 @@ extension Windows.Kernel.Descriptor.Duplicate {
     ///
     /// - Parameter descriptor: The handle to duplicate.
     /// - Returns: The duplicated handle.
-    /// - Throws: `Windows.Kernel.Descriptor.Duplicate.Error` on failure.
-    public static func duplicate(_ descriptor: borrowing Windows.Kernel.Descriptor) throws(Error) -> Windows.Kernel.Descriptor {
+    /// - Throws: `Windows.`32`.Kernel.Descriptor.Duplicate.Error` on failure.
+    public static func duplicate(_ descriptor: borrowing Windows.`32`.Kernel.Descriptor) throws(Error) -> Windows.`32`.Kernel.Descriptor {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
         let newHandle = try duplicate(descriptor._rawValue)
-        return Windows.Kernel.Descriptor(_rawValue: newHandle)
+        return Windows.`32`.Kernel.Descriptor(_rawValue: newHandle)
     }
 }
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Descriptor.Duplicate.Error {
+extension Windows.`32`.Kernel.Descriptor.Duplicate.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
         let code = Error_Primitives.Error.captureLastError()
-        if let e = Windows.Kernel.Descriptor.Validity.Error(code: code) {
+        if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
             return .handle(e)
         }
         return .platform(Error_Primitives.Error(code: code))

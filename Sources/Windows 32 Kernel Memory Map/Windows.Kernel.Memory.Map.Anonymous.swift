@@ -39,7 +39,7 @@ extension Memory.Map.Anonymous {
     /// region.base.mutablePointer.storeBytes(of: 42, as: Int.self)
     /// ```
     public static func map(
-        length: Windows.Kernel.File.Size,
+        length: Windows.`32`.Kernel.File.Size,
         protection: Memory.Map.Protection = [.read, .write]
     ) throws(Memory.Map.Error) -> Memory.Map.Region {
         let addr = try Memory.Map.mapAnonymous(
@@ -60,7 +60,7 @@ extension Memory.Map.Anonymous {
     /// - Throws: `Memory.Map.Error` on failure.
     public static func map(
         addr: Memory.Address,
-        length: Windows.Kernel.File.Size,
+        length: Windows.`32`.Kernel.File.Size,
         protection: Memory.Map.Protection
     ) throws(Memory.Map.Error) -> Memory.Map.Region {
         let mappedAddr = try Memory.Map.mapAnonymous(

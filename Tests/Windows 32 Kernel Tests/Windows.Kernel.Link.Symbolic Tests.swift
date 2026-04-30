@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Symlink {
+extension Windows.`32`.Kernel.Symlink {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,16 +31,16 @@ extension Windows.Kernel.Symlink {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Symlink.Test.Unit {
+extension Windows.`32`.Kernel.Symlink.Test.Unit {
     @Test
     func `Symlink namespace exists`() {
-        _ = Windows.Kernel.Symlink.self
+        _ = Windows.`32`.Kernel.Symlink.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Symlink.Test.Unit {
+extension Windows.`32`.Kernel.Symlink.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Symlink.Error.current(from: Error_Primitives.Error.Code.File.notFound)
@@ -94,7 +94,7 @@ extension Windows.Kernel.Symlink.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Symlink.Test.EdgeCase {
+extension Windows.`32`.Kernel.Symlink.Test.EdgeCase {
     @Test
     func `symlink may require privileges`() {
         // Symlinks on Windows typically require:
@@ -114,7 +114,7 @@ extension Windows.Kernel.Symlink.Test.EdgeCase {
                 try link.withUnsafeBufferPointer { linkPtr in
                     let wtarget = UnsafeRawPointer(targetPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.Kernel.Symlink.symlink(target: wtarget, link: wlink)
+                    try Windows.`32`.Kernel.Symlink.symlink(target: wtarget, link: wlink)
                 }
             }
         }

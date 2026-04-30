@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.Kernel.Rename {
+extension Windows.`32`.Kernel.Rename {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,16 +28,16 @@ extension Windows.Kernel.Rename {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Rename.Test.Unit {
+extension Windows.`32`.Kernel.Rename.Test.Unit {
     @Test
     func `Rename namespace exists`() {
-        _ = Windows.Kernel.Rename.self
+        _ = Windows.`32`.Kernel.Rename.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Rename.Test.Unit {
+extension Windows.`32`.Kernel.Rename.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Rename.Error.current(from: Error_Primitives.Error.Code.File.notFound)
@@ -91,7 +91,7 @@ extension Windows.Kernel.Rename.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Rename.Test.EdgeCase {
+extension Windows.`32`.Kernel.Rename.Test.EdgeCase {
     @Test
     func `rename nonexistent file throws notFound`() {
         let oldPath = "C:\\nonexistent_rename_\(GetCurrentProcessId()).tmp"
@@ -105,7 +105,7 @@ extension Windows.Kernel.Rename.Test.EdgeCase {
                 try new.withUnsafeBufferPointer { newPtr in
                     let wold = UnsafeRawPointer(oldPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wnew = UnsafeRawPointer(newPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.Kernel.Rename.rename(from: wold, to: wnew)
+                    try Windows.`32`.Kernel.Rename.rename(from: wold, to: wnew)
                 }
             }
         }

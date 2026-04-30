@@ -14,18 +14,18 @@ public import WinSDK
 
 // MARK: - Windows Environment Variable Operations
 
-extension Windows.Kernel.Environment {
+extension Windows.`32`.Kernel.Environment {
     /// Gets an environment variable.
     ///
     /// - Parameters:
     ///   - name: The variable name as a null-terminated wide string.
     ///   - buffer: Buffer to receive the value.
     /// - Returns: Number of characters written (excluding null terminator).
-    /// - Throws: `Windows.Kernel.Environment.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Environment.Error` on failure.
     public static func get(
         name: UnsafePointer<WCHAR>,
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Windows.Kernel.Environment.Error) -> Int {
+    ) throws(Windows.`32`.Kernel.Environment.Error) -> Int {
         let wbuffer = UnsafeMutableRawPointer(buffer.baseAddress!).assumingMemoryBound(to: WCHAR.self)
         let result = GetEnvironmentVariableW(name, wbuffer, DWORD(buffer.count))
 
@@ -73,11 +73,11 @@ extension Windows.Kernel.Environment {
     /// - Parameters:
     ///   - name: The variable name as a null-terminated wide string.
     ///   - value: The value as a null-terminated wide string.
-    /// - Throws: `Windows.Kernel.Environment.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Environment.Error` on failure.
     public static func set(
         name: UnsafePointer<WCHAR>,
         value: UnsafePointer<WCHAR>
-    ) throws(Windows.Kernel.Environment.Error) {
+    ) throws(Windows.`32`.Kernel.Environment.Error) {
         guard SetEnvironmentVariableW(name, value) else {
             throw .current()
         }
@@ -86,10 +86,10 @@ extension Windows.Kernel.Environment {
     /// Unsets (removes) an environment variable.
     ///
     /// - Parameter name: The variable name as a null-terminated wide string.
-    /// - Throws: `Windows.Kernel.Environment.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Environment.Error` on failure.
     public static func unset(
         name: UnsafePointer<WCHAR>
-    ) throws(Windows.Kernel.Environment.Error) {
+    ) throws(Windows.`32`.Kernel.Environment.Error) {
         guard SetEnvironmentVariableW(name, nil) else {
             let error = GetLastError()
             if error == DWORD(ERROR_ENVVAR_NOT_FOUND) {
@@ -102,7 +102,7 @@ extension Windows.Kernel.Environment {
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Environment.Error {
+extension Windows.`32`.Kernel.Environment.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

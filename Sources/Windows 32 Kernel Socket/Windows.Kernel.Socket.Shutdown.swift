@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Socket Shutdown
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Shuts down part of a full-duplex connection.
     ///
     /// Disables sends, receives, or both on a socket. This does not close
@@ -30,17 +30,17 @@ extension Windows.Kernel.Socket {
     ///
     /// ```swift
     /// // Signal that we're done sending (half-close)
-    /// try Windows.Kernel.Socket.shutdown(sock, how: .write)
+    /// try Windows.`32`.Kernel.Socket.shutdown(sock, how: .write)
     ///
     /// // Can still receive data until the peer closes
-    /// let bytes = try Windows.Kernel.Socket.receive(sock, buffer: &buf)
+    /// let bytes = try Windows.`32`.Kernel.Socket.receive(sock, buffer: &buf)
     ///
     /// // Now fully close the socket
-    /// try Windows.Kernel.Socket.close(sock)
+    /// try Windows.`32`.Kernel.Socket.close(sock)
     /// ```
     public static func shutdown(
-        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
-        how: Windows.Kernel.Socket.Shutdown.How
+        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
+        how: Windows.`32`.Kernel.Socket.Shutdown.How
     ) throws(Error) {
         try shutdown(socket._rawValue, how: how)
     }
@@ -48,7 +48,7 @@ extension Windows.Kernel.Socket {
     /// Shuts down part of a full-duplex connection on a SOCKET bit pattern.
     ///
     /// Spec-literal raw `shutdown`. The typed L2 convenience
-    /// (`shutdown(_:how:)` taking `borrowing Windows.Kernel.Socket.Descriptor`)
+    /// (`shutdown(_:how:)` taking `borrowing Windows.`32`.Kernel.Socket.Descriptor`)
     /// delegates to this raw SPI internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -58,7 +58,7 @@ extension Windows.Kernel.Socket {
     @_spi(Syscall)
     public static func shutdown(
         _ socket: UInt,
-        how: Windows.Kernel.Socket.Shutdown.How
+        how: Windows.`32`.Kernel.Socket.Shutdown.How
     ) throws(Error) {
         let sdHow: Int32
         switch how {
@@ -79,7 +79,7 @@ extension Windows.Kernel.Socket {
 
 // MARK: - Windows-specific Shutdown Values
 
-extension Windows.Kernel.Socket.Shutdown.How {
+extension Windows.`32`.Kernel.Socket.Shutdown.How {
     /// Windows shutdown constant for read.
     public static var sdReceive: Int32 { SD_RECEIVE }
 

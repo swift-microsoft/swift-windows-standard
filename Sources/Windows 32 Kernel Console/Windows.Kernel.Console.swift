@@ -14,14 +14,14 @@ public import WinSDK
 
 // MARK: - Windows Console Operations
 
-extension Windows.Kernel {
+extension Windows.`32`.Kernel {
     /// Namespace for Windows console operations.
     public enum Console {}
 }
 
 // MARK: - Standard Handles
 
-extension Windows.Kernel.Console {
+extension Windows.`32`.Kernel.Console {
     /// Returns the standard input handle.
     @inlinable
     public static func standardInput() -> HANDLE? {
@@ -56,7 +56,7 @@ extension Windows.Kernel.Console {
 
 // MARK: - Console Mode
 
-extension Windows.Kernel.Console {
+extension Windows.`32`.Kernel.Console {
     /// Console input mode flags.
     public struct InputMode: OptionSet, Sendable {
         public let rawValue: UInt32
@@ -172,7 +172,7 @@ extension Windows.Kernel.Console {
 
 // MARK: - Console Read/Write
 
-extension Windows.Kernel.Console {
+extension Windows.`32`.Kernel.Console {
     /// Reads from the console.
     ///
     /// - Parameters:
@@ -230,7 +230,7 @@ extension Windows.Kernel.Console {
 
 // MARK: - Console Screen Buffer
 
-extension Windows.Kernel.Console {
+extension Windows.`32`.Kernel.Console {
     /// Console screen buffer information.
     public struct ScreenBufferInfo {
         /// Size of the screen buffer.

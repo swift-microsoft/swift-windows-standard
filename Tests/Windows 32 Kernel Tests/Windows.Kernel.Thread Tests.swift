@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Thread {
+extension Windows.`32`.Kernel.Thread {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,10 +31,10 @@ extension Windows.Kernel.Thread {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Thread.Test.Unit {
+extension Windows.`32`.Kernel.Thread.Test.Unit {
     @Test
     func `Thread namespace exists`() {
-        _ = Windows.Kernel.Thread.self
+        _ = Windows.`32`.Kernel.Thread.self
     }
 
     @Test
@@ -45,22 +45,22 @@ extension Windows.Kernel.Thread.Test.Unit {
 
 // MARK: - Current Thread Tests
 
-extension Windows.Kernel.Thread.Test.Unit {
+extension Windows.`32`.Kernel.Thread.Test.Unit {
     @Test
     func `current returns valid handle`() {
-        let handle = Windows.Kernel.Thread.current()
+        let handle = Windows.`32`.Kernel.Thread.current()
         #expect(handle.rawValue != 0)
     }
 
     @Test
     func `currentID returns non-zero`() {
-        let id = Windows.Kernel.Thread.currentID()
+        let id = Windows.`32`.Kernel.Thread.currentID()
         #expect(id > 0)
     }
 
     @Test
     func `currentID matches GetCurrentThreadId`() {
-        let id = Windows.Kernel.Thread.currentID()
+        let id = Windows.`32`.Kernel.Thread.currentID()
         let win32Id = GetCurrentThreadId()
         #expect(id == win32Id)
     }
@@ -68,34 +68,34 @@ extension Windows.Kernel.Thread.Test.Unit {
 
 // MARK: - Yield Tests
 
-extension Windows.Kernel.Thread.Test.Unit {
+extension Windows.`32`.Kernel.Thread.Test.Unit {
     @Test
     func `yield completes without error`() {
         // yield() is a hint, should never fail
-        Windows.Kernel.Thread.yield()
+        Windows.`32`.Kernel.Thread.yield()
     }
 
     @Test
     func `yield can be called multiple times`() {
         for _ in 0..<10 {
-            Windows.Kernel.Thread.yield()
+            Windows.`32`.Kernel.Thread.yield()
         }
     }
 }
 
 // MARK: - Thread Creation Tests
 
-extension Windows.Kernel.Thread.Test.Unit {
+extension Windows.`32`.Kernel.Thread.Test.Unit {
     @Test
     func `create and join thread`() throws {
         var executed = false
 
-        let handle = try Windows.Kernel.Thread.create {
+        let handle = try Windows.`32`.Kernel.Thread.create {
             executed = true
         }
 
-        let joined = Windows.Kernel.Thread.join(handle)
-        Windows.Kernel.Thread.close(handle)
+        let joined = Windows.`32`.Kernel.Thread.join(handle)
+        Windows.`32`.Kernel.Thread.close(handle)
 
         #expect(joined)
         // Note: executed may be false due to race, but thread should complete
@@ -106,7 +106,7 @@ extension Windows.Kernel.Thread.Test.Unit {
         var handles: [Kernel.Thread.Handle] = []
 
         for _ in 0..<5 {
-            let handle = try Windows.Kernel.Thread.create {
+            let handle = try Windows.`32`.Kernel.Thread.create {
                 // Do nothing
             }
             handles.append(handle)
@@ -114,36 +114,36 @@ extension Windows.Kernel.Thread.Test.Unit {
 
         // Join all
         for handle in handles {
-            _ = Windows.Kernel.Thread.join(handle)
-            Windows.Kernel.Thread.close(handle)
+            _ = Windows.`32`.Kernel.Thread.join(handle)
+            Windows.`32`.Kernel.Thread.close(handle)
         }
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Thread.Test.EdgeCase {
+extension Windows.`32`.Kernel.Thread.Test.EdgeCase {
     @Test
     func `currentID is consistent within same thread`() {
-        let id1 = Windows.Kernel.Thread.currentID()
-        let id2 = Windows.Kernel.Thread.currentID()
+        let id1 = Windows.`32`.Kernel.Thread.currentID()
+        let id2 = Windows.`32`.Kernel.Thread.currentID()
         #expect(id1 == id2)
     }
 
     @Test
     func `join with timeout returns false on timeout`() throws {
         // Create a thread that takes a long time
-        let handle = try Windows.Kernel.Thread.create {
+        let handle = try Windows.`32`.Kernel.Thread.create {
             Sleep(5000)  // Sleep 5 seconds
         }
 
         // Try to join with very short timeout
-        let joined = Windows.Kernel.Thread.join(handle, timeout: 1)
+        let joined = Windows.`32`.Kernel.Thread.join(handle, timeout: 1)
         #expect(!joined)
 
         // Clean up - wait for thread to finish
-        _ = Windows.Kernel.Thread.join(handle)
-        Windows.Kernel.Thread.close(handle)
+        _ = Windows.`32`.Kernel.Thread.join(handle)
+        Windows.`32`.Kernel.Thread.close(handle)
     }
 }
 

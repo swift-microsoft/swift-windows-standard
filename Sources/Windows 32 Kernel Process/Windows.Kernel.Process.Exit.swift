@@ -12,12 +12,12 @@
 #if os(Windows)
 public import WinSDK
 
-extension Windows.Kernel.Process {
+extension Windows.`32`.Kernel.Process {
     /// Exit operations namespace.
     public enum Exit {}
 }
 
-extension Windows.Kernel.Process.Exit {
+extension Windows.`32`.Kernel.Process.Exit {
     /// Terminates the calling process immediately.
     ///
     /// - Parameter exitCode: Exit code for the process (`UINT`).
@@ -36,8 +36,8 @@ extension Windows.Kernel.Process.Exit {
     /// ## Usage
     ///
     /// ```swift
-    /// Windows.Kernel.Process.Exit.now(0)  // success
-    /// Windows.Kernel.Process.Exit.now(1)  // failure
+    /// Windows.`32`.Kernel.Process.Exit.now(0)  // success
+    /// Windows.`32`.Kernel.Process.Exit.now(1)  // failure
     /// ```
     public static func now(_ exitCode: UInt32) -> Never {
         ExitProcess(exitCode)

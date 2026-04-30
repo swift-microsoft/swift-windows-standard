@@ -21,7 +21,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Random {
+extension Windows.`32`.Kernel.Random {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -32,21 +32,21 @@ extension Windows.Kernel.Random {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Random.Test.Unit {
+extension Windows.`32`.Kernel.Random.Test.Unit {
     @Test
     func `Random namespace exists`() {
-        _ = Windows.Kernel.Random.self
+        _ = Windows.`32`.Kernel.Random.self
     }
 }
 
 // MARK: - BCryptGenRandom Tests
 
-extension Windows.Kernel.Random.Test.Unit {
+extension Windows.`32`.Kernel.Random.Test.Unit {
     @Test
     func `bCryptGenRandom fills buffer without throwing`() throws(Random.Error) {
         var buffer: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)  // 32 bytes
         try withUnsafeMutableBytes(of: &buffer) { raw throws(Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(raw)
+            try Windows.`32`.Kernel.Random.bCryptGenRandom(raw)
         }
     }
 
@@ -54,7 +54,7 @@ extension Windows.Kernel.Random.Test.Unit {
     func `bCryptGenRandom produces non-zero bytes`() throws(Random.Error) {
         var buffer: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)  // 32 bytes
         try withUnsafeMutableBytes(of: &buffer) { raw throws(Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(raw)
+            try Windows.`32`.Kernel.Random.bCryptGenRandom(raw)
         }
         // Very unlikely all 32 bytes are zero
         #expect(buffer != (0, 0, 0, 0))
@@ -63,22 +63,22 @@ extension Windows.Kernel.Random.Test.Unit {
     @Test
     func `bCryptGenRandom with empty buffer is a no-op`() throws(Random.Error) {
         let buffer = UnsafeMutableRawBufferPointer(start: nil, count: 0)
-        try Windows.Kernel.Random.bCryptGenRandom(buffer)
+        try Windows.`32`.Kernel.Random.bCryptGenRandom(buffer)
     }
 }
 
 // MARK: - Random Value Tests
 
-extension Windows.Kernel.Random.Test.Unit {
+extension Windows.`32`.Kernel.Random.Test.Unit {
     @Test
     func `uint64 returns value`() {
-        let value = Windows.Kernel.Random.uint64()
+        let value = Windows.`32`.Kernel.Random.uint64()
         #expect(value != nil)
     }
 
     @Test
     func `uint32 returns value`() {
-        let value = Windows.Kernel.Random.uint32()
+        let value = Windows.`32`.Kernel.Random.uint32()
         #expect(value != nil)
     }
 
@@ -86,7 +86,7 @@ extension Windows.Kernel.Random.Test.Unit {
     func `uint64 produces different values`() {
         var values: Set<UInt64> = []
         for _ in 0..<10 {
-            if let v = Windows.Kernel.Random.uint64() {
+            if let v = Windows.`32`.Kernel.Random.uint64() {
                 values.insert(v)
             }
         }
@@ -98,7 +98,7 @@ extension Windows.Kernel.Random.Test.Unit {
     func `uint32 produces different values`() {
         var values: Set<UInt32> = []
         for _ in 0..<10 {
-            if let v = Windows.Kernel.Random.uint32() {
+            if let v = Windows.`32`.Kernel.Random.uint32() {
                 values.insert(v)
             }
         }
@@ -108,13 +108,13 @@ extension Windows.Kernel.Random.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Random.Test.EdgeCase {
+extension Windows.`32`.Kernel.Random.Test.EdgeCase {
     @Test
     func `bCryptGenRandom fills a one-megabyte buffer`() throws(Random.Error) {
         let buffer = UnsafeMutableRawBufferPointer.allocate(byteCount: 1024 * 1024, alignment: 1)
         defer { buffer.deallocate() }
         buffer.initializeMemory(as: UInt8.self, repeating: 0)
-        try Windows.Kernel.Random.bCryptGenRandom(buffer)
+        try Windows.`32`.Kernel.Random.bCryptGenRandom(buffer)
     }
 
     @Test
@@ -123,10 +123,10 @@ extension Windows.Kernel.Random.Test.EdgeCase {
         var second: (UInt64, UInt64, UInt64, UInt64) = (0, 0, 0, 0)
 
         try withUnsafeMutableBytes(of: &first) { raw throws(Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(raw)
+            try Windows.`32`.Kernel.Random.bCryptGenRandom(raw)
         }
         try withUnsafeMutableBytes(of: &second) { raw throws(Random.Error) in
-            try Windows.Kernel.Random.bCryptGenRandom(raw)
+            try Windows.`32`.Kernel.Random.bCryptGenRandom(raw)
         }
 
         #expect(first != second)

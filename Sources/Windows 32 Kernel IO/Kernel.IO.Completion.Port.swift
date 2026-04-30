@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import WinSDK
 
-    extension Windows.Kernel.IO.Completion {
+    extension Windows.`32`.Kernel.IO.Completion {
         /// Raw I/O Completion Port wrappers (Windows only).
         ///
         /// I/O Completion Ports are the high-performance asynchronous I/O
@@ -37,7 +37,7 @@
 
     // MARK: - Syscalls (raw @_spi(Syscall))
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Creates a new I/O completion port.
         ///
         /// - Parameter threads: Maximum number of threads allowed to
@@ -47,7 +47,7 @@
         @inlinable
         public static func create(
             threads: UInt32 = 0
-        ) throws(Error) -> Windows.Kernel.Descriptor {
+        ) throws(Error) -> Windows.`32`.Kernel.Descriptor {
             let handle = CreateIoCompletionPort(
                 INVALID_HANDLE_VALUE,
                 nil,
@@ -57,13 +57,13 @@
             guard let handle, handle != INVALID_HANDLE_VALUE else {
                 throw .create(.captureLastError())
             }
-            return Windows.Kernel.Descriptor(rawValue: handle)
+            return Windows.`32`.Kernel.Descriptor(rawValue: handle)
         }
 
         /// Associates a file handle bit pattern with a completion port bit pattern.
         ///
         /// Spec-literal raw `CreateIoCompletionPort`. The typed L2 convenience
-        /// (`associate(_:handle:key:)` taking `Windows.Kernel.Descriptor`) delegates
+        /// (`associate(_:handle:key:)` taking `Windows.`32`.Kernel.Descriptor`) delegates
         /// to this raw SPI internally via `descriptor._rawValue` after a
         /// fast-fail validity check.
         ///
@@ -96,7 +96,7 @@
         ///
         /// Spec-literal raw `PostQueuedCompletionStatus`. The typed L2
         /// convenience (`post(_:bytes:key:overlapped:)` taking
-        /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
         /// `descriptor._rawValue` after a fast-fail validity check.
         ///
         /// - Parameters:
@@ -127,8 +127,8 @@
 
         /// Closes a port HANDLE bit pattern.
         ///
-        /// Spec-literal raw delegate to `Windows.Kernel.Close.close(_:)`. The
-        /// typed L2 convenience (`close(_:)` taking `Windows.Kernel.Descriptor`)
+        /// Spec-literal raw delegate to `Windows.`32`.Kernel.Close.close(_:)`. The
+        /// typed L2 convenience (`close(_:)` taking `Windows.`32`.Kernel.Descriptor`)
         /// delegates to this raw SPI internally via `descriptor._rawValue`
         /// after a fast-fail validity check.
         ///
@@ -139,14 +139,14 @@
         @_spi(Syscall)
         @inlinable
         public static func close(_ port: UInt) {
-            _ = Windows.Kernel.Close.close(port)
+            _ = Windows.`32`.Kernel.Close.close(port)
         }
 
         /// Initiates an overlapped read on a HANDLE bit pattern.
         ///
         /// Spec-literal raw `ReadFile` over an overlapped structure. The
         /// typed L2 convenience (`read(_:into:overlapped:)` taking
-        /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
         /// `descriptor._rawValue` after a fast-fail validity check.
         ///
         /// - Parameters:
@@ -190,7 +190,7 @@
         ///
         /// Spec-literal raw `WriteFile` over an overlapped structure. The
         /// typed L2 convenience (`write(_:from:overlapped:)` taking
-        /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
         /// `descriptor._rawValue` after a fast-fail validity check.
         ///
         /// - Parameters:
@@ -233,7 +233,7 @@
         /// Gets the result of a completed overlapped operation on a HANDLE bit pattern.
         ///
         /// Spec-literal raw `GetOverlappedResult`. The typed L2 convenience
-        /// (`result(_:overlapped:wait:)` taking `Windows.Kernel.Descriptor`)
+        /// (`result(_:overlapped:wait:)` taking `Windows.`32`.Kernel.Descriptor`)
         /// delegates to this raw SPI internally via `descriptor._rawValue`
         /// after a fast-fail validity check.
         ///
@@ -270,7 +270,7 @@
 
     // MARK: - Typed Convenience
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Associates a file handle with the completion port.
         ///
         /// Typed L2 form. Delegates to the raw `associate(_:handle:key:)` SPI
@@ -284,8 +284,8 @@
         /// - Throws: `Error.associate` if association fails.
         @inlinable
         public static func associate(
-            _ port: Windows.Kernel.Descriptor,
-            handle: Windows.Kernel.Descriptor,
+            _ port: Windows.`32`.Kernel.Descriptor,
+            handle: Windows.`32`.Kernel.Descriptor,
             key: Key
         ) throws(Error) {
             try associate(port._rawValue, handle: handle._rawValue, key: key)
@@ -307,7 +307,7 @@
         @unsafe
         @inlinable
         public static func post(
-            _ port: Windows.Kernel.Descriptor,
+            _ port: Windows.`32`.Kernel.Descriptor,
             bytes: DWORD = 0,
             key: Key = .zero,
             overlapped: LPOVERLAPPED? = nil
@@ -324,7 +324,7 @@
         ///
         /// - Parameter port: The port handle to close.
         @inlinable
-        public static func close(_ port: Windows.Kernel.Descriptor) {
+        public static func close(_ port: Windows.`32`.Kernel.Descriptor) {
             close(port._rawValue)
         }
 
@@ -342,7 +342,7 @@
         @unsafe
         @inlinable
         public static func read(
-            _ handle: Windows.Kernel.Descriptor,
+            _ handle: Windows.`32`.Kernel.Descriptor,
             into buffer: UnsafeMutableRawBufferPointer,
             overlapped: inout Overlapped
         ) throws(Error) -> Read.Result {
@@ -363,7 +363,7 @@
         @unsafe
         @inlinable
         public static func write(
-            _ handle: Windows.Kernel.Descriptor,
+            _ handle: Windows.`32`.Kernel.Descriptor,
             from buffer: UnsafeRawBufferPointer,
             overlapped: inout Overlapped
         ) throws(Error) -> Write.Result {
@@ -383,7 +383,7 @@
         /// - Throws: `Error.result` on failure.
         @inlinable
         public static func result(
-            _ handle: Windows.Kernel.Descriptor,
+            _ handle: Windows.`32`.Kernel.Descriptor,
             overlapped: inout Overlapped,
             wait: Bool = false
         ) throws(Error) -> UInt32 {

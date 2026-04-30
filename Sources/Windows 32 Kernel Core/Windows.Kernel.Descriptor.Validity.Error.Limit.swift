@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-extension Windows.Kernel.Descriptor.Validity.Error {
+extension Windows.`32`.Kernel.Descriptor.Validity.Error {
     /// Limit scope for Windows handle exhaustion.
     public enum Limit: Sendable, Equatable, Hashable {
         /// Per-process handle limit reached (`ERROR_TOO_MANY_OPEN_FILES`).
@@ -20,7 +20,7 @@ extension Windows.Kernel.Descriptor.Validity.Error {
     }
 }
 
-extension Windows.Kernel.Descriptor.Validity.Error.Limit: CustomStringConvertible {
+extension Windows.`32`.Kernel.Descriptor.Validity.Error.Limit: CustomStringConvertible {
     public var description: Swift.String {
         switch self {
         case .process:

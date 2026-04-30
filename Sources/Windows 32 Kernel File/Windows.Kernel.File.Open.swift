@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows CreateFileW syscall
 
-extension Windows.Kernel.File.Open {
+extension Windows.`32`.Kernel.File.Open {
     /// Opens a file at the specified path.
     ///
     /// ## Threading
@@ -43,11 +43,11 @@ extension Windows.Kernel.File.Open {
     @inlinable
     public static func open(
         path: borrowing Path,
-        mode: Windows.Kernel.File.Open.Mode,
-        options: Windows.Kernel.File.Open.Options,
-        permissions: Windows.Kernel.File.Permissions = .standard
-    ) throws(Windows.Kernel.File.Open.Error) -> Windows.Kernel.Descriptor {
-        try path.withUnsafeCString { ptr throws(Windows.Kernel.File.Open.Error) in
+        mode: Windows.`32`.Kernel.File.Open.Mode,
+        options: Windows.`32`.Kernel.File.Open.Options,
+        permissions: Windows.`32`.Kernel.File.Permissions = .standard
+    ) throws(Windows.`32`.Kernel.File.Open.Error) -> Windows.`32`.Kernel.Descriptor {
+        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.File.Open.Error) in
             try open(
                 unsafePath: ptr,
                 mode: mode,
@@ -71,10 +71,10 @@ extension Windows.Kernel.File.Open {
     /// - Throws: ``Kernel/File/Open/Error`` on failure.
     public static func open(
         unsafePath: UnsafePointer<Path.Char>,
-        mode: Windows.Kernel.File.Open.Mode,
-        options: Windows.Kernel.File.Open.Options,
-        permissions: Windows.Kernel.File.Permissions = .standard
-    ) throws(Windows.Kernel.File.Open.Error) -> Windows.Kernel.Descriptor {
+        mode: Windows.`32`.Kernel.File.Open.Mode,
+        options: Windows.`32`.Kernel.File.Open.Options,
+        permissions: Windows.`32`.Kernel.File.Permissions = .standard
+    ) throws(Windows.`32`.Kernel.File.Open.Error) -> Windows.`32`.Kernel.Descriptor {
         let desiredAccess = mode.windowsDesiredAccess
         let shareMode: DWORD = DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE)
         let creationDisposition = options.windowsCreationDisposition
@@ -102,13 +102,13 @@ extension Windows.Kernel.File.Open {
             throw .current()
         }
 
-        return Windows.Kernel.Descriptor.borrowing(handle: handle)
+        return Windows.`32`.Kernel.Descriptor.borrowing(handle: handle)
     }
 }
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.File.Open.Error {
+extension Windows.`32`.Kernel.File.Open.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

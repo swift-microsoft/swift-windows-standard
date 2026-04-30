@@ -15,7 +15,7 @@ public import WinSDK
 
 // MARK: - Socket Namespace
 
-extension Windows.Kernel {
+extension Windows.`32`.Kernel {
     /// Windows socket (Winsock2) operations.
     ///
     /// Provides low-level Winsock2 API wrappers for socket operations.
@@ -27,19 +27,19 @@ extension Windows.Kernel {
     /// and `cleanup()` when done.
     ///
     /// ```swift
-    /// try Windows.Kernel.Socket.startup()
-    /// defer { Windows.Kernel.Socket.cleanup() }
+    /// try Windows.`32`.Kernel.Socket.startup()
+    /// defer { Windows.`32`.Kernel.Socket.cleanup() }
     ///
-    /// let sock = try Windows.Kernel.Socket.create(family: .inet, type: .stream)
+    /// let sock = try Windows.`32`.Kernel.Socket.create(family: .inet, type: .stream)
     /// // ... use socket ...
-    /// try Windows.Kernel.Socket.close(sock)
+    /// try Windows.`32`.Kernel.Socket.close(sock)
     /// ```
     public enum Socket {}
 }
 
 // MARK: - Winsock Initialization
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Initializes Winsock2 library.
     ///
     /// Must be called before any other socket operations. Each successful
@@ -72,7 +72,7 @@ extension Windows.Kernel.Socket {
 
 // MARK: - Socket Creation
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Address family for sockets.
     public struct Family: RawRepresentable, Sendable, Equatable {
         public let rawValue: Int32
@@ -142,12 +142,12 @@ extension Windows.Kernel.Socket {
         family: Family,
         type: SocketType,
         protocol: Protocol = .default
-    ) throws(Error) -> Windows.Kernel.Socket.Descriptor {
+    ) throws(Error) -> Windows.`32`.Kernel.Socket.Descriptor {
         let sock = socket(family.rawValue, type.rawValue, `protocol`.rawValue)
         guard sock != INVALID_SOCKET else {
             throw .create(captureLastSocketError())
         }
-        return Windows.Kernel.Socket.Descriptor(_rawValue: UInt(sock))
+        return Windows.`32`.Kernel.Socket.Descriptor(_rawValue: UInt(sock))
     }
 
     /// Closes a socket by consuming ownership.
@@ -155,7 +155,7 @@ extension Windows.Kernel.Socket {
     /// Takes ownership of the descriptor; the `deinit` handles `closesocket`.
     ///
     /// - Parameter socket: The socket to close (ownership transferred).
-    public static func close(_ socket: consuming Windows.Kernel.Socket.Descriptor) {
+    public static func close(_ socket: consuming Windows.`32`.Kernel.Socket.Descriptor) {
         // Deinit handles closesocket.
     }
 }

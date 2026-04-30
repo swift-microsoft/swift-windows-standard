@@ -14,23 +14,23 @@ public import WinSDK
 
 // MARK: - Windows Pipe Operations
 
-extension Windows.Kernel.Pipe {
+extension Windows.`32`.Kernel.Pipe {
     /// A pair of pipe endpoints (read and write).
     public struct Pair {
         /// The read end of the pipe.
-        public let read: Windows.Kernel.Descriptor
+        public let read: Windows.`32`.Kernel.Descriptor
         /// The write end of the pipe.
-        public let write: Windows.Kernel.Descriptor
+        public let write: Windows.`32`.Kernel.Descriptor
     }
 
     /// Creates an anonymous pipe.
     ///
     /// - Parameter bufferSize: Suggested buffer size (0 for default).
     /// - Returns: A pair of descriptors (read, write).
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     public static func create(
         bufferSize: UInt32 = 0
-    ) throws(Windows.Kernel.Pipe.Error) -> Pair {
+    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Pair {
         var readHandle: HANDLE? = nil
         var writeHandle: HANDLE? = nil
 
@@ -43,8 +43,8 @@ extension Windows.Kernel.Pipe {
         }
 
         return Pair(
-            read: Windows.Kernel.Descriptor.borrowing(handle: read),
-            write: Windows.Kernel.Descriptor.borrowing(handle: write)
+            read: Windows.`32`.Kernel.Descriptor.borrowing(handle: read),
+            write: Windows.`32`.Kernel.Descriptor.borrowing(handle: write)
         )
     }
 
@@ -57,12 +57,12 @@ extension Windows.Kernel.Pipe {
     ///   - inheritRead: Whether the read handle should be inheritable.
     ///   - inheritWrite: Whether the write handle should be inheritable.
     /// - Returns: A pair of descriptors (read, write).
-    /// - Throws: `Windows.Kernel.Pipe.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
     public static func create(
         bufferSize: UInt32 = 0,
         inheritRead: Bool,
         inheritWrite: Bool
-    ) throws(Windows.Kernel.Pipe.Error) -> Pair {
+    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Pair {
         var securityAttributes = SECURITY_ATTRIBUTES()
         securityAttributes.nLength = DWORD(MemoryLayout<SECURITY_ATTRIBUTES>.size)
         securityAttributes.bInheritHandle = true
@@ -99,15 +99,15 @@ extension Windows.Kernel.Pipe {
         }
 
         return Pair(
-            read: Windows.Kernel.Descriptor.borrowing(handle: read),
-            write: Windows.Kernel.Descriptor.borrowing(handle: write)
+            read: Windows.`32`.Kernel.Descriptor.borrowing(handle: read),
+            write: Windows.`32`.Kernel.Descriptor.borrowing(handle: write)
         )
     }
 }
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Pipe.Error {
+extension Windows.`32`.Kernel.Pipe.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Thread Condition Variable
 
-extension Windows.Kernel.Thread {
+extension Windows.`32`.Kernel.Thread {
     /// A low-level condition variable for thread synchronization.
     ///
     /// This is a policy-free wrapper around Windows `CONDITION_VARIABLE`.
@@ -25,8 +25,8 @@ extension Windows.Kernel.Thread {
     /// ## Usage
     /// Condition variables are always used with a mutex:
     /// ```swift
-    /// let mutex = Windows.Kernel.Thread.Mutex()
-    /// let condition = Windows.Kernel.Thread.Condition()
+    /// let mutex = Windows.`32`.Kernel.Thread.Mutex()
+    /// let condition = Windows.`32`.Kernel.Thread.Condition()
     ///
     /// // Waiting thread:
     /// mutex.lock()
@@ -57,14 +57,14 @@ extension Windows.Kernel.Thread {
 
 // MARK: - Wait Operations
 
-extension Windows.Kernel.Thread.Condition {
+extension Windows.`32`.Kernel.Thread.Condition {
     /// Waits on the condition variable.
     ///
     /// The mutex is atomically released while waiting and reacquired before returning.
     ///
     /// - Parameter mutex: The mutex to release while waiting.
     /// - Precondition: The mutex must be held by the current thread.
-    public func wait(mutex: Windows.Kernel.Thread.Mutex) {
+    public func wait(mutex: Windows.`32`.Kernel.Thread.Mutex) {
         _ = mutex.withUnsafeMutablePointer { mutexPtr in
             SleepConditionVariableSRW(&cond, mutexPtr, INFINITE, 0)
         }
@@ -79,7 +79,7 @@ extension Windows.Kernel.Thread.Condition {
     ///   - timeout: Maximum time to wait.
     /// - Returns: `true` if signaled, `false` if timed out.
     /// - Precondition: The mutex must be held by the current thread.
-    public func wait(mutex: Windows.Kernel.Thread.Mutex, timeout: Duration) -> Bool {
+    public func wait(mutex: Windows.`32`.Kernel.Thread.Mutex, timeout: Duration) -> Bool {
         mutex.withUnsafeMutablePointer { mutexPtr in
             let (seconds, attoseconds) = timeout.components
             let totalMs = seconds * 1000 + attoseconds / 1_000_000_000_000_000
@@ -95,7 +95,7 @@ extension Windows.Kernel.Thread.Condition {
     ///   - mutex: The mutex to release while waiting.
     ///   - milliseconds: Maximum time to wait in milliseconds.
     /// - Returns: `true` if signaled, `false` if timed out.
-    public func wait(mutex: Windows.Kernel.Thread.Mutex, milliseconds: DWORD) -> Bool {
+    public func wait(mutex: Windows.`32`.Kernel.Thread.Mutex, milliseconds: DWORD) -> Bool {
         mutex.withUnsafeMutablePointer { mutexPtr in
             SleepConditionVariableSRW(&cond, mutexPtr, milliseconds, 0)
         }
@@ -104,7 +104,7 @@ extension Windows.Kernel.Thread.Condition {
 
 // MARK: - Signal Operations
 
-extension Windows.Kernel.Thread.Condition {
+extension Windows.`32`.Kernel.Thread.Condition {
     /// Signals one waiting thread.
     ///
     /// If multiple threads are waiting, one is unblocked (which one is unspecified).

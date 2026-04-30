@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Rmdir {
+extension Windows.`32`.Kernel.Rmdir {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,16 +31,16 @@ extension Windows.Kernel.Rmdir {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Rmdir.Test.Unit {
+extension Windows.`32`.Kernel.Rmdir.Test.Unit {
     @Test
     func `Rmdir namespace exists`() {
-        _ = Windows.Kernel.Rmdir.self
+        _ = Windows.`32`.Kernel.Rmdir.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.Kernel.Rmdir.Test.Unit {
+extension Windows.`32`.Kernel.Rmdir.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
         let error = Kernel.Rmdir.Error.current(from: Error_Primitives.Error.Code.File.notFound)
@@ -94,7 +94,7 @@ extension Windows.Kernel.Rmdir.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Rmdir.Test.EdgeCase {
+extension Windows.`32`.Kernel.Rmdir.Test.EdgeCase {
     @Test
     func `rmdir on nonexistent path throws notFound`() {
         let fakePath = "C:\\nonexistent_dir_12345_\(GetCurrentProcessId())"
@@ -103,7 +103,7 @@ extension Windows.Kernel.Rmdir.Test.EdgeCase {
         #expect(throws: Kernel.Rmdir.Error.self) {
             try utf16Path.withUnsafeBufferPointer { pathPtr in
                 let ptr = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                try Windows.Kernel.Rmdir.rmdir(unsafePath: ptr)
+                try Windows.`32`.Kernel.Rmdir.rmdir(unsafePath: ptr)
             }
         }
     }

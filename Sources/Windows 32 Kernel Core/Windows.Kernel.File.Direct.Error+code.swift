@@ -13,7 +13,7 @@
 
 // MARK: - Windows Translation from Syscall
 
-extension Windows.Kernel.File.Direct.Error {
+extension Windows.`32`.Kernel.File.Direct.Error {
     /// Creates a semantic error from a raw syscall error.
     public init(from syscall: Syscall) {
         switch syscall {

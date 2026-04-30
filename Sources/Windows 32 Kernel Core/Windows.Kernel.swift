@@ -11,20 +11,20 @@
 
 public import Windows_32_Core
 
-// Windows.Kernel canonical declaration lives at Windows.Kernel.Namespace.swift
+// Windows.`32`.Kernel canonical declaration lives at Windows.`32`.Kernel.Namespace.swift
 // (G6.D typealias-via-L3 pattern). This file holds Windows-specific
-// veneer extensions on Windows.Kernel.Descriptor.
+// veneer extensions on Windows.`32`.Kernel.Descriptor.
 
-// MARK: - Windows.Kernel.Descriptor Veneer
+// MARK: - Windows.`32`.Kernel.Descriptor Veneer
 
 #if os(Windows)
 public import WinSDK
 
-extension Windows_32_Core.Windows.Kernel.Descriptor {
+extension Windows_32_Core.Windows.`32`.Kernel.Descriptor {
     /// Creates a descriptor by borrowing a Windows HANDLE.
     ///
     /// - Parameter handle: The raw Windows HANDLE.
-    /// - Returns: A `Windows.Kernel.Descriptor` wrapping the handle.
+    /// - Returns: A `Windows.`32`.Kernel.Descriptor` wrapping the handle.
     @inlinable
     public static func borrowing(handle: HANDLE) -> Self {
         Self(_rawValue: UInt(bitPattern: handle))

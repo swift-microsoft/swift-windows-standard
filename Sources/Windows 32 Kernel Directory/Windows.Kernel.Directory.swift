@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows Directory Iteration
 
-extension Windows.Kernel.Directory {
+extension Windows.`32`.Kernel.Directory {
     /// A handle for iterating over directory contents.
     ///
     /// Use `open(path:)` to create an iterator, then call `next()` repeatedly
@@ -23,7 +23,7 @@ extension Windows.Kernel.Directory {
     /// ## Usage
     ///
     /// ```swift
-    /// var iterator = try Windows.Kernel.Directory.Iterator.open(path: dirPath)
+    /// var iterator = try Windows.`32`.Kernel.Directory.Iterator.open(path: dirPath)
     /// defer { iterator.close() }
     ///
     /// while let entry = try iterator.next() {
@@ -56,16 +56,16 @@ extension Windows.Kernel.Directory {
 
 // MARK: - Iterator Operations
 
-extension Windows.Kernel.Directory.Iterator {
+extension Windows.`32`.Kernel.Directory.Iterator {
     /// Opens a directory for iteration.
     ///
     /// - Parameter path: The directory path to iterate.
     /// - Returns: An iterator for the directory contents.
-    /// - Throws: `Windows.Kernel.Directory.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Directory.Error` on failure.
     public static func open(
         path: borrowing Path
-    ) throws(Windows.Kernel.Directory.Error) -> Self {
-        try path.withUnsafeCString { ptr throws(Windows.Kernel.Directory.Error) in
+    ) throws(Windows.`32`.Kernel.Directory.Error) -> Self {
+        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Directory.Error) in
             try open(unsafePath: ptr)
         }
     }
@@ -74,10 +74,10 @@ extension Windows.Kernel.Directory.Iterator {
     ///
     /// - Parameter unsafePath: The directory path as a null-terminated wide string.
     /// - Returns: An iterator for the directory contents.
-    /// - Throws: `Windows.Kernel.Directory.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Directory.Error` on failure.
     public static func open(
         unsafePath: UnsafePointer<Path.Char>
-    ) throws(Windows.Kernel.Directory.Error) -> Self {
+    ) throws(Windows.`32`.Kernel.Directory.Error) -> Self {
         // Append \* to the path for FindFirstFileW pattern
         let pathChars = unsafePath
         var length = 0
@@ -107,7 +107,7 @@ extension Windows.Kernel.Directory.Iterator {
 
             guard handle != INVALID_HANDLE_VALUE else {
                 let error = GetLastError()
-                throw Windows.Kernel.Directory.Error(_windowsError: error)
+                throw Windows.`32`.Kernel.Directory.Error(_windowsError: error)
             }
 
             return Self(handle: handle, findData: findData)
@@ -117,8 +117,8 @@ extension Windows.Kernel.Directory.Iterator {
     /// Returns the next directory entry, or `nil` if iteration is complete.
     ///
     /// - Returns: The next entry, or `nil` at end of directory.
-    /// - Throws: `Windows.Kernel.Directory.Error` on I/O failure.
-    public mutating func next() throws(Windows.Kernel.Directory.Error) -> Windows.Kernel.Directory.Entry? {
+    /// - Throws: `Windows.`32`.Kernel.Directory.Error` on I/O failure.
+    public mutating func next() throws(Windows.`32`.Kernel.Directory.Error) -> Windows.`32`.Kernel.Directory.Entry? {
         if firstEntry {
             firstEntry = false
             return entryFromFindData()
@@ -129,7 +129,7 @@ extension Windows.Kernel.Directory.Iterator {
             if error == DWORD(ERROR_NO_MORE_FILES) {
                 return nil
             }
-            throw Windows.Kernel.Directory.Error(_windowsError: error)
+            throw Windows.`32`.Kernel.Directory.Error(_windowsError: error)
         }
 
         return entryFromFindData()
@@ -146,7 +146,7 @@ extension Windows.Kernel.Directory.Iterator {
 
     /// Converts current findData to a Directory.Entry.
     @usableFromInline
-    internal func entryFromFindData() -> Windows.Kernel.Directory.Entry {
+    internal func entryFromFindData() -> Windows.`32`.Kernel.Directory.Entry {
         // Extract the name from cFileName (null-terminated)
         let nameChars = withUnsafeBytes(of: findData.cFileName) { buffer in
             let ptr = buffer.baseAddress!.assumingMemoryBound(to: UInt16.self)
@@ -159,7 +159,7 @@ extension Windows.Kernel.Directory.Iterator {
         }
 
         // Determine type from attributes
-        let type: Windows.Kernel.File.Stats.Kind?
+        let type: Windows.`32`.Kernel.File.Stats.Kind?
         if (findData.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
             type = .directory
         } else if (findData.dwFileAttributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0 {
@@ -168,13 +168,13 @@ extension Windows.Kernel.Directory.Iterator {
             type = .regular
         }
 
-        return Windows.Kernel.Directory.Entry(rawName: nameChars, inode: nil, type: type)
+        return Windows.`32`.Kernel.Directory.Entry(rawName: nameChars, inode: nil, type: type)
     }
 }
 
 // MARK: - Error Mapping
 
-extension Windows.Kernel.Directory.Error {
+extension Windows.`32`.Kernel.Directory.Error {
     /// Creates an error from a Windows error code.
     internal init(_windowsError error: DWORD) {
         switch error {

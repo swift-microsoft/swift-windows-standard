@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-extension Windows.Kernel.Descriptor {
+extension Windows.`32`.Kernel.Descriptor {
     /// Windows handle duplication operations.
     ///
     /// Wraps `DuplicateHandle`. The new handle refers to the same kernel
@@ -17,11 +17,11 @@ extension Windows.Kernel.Descriptor {
     public enum Duplicate: Sendable {}
 }
 
-extension Windows.Kernel.Descriptor.Duplicate {
+extension Windows.`32`.Kernel.Descriptor.Duplicate {
     /// Errors that can occur during Windows handle duplication.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// The source handle is invalid.
-        case handle(Windows.Kernel.Descriptor.Validity.Error)
+        case handle(Windows.`32`.Kernel.Descriptor.Validity.Error)
 
         /// Per-process handle limit reached.
         case tooManyOpen

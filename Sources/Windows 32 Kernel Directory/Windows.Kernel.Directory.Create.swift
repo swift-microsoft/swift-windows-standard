@@ -14,18 +14,18 @@ public import WinSDK
 
 // MARK: - Windows CreateDirectoryW syscall
 
-extension Windows.Kernel.Directory.Create {
+extension Windows.`32`.Kernel.Directory.Create {
     /// Creates a directory at the specified path.
     ///
     /// - Parameters:
     ///   - path: The path where the directory should be created.
     ///   - permissions: POSIX permissions (ignored on Windows, uses default security).
-    /// - Throws: `Windows.Kernel.Directory.Create.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Directory.Create.Error` on failure.
     public static func create(
         path: borrowing Path,
-        permissions: Windows.Kernel.File.Permissions = .directoryDefault
-    ) throws(Windows.Kernel.Directory.Create.Error) {
-        try path.withUnsafeCString { ptr throws(Windows.Kernel.Directory.Create.Error) in
+        permissions: Windows.`32`.Kernel.File.Permissions = .directoryDefault
+    ) throws(Windows.`32`.Kernel.Directory.Create.Error) {
+        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Directory.Create.Error) in
             try create(unsafePath: ptr, permissions: permissions)
         }
     }
@@ -35,11 +35,11 @@ extension Windows.Kernel.Directory.Create {
     /// - Parameters:
     ///   - unsafePath: The path as a null-terminated wide string.
     ///   - permissions: POSIX permissions (ignored on Windows).
-    /// - Throws: `Windows.Kernel.Directory.Create.Error` on failure.
+    /// - Throws: `Windows.`32`.Kernel.Directory.Create.Error` on failure.
     public static func create(
         unsafePath: UnsafePointer<Path.Char>,
-        permissions: Windows.Kernel.File.Permissions = .directoryDefault
-    ) throws(Windows.Kernel.Directory.Create.Error) {
+        permissions: Windows.`32`.Kernel.File.Permissions = .directoryDefault
+    ) throws(Windows.`32`.Kernel.Directory.Create.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard CreateDirectoryW(wpath, nil) else {
             throw .current()
@@ -49,7 +49,7 @@ extension Windows.Kernel.Directory.Create {
 
 // MARK: - Error Construction
 
-extension Windows.Kernel.Directory.Create.Error {
+extension Windows.`32`.Kernel.Directory.Create.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

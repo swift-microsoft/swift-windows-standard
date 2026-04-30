@@ -12,7 +12,7 @@
 #if os(Windows)
 internal import WinSDK
 
-extension Windows.Kernel.Socket {
+extension Windows.`32`.Kernel.Socket {
     /// Windows socket descriptor with `closesocket`-on-deinit policy.
     ///
     /// On Windows, sockets are NOT file descriptors — they are `SOCKET`
@@ -50,7 +50,7 @@ extension Windows.Kernel.Socket {
 
 // MARK: - SPI for Syscall Layers
 
-extension Windows.Kernel.Socket.Descriptor {
+extension Windows.`32`.Kernel.Socket.Descriptor {
     /// Creates a socket descriptor from a raw Windows SOCKET value.
     @_spi(Syscall)
     @inlinable

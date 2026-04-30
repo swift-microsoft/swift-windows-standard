@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Windows.Kernel.IO.Error {
+extension Windows.`32`.Kernel.IO.Error {
     /// Creates an error from a Windows error code, if applicable.
     ///
     /// Returns `nil` if the error code doesn't map to an I/O error.

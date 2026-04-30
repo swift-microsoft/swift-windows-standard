@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.Kernel.Close {
+extension Windows.`32`.Kernel.Close {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,22 +31,22 @@ extension Windows.Kernel.Close {
 
 // MARK: - Namespace Tests
 
-extension Windows.Kernel.Close.Test.Unit {
+extension Windows.`32`.Kernel.Close.Test.Unit {
     @Test
     func `Close namespace exists`() {
-        _ = Windows.Kernel.Close.self
+        _ = Windows.`32`.Kernel.Close.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.Kernel.Close.Test.Unit {
+extension Windows.`32`.Kernel.Close.Test.Unit {
     @Test
     func `close with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
 
         #expect(throws: Kernel.Close.Error.self) {
-            try Windows.Kernel.Close.close(invalid)
+            try Windows.`32`.Kernel.Close.close(invalid)
         }
     }
 
@@ -55,7 +55,7 @@ extension Windows.Kernel.Close.Test.Unit {
         let invalid = Kernel.Descriptor.invalid
 
         do {
-            try Windows.Kernel.Close.close(invalid)
+            try Windows.`32`.Kernel.Close.close(invalid)
             Issue.record("Expected error")
         } catch let error as Kernel.Close.Error {
             if case .handle(.invalid) = error {
@@ -71,7 +71,7 @@ extension Windows.Kernel.Close.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.Kernel.Close.Test.EdgeCase {
+extension Windows.`32`.Kernel.Close.Test.EdgeCase {
     @Test
     func `Kernel.Descriptor.invalid is detected`() {
         let invalid = Kernel.Descriptor.invalid

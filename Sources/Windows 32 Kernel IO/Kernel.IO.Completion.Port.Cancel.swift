@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import WinSDK
 
-    extension Windows.Kernel.IO.Completion.Port {
+    extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Operations for cancelling pending I/O on port-associated handles.
         ///
         /// Provides both fire-and-forget and status-returning variants for
@@ -23,13 +23,13 @@
         ///
         /// ```swift
         /// // Cancel all pending I/O on a handle
-        /// Windows.Kernel.IO.Completion.Port.Cancel.all(handle)
+        /// Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle)
         ///
         /// // Cancel a specific operation
-        /// Windows.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: &myOverlapped)
+        /// Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: &myOverlapped)
         ///
         /// // Check if cancellation succeeded (using nested accessor)
-        /// if Windows.Kernel.IO.Completion.Port.Cancel.all(handle).status {
+        /// if Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle).status {
         ///     // Operations were cancelled
         /// }
         /// ```
@@ -43,7 +43,7 @@
 
     // MARK: - Raw Syscalls (@_spi(Syscall))
 
-    extension Windows.Kernel.IO.Completion.Port.Cancel {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Cancels all pending I/O on a HANDLE bit pattern (raw `CancelIoEx`).
         ///
         /// Spec-literal raw `CancelIoEx(handle, nil)`. The typed L2 accessor
@@ -81,14 +81,14 @@
 
     // MARK: - Cancel All
 
-    extension Windows.Kernel.IO.Completion.Port.Cancel {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Result of cancelling all pending I/O operations.
         public struct All: Sendable {
             @usableFromInline
-            let descriptor: Windows.Kernel.Descriptor
+            let descriptor: Windows.`32`.Kernel.Descriptor
 
             @usableFromInline
-            init(_ descriptor: Windows.Kernel.Descriptor) {
+            init(_ descriptor: Windows.`32`.Kernel.Descriptor) {
                 self.descriptor = descriptor
             }
 
@@ -99,7 +99,7 @@
             /// pending.
             @inlinable
             public func callAsFunction() {
-                _ = Windows.Kernel.IO.Completion.Port.Cancel.all(descriptor._rawValue)
+                _ = Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(descriptor._rawValue)
             }
 
             /// Returns whether cancellation succeeded.
@@ -110,10 +110,10 @@
             /// - Returns: `true` if cancelled, `false` if no pending operations.
             @inlinable
             public var status: Bool {
-                if Windows.Kernel.IO.Completion.Port.Cancel.all(descriptor._rawValue) {
+                if Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(descriptor._rawValue) {
                     return true
                 }
-                return GetLastError() != Windows.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
+                return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
             }
         }
 
@@ -126,26 +126,26 @@
         /// - Parameter descriptor: The descriptor with pending I/O.
         /// - Returns: An accessor for cancel operations.
         @inlinable
-        public static func all(_ descriptor: Windows.Kernel.Descriptor) -> All {
+        public static func all(_ descriptor: Windows.`32`.Kernel.Descriptor) -> All {
             All(descriptor)
         }
     }
 
     // MARK: - Cancel Specific
 
-    extension Windows.Kernel.IO.Completion.Port.Cancel {
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Result of cancelling a specific pending I/O operation.
         @safe
         public struct Pending: @unchecked Sendable {
             @usableFromInline
-            let descriptor: Windows.Kernel.Descriptor
+            let descriptor: Windows.`32`.Kernel.Descriptor
 
             @usableFromInline
-            let overlappedPtr: UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>
+            let overlappedPtr: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>
 
             @unsafe
             @usableFromInline
-            init(_ descriptor: Windows.Kernel.Descriptor, overlapped: UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>) {
+            init(_ descriptor: Windows.`32`.Kernel.Descriptor, overlapped: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>) {
                 self.descriptor = descriptor
                 unsafe { self.overlappedPtr = overlapped }
             }
@@ -159,7 +159,7 @@
             public func callAsFunction() {
                 let ptr = unsafe overlappedPtr
                 _ = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
-                    Windows.Kernel.IO.Completion.Port.Cancel.pending(descriptor._rawValue, overlapped: rawPtr)
+                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(descriptor._rawValue, overlapped: rawPtr)
                 }
             }
 
@@ -173,12 +173,12 @@
             public var status: Bool {
                 let ptr = unsafe overlappedPtr
                 let result = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
-                    Windows.Kernel.IO.Completion.Port.Cancel.pending(descriptor._rawValue, overlapped: rawPtr)
+                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(descriptor._rawValue, overlapped: rawPtr)
                 }
                 if result {
                     return true
                 }
-                return GetLastError() != Windows.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
+                return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
             }
         }
 
@@ -194,8 +194,8 @@
         /// - Returns: An accessor for cancel operations.
         @inlinable
         public static func pending(
-            _ descriptor: Windows.Kernel.Descriptor,
-            overlapped: inout Windows.Kernel.IO.Completion.Port.Overlapped
+            _ descriptor: Windows.`32`.Kernel.Descriptor,
+            overlapped: inout Windows.`32`.Kernel.IO.Completion.Port.Overlapped
         ) -> Pending {
             unsafe withUnsafeMutablePointer(to: &overlapped) { ptr in
                 unsafe Pending(descriptor, overlapped: ptr)
@@ -215,8 +215,8 @@
         @unsafe
         @inlinable
         public static func pending(
-            _ descriptor: Windows.Kernel.Descriptor,
-            overlapped: UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>
+            _ descriptor: Windows.`32`.Kernel.Descriptor,
+            overlapped: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>
         ) -> Pending {
             unsafe Pending(descriptor, overlapped: overlapped)
         }

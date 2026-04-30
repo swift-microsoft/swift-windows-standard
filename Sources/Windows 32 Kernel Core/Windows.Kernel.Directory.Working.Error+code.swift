@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Windows.Kernel.Directory.Working.Error {
+extension Windows.`32`.Kernel.Directory.Working.Error {
     /// Creates an error from a Windows error code.
     @usableFromInline
     internal init(code: Error_Primitives.Error.Code) {
@@ -21,7 +21,7 @@ extension Windows.Kernel.Directory.Working.Error {
             self = .path(e)
             return
         }
-        if let e = Windows.Kernel.Permission.Error(code: code) {
+        if let e = Windows.`32`.Kernel.Permission.Error(code: code) {
             self = .permission(e)
             return
         }

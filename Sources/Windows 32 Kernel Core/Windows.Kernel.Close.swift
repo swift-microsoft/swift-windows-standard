@@ -13,12 +13,12 @@
 internal import WinSDK
 #endif
 
-extension Windows.Kernel {
+extension Windows.`32`.Kernel {
     /// Windows handle close operations.
     public enum Close: Sendable {}
 }
 
-extension Windows.Kernel.Close {
+extension Windows.`32`.Kernel.Close {
     /// Close a Windows handle, reporting errors.
     ///
     /// Consumes the descriptor: after this call, the descriptor is destroyed.
@@ -27,7 +27,7 @@ extension Windows.Kernel.Close {
     ///
     /// - Parameter descriptor: The handle to close (consumed).
     /// - Throws: ``Error`` on failure.
-    public static func close(_ descriptor: consuming Windows.Kernel.Descriptor) throws(Error) {
+    public static func close(_ descriptor: consuming Windows.`32`.Kernel.Descriptor) throws(Error) {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }

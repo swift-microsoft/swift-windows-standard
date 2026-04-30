@@ -10,21 +10,11 @@
 // ===----------------------------------------------------------------------===//
 
 public import Windows_Standard_Core
+public import Kernel_Namespace
 
 extension Windows_Standard_Core.Windows {
-    /// Windows kernel mechanisms.
-    ///
-    /// This is a typealias to `Kernel_Primitives_Core.Kernel`, allowing Windows-specific
-    /// extensions to be added to the shared Kernel type.
-    ///
-    /// Low-level Windows syscall wrappers for:
-    /// - I/O Completion Ports (IOCP) for async I/O
-    /// - File I/O (CreateFileW, ReadFile, WriteFile, CloseHandle)
-    /// - File seeking (SetFilePointerEx)
-    /// - Directory operations
-    /// - Process management
-    /// - Memory mapping
-    public typealias Kernel = Kernel_Primitives_Core.Kernel
+    /// Windows kernel mechanisms — typealias to the shared `Kernel` namespace.
+    public typealias Kernel = Kernel_Namespace.Kernel
 }
 
 // MARK: - Windows.Kernel.Descriptor Veneer
@@ -32,7 +22,7 @@ extension Windows_Standard_Core.Windows {
 #if os(Windows)
 public import WinSDK
 
-extension Kernel_Primitives_Core.Kernel.Descriptor {
+extension Kernel_Namespace.Kernel.Descriptor {
     /// Creates a descriptor by borrowing a Windows HANDLE.
     ///
     /// - Parameter handle: The raw Windows HANDLE.

@@ -9,7 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Kernel_Primitives_Core
 public import Windows_Standard_Core
 
 extension Windows_Standard_Core.Windows {

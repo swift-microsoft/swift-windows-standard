@@ -10,7 +10,6 @@
 // ===----------------------------------------------------------------------===//
 
 internal import Windows_Standard_Core
-internal import Kernel_Primitives_Core
 internal import Error_Primitives
 internal import Kernel_File_Primitives
 internal import Path_Primitives

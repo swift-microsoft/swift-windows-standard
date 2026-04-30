@@ -13,7 +13,6 @@
 import Testing
 
 @testable import Windows_Kernel_Standard
-import Kernel_Primitives_Core
 import Error_Primitives
 
 extension Error_Primitives.Error.Code {

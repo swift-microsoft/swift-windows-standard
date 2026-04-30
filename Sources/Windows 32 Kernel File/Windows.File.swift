@@ -9,5 +9,12 @@
 //
 // ===----------------------------------------------------------------------===//
 
-@_exported public import Windows_32_Kernel
-@_exported public import Windows_32_Loader
+public import Windows_32_Core
+
+extension Windows_32_Core.Windows {
+    /// Windows-specific file operations.
+    ///
+    /// Contains Windows-specific file types and extensions that are not
+    /// available on other platforms.
+    public enum File: Sendable {}
+}

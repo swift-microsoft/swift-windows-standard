@@ -1,2 +1,0 @@
-@_exported public import Windows_Kernel_Standard_Core
-@_exported public import Sequence_Primitives

@@ -9,5 +9,9 @@
 //
 // ===----------------------------------------------------------------------===//
 
-@_exported public import Windows_32_Kernel
-@_exported public import Windows_32_Loader
+public import Windows_32_Core
+
+extension Windows.Memory {
+    /// Allocation namespace for Windows memory allocation tracking.
+    public enum Allocation: Sendable {}
+}

@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "swift-windows-standard",
+    name: "swift-windows-32",
     platforms: [
         .macOS(.v26),
         .iOS(.v26),
@@ -14,78 +14,78 @@ let package = Package(
     products: [
         // MARK: - Kernel
         .library(
-            name: "Windows Kernel Standard",
-            targets: ["Windows Kernel Standard"]
+            name: "Windows 32 Kernel",
+            targets: ["Windows 32 Kernel"]
         ),
         .library(
-            name: "Windows Kernel Clock Standard",
-            targets: ["Windows Kernel Clock Standard"]
+            name: "Windows 32 Kernel Clock",
+            targets: ["Windows 32 Kernel Clock"]
         ),
         .library(
-            name: "Windows Kernel Console Standard",
-            targets: ["Windows Kernel Console Standard"]
+            name: "Windows 32 Kernel Console",
+            targets: ["Windows 32 Kernel Console"]
         ),
         .library(
-            name: "Windows Kernel Directory Standard",
-            targets: ["Windows Kernel Directory Standard"]
+            name: "Windows 32 Kernel Directory",
+            targets: ["Windows 32 Kernel Directory"]
         ),
         .library(
-            name: "Windows Kernel Environment Standard",
-            targets: ["Windows Kernel Environment Standard"]
+            name: "Windows 32 Kernel Environment",
+            targets: ["Windows 32 Kernel Environment"]
         ),
         .library(
-            name: "Windows Kernel File Standard",
-            targets: ["Windows Kernel File Standard"]
+            name: "Windows 32 Kernel File",
+            targets: ["Windows 32 Kernel File"]
         ),
         .library(
-            name: "Windows Kernel IO Standard",
-            targets: ["Windows Kernel IO Standard"]
+            name: "Windows 32 Kernel IO",
+            targets: ["Windows 32 Kernel IO"]
         ),
         .library(
-            name: "Windows Kernel Memory Map Standard",
-            targets: ["Windows Kernel Memory Map Standard"]
+            name: "Windows 32 Kernel Memory Map",
+            targets: ["Windows 32 Kernel Memory Map"]
         ),
         .library(
-            name: "Windows Kernel Process Standard",
-            targets: ["Windows Kernel Process Standard"]
+            name: "Windows 32 Kernel Process",
+            targets: ["Windows 32 Kernel Process"]
         ),
         .library(
-            name: "Windows Kernel Socket Standard",
-            targets: ["Windows Kernel Socket Standard"]
+            name: "Windows 32 Kernel Socket",
+            targets: ["Windows 32 Kernel Socket"]
         ),
         .library(
-            name: "Windows Kernel System Standard",
-            targets: ["Windows Kernel System Standard"]
+            name: "Windows 32 Kernel System",
+            targets: ["Windows 32 Kernel System"]
         ),
         .library(
-            name: "Windows Kernel Thread Standard",
-            targets: ["Windows Kernel Thread Standard"]
+            name: "Windows 32 Kernel Thread",
+            targets: ["Windows 32 Kernel Thread"]
         ),
         .library(
-            name: "Windows Kernel Time Standard",
-            targets: ["Windows Kernel Time Standard"]
+            name: "Windows 32 Kernel Time",
+            targets: ["Windows 32 Kernel Time"]
         ),
         // MARK: - Other
         .library(
-            name: "Windows Identity Standard",
-            targets: ["Windows Identity Standard"]
+            name: "Windows 32 Identity",
+            targets: ["Windows 32 Identity"]
         ),
         .library(
-            name: "Windows Interop Standard",
-            targets: ["Windows Interop Standard"]
+            name: "Windows 32 Interop",
+            targets: ["Windows 32 Interop"]
         ),
         .library(
-            name: "Windows Loader Standard",
-            targets: ["Windows Loader Standard"]
+            name: "Windows 32 Loader",
+            targets: ["Windows 32 Loader"]
         ),
         .library(
-            name: "Windows Memory Standard",
-            targets: ["Windows Memory Standard"]
+            name: "Windows 32 Memory",
+            targets: ["Windows 32 Memory"]
         ),
         // MARK: - Test Support
         .library(
-            name: "Windows Kernel Standard Test Support",
-            targets: ["Windows Kernel Standard Test Support"]
+            name: "Windows 32 Kernel Test Support",
+            targets: ["Windows 32 Kernel Test Support"]
         ),
     ],
     dependencies: [
@@ -102,7 +102,7 @@ let package = Package(
     targets: [
         // MARK: - Core
         .target(
-            name: "Windows Standard Core",
+            name: "Windows 32 Core",
             dependencies: []
         ),
         .target(
@@ -112,9 +112,9 @@ let package = Package(
 
         // MARK: - Kernel Core
         .target(
-            name: "Windows Kernel Standard Core",
+            name: "Windows 32 Kernel Core",
             dependencies: [
-                .target(name: "Windows Standard Core"),
+                .target(name: "Windows 32 Core"),
                 .product(name: "Error Primitives", package: "swift-error-primitives"),
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
@@ -123,86 +123,86 @@ let package = Package(
 
         // MARK: - Kernel Clock
         .target(
-            name: "Windows Kernel Clock Standard",
+            name: "Windows 32 Kernel Clock",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
                 .product(name: "Clock Primitives", package: "swift-clock-primitives"),
             ]
         ),
 
         // MARK: - Kernel Console
         .target(
-            name: "Windows Kernel Console Standard",
+            name: "Windows 32 Kernel Console",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
             ]
         ),
 
         // MARK: - Kernel Directory
         .target(
-            name: "Windows Kernel Directory Standard",
+            name: "Windows 32 Kernel Directory",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
 
         // MARK: - Kernel Environment
         .target(
-            name: "Windows Kernel Environment Standard",
+            name: "Windows 32 Kernel Environment",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
             ]
         ),
 
         // MARK: - Kernel File
         .target(
-            name: "Windows Kernel File Standard",
+            name: "Windows 32 Kernel File",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
 
         // MARK: - Kernel IO
         .target(
-            name: "Windows Kernel IO Standard",
+            name: "Windows 32 Kernel IO",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
             ]
         ),
 
         // MARK: - Kernel Memory Map
         .target(
-            name: "Windows Kernel Memory Map Standard",
+            name: "Windows 32 Kernel Memory Map",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
             ]
         ),
 
         // MARK: - Kernel Process
         .target(
-            name: "Windows Kernel Process Standard",
+            name: "Windows 32 Kernel Process",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
             ]
         ),
 
         // MARK: - Kernel Socket
         .target(
-            name: "Windows Kernel Socket Standard",
+            name: "Windows 32 Kernel Socket",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
             ]
         ),
 
         // MARK: - Kernel System
         .target(
-            name: "Windows Kernel System Standard",
+            name: "Windows 32 Kernel System",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
                 .product(name: "System Primitives", package: "swift-system-primitives"),
                 .product(name: "Random Primitives", package: "swift-random-primitives"),
             ]
@@ -210,98 +210,98 @@ let package = Package(
 
         // MARK: - Kernel Thread
         .target(
-            name: "Windows Kernel Thread Standard",
+            name: "Windows 32 Kernel Thread",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
             ]
         ),
 
         // MARK: - Kernel Time
         .target(
-            name: "Windows Kernel Time Standard",
+            name: "Windows 32 Kernel Time",
             dependencies: [
-                "Windows Kernel Standard Core",
+                "Windows 32 Kernel Core",
             ]
         ),
 
         // MARK: - Kernel Umbrella
         .target(
-            name: "Windows Kernel Standard",
+            name: "Windows 32 Kernel",
             dependencies: [
-                "Windows Kernel Standard Core",
-                "Windows Kernel Clock Standard",
-                "Windows Kernel Console Standard",
-                "Windows Kernel Directory Standard",
-                "Windows Kernel Environment Standard",
-                "Windows Kernel File Standard",
-                "Windows Kernel IO Standard",
-                "Windows Kernel Memory Map Standard",
-                "Windows Kernel Process Standard",
-                "Windows Kernel Socket Standard",
-                "Windows Kernel System Standard",
-                "Windows Kernel Thread Standard",
-                "Windows Kernel Time Standard",
+                "Windows 32 Kernel Core",
+                "Windows 32 Kernel Clock",
+                "Windows 32 Kernel Console",
+                "Windows 32 Kernel Directory",
+                "Windows 32 Kernel Environment",
+                "Windows 32 Kernel File",
+                "Windows 32 Kernel IO",
+                "Windows 32 Kernel Memory Map",
+                "Windows 32 Kernel Process",
+                "Windows 32 Kernel Socket",
+                "Windows 32 Kernel System",
+                "Windows 32 Kernel Thread",
+                "Windows 32 Kernel Time",
             ]
         ),
 
         // MARK: - Identity
         .target(
-            name: "Windows Identity Standard",
+            name: "Windows 32 Identity",
             dependencies: [
-                .target(name: "Windows Standard Core"),
+                .target(name: "Windows 32 Core"),
             ]
         ),
 
         // MARK: - Interop
         .target(
-            name: "Windows Interop Standard",
+            name: "Windows 32 Interop",
             dependencies: [
-                .target(name: "Windows Standard Core"),
+                .target(name: "Windows 32 Core"),
             ]
         ),
 
         // MARK: - Loader
         .target(
-            name: "Windows Loader Standard",
+            name: "Windows 32 Loader",
             dependencies: [
-                .target(name: "Windows Standard Core"),
+                .target(name: "Windows 32 Core"),
                 .product(name: "Loader Primitives", package: "swift-loader-primitives")
             ]
         ),
 
         // MARK: - Memory
         .target(
-            name: "Windows Memory Standard",
+            name: "Windows 32 Memory",
             dependencies: [
-                .target(name: "Windows Standard Core"),
+                .target(name: "Windows 32 Core"),
                 .target(name: "CWindowsMemoryShim", condition: .when(platforms: [.windows]))
             ]
         ),
 
         // MARK: - Test Support
         .target(
-            name: "Windows Kernel Standard Test Support",
+            name: "Windows 32 Kernel Test Support",
             dependencies: [
-                "Windows Kernel Standard",
-                "Windows Loader Standard",
+                "Windows 32 Kernel",
+                "Windows 32 Loader",
             ],
             path: "Tests/Support"
         ),
 
         // MARK: - Tests
         .testTarget(
-            name: "Windows Kernel Standard Tests",
+            name: "Windows 32 Kernel Tests",
             dependencies: [
-                "Windows Kernel Standard",
-                "Windows Kernel Standard Test Support",
+                "Windows 32 Kernel",
+                "Windows 32 Kernel Test Support",
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
         ),
         .testTarget(
-            name: "Windows Loader Standard Tests",
+            name: "Windows 32 Loader Tests",
             dependencies: [
-                "Windows Loader Standard",
-                "Windows Kernel Standard Test Support",
+                "Windows 32 Loader",
+                "Windows 32 Kernel Test Support",
             ]
         ),
     ],

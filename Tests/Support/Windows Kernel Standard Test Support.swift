@@ -9,13 +9,13 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_Kernel_Standard
+public import Windows_32_Kernel
 
 extension Windows.Kernel {
     /// Namespace for Windows-specific test utilities.
     ///
     /// Host for helpers shared across `Windows Kernel Standard Tests` and any
-    /// downstream package that imports `Windows_Kernel_Standard_Test_Support`.
+    /// downstream package that imports `Windows_32_Kernel_Test_Support`.
     /// Start with literal conformances, temporary-path helpers, or thread
     /// harnesses here as concrete test needs surface — the iso-9945 and
     /// darwin-standard analogs (`ISO 9945 Kernel Test Support`,

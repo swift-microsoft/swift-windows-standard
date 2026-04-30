@@ -9,7 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-@_spi(Syscall) public import Kernel_Descriptor_Primitives
 
 #if os(Windows)
 internal import WinSDK

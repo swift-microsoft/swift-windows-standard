@@ -10,7 +10,6 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Kernel_Descriptor_Primitives
 public import WinSDK
 
 // MARK: - Windows Named Pipe Operations

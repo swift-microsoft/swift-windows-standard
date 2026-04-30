@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Kernel_Descriptor_Primitives
+@_spi(Syscall) import Windows_Kernel_Standard_Core
 public import WinSDK
 
 // MARK: - Windows DuplicateHandle syscall (raw @_spi(Syscall))
@@ -19,18 +19,18 @@ extension Windows.Kernel.Descriptor.Duplicate {
     /// Duplicates a HANDLE bit pattern.
     ///
     /// Spec-literal raw `DuplicateHandle`. The typed L2 convenience
-    /// (`duplicate(_:)` taking `Kernel.Descriptor`) delegates to this raw
-    /// SPI internally via `descriptor._rawValue` after a fast-fail validity
-    /// check.
+    /// (`duplicate(_:)` taking `Windows.Kernel.Descriptor`) delegates to this
+    /// raw SPI internally via `descriptor._rawValue` after a fast-fail
+    /// validity check.
     ///
     /// Creates a duplicate of the specified handle with the same access
     /// rights. The new handle refers to the same underlying kernel object.
     ///
     /// - Parameter handle: HANDLE bit pattern to duplicate.
     /// - Returns: The duplicated HANDLE bit pattern.
-    /// - Throws: `Kernel.Descriptor.Duplicate.Error` on failure.
+    /// - Throws: `Windows.Kernel.Descriptor.Duplicate.Error` on failure.
     @_spi(Syscall)
-    public static func duplicate(_ handle: UInt) throws(Kernel.Descriptor.Duplicate.Error) -> UInt {
+    public static func duplicate(_ handle: UInt) throws(Error) -> UInt {
         let currentProcess = GetCurrentProcess()
         var newHandle: HANDLE? = nil
 
@@ -60,57 +60,26 @@ extension Windows.Kernel.Descriptor.Duplicate {
     /// Typed L2 form. Delegates to the raw `duplicate(_:)` SPI via
     /// `descriptor._rawValue` after a fast-fail validity check.
     ///
-    /// Creates a duplicate of the specified handle with the same access
-    /// rights. The new handle refers to the same underlying kernel object.
-    ///
     /// - Parameter descriptor: The handle to duplicate.
     /// - Returns: The duplicated handle.
-    /// - Throws: `Kernel.Descriptor.Duplicate.Error` on failure.
-    public static func duplicate(_ descriptor: Kernel.Descriptor) throws(Kernel.Descriptor.Duplicate.Error) -> Kernel.Descriptor {
+    /// - Throws: `Windows.Kernel.Descriptor.Duplicate.Error` on failure.
+    public static func duplicate(_ descriptor: borrowing Windows.Kernel.Descriptor) throws(Error) -> Windows.Kernel.Descriptor {
         guard descriptor.isValid else {
             throw .handle(.invalid)
         }
         let newHandle = try duplicate(descriptor._rawValue)
-        return Kernel.Descriptor.borrowing(handle: HANDLE(bitPattern: newHandle)!)
-    }
-
-    /// Duplicates a handle to a specific target handle value.
-    ///
-    /// Typed L2 form. Delegates to the raw `duplicate(_:)` SPI via
-    /// `descriptor._rawValue` after a fast-fail validity check. On Windows,
-    /// this closes the target handle first if it's valid, then duplicates
-    /// the source to it.
-    ///
-    /// - Parameters:
-    ///   - descriptor: The source handle to duplicate.
-    ///   - target: The target handle (will be closed and replaced).
-    /// - Returns: The new handle (same as target).
-    /// - Throws: `Kernel.Descriptor.Duplicate.Error` on failure.
-    public static func duplicate(
-        _ descriptor: Kernel.Descriptor,
-        to target: Kernel.Descriptor
-    ) throws(Kernel.Descriptor.Duplicate.Error) -> Kernel.Descriptor {
-        guard descriptor.isValid else {
-            throw .handle(.invalid)
-        }
-
-        // Close target if valid (raw form via target._rawValue)
-        if target.isValid {
-            _ = Kernel.Close.close(target._rawValue)
-        }
-
-        return try duplicate(descriptor)
+        return Windows.Kernel.Descriptor(_rawValue: newHandle)
     }
 }
 
 // MARK: - Error Construction
 
-extension Kernel.Descriptor.Duplicate.Error {
+extension Windows.Kernel.Descriptor.Duplicate.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
         let code = Error_Primitives.Error.captureLastError()
-        if let e = Kernel.Descriptor.Validity.Error(code: code) {
+        if let e = Windows.Kernel.Descriptor.Validity.Error(code: code) {
             return .handle(e)
         }
         return .platform(Error_Primitives.Error(code: code))

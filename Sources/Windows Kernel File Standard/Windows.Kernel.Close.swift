@@ -16,7 +16,7 @@ internal import WinSDK
 
 // MARK: - Windows CloseHandle — spec-literal raw
 
-extension Kernel.Close {
+extension Windows.Kernel.Close {
     /// Raw Windows `CloseHandle` syscall.
     ///
     /// Spec-literal: takes a HANDLE, returns the BOOL result. Zero policy:
@@ -26,7 +26,7 @@ extension Kernel.Close {
     ///
     /// L3-policy throwing wrappers (`Windows.Kernel.Close.close(_:)` in
     /// swift-windows) compose this raw call with last-error-to-
-    /// `Kernel.Close.Error` mapping per [PLAT-ARCH-008e]. L1 syscall
+    /// `Windows.Kernel.Close.Error` mapping per [PLAT-ARCH-008e]. L1 syscall
     /// callers MUST NOT call this function directly; the L1 → L3-policy →
     /// L2 chain is mandatory.
     ///

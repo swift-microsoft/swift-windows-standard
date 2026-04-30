@@ -61,11 +61,11 @@ extension Windows.Kernel.Directory.Iterator {
     ///
     /// - Parameter path: The directory path to iterate.
     /// - Returns: An iterator for the directory contents.
-    /// - Throws: `Kernel.Directory.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Error` on failure.
     public static func open(
         path: borrowing Path
-    ) throws(Kernel.Directory.Error) -> Self {
-        try path.withUnsafeCString { ptr throws(Kernel.Directory.Error) in
+    ) throws(Windows.Kernel.Directory.Error) -> Self {
+        try path.withUnsafeCString { ptr throws(Windows.Kernel.Directory.Error) in
             try open(unsafePath: ptr)
         }
     }
@@ -74,10 +74,10 @@ extension Windows.Kernel.Directory.Iterator {
     ///
     /// - Parameter unsafePath: The directory path as a null-terminated wide string.
     /// - Returns: An iterator for the directory contents.
-    /// - Throws: `Kernel.Directory.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Error` on failure.
     public static func open(
         unsafePath: UnsafePointer<Path.Char>
-    ) throws(Kernel.Directory.Error) -> Self {
+    ) throws(Windows.Kernel.Directory.Error) -> Self {
         // Append \* to the path for FindFirstFileW pattern
         let pathChars = unsafePath
         var length = 0
@@ -107,7 +107,7 @@ extension Windows.Kernel.Directory.Iterator {
 
             guard handle != INVALID_HANDLE_VALUE else {
                 let error = GetLastError()
-                throw Kernel.Directory.Error(_windowsError: error)
+                throw Windows.Kernel.Directory.Error(_windowsError: error)
             }
 
             return Self(handle: handle, findData: findData)
@@ -117,8 +117,8 @@ extension Windows.Kernel.Directory.Iterator {
     /// Returns the next directory entry, or `nil` if iteration is complete.
     ///
     /// - Returns: The next entry, or `nil` at end of directory.
-    /// - Throws: `Kernel.Directory.Error` on I/O failure.
-    public mutating func next() throws(Kernel.Directory.Error) -> Kernel.Directory.Entry? {
+    /// - Throws: `Windows.Kernel.Directory.Error` on I/O failure.
+    public mutating func next() throws(Windows.Kernel.Directory.Error) -> Windows.Kernel.Directory.Entry? {
         if firstEntry {
             firstEntry = false
             return entryFromFindData()
@@ -129,7 +129,7 @@ extension Windows.Kernel.Directory.Iterator {
             if error == DWORD(ERROR_NO_MORE_FILES) {
                 return nil
             }
-            throw Kernel.Directory.Error(_windowsError: error)
+            throw Windows.Kernel.Directory.Error(_windowsError: error)
         }
 
         return entryFromFindData()
@@ -146,7 +146,7 @@ extension Windows.Kernel.Directory.Iterator {
 
     /// Converts current findData to a Directory.Entry.
     @usableFromInline
-    internal func entryFromFindData() -> Kernel.Directory.Entry {
+    internal func entryFromFindData() -> Windows.Kernel.Directory.Entry {
         // Extract the name from cFileName (null-terminated)
         let nameChars = withUnsafeBytes(of: findData.cFileName) { buffer in
             let ptr = buffer.baseAddress!.assumingMemoryBound(to: UInt16.self)
@@ -159,7 +159,7 @@ extension Windows.Kernel.Directory.Iterator {
         }
 
         // Determine type from attributes
-        let type: Kernel.File.Stats.Kind?
+        let type: Windows.Kernel.File.Stats.Kind?
         if (findData.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
             type = .directory
         } else if (findData.dwFileAttributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0 {
@@ -168,13 +168,13 @@ extension Windows.Kernel.Directory.Iterator {
             type = .regular
         }
 
-        return Kernel.Directory.Entry(rawName: nameChars, inode: nil, type: type)
+        return Windows.Kernel.Directory.Entry(rawName: nameChars, inode: nil, type: type)
     }
 }
 
 // MARK: - Error Mapping
 
-extension Kernel.Directory.Error {
+extension Windows.Kernel.Directory.Error {
     /// Creates an error from a Windows error code.
     internal init(_windowsError error: DWORD) {
         switch error {

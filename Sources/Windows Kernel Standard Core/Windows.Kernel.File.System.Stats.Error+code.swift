@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.File.System.Stats.Error {
+extension Windows.Kernel.File.System.Stats.Error {
     /// Creates an error from a Windows error code.
     @usableFromInline
     internal init(code: Error_Primitives.Error.Code) {
@@ -21,11 +21,11 @@ extension Kernel.File.System.Stats.Error {
             self = .path(e)
             return
         }
-        if let e = Kernel.Descriptor.Validity.Error(code: code) {
+        if let e = Windows.Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
             return
         }
-        if let e = Kernel.Permission.Error(code: code) {
+        if let e = Windows.Kernel.Permission.Error(code: code) {
             self = .permission(e)
             return
         }
@@ -33,7 +33,7 @@ extension Kernel.File.System.Stats.Error {
             self = .memory(e)
             return
         }
-        if let e = Kernel.IO.Error(code: code) {
+        if let e = Windows.Kernel.IO.Error(code: code) {
             self = .io(e)
             return
         }

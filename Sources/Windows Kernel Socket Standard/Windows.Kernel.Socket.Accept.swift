@@ -19,7 +19,7 @@ extension Windows.Kernel.Socket {
     /// Accepts an incoming connection on a SOCKET bit pattern.
     ///
     /// Spec-literal raw `accept`. The typed L2 convenience (`accept(_:)`
-    /// taking `borrowing Kernel.Socket.Descriptor`) delegates to this raw
+    /// taking `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw
     /// SPI internally via `socket._rawValue`.
     ///
     /// - Parameter socket: SOCKET bit pattern (listening).
@@ -40,7 +40,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `accept`. The typed L2 convenience
     /// (`accept(_:address:addressLength:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -67,7 +67,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Typed L2 form. Delegates to the raw `accept(_:)` SPI via
     /// `socket._rawValue` and reconstructs the result via
-    /// `Kernel.Socket.Descriptor(_rawValue:)`.
+    /// `Windows.Kernel.Socket.Descriptor(_rawValue:)`.
     ///
     /// - Parameter socket: The listening socket.
     /// - Returns: The new connected socket descriptor.
@@ -79,17 +79,17 @@ extension Windows.Kernel.Socket {
     /// For non-blocking sockets, it returns immediately with
     /// `WSAEWOULDBLOCK` if no connections are pending.
     public static func accept(
-        _ socket: borrowing Kernel.Socket.Descriptor
-    ) throws(Error) -> Kernel.Socket.Descriptor {
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor
+    ) throws(Error) -> Windows.Kernel.Socket.Descriptor {
         let raw = try accept(socket._rawValue)
-        return Kernel.Socket.Descriptor(_rawValue: raw)
+        return Windows.Kernel.Socket.Descriptor(_rawValue: raw)
     }
 
     /// Accepts an incoming connection and retrieves the client address.
     ///
     /// Typed L2 form. Delegates to the raw `accept(_:address:addressLength:)`
     /// SPI via `socket._rawValue` and reconstructs the result via
-    /// `Kernel.Socket.Descriptor(_rawValue:)`.
+    /// `Windows.Kernel.Socket.Descriptor(_rawValue:)`.
     ///
     /// - Parameters:
     ///   - socket: The listening socket.
@@ -99,12 +99,12 @@ extension Windows.Kernel.Socket {
     /// - Returns: The new connected socket descriptor.
     /// - Throws: `Error.accept` on failure.
     public static func accept(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
-    ) throws(Error) -> Kernel.Socket.Descriptor {
+    ) throws(Error) -> Windows.Kernel.Socket.Descriptor {
         let raw = try accept(socket._rawValue, address: address, addressLength: addressLength)
-        return Kernel.Socket.Descriptor(_rawValue: raw)
+        return Windows.Kernel.Socket.Descriptor(_rawValue: raw)
     }
 }
 

@@ -102,7 +102,7 @@ extension Windows.Kernel.Socket {
     ///             On output, actual size of the returned value.
     /// - Throws: `Error.getOption` on failure.
     public static func getOption(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         level: OptionLevel,
         name: OptionName,
         value: UnsafeMutableRawPointer,
@@ -115,7 +115,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `getsockopt`. The typed L2 convenience
     /// (`getOption(_:level:name:value:length:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -155,7 +155,7 @@ extension Windows.Kernel.Socket {
     ///   - length: Size of the option value.
     /// - Throws: `Error.setOption` on failure.
     public static func setOption(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         level: OptionLevel,
         name: OptionName,
         value: UnsafeRawPointer,
@@ -168,7 +168,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `setsockopt`. The typed L2 convenience
     /// (`setOption(_:level:name:value:length:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -209,7 +209,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: The boolean option value.
     /// - Throws: `Error.getOption` on failure.
     public static func getBoolOption(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         level: OptionLevel,
         name: OptionName
     ) throws(Error) -> Bool {
@@ -228,7 +228,7 @@ extension Windows.Kernel.Socket {
     ///   - value: The boolean value to set.
     /// - Throws: `Error.setOption` on failure.
     public static func setBoolOption(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         level: OptionLevel,
         name: OptionName,
         value: Bool
@@ -252,7 +252,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: The integer option value.
     /// - Throws: `Error.getOption` on failure.
     public static func getIntOption(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         level: OptionLevel,
         name: OptionName
     ) throws(Error) -> Int32 {
@@ -271,7 +271,7 @@ extension Windows.Kernel.Socket {
     ///   - value: The integer value to set.
     /// - Throws: `Error.setOption` on failure.
     public static func setIntOption(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         level: OptionLevel,
         name: OptionName,
         value: Int32
@@ -298,7 +298,7 @@ extension Windows.Kernel.Socket {
     ///   - enabled: Whether to enable address reuse.
     /// - Throws: `Error.setOption` on failure.
     public static func setReuseAddress(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         enabled: Bool
     ) throws(Error) {
         try setBoolOption(socket, level: .socket, name: .reuseAddr, value: enabled)
@@ -314,7 +314,7 @@ extension Windows.Kernel.Socket {
     ///   - enabled: Whether to disable Nagle (true = no delay).
     /// - Throws: `Error.setOption` on failure.
     public static func setNoDelay(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         enabled: Bool
     ) throws(Error) {
         try setBoolOption(socket, level: .tcp, name: .tcpNoDelay, value: enabled)
@@ -328,7 +328,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: The error code, or 0 if no error.
     /// - Throws: `Error.getOption` on failure.
     public static func getError(
-        _ socket: borrowing Kernel.Socket.Descriptor
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor
     ) throws(Error) -> Int32 {
         try getIntOption(socket, level: .socket, name: .error)
     }
@@ -340,7 +340,7 @@ extension Windows.Kernel.Socket {
     ///   - size: Buffer size in bytes.
     /// - Throws: `Error.setOption` on failure.
     public static func setReceiveBuffer(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         size: Int32
     ) throws(Error) {
         try setIntOption(socket, level: .socket, name: .receiveBuffer, value: size)
@@ -353,7 +353,7 @@ extension Windows.Kernel.Socket {
     ///   - size: Buffer size in bytes.
     /// - Throws: `Error.setOption` on failure.
     public static func setSendBuffer(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         size: Int32
     ) throws(Error) {
         try setIntOption(socket, level: .socket, name: .sendBuffer, value: size)
@@ -366,7 +366,7 @@ extension Windows.Kernel.Socket {
     ///   - enabled: Whether to enable keep-alive.
     /// - Throws: `Error.setOption` on failure.
     public static func setKeepAlive(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         enabled: Bool
     ) throws(Error) {
         try setBoolOption(socket, level: .socket, name: .keepAlive, value: enabled)
@@ -385,7 +385,7 @@ extension Windows.Kernel.Socket {
     ///                    On output, actual size of the returned address.
     /// - Throws: `Error.getSockName` on failure.
     public static func getSockName(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
     ) throws(Error) {
@@ -396,7 +396,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `getsockname`. The typed L2 convenience
     /// (`getSockName(_:address:addressLength:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -426,7 +426,7 @@ extension Windows.Kernel.Socket {
     ///                    On output, actual size of the returned address.
     /// - Throws: `Error.getPeerName` on failure.
     public static func getPeerName(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
     ) throws(Error) {
@@ -437,7 +437,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `getpeername`. The typed L2 convenience
     /// (`getPeerName(_:address:addressLength:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:

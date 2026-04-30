@@ -9,12 +9,16 @@
 //
 // ===----------------------------------------------------------------------===//
 
-// G6.D parallel-roots: `Kernel` namespace declared at windows-standard L2.
-// Per Path X terminal step, swift-kernel-primitives package no longer
-// exists; the Kernel root namespace lives at L2 spec packages directly
-// (parallel declarations at iso-9945 + windows-standard). Cross-platform
-// consumers reach exactly one Kernel via swift-kernel L3's conditional
-// re-export of the platform L2.
+// G6.D typealias-via-L3 namespace anchor (per [PLAT-ARCH-005]):
+// - Canonical Windows Kernel type is nested under Windows (`Windows.Kernel`).
+// - swift-kernel L3 declares `public typealias Kernel = Windows.Kernel`
+//   per #if-os to provide the unified cross-platform name.
+// - swift-kernel-primitives package no longer exists; the Kernel root
+//   namespace lives at L2 spec packages.
 
-/// Root namespace for kernel-shaped APIs.
-public enum Kernel: Sendable {}
+public import Windows_Standard_Core
+
+extension Windows_Standard_Core.Windows {
+    /// Root namespace for kernel-shaped APIs (Windows canonical).
+    public enum Kernel: Sendable {}
+}

@@ -13,7 +13,7 @@
 
 public import WinSDK
 
-extension Kernel.Thread {
+extension Windows.Kernel.Thread {
     /// Opaque OS thread identifier on Windows.
     ///
     /// The raw value is the thread ID (`DWORD`) as returned by
@@ -36,7 +36,7 @@ extension Kernel.Thread {
     }
 }
 
-extension Kernel.Thread.ID {
+extension Windows.Kernel.Thread.ID {
     /// The ID of the calling thread.
     public static var current: Self {
         .init(rawValue: UInt32(unsafe GetCurrentThreadId()))

@@ -46,7 +46,7 @@ extension Windows.Kernel.Socket {
     /// }
     /// ```
     public static func bind(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         address: UnsafePointer<sockaddr>,
         addressLength: Int32
     ) throws(Error) {
@@ -57,7 +57,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `bind`. The typed L2 convenience
     /// (`bind(_:address:addressLength:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:

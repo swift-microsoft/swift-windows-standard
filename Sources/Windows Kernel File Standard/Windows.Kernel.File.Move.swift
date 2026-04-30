@@ -49,12 +49,12 @@ extension Windows.Kernel.File.Move {
     ///   - oldPath: The current path of the file or directory.
     ///   - newPath: The new path for the file or directory.
     ///   - replaceExisting: If true, replaces an existing file at newPath.
-    /// - Throws: `Kernel.File.Move.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Move.Error` on failure.
     public static func move(
         from oldPath: borrowing Path,
         to newPath: borrowing Path,
         replaceExisting: Bool = false
-    ) throws(Kernel.File.Move.Error) {
+    ) throws(Windows.Kernel.File.Move.Error) {
         let options: Options = replaceExisting ? .replaceExisting : []
         try move(from: oldPath, to: newPath, options: options)
     }
@@ -65,14 +65,14 @@ extension Windows.Kernel.File.Move {
     ///   - oldPath: The current path of the file or directory.
     ///   - newPath: The new path for the file or directory.
     ///   - options: Move options (replaceExisting, writeThrough, etc.).
-    /// - Throws: `Kernel.File.Move.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Move.Error` on failure.
     public static func move(
         from oldPath: borrowing Path,
         to newPath: borrowing Path,
         options: Options
-    ) throws(Kernel.File.Move.Error) {
-        try oldPath.withUnsafeCString { oldPtr throws(Kernel.File.Move.Error) in
-            try newPath.withUnsafeCString { newPtr throws(Kernel.File.Move.Error) in
+    ) throws(Windows.Kernel.File.Move.Error) {
+        try oldPath.withUnsafeCString { oldPtr throws(Windows.Kernel.File.Move.Error) in
+            try newPath.withUnsafeCString { newPtr throws(Windows.Kernel.File.Move.Error) in
                 try move(
                     from: oldPtr,
                     to: newPtr,
@@ -88,12 +88,12 @@ extension Windows.Kernel.File.Move {
     ///   - oldPath: The current path as a null-terminated wide string.
     ///   - newPath: The new path as a null-terminated wide string.
     ///   - replaceExisting: If true, replaces an existing file at newPath.
-    /// - Throws: `Kernel.File.Move.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Move.Error` on failure.
     public static func move(
         from oldPath: UnsafePointer<Path.Char>,
         to newPath: UnsafePointer<Path.Char>,
         replaceExisting: Bool = false
-    ) throws(Kernel.File.Move.Error) {
+    ) throws(Windows.Kernel.File.Move.Error) {
         let options: Options = replaceExisting ? .replaceExisting : []
         try move(from: oldPath, to: newPath, options: options)
     }
@@ -104,12 +104,12 @@ extension Windows.Kernel.File.Move {
     ///   - oldPath: The current path as a null-terminated wide string.
     ///   - newPath: The new path as a null-terminated wide string.
     ///   - options: Move options (replaceExisting, writeThrough, etc.).
-    /// - Throws: `Kernel.File.Move.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Move.Error` on failure.
     public static func move(
         from oldPath: UnsafePointer<Path.Char>,
         to newPath: UnsafePointer<Path.Char>,
         options: Options
-    ) throws(Kernel.File.Move.Error) {
+    ) throws(Windows.Kernel.File.Move.Error) {
         let wOldPath = UnsafeRawPointer(oldPath).assumingMemoryBound(to: WCHAR.self)
         let wNewPath = UnsafeRawPointer(newPath).assumingMemoryBound(to: WCHAR.self)
 
@@ -121,7 +121,7 @@ extension Windows.Kernel.File.Move {
 
 // MARK: - Error Construction
 
-extension Kernel.File.Move.Error {
+extension Windows.Kernel.File.Move.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

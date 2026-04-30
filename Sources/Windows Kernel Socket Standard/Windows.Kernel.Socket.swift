@@ -142,12 +142,12 @@ extension Windows.Kernel.Socket {
         family: Family,
         type: SocketType,
         protocol: Protocol = .default
-    ) throws(Error) -> Kernel.Socket.Descriptor {
+    ) throws(Error) -> Windows.Kernel.Socket.Descriptor {
         let sock = socket(family.rawValue, type.rawValue, `protocol`.rawValue)
         guard sock != INVALID_SOCKET else {
             throw .create(captureLastSocketError())
         }
-        return Kernel.Socket.Descriptor(_rawValue: UInt(sock))
+        return Windows.Kernel.Socket.Descriptor(_rawValue: UInt(sock))
     }
 
     /// Closes a socket by consuming ownership.
@@ -155,7 +155,7 @@ extension Windows.Kernel.Socket {
     /// Takes ownership of the descriptor; the `deinit` handles `closesocket`.
     ///
     /// - Parameter socket: The socket to close (ownership transferred).
-    public static func close(_ socket: consuming Kernel.Socket.Descriptor) {
+    public static func close(_ socket: consuming Windows.Kernel.Socket.Descriptor) {
         // Deinit handles closesocket.
     }
 }

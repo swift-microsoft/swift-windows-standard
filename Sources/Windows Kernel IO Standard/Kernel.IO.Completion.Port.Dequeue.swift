@@ -14,7 +14,7 @@
     public import Kernel_IO_Primitives
     public import WinSDK
 
-    extension Kernel.IO.Completion.Port {
+    extension Windows.Kernel.IO.Completion.Port {
         /// Operations for retrieving completed I/O from a port.
         ///
         /// Provides both single-entry and batch dequeue operations. Batch
@@ -24,7 +24,7 @@
         ///
         /// ```swift
         /// // Single completion
-        /// let item = try Kernel.IO.Completion.Port.Dequeue.single(port, timeout: INFINITE)
+        /// let item = try Windows.Kernel.IO.Completion.Port.Dequeue.single(port, timeout: INFINITE)
         /// switch item.status {
         /// case .ok:
         ///     // I/O completed successfully
@@ -37,7 +37,7 @@
         /// // Batch completion (more efficient)
         /// var entries = [OVERLAPPED_ENTRY](repeating: .init(), count: 64)
         /// let count = try entries.withUnsafeMutableBufferPointer { buffer in
-        ///     try Kernel.IO.Completion.Port.Dequeue.batch(port, entries: buffer, timeout: 100)
+        ///     try Windows.Kernel.IO.Completion.Port.Dequeue.batch(port, entries: buffer, timeout: 100)
         /// }
         /// ```
         ///
@@ -53,7 +53,7 @@
 
     // MARK: - Status
 
-    extension Kernel.IO.Completion.Port.Dequeue {
+    extension Windows.Kernel.IO.Completion.Port.Dequeue {
         /// Status of a completed I/O operation.
         @frozen
         public enum Status: Sendable, Equatable {
@@ -67,7 +67,7 @@
 
     // MARK: - Item
 
-    extension Kernel.IO.Completion.Port.Dequeue {
+    extension Windows.Kernel.IO.Completion.Port.Dequeue {
         /// A dequeued I/O completion.
         ///
         /// - Important: `overlapped` points to storage that must remain valid until
@@ -81,13 +81,13 @@
             public let bytes: UInt32
 
             /// Application-defined completion key.
-            public let key: Kernel.IO.Completion.Port.Key
+            public let key: Windows.Kernel.IO.Completion.Port.Key
 
             /// Pointer to the Overlapped structure associated with the operation.
             ///
             /// May be `nil` for synthetic completions posted via `PostQueuedCompletionStatus`
             /// without an associated overlapped structure.
-            public let overlapped: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>?
+            public let overlapped: UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>?
 
             /// Status of the completed I/O operation.
             public let status: Status
@@ -96,8 +96,8 @@
             @inlinable
             public init(
                 bytes: UInt32,
-                key: Kernel.IO.Completion.Port.Key,
-                overlapped: UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>?,
+                key: Windows.Kernel.IO.Completion.Port.Key,
+                overlapped: UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>?,
                 status: Status
             ) {
                 self.bytes = bytes
@@ -110,11 +110,11 @@
 
     // MARK: - Operations (raw @_spi(Syscall))
 
-    extension Kernel.IO.Completion.Port.Dequeue {
+    extension Windows.Kernel.IO.Completion.Port.Dequeue {
         /// Dequeues a single completion packet from a port HANDLE bit pattern.
         ///
         /// Spec-literal raw `GetQueuedCompletionStatus`. The typed L2
-        /// convenience (`single(_:timeout:)` taking `Kernel.Descriptor`)
+        /// convenience (`single(_:timeout:)` taking `Windows.Kernel.Descriptor`)
         /// delegates to this raw SPI internally via `descriptor._rawValue`.
         ///
         /// - Note: This operation **blocks the calling thread** until a completion
@@ -122,7 +122,7 @@
         ///
         /// - Parameters:
         ///   - port: Port HANDLE bit pattern.
-        ///   - timeout: Timeout in milliseconds (`Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
+        ///   - timeout: Timeout in milliseconds (`Windows.Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
         /// - Returns: The dequeued completion item.
         /// - Throws: `.timeout` on timeout, `.dequeue` only on actual port failure.
         ///   Operation failures are returned via `Item.status`.
@@ -131,7 +131,7 @@
         public static func single(
             _ port: UInt,
             timeout: UInt32
-        ) throws(Kernel.IO.Completion.Port.Error) -> Item {
+        ) throws(Windows.Kernel.IO.Completion.Port.Error) -> Item {
             var bytes: DWORD = 0
             var key: ULONG_PTR = 0
             var overlapped: LPOVERLAPPED? = nil
@@ -146,16 +146,16 @@
 
             // Helper to convert raw pointer to Swift wrapper pointer
             @unsafe
-            func toOverlapped(_ raw: LPOVERLAPPED?) -> UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>? {
+            func toOverlapped(_ raw: LPOVERLAPPED?) -> UnsafeMutablePointer<Windows.Kernel.IO.Completion.Port.Overlapped>? {
                 guard let raw = unsafe raw else { return nil }
                 return unsafe UnsafeMutableRawPointer(raw)
-                    .assumingMemoryBound(to: Kernel.IO.Completion.Port.Overlapped.self)
+                    .assumingMemoryBound(to: Windows.Kernel.IO.Completion.Port.Overlapped.self)
             }
 
             if ok {
                 return unsafe Item(
                     bytes: UInt32(bytes),
-                    key: Kernel.IO.Completion.Port.Key(rawValue: key),
+                    key: Windows.Kernel.IO.Completion.Port.Key(rawValue: key),
                     overlapped: toOverlapped(overlapped),
                     status: .ok
                 )
@@ -172,7 +172,7 @@
                 // Correct: dequeued completion of a FAILED I/O operation
                 return unsafe Item(
                     bytes: UInt32(bytes),
-                    key: Kernel.IO.Completion.Port.Key(rawValue: key),
+                    key: Windows.Kernel.IO.Completion.Port.Key(rawValue: key),
                     overlapped: toOverlapped(overlapped),
                     status: .platform(Error_Primitives.Error(code: .win32(error)))
                 )
@@ -185,7 +185,7 @@
         /// Dequeues multiple completion packets (batch) from a port HANDLE bit pattern.
         ///
         /// Spec-literal raw `GetQueuedCompletionStatusEx`. The typed L2
-        /// convenience (`batch(_:entries:timeout:)` taking `Kernel.Descriptor`)
+        /// convenience (`batch(_:entries:timeout:)` taking `Windows.Kernel.Descriptor`)
         /// delegates to this raw SPI internally via `descriptor._rawValue`.
         ///
         /// More efficient than calling `single` in a loop when multiple
@@ -205,9 +205,9 @@
         @inlinable
         public static func batch(
             _ port: UInt,
-            entries: UnsafeMutableBufferPointer<Kernel.IO.Completion.Port.Entry>,
+            entries: UnsafeMutableBufferPointer<Windows.Kernel.IO.Completion.Port.Entry>,
             timeout: UInt32
-        ) throws(Kernel.IO.Completion.Port.Error) -> Int {
+        ) throws(Windows.Kernel.IO.Completion.Port.Error) -> Int {
             guard let base = unsafe entries.baseAddress else { return 0 }
 
             // Entry is a transparent wrapper around OVERLAPPED_ENTRY,
@@ -239,7 +239,7 @@
 
     // MARK: - Typed Convenience
 
-    extension Kernel.IO.Completion.Port.Dequeue {
+    extension Windows.Kernel.IO.Completion.Port.Dequeue {
         /// Dequeues a single completion packet.
         ///
         /// Typed L2 form. Delegates to the raw `single(_:timeout:)` SPI via
@@ -250,15 +250,15 @@
         ///
         /// - Parameters:
         ///   - port: The port handle.
-        ///   - timeout: Timeout in milliseconds (`Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
+        ///   - timeout: Timeout in milliseconds (`Windows.Kernel.IO.Completion.Port.Error.Timeout.infinite` = 0xFFFFFFFF).
         /// - Returns: The dequeued completion item.
         /// - Throws: `.timeout` on timeout, `.dequeue` only on actual port failure.
         ///   Operation failures are returned via `Item.status`.
         @inlinable
         public static func single(
-            _ port: Kernel.Descriptor,
+            _ port: Windows.Kernel.Descriptor,
             timeout: UInt32
-        ) throws(Kernel.IO.Completion.Port.Error) -> Item {
+        ) throws(Windows.Kernel.IO.Completion.Port.Error) -> Item {
             try single(port._rawValue, timeout: timeout)
         }
 
@@ -279,10 +279,10 @@
         @unsafe
         @inlinable
         public static func batch(
-            _ port: Kernel.Descriptor,
-            entries: UnsafeMutableBufferPointer<Kernel.IO.Completion.Port.Entry>,
+            _ port: Windows.Kernel.Descriptor,
+            entries: UnsafeMutableBufferPointer<Windows.Kernel.IO.Completion.Port.Entry>,
             timeout: UInt32
-        ) throws(Kernel.IO.Completion.Port.Error) -> Int {
+        ) throws(Windows.Kernel.IO.Completion.Port.Error) -> Int {
             try unsafe batch(port._rawValue, entries: entries, timeout: timeout)
         }
     }

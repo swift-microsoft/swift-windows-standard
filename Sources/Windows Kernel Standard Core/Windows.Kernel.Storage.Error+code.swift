@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.Storage.Error {
+extension Windows.Kernel.Storage.Error {
     /// Creates an error from a Windows error code, if applicable.
     ///
     /// Returns `nil` if the error code doesn't map to a storage error.

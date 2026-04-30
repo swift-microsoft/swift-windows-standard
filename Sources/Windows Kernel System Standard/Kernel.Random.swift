@@ -11,7 +11,7 @@
 
 // MARK: - Windows random namespace anchor
 //
-// Re-declares the empty `Kernel.Random` namespace at L2 so that
+// Re-declares the empty `Windows.Kernel.Random` namespace at L2 so that
 // `Windows.Kernel.Random.bCryptGenRandom` extension compiles against a
 // fresh namespace shell after the L1 `swift-kernel-primitives` Kernel
 // Random Primitives target was removed in Path X Cycle 7. Per
@@ -19,6 +19,6 @@
 // `Random_Primitives.Random.Error`; this namespace is purely an extension
 // host for the Windows-specific syscall wrapper.
 
-extension Kernel {
+extension Windows.Kernel {
     public enum Random {}
 }

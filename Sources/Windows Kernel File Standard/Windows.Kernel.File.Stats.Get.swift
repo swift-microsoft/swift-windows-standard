@@ -100,16 +100,16 @@ extension Windows.Kernel.File {
     /// Gets file information for a HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetFileInformationByHandle`. The typed L2
-    /// convenience (`getStats(_:)` taking `Kernel.Descriptor`) delegates to
+    /// convenience (`getStats(_:)` taking `Windows.Kernel.Descriptor`) delegates to
     /// this raw SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: File stats on success.
-    /// - Throws: `Kernel.File.Stats.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Stats.Error` on failure.
     @_spi(Syscall)
     public static func getStats(
         _ handle: UInt
-    ) throws(Kernel.File.Stats.Error) -> Stats {
+    ) throws(Windows.Kernel.File.Stats.Error) -> Stats {
         var info = BY_HANDLE_FILE_INFORMATION()
 
         guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
@@ -133,7 +133,7 @@ extension Windows.Kernel.File {
     /// Gets file size for a HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetFileSizeEx`. The typed L2 convenience
-    /// (`getSize(_:)` taking `Kernel.Descriptor`) delegates to this raw SPI
+    /// (`getSize(_:)` taking `Windows.Kernel.Descriptor`) delegates to this raw SPI
     /// internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
@@ -160,10 +160,10 @@ extension Windows.Kernel.File {
     ///
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: File stats on success.
-    /// - Throws: `Kernel.File.Stats.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Stats.Error` on failure.
     public static func getStats(
-        _ descriptor: Kernel.Descriptor
-    ) throws(Kernel.File.Stats.Error) -> Stats {
+        _ descriptor: Windows.Kernel.Descriptor
+    ) throws(Windows.Kernel.File.Stats.Error) -> Stats {
         try getStats(descriptor._rawValue)
     }
 
@@ -175,7 +175,7 @@ extension Windows.Kernel.File {
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: File size in bytes, or nil on failure.
     public static func getSize(
-        _ descriptor: Kernel.Descriptor
+        _ descriptor: Windows.Kernel.Descriptor
     ) -> UInt64? {
         getSize(descriptor._rawValue)
     }
@@ -268,7 +268,7 @@ extension Windows.Kernel.File {
     /// Gets the type for a HANDLE bit pattern (raw `GetFileType`).
     ///
     /// Spec-literal raw `GetFileType`. The typed L2 convenience
-    /// (`getType(_:)` taking `Kernel.Descriptor`) delegates to this raw SPI
+    /// (`getType(_:)` taking `Windows.Kernel.Descriptor`) delegates to this raw SPI
     /// internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
@@ -291,7 +291,7 @@ extension Windows.Kernel.File {
     /// - Returns: The file type.
     @inlinable
     public static func getType(
-        _ descriptor: Kernel.Descriptor
+        _ descriptor: Windows.Kernel.Descriptor
     ) -> FileType {
         getType(descriptor._rawValue)
     }

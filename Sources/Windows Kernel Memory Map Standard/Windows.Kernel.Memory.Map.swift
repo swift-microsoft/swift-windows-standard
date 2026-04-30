@@ -21,7 +21,7 @@ extension Memory.Map {
     ///
     /// Spec-literal raw `CreateFileMappingW + MapViewOfFile`. The typed L2
     /// convenience (`map(fd:length:protection:flags:offset:)` taking
-    /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
     /// `descriptor._rawValue`.
     ///
     /// Windows memory mapping requires two steps:
@@ -39,10 +39,10 @@ extension Memory.Map {
     @_spi(Syscall)
     public static func map(
         fd handle: UInt,
-        length: Kernel.File.Size,
+        length: Windows.Kernel.File.Size,
         protection: Protection,
         flags: Flags,
-        offset: Kernel.File.Offset = .zero
+        offset: Windows.Kernel.File.Offset = .zero
     ) throws(Memory.Map.Error) -> Memory.Address {
         guard length.isPositive else {
             throw .invalid(.length)
@@ -97,11 +97,11 @@ extension Memory.Map {
     /// - Returns: Pointer to the mapped region.
     /// - Throws: `Error.map` on failure.
     public static func map(
-        fd: Kernel.Descriptor,
-        length: Kernel.File.Size,
+        fd: Windows.Kernel.Descriptor,
+        length: Windows.Kernel.File.Size,
         protection: Protection,
         flags: Flags,
-        offset: Kernel.File.Offset = .zero
+        offset: Windows.Kernel.File.Offset = .zero
     ) throws(Memory.Map.Error) -> Memory.Address {
         try map(
             fd: fd._rawValue,
@@ -124,7 +124,7 @@ extension Memory.Map {
     /// - Throws: `Error.map` on failure.
     public static func mapAnonymous(
         addr: Memory.Address? = nil,
-        length: Kernel.File.Size,
+        length: Windows.Kernel.File.Size,
         protection: Protection
     ) throws(Memory.Map.Error) -> Memory.Address {
         guard length.isPositive else {
@@ -155,7 +155,7 @@ extension Memory.Map {
     /// - Throws: `Error.unmap` on failure.
     public static func unmap(
         addr: Memory.Address,
-        length: Kernel.File.Size,
+        length: Windows.Kernel.File.Size,
         isAnonymous: Bool = false
     ) throws(Memory.Map.Error) {
         let success: Bool
@@ -178,7 +178,7 @@ extension Memory.Map {
     /// - Throws: `Error.sync` on failure.
     public static func sync(
         addr: Memory.Address,
-        length: Kernel.File.Size
+        length: Windows.Kernel.File.Size
     ) throws(Memory.Map.Error) {
         guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.rawValue)) else {
             throw .sync(Error_Primitives.Error.captureLastError())
@@ -194,7 +194,7 @@ extension Memory.Map {
     /// - Throws: `Error.protect` on failure.
     public static func protect(
         addr: Memory.Address,
-        length: Kernel.File.Size,
+        length: Windows.Kernel.File.Size,
         protection: Protection
     ) throws(Memory.Map.Error) {
         var oldProtect: DWORD = 0

@@ -19,10 +19,10 @@ extension Windows.Kernel.Directory.Working {
     ///
     /// - Parameter buffer: Buffer to receive the path (UTF-16).
     /// - Returns: The number of characters written (excluding null terminator).
-    /// - Throws: `Kernel.Directory.Working.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Working.Error` on failure.
     public static func get(
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Kernel.Directory.Working.Error) -> Int {
+    ) throws(Windows.Kernel.Directory.Working.Error) -> Int {
         let wbuffer = UnsafeMutableRawPointer(buffer.baseAddress!).assumingMemoryBound(to: WCHAR.self)
         let result = GetCurrentDirectoryW(DWORD(buffer.count), wbuffer)
 
@@ -41,8 +41,8 @@ extension Windows.Kernel.Directory.Working {
     /// Gets the current working directory into an array.
     ///
     /// - Returns: The current directory path as UTF-16 code units.
-    /// - Throws: `Kernel.Directory.Working.Error` on failure.
-    public static func get() throws(Kernel.Directory.Working.Error) -> [UInt16] {
+    /// - Throws: `Windows.Kernel.Directory.Working.Error` on failure.
+    public static func get() throws(Windows.Kernel.Directory.Working.Error) -> [UInt16] {
         // First call to get required size
         let requiredSize = GetCurrentDirectoryW(0, nil)
         guard requiredSize > 0 else {
@@ -61,11 +61,11 @@ extension Windows.Kernel.Directory.Working {
     /// Sets the current working directory.
     ///
     /// - Parameter path: The new working directory path.
-    /// - Throws: `Kernel.Directory.Working.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Working.Error` on failure.
     public static func set(
         path: borrowing Path
-    ) throws(Kernel.Directory.Working.Error) {
-        try path.withUnsafeCString { ptr throws(Kernel.Directory.Working.Error) in
+    ) throws(Windows.Kernel.Directory.Working.Error) {
+        try path.withUnsafeCString { ptr throws(Windows.Kernel.Directory.Working.Error) in
             try set(unsafePath: ptr)
         }
     }
@@ -73,10 +73,10 @@ extension Windows.Kernel.Directory.Working {
     /// Sets the current working directory using an unsafe wide string.
     ///
     /// - Parameter unsafePath: The path as a null-terminated wide string.
-    /// - Throws: `Kernel.Directory.Working.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Working.Error` on failure.
     public static func set(
         unsafePath: UnsafePointer<Path.Char>
-    ) throws(Kernel.Directory.Working.Error) {
+    ) throws(Windows.Kernel.Directory.Working.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard SetCurrentDirectoryW(wpath) else {
             throw .current()
@@ -86,7 +86,7 @@ extension Windows.Kernel.Directory.Working {
 
 // MARK: - Error Construction
 
-extension Kernel.Directory.Working.Error {
+extension Windows.Kernel.Directory.Working.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

@@ -23,7 +23,7 @@ extension Path.Canonical.Error {
             self = .path(e)
             return
         }
-        if let e = Kernel.Permission.Error(code: code) {
+        if let e = Windows.Kernel.Permission.Error(code: code) {
             self = .permission(e)
             return
         }

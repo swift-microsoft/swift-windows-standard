@@ -11,22 +11,20 @@
 
 public import Windows_Standard_Core
 
-extension Windows_Standard_Core.Windows {
-    /// Windows kernel mechanisms — typealias to the windows-standard L2
-    /// `Kernel` namespace (G6.D parallel roots; locally declared).
-    public typealias Kernel = Kernel
-}
+// Windows.Kernel canonical declaration lives at Windows.Kernel.Namespace.swift
+// (G6.D typealias-via-L3 pattern). This file holds Windows-specific
+// veneer extensions on Windows.Kernel.Descriptor.
 
 // MARK: - Windows.Kernel.Descriptor Veneer
 
 #if os(Windows)
 public import WinSDK
 
-extension Kernel.Descriptor {
+extension Windows_Standard_Core.Windows.Kernel.Descriptor {
     /// Creates a descriptor by borrowing a Windows HANDLE.
     ///
     /// - Parameter handle: The raw Windows HANDLE.
-    /// - Returns: A `Kernel.Descriptor` wrapping the handle.
+    /// - Returns: A `Windows.Kernel.Descriptor` wrapping the handle.
     @inlinable
     public static func borrowing(handle: HANDLE) -> Self {
         Self(_rawValue: UInt(bitPattern: handle))

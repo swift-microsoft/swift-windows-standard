@@ -23,7 +23,7 @@ public import WinSDK
 extension Windows_Standard_Core.Windows.File {
     /// Windows-specific file metadata including creation time.
     ///
-    /// This type extends the cross-platform `Kernel.File.Stats` with Windows-specific
+    /// This type extends the cross-platform `Windows.Kernel.File.Stats` with Windows-specific
     /// fields like `creationTime` that are always available on Windows.
     ///
     /// ## Usage
@@ -41,17 +41,17 @@ extension Windows_Standard_Core.Windows.File {
     /// - ``Kernel/File/Stats`` for cross-platform file stats
     public struct Stats: Sendable, Equatable {
         /// The cross-platform file stats.
-        public let base: Kernel.File.Stats
+        public let base: Windows.Kernel.File.Stats
 
         /// File creation time.
         ///
         /// This is always available on Windows systems as `ftCreationTime`.
         /// On other platforms, use the platform-specific package or omit this field.
-        public let creationTime: Kernel.Time
+        public let creationTime: Windows.Kernel.Time
 
         /// Creates Windows file stats.
         @inlinable
-        public init(base: Kernel.File.Stats, creationTime: Kernel.Time) {
+        public init(base: Windows.Kernel.File.Stats, creationTime: Windows.Kernel.Time) {
             self.base = base
             self.creationTime = creationTime
         }
@@ -63,54 +63,54 @@ extension Windows_Standard_Core.Windows.File {
 extension Windows_Standard_Core.Windows.File.Stats {
     /// File size in bytes.
     @inlinable
-    public var size: Kernel.File.Size { base.size }
+    public var size: Windows.Kernel.File.Size { base.size }
 
     /// File type (regular, directory, symlink, etc.).
     @inlinable
-    public var type: Kernel.File.Stats.Kind { base.type }
+    public var type: Windows.Kernel.File.Stats.Kind { base.type }
 
     /// POSIX file permissions (synthesized from Windows attributes).
     @inlinable
-    public var permissions: Kernel.File.Permissions { base.permissions }
+    public var permissions: Windows.Kernel.File.Permissions { base.permissions }
 
     /// Owner user ID (always 0 on Windows).
     @inlinable
-    public var uid: Kernel.User.ID { base.uid }
+    public var uid: Windows.Kernel.User.ID { base.uid }
 
     /// Owner group ID (always 0 on Windows).
     @inlinable
-    public var gid: Kernel.Group.ID { base.gid }
+    public var gid: Windows.Kernel.Group.ID { base.gid }
 
     /// Inode number (synthesized from file ID).
     @inlinable
-    public var inode: Kernel.Inode { base.inode }
+    public var inode: Windows.Kernel.Inode { base.inode }
 
     /// Device ID (from volume serial number).
     @inlinable
-    public var device: Kernel.Device { base.device }
+    public var device: Windows.Kernel.Device { base.device }
 
     /// Number of hard links.
     @inlinable
-    public var linkCount: Kernel.Link.Count { base.linkCount }
+    public var linkCount: Windows.Kernel.Link.Count { base.linkCount }
 
     /// Last access time.
     @inlinable
-    public var accessTime: Kernel.Time { base.accessTime }
+    public var accessTime: Windows.Kernel.Time { base.accessTime }
 
     /// Last modification time.
     @inlinable
-    public var modificationTime: Kernel.Time { base.modificationTime }
+    public var modificationTime: Windows.Kernel.Time { base.modificationTime }
 
     /// Status change time (same as modification time on Windows).
     @inlinable
-    public var changeTime: Kernel.Time { base.changeTime }
+    public var changeTime: Windows.Kernel.Time { base.changeTime }
 }
 
 // MARK: - Get operations
 
 extension Windows_Standard_Core.Windows.File.Stats {
     /// Error type for Windows file stats operations.
-    public typealias Error = Kernel.File.Stats.Error
+    public typealias Error = Windows.Kernel.File.Stats.Error
 
     /// Gets Windows-specific file metadata for a path (follows symlinks).
     ///
@@ -193,7 +193,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     /// Gets Windows-specific file metadata for a HANDLE bit pattern.
     ///
     /// Spec-literal raw `GetFileInformationByHandle`. The typed L2
-    /// convenience (`get(descriptor:)` taking `Kernel.Descriptor`) delegates
+    /// convenience (`get(descriptor:)` taking `Windows.Kernel.Descriptor`) delegates
     /// to this raw SPI internally via `descriptor._rawValue`.
     ///
     /// - Parameter handle: HANDLE bit pattern.
@@ -216,7 +216,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     /// - Parameter descriptor: The file descriptor to stat.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func get(descriptor: Kernel.Descriptor) throws(Error) -> Self {
+    public static func get(descriptor: Windows.Kernel.Descriptor) throws(Error) -> Self {
         try get(handle: descriptor._rawValue)
     }
 }
@@ -228,7 +228,7 @@ extension Windows_Standard_Core.Windows.File.Stats {
     internal init(_from info: BY_HANDLE_FILE_INFORMATION) {
         let size = (Int64(info.nFileSizeHigh) << 32) | Int64(info.nFileSizeLow)
 
-        let type: Kernel.File.Stats.Kind
+        let type: Windows.Kernel.File.Stats.Kind
         if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
             type = .directory
         } else if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0 {
@@ -238,12 +238,12 @@ extension Windows_Standard_Core.Windows.File.Stats {
         }
 
         // Synthesize POSIX-like permissions from Windows attributes
-        var permissions: Kernel.File.Permissions = .standard  // Default: rw-r--r-- (0o644)
+        var permissions: Windows.Kernel.File.Permissions = .standard  // Default: rw-r--r-- (0o644)
         if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_READONLY)) != 0 {
-            permissions = Kernel.File.Permissions(rawValue: 0o444)  // r--r--r--
+            permissions = Windows.Kernel.File.Permissions(rawValue: 0o444)  // r--r--r--
         }
         if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
-            permissions = Kernel.File.Permissions(rawValue: permissions.rawValue | 0o111)  // Add execute for directories
+            permissions = Windows.Kernel.File.Permissions(rawValue: permissions.rawValue | 0o111)  // Add execute for directories
         }
 
         let inode = (UInt64(info.nFileIndexHigh) << 32) | UInt64(info.nFileIndexLow)
@@ -253,15 +253,15 @@ extension Windows_Standard_Core.Windows.File.Stats {
         let changeTime = Instant(_from: info.ftLastWriteTime)  // Windows doesn't have ctime
         let creationTime = Instant(_from: info.ftCreationTime)
 
-        let base = Kernel.File.Stats(
-            size: Kernel.File.Size(size),
+        let base = Windows.Kernel.File.Stats(
+            size: Windows.Kernel.File.Size(size),
             type: type,
             permissions: permissions,
             uid: .root,
             gid: .root,
-            inode: Kernel.Inode(inode),
-            device: Kernel.Device(UInt64(info.dwVolumeSerialNumber)),
-            linkCount: Kernel.Link.Count(__unchecked: (), Cardinal(UInt(info.nNumberOfLinks))),
+            inode: Windows.Kernel.Inode(inode),
+            device: Windows.Kernel.Device(UInt64(info.dwVolumeSerialNumber)),
+            linkCount: Windows.Kernel.Link.Count(__unchecked: (), Cardinal(UInt(info.nNumberOfLinks))),
             accessTime: accessTime,
             modificationTime: modificationTime,
             changeTime: changeTime
@@ -273,15 +273,15 @@ extension Windows_Standard_Core.Windows.File.Stats {
 
 // MARK: - Error extension for Windows error
 
-extension Kernel.File.Stats.Error {
+extension Windows.Kernel.File.Stats.Error {
     /// Creates an error from a Windows error code.
     internal init(_windowsError error: DWORD) {
         let errorCode = Error_Primitives.Error.Code.win32(error)
-        if let e = Kernel.Descriptor.Validity.Error(code: errorCode) {
+        if let e = Windows.Kernel.Descriptor.Validity.Error(code: errorCode) {
             self = .handle(e)
             return
         }
-        if let e = Kernel.IO.Error(code: errorCode) {
+        if let e = Windows.Kernel.IO.Error(code: errorCode) {
             self = .io(e)
             return
         }

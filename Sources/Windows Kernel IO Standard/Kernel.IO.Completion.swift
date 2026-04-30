@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import Kernel_IO_Primitives
 
-    extension Kernel.IO {
+    extension Windows.Kernel.IO {
         /// Completion-related types for asynchronous I/O.
         ///
         /// Contains I/O completion port and related mechanisms.

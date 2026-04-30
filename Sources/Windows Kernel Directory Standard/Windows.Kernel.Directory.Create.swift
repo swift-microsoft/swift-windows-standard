@@ -20,12 +20,12 @@ extension Windows.Kernel.Directory.Create {
     /// - Parameters:
     ///   - path: The path where the directory should be created.
     ///   - permissions: POSIX permissions (ignored on Windows, uses default security).
-    /// - Throws: `Kernel.Directory.Create.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Create.Error` on failure.
     public static func create(
         path: borrowing Path,
-        permissions: Kernel.File.Permissions = .directoryDefault
-    ) throws(Kernel.Directory.Create.Error) {
-        try path.withUnsafeCString { ptr throws(Kernel.Directory.Create.Error) in
+        permissions: Windows.Kernel.File.Permissions = .directoryDefault
+    ) throws(Windows.Kernel.Directory.Create.Error) {
+        try path.withUnsafeCString { ptr throws(Windows.Kernel.Directory.Create.Error) in
             try create(unsafePath: ptr, permissions: permissions)
         }
     }
@@ -35,11 +35,11 @@ extension Windows.Kernel.Directory.Create {
     /// - Parameters:
     ///   - unsafePath: The path as a null-terminated wide string.
     ///   - permissions: POSIX permissions (ignored on Windows).
-    /// - Throws: `Kernel.Directory.Create.Error` on failure.
+    /// - Throws: `Windows.Kernel.Directory.Create.Error` on failure.
     public static func create(
         unsafePath: UnsafePointer<Path.Char>,
-        permissions: Kernel.File.Permissions = .directoryDefault
-    ) throws(Kernel.Directory.Create.Error) {
+        permissions: Windows.Kernel.File.Permissions = .directoryDefault
+    ) throws(Windows.Kernel.Directory.Create.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard CreateDirectoryW(wpath, nil) else {
             throw .current()
@@ -49,7 +49,7 @@ extension Windows.Kernel.Directory.Create {
 
 // MARK: - Error Construction
 
-extension Kernel.Directory.Create.Error {
+extension Windows.Kernel.Directory.Create.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

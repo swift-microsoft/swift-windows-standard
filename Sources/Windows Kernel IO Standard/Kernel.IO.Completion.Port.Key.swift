@@ -14,7 +14,7 @@
     public import Kernel_IO_Primitives
     public import WinSDK
 
-    extension Kernel.IO.Completion.Port {
+    extension Windows.Kernel.IO.Completion.Port {
         /// Completion key for routing I/O completions to handlers.
         ///
         /// The completion key is an application-defined value associated with
@@ -26,8 +26,8 @@
         /// **Index-based:** Use small integers to index into an array of handlers:
         /// ```swift
         /// let handlers: [Handler] = ...
-        /// let key = Kernel.IO.Completion.Port.Key(UInt(index))
-        /// try Kernel.IO.Completion.Port.associate(port, handle: handle, key: key)
+        /// let key = Windows.Kernel.IO.Completion.Port.Key(UInt(index))
+        /// try Windows.Kernel.IO.Completion.Port.associate(port, handle: handle, key: key)
         ///
         /// // On completion:
         /// let handler = handlers[Int(entry.key.rawValue)]
@@ -37,8 +37,8 @@
         /// ```swift
         /// let context = UnsafeMutablePointer<MyContext>.allocate(capacity: 1)
         /// context.initialize(to: MyContext(...))
-        /// let key = Kernel.IO.Completion.Port.Key(pointer: context)
-        /// try Kernel.IO.Completion.Port.associate(port, handle: handle, key: key)
+        /// let key = Windows.Kernel.IO.Completion.Port.Key(pointer: context)
+        /// try Windows.Kernel.IO.Completion.Port.associate(port, handle: handle, key: key)
         ///
         /// // On completion:
         /// let context = UnsafeMutablePointer<MyContext>(
@@ -62,7 +62,7 @@
 
     // MARK: - Pointer Conversions
 
-    extension Kernel.IO.Completion.Port.Key {
+    extension Windows.Kernel.IO.Completion.Port.Key {
         /// Creates a completion key from an integer identifier.
         ///
         /// - Parameter id: An integer identifier for the key.
@@ -104,14 +104,14 @@
 
     // MARK: - Common Values
 
-    extension Kernel.IO.Completion.Port.Key {
+    extension Windows.Kernel.IO.Completion.Port.Key {
         /// Zero completion key.
         public static let zero = Self(rawValue: 0)
     }
 
     // MARK: - ExpressibleByIntegerLiteral
 
-    extension Kernel.IO.Completion.Port.Key: ExpressibleByIntegerLiteral {
+    extension Windows.Kernel.IO.Completion.Port.Key: ExpressibleByIntegerLiteral {
         @inlinable
         public init(integerLiteral value: UInt) {
             self.init(rawValue: ULONG_PTR(value))

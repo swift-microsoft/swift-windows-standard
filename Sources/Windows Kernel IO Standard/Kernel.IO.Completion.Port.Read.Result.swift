@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import Kernel_IO_Primitives
 
-    extension Kernel.IO.Completion.Port.Read {
+    extension Windows.Kernel.IO.Completion.Port.Read {
         /// Result of initiating an overlapped read operation.
         ///
         /// Windows overlapped I/O can complete either synchronously (immediately)
@@ -22,11 +22,11 @@
         /// ## Usage
         ///
         /// ```swift
-        /// let result = try Kernel.IO.Completion.Port.read(handle, into: buffer, overlapped: &overlapped)
+        /// let result = try Windows.Kernel.IO.Completion.Port.read(handle, into: buffer, overlapped: &overlapped)
         /// switch result {
         /// case .pending:
         ///     // Wait for completion via port
-        ///     let entry = try Kernel.IO.Completion.Port.Dequeue.single(port, timeout: INFINITE)
+        ///     let entry = try Windows.Kernel.IO.Completion.Port.Dequeue.single(port, timeout: INFINITE)
         ///     let count = entry.0
         /// case .completed(let bytes):
         ///     // Completed immediately, no port notification

@@ -21,11 +21,11 @@ extension Windows.Kernel.File.Delete {
     /// have the file open. The file will be deleted when the last handle is closed.
     ///
     /// - Parameter path: The path of the file to delete.
-    /// - Throws: `Kernel.File.Delete.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Delete.Error` on failure.
     public static func delete(
         path: borrowing Path
-    ) throws(Kernel.File.Delete.Error) {
-        try path.withUnsafeCString { ptr throws(Kernel.File.Delete.Error) in
+    ) throws(Windows.Kernel.File.Delete.Error) {
+        try path.withUnsafeCString { ptr throws(Windows.Kernel.File.Delete.Error) in
             try delete(unsafePath: ptr)
         }
     }
@@ -33,10 +33,10 @@ extension Windows.Kernel.File.Delete {
     /// Deletes a file using an unsafe wide string.
     ///
     /// - Parameter unsafePath: The path as a null-terminated wide string.
-    /// - Throws: `Kernel.File.Delete.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Delete.Error` on failure.
     public static func delete(
         unsafePath: UnsafePointer<Path.Char>
-    ) throws(Kernel.File.Delete.Error) {
+    ) throws(Windows.Kernel.File.Delete.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard DeleteFileW(wpath) else {
             throw .current()
@@ -46,7 +46,7 @@ extension Windows.Kernel.File.Delete {
 
 // MARK: - Error Construction
 
-extension Kernel.File.Delete.Error {
+extension Windows.Kernel.File.Delete.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.Lock.Error {
+extension Windows.Kernel.Lock.Error {
     /// Creates a lock error from a Windows error code, if applicable.
     ///
     /// - Parameter code: The kernel error code.

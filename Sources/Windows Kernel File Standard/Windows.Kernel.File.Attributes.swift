@@ -96,11 +96,11 @@ extension Windows.Kernel.File {
     /// - Parameters:
     ///   - path: The file path.
     ///   - attributes: The attributes to set.
-    /// - Throws: `Kernel.File.Attributes.Error` on failure.
+    /// - Throws: `Windows.Kernel.File.Attributes.Error` on failure.
     public static func setAttributes(
         path: UnsafePointer<WCHAR>,
         to attributes: Attributes
-    ) throws(Kernel.File.Attributes.Error) {
+    ) throws(Windows.Kernel.File.Attributes.Error) {
         guard SetFileAttributesW(path, attributes.rawValue) else {
             throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }

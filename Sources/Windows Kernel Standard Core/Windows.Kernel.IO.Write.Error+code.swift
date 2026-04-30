@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Access
 
-extension Kernel.IO.Write.Error {
+extension Windows.Kernel.IO.Write.Error {
     /// The underlying Windows error code.
     @inlinable
     public var code: Error_Primitives.Error.Code {
@@ -30,23 +30,23 @@ extension Kernel.IO.Write.Error {
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.IO.Write.Error {
+extension Windows.Kernel.IO.Write.Error {
     /// Creates an error from a Windows error code.
     @usableFromInline
     internal init(code: Error_Primitives.Error.Code) {
-        if let e = Kernel.Descriptor.Validity.Error(code: code) {
+        if let e = Windows.Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
             return
         }
-        if let e = Kernel.IO.Blocking.Error(code: code) {
+        if let e = Windows.Kernel.IO.Blocking.Error(code: code) {
             self = .blocking(e)
             return
         }
-        if let e = Kernel.IO.Error(code: code) {
+        if let e = Windows.Kernel.IO.Error(code: code) {
             self = .io(e)
             return
         }
-        if let e = Kernel.Storage.Error(code: code) {
+        if let e = Windows.Kernel.Storage.Error(code: code) {
             self = .space(e)
             return
         }

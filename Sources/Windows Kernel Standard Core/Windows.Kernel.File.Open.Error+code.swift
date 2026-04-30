@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.File.Open.Error {
+extension Windows.Kernel.File.Open.Error {
     /// Creates an error by mapping a Windows error code to the appropriate case.
     @_spi(Syscall)
     @inlinable
@@ -22,19 +22,19 @@ extension Kernel.File.Open.Error {
             self = .path(e)
             return
         }
-        if let e = Kernel.Permission.Error(code: code) {
+        if let e = Windows.Kernel.Permission.Error(code: code) {
             self = .permission(e)
             return
         }
-        if let e = Kernel.Descriptor.Validity.Error(code: code) {
+        if let e = Windows.Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
             return
         }
-        if let e = Kernel.Storage.Error(code: code) {
+        if let e = Windows.Kernel.Storage.Error(code: code) {
             self = .space(e)
             return
         }
-        if let e = Kernel.IO.Error(code: code) {
+        if let e = Windows.Kernel.IO.Error(code: code) {
             self = .io(e)
             return
         }

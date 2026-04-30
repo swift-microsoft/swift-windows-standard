@@ -21,11 +21,11 @@ extension Windows.Kernel.Environment {
     ///   - name: The variable name as a null-terminated wide string.
     ///   - buffer: Buffer to receive the value.
     /// - Returns: Number of characters written (excluding null terminator).
-    /// - Throws: `Kernel.Environment.Error` on failure.
+    /// - Throws: `Windows.Kernel.Environment.Error` on failure.
     public static func get(
         name: UnsafePointer<WCHAR>,
         into buffer: UnsafeMutableBufferPointer<UInt16>
-    ) throws(Kernel.Environment.Error) -> Int {
+    ) throws(Windows.Kernel.Environment.Error) -> Int {
         let wbuffer = UnsafeMutableRawPointer(buffer.baseAddress!).assumingMemoryBound(to: WCHAR.self)
         let result = GetEnvironmentVariableW(name, wbuffer, DWORD(buffer.count))
 
@@ -73,11 +73,11 @@ extension Windows.Kernel.Environment {
     /// - Parameters:
     ///   - name: The variable name as a null-terminated wide string.
     ///   - value: The value as a null-terminated wide string.
-    /// - Throws: `Kernel.Environment.Error` on failure.
+    /// - Throws: `Windows.Kernel.Environment.Error` on failure.
     public static func set(
         name: UnsafePointer<WCHAR>,
         value: UnsafePointer<WCHAR>
-    ) throws(Kernel.Environment.Error) {
+    ) throws(Windows.Kernel.Environment.Error) {
         guard SetEnvironmentVariableW(name, value) else {
             throw .current()
         }
@@ -86,10 +86,10 @@ extension Windows.Kernel.Environment {
     /// Unsets (removes) an environment variable.
     ///
     /// - Parameter name: The variable name as a null-terminated wide string.
-    /// - Throws: `Kernel.Environment.Error` on failure.
+    /// - Throws: `Windows.Kernel.Environment.Error` on failure.
     public static func unset(
         name: UnsafePointer<WCHAR>
-    ) throws(Kernel.Environment.Error) {
+    ) throws(Windows.Kernel.Environment.Error) {
         guard SetEnvironmentVariableW(name, nil) else {
             let error = GetLastError()
             if error == DWORD(ERROR_ENVVAR_NOT_FOUND) {
@@ -102,7 +102,7 @@ extension Windows.Kernel.Environment {
 
 // MARK: - Error Construction
 
-extension Kernel.Environment.Error {
+extension Windows.Kernel.Environment.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

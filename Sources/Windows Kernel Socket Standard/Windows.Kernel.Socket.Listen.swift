@@ -34,8 +34,8 @@ extension Windows.Kernel.Socket {
     /// try Windows.Kernel.Socket.listen(sock, backlog: .default)
     /// ```
     public static func listen(
-        _ socket: borrowing Kernel.Socket.Descriptor,
-        backlog: Kernel.Socket.Backlog
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
+        backlog: Windows.Kernel.Socket.Backlog
     ) throws(Error) {
         try listen(socket._rawValue, backlog: backlog)
     }
@@ -43,7 +43,7 @@ extension Windows.Kernel.Socket {
     /// Places a SOCKET bit pattern in listening state.
     ///
     /// Spec-literal raw `listen`. The typed L2 convenience
-    /// (`listen(_:backlog:)` taking `borrowing Kernel.Socket.Descriptor`)
+    /// (`listen(_:backlog:)` taking `borrowing Windows.Kernel.Socket.Descriptor`)
     /// delegates to this raw SPI internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -53,7 +53,7 @@ extension Windows.Kernel.Socket {
     @_spi(Syscall)
     public static func listen(
         _ socket: UInt,
-        backlog: Kernel.Socket.Backlog
+        backlog: Windows.Kernel.Socket.Backlog
     ) throws(Error) {
         let result = WinSDK.listen(SOCKET(socket), backlog.rawValue)
         guard result == 0 else {
@@ -64,12 +64,12 @@ extension Windows.Kernel.Socket {
 
 // MARK: - Backlog Platform Values
 
-extension Kernel.Socket.Backlog {
+extension Windows.Kernel.Socket.Backlog {
     /// Maximum backlog value on Windows.
     ///
     /// `SOMAXCONN` is typically 0x7FFFFFFF on modern Windows.
-    public static var max: Kernel.Socket.Backlog {
-        Kernel.Socket.Backlog(rawValue: SOMAXCONN)
+    public static var max: Windows.Kernel.Socket.Backlog {
+        Windows.Kernel.Socket.Backlog(rawValue: SOMAXCONN)
     }
 }
 

@@ -14,7 +14,7 @@ public import WinSDK
 
 // MARK: - Windows file open options conversion
 
-extension Kernel.File.Open.Options {
+extension Windows.Kernel.File.Open.Options {
     /// Converts the options to Windows creation disposition.
     ///
     /// Maps the portable `Options` flags to Win32 creation disposition values:
@@ -80,7 +80,7 @@ extension Kernel.File.Open.Options {
 
 // MARK: - Windows-specific Options
 
-extension Kernel.File.Open.Options {
+extension Windows.Kernel.File.Open.Options {
     /// Opens the file for overlapped (async) I/O.
     ///
     /// Required when using I/O Completion Ports. Windows-specific.
@@ -99,7 +99,7 @@ extension Kernel.File.Open.Options {
 
 // MARK: - Extended Windows flags conversion
 
-extension Kernel.File.Open.Options {
+extension Windows.Kernel.File.Open.Options {
     /// Full Windows flags conversion including Windows-specific options.
     @usableFromInline
     internal var windowsFlagsAndAttributesFull: DWORD {

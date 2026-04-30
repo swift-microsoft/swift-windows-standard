@@ -22,11 +22,11 @@ extension Windows.Kernel.Thread {
     ///
     /// - Parameter body: The work to run on the new thread.
     /// - Returns: A handle to the created thread.
-    /// - Throws: `Kernel.Thread.Error` if thread creation fails.
+    /// - Throws: `Windows.Kernel.Thread.Error` if thread creation fails.
     @inlinable
     public static func create(
         _ body: @escaping @Sendable () -> Void
-    ) throws(Kernel.Thread.Error) -> Kernel.Thread.Handle {
+    ) throws(Windows.Kernel.Thread.Error) -> Windows.Kernel.Thread.Handle {
         let context = UnsafeMutablePointer<(@Sendable () -> Void)>.allocate(capacity: 1)
         context.initialize(to: body)
 
@@ -54,7 +54,7 @@ extension Windows.Kernel.Thread {
             throw .create(Error_Primitives.Error.captureLastError())
         }
 
-        return Kernel.Thread.Handle(_handle: handle)
+        return Windows.Kernel.Thread.Handle(_handle: handle)
     }
 
     /// Waits for a thread to terminate.
@@ -65,7 +65,7 @@ extension Windows.Kernel.Thread {
     /// - Returns: `true` if the thread terminated, `false` if timed out.
     @inlinable
     public static func join(
-        _ handle: Kernel.Thread.Handle,
+        _ handle: Windows.Kernel.Thread.Handle,
         timeout: DWORD = INFINITE
     ) -> Bool {
         let result = WaitForSingleObject(handle._handle, timeout)
@@ -76,7 +76,7 @@ extension Windows.Kernel.Thread {
     ///
     /// - Parameter handle: The thread handle to close.
     @inlinable
-    public static func close(_ handle: Kernel.Thread.Handle) {
+    public static func close(_ handle: Windows.Kernel.Thread.Handle) {
         _ = CloseHandle(handle._handle)
     }
 }
@@ -100,17 +100,17 @@ extension Windows.Kernel.Thread {
     ///
     /// Note: This returns a pseudo-handle that doesn't need to be closed.
     @inlinable
-    public static func current() -> Kernel.Thread.Handle {
-        Kernel.Thread.Handle(_handle: GetCurrentThread())
+    public static func current() -> Windows.Kernel.Thread.Handle {
+        Windows.Kernel.Thread.Handle(_handle: GetCurrentThread())
     }
 
     /// Returns the ID of the current thread.
     ///
-    /// - Note: Prefer `Kernel.Thread.ID.current` — the portable, typed
+    /// - Note: Prefer `Windows.Kernel.Thread.ID.current` — the portable, typed
     ///   equivalent that works across platforms. This Windows-specific
     ///   overload remains for parity with the Windows API surface but
     ///   new code should use the cross-platform form.
-    @available(*, deprecated, message: "Use Kernel.Thread.ID.current for portable, typed thread identity.")
+    @available(*, deprecated, message: "Use Windows.Kernel.Thread.ID.current for portable, typed thread identity.")
     @inlinable
     public static func currentID() -> DWORD {
         GetCurrentThreadId()
@@ -119,7 +119,7 @@ extension Windows.Kernel.Thread {
 
 // MARK: - Thread Handle Extension
 
-extension Kernel.Thread.Handle {
+extension Windows.Kernel.Thread.Handle {
     /// Creates a handle from a Windows HANDLE.
     @_spi(Syscall)
     @inlinable

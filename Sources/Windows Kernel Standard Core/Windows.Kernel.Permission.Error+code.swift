@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.Permission.Error {
+extension Windows.Kernel.Permission.Error {
     /// Creates an error from a Windows error code, if it maps to a permission error.
     ///
     /// - Parameter code: The platform error code.

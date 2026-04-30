@@ -26,7 +26,7 @@ extension Windows.Kernel {
     ///
     /// Raw value access is available only via `@_spi(Syscall)` for syscall
     /// implementation layers. Application code should use the unified API in
-    /// swift-kernel, where `Kernel.Descriptor` is a typealias to this type
+    /// swift-kernel, where `Windows.Kernel.Descriptor` is a typealias to this type
     /// on Windows.
     public struct Descriptor: ~Copyable, Sendable {
         @usableFromInline

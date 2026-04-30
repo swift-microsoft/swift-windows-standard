@@ -49,7 +49,7 @@ extension Windows.Kernel.Socket {
     /// The return value may be less than `length` if the send buffer is full
     /// or for other reasons. Callers should loop to send remaining data.
     public static func send(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         buffer: UnsafeRawPointer,
         length: Int,
         flags: SendFlags = .none
@@ -61,7 +61,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `send`. The typed L2 convenience
     /// (`send(_:buffer:length:flags:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:
@@ -99,7 +99,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: Number of bytes sent.
     /// - Throws: `Error.send` on failure.
     public static func send(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         buffer: UnsafeBufferPointer<UInt8>,
         flags: SendFlags = .none
     ) throws(Error) -> Int {
@@ -124,7 +124,7 @@ extension Windows.Kernel.Socket {
     /// - Returns: Number of bytes sent.
     /// - Throws: `Error.send` on failure.
     public static func sendTo(
-        _ socket: borrowing Kernel.Socket.Descriptor,
+        _ socket: borrowing Windows.Kernel.Socket.Descriptor,
         buffer: UnsafeRawPointer,
         length: Int,
         flags: SendFlags = .none,
@@ -145,7 +145,7 @@ extension Windows.Kernel.Socket {
     ///
     /// Spec-literal raw `sendto`. The typed L2 convenience
     /// (`sendTo(_:buffer:length:flags:destAddr:destAddrLength:)` taking
-    /// `borrowing Kernel.Socket.Descriptor`) delegates to this raw SPI
+    /// `borrowing Windows.Kernel.Socket.Descriptor`) delegates to this raw SPI
     /// internally via `socket._rawValue`.
     ///
     /// - Parameters:

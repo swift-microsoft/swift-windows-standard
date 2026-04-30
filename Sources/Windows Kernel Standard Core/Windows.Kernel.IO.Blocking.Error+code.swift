@@ -18,7 +18,7 @@
 // Windows mapping therefore returns `nil` for all codes; the cascade callers
 // fall through to the next sub-mapper.
 
-extension Kernel.IO.Blocking.Error {
+extension Windows.Kernel.IO.Blocking.Error {
     /// Always returns `nil` on Windows.
     @inlinable
     public init?(code: Error_Primitives.Error.Code) {

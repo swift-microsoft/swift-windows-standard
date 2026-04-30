@@ -13,7 +13,7 @@
     public import Error_Primitives
     public import Kernel_IO_Primitives
 
-    extension Kernel.IO.Completion.Port {
+    extension Windows.Kernel.IO.Completion.Port {
         /// Namespace for read operation types.
         ///
         /// ## See Also

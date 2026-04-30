@@ -36,8 +36,8 @@ extension Windows.Kernel.Process.Exit {
     /// ## Usage
     ///
     /// ```swift
-    /// Kernel.Process.Exit.now(0)  // success
-    /// Kernel.Process.Exit.now(1)  // failure
+    /// Windows.Kernel.Process.Exit.now(0)  // success
+    /// Windows.Kernel.Process.Exit.now(1)  // failure
     /// ```
     public static func now(_ exitCode: UInt32) -> Never {
         ExitProcess(exitCode)

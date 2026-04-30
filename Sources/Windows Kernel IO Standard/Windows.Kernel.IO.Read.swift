@@ -20,7 +20,7 @@ extension Windows.Kernel.IO.Read {
     /// Reads bytes from a raw Windows HANDLE bit pattern.
     ///
     /// Spec-literal raw `ReadFile`. The typed L2 convenience
-    /// (`Windows.Kernel.IO.Read.read(_:into:)` taking `Kernel.Descriptor`)
+    /// (`Windows.Kernel.IO.Read.read(_:into:)` taking `Windows.Kernel.Descriptor`)
     /// delegates to this raw SPI internally via `descriptor._rawValue` after
     /// a fast-fail validity check.
     ///
@@ -69,7 +69,7 @@ extension Windows.Kernel.IO.Read {
     ///
     /// Spec-literal raw `SetFilePointerEx + ReadFile`. The typed L2
     /// convenience (`Windows.Kernel.IO.Read.pread(_:into:at:)` taking
-    /// `Kernel.Descriptor`) delegates to this raw SPI internally via
+    /// `Windows.Kernel.Descriptor`) delegates to this raw SPI internally via
     /// `descriptor._rawValue` after a fast-fail validity check.
     ///
     /// This does NOT modify the file pointer atomically on Windows (unlike
@@ -85,7 +85,7 @@ extension Windows.Kernel.IO.Read {
     public static func pread(
         _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer,
-        at offset: Kernel.File.Offset
+        at offset: Windows.Kernel.File.Offset
     ) throws(Error) -> Int {
         guard let baseAddress = buffer.baseAddress else {
             return 0
@@ -151,7 +151,7 @@ extension Windows.Kernel.IO.Read {
     /// - Returns: Number of bytes read. Returns 0 on EOF.
     /// - Throws: ``Kernel/IO/Read/Error`` on failure.
     public static func read(
-        _ descriptor: Kernel.Descriptor,
+        _ descriptor: Windows.Kernel.Descriptor,
         into buffer: UnsafeMutableRawBufferPointer
     ) throws(Error) -> Int {
         guard descriptor.isValid else {
@@ -176,9 +176,9 @@ extension Windows.Kernel.IO.Read {
     /// - Returns: Number of bytes read. Returns 0 on EOF.
     /// - Throws: ``Kernel/IO/Read/Error`` on failure.
     public static func pread(
-        _ descriptor: Kernel.Descriptor,
+        _ descriptor: Windows.Kernel.Descriptor,
         into buffer: UnsafeMutableRawBufferPointer,
-        at offset: Kernel.File.Offset
+        at offset: Windows.Kernel.File.Offset
     ) throws(Error) -> Int {
         guard descriptor.isValid else {
             throw .handle(.invalid)
@@ -196,10 +196,10 @@ extension Windows.Kernel.IO.Read {
     ///   - descriptor: The file descriptor to read from.
     ///   - span: The mutable span to read into.
     /// - Returns: Number of bytes read. Returns 0 on EOF.
-    /// - Throws: `Kernel.IO.Read.Error` on failure.
+    /// - Throws: `Windows.Kernel.IO.Read.Error` on failure.
     @inlinable
     public static func read(
-        _ descriptor: Kernel.Descriptor,
+        _ descriptor: Windows.Kernel.Descriptor,
         into span: inout MutableSpan<UInt8>
     ) throws(Error) -> Int {
         try span.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) throws(Error) -> Int in
@@ -214,12 +214,12 @@ extension Windows.Kernel.IO.Read {
     ///   - span: The mutable span to read into.
     ///   - offset: The file offset to read from.
     /// - Returns: Number of bytes read. Returns 0 on EOF.
-    /// - Throws: `Kernel.IO.Read.Error` on failure.
+    /// - Throws: `Windows.Kernel.IO.Read.Error` on failure.
     @inlinable
     public static func pread(
-        _ descriptor: Kernel.Descriptor,
+        _ descriptor: Windows.Kernel.Descriptor,
         into span: inout MutableSpan<UInt8>,
-        at offset: Kernel.File.Offset
+        at offset: Windows.Kernel.File.Offset
     ) throws(Error) -> Int {
         try span.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) throws(Error) -> Int in
             try pread(descriptor, into: buffer, at: offset)
@@ -230,12 +230,12 @@ extension Windows.Kernel.IO.Read {
 // MARK: - Error Type Alias
 
 extension Windows.Kernel.IO.Read {
-    public typealias Error = Kernel.IO.Read.Error
+    public typealias Error = Windows.Kernel.IO.Read.Error
 }
 
 // MARK: - Error Construction
 
-extension Kernel.IO.Read.Error {
+extension Windows.Kernel.IO.Read.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {

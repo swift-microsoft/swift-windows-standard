@@ -11,7 +11,7 @@
 
 #if os(Windows)
 
-extension Kernel.IO {
+extension Windows.Kernel.IO {
     /// I/O operation errors.
     ///
     /// Cases mirror the POSIX iso-9945 surface for cross-platform consumer compatibility.
@@ -48,7 +48,7 @@ extension Kernel.IO {
 
 // MARK: - CustomStringConvertible
 
-extension Kernel.IO.Error: CustomStringConvertible {
+extension Windows.Kernel.IO.Error: CustomStringConvertible {
     public var description: Swift.String {
         switch self {
         case .broken:

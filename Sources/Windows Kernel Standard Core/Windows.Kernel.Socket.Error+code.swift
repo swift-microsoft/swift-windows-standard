@@ -13,7 +13,7 @@
 
 // MARK: - Windows Error Code Access
 
-extension Kernel.Socket.Error {
+extension Windows.Kernel.Socket.Error {
     /// The underlying Windows error code.
     @inlinable
     public var code: Error_Primitives.Error.Code {
@@ -26,11 +26,11 @@ extension Kernel.Socket.Error {
 
 // MARK: - Windows Error Code Mapping
 
-extension Kernel.Socket.Error {
+extension Windows.Kernel.Socket.Error {
     /// Creates an error from a Windows error code.
     @inlinable
     public init(code: Error_Primitives.Error.Code) {
-        if let e = Kernel.Descriptor.Validity.Error(code: code) {
+        if let e = Windows.Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
             return
         }

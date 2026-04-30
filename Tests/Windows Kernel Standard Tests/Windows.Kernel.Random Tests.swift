@@ -16,7 +16,6 @@ import Standard_Library_Extensions
 
 @testable import Windows_Kernel_Standard
 import Error_Primitives
-import Kernel_File_Primitives
 import Path_Primitives
 import Kernel_IO_Primitives
 import Kernel_Thread_Primitives

@@ -11,7 +11,6 @@
 
 internal import Windows_Standard_Core
 internal import Error_Primitives
-internal import Kernel_File_Primitives
 internal import Path_Primitives
 internal import Kernel_IO_Primitives
 internal import Random_Primitives

@@ -12,7 +12,6 @@
 #if os(Windows)
     public import Error_Primitives
     public import Kernel_IO_Primitives
-    public import Kernel_File_Primitives
     public import WinSDK
 
     extension Kernel.IO.Completion.Port {

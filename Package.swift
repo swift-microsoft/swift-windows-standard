@@ -89,7 +89,6 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(path: "../../swift-primitives/swift-kernel-primitives"),
         .package(path: "../../swift-primitives/swift-memory-primitives"),
         .package(path: "../../swift-primitives/swift-clock-primitives"),
         .package(path: "../../swift-primitives/swift-loader-primitives"),
@@ -116,9 +115,7 @@ let package = Package(
             name: "Windows Kernel Standard Core",
             dependencies: [
                 .target(name: "Windows Standard Core"),
-                .product(name: "Kernel Namespace", package: "swift-kernel-primitives"),
                 .product(name: "Error Primitives", package: "swift-error-primitives"),
-                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
@@ -146,7 +143,6 @@ let package = Package(
             name: "Windows Kernel Directory Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
@@ -165,7 +161,6 @@ let package = Package(
             name: "Windows Kernel File Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
@@ -175,7 +170,6 @@ let package = Package(
             name: "Windows Kernel IO Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
             ]
         ),
 
@@ -184,7 +178,6 @@ let package = Package(
             name: "Windows Kernel Memory Map Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel File Primitives", package: "swift-kernel-primitives"),
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
             ]
         ),
@@ -291,7 +284,6 @@ let package = Package(
             dependencies: [
                 "Windows Kernel Standard",
                 "Windows Loader Standard",
-                .product(name: "Kernel Primitives Test Support", package: "swift-kernel-primitives"),
             ],
             path: "Tests/Support"
         ),

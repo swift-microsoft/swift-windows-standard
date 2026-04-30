@@ -10,11 +10,11 @@
 // ===----------------------------------------------------------------------===//
 
 public import Windows_Standard_Core
-public import Kernel_Namespace
 
 extension Windows_Standard_Core.Windows {
-    /// Windows kernel mechanisms — typealias to the shared `Kernel` namespace.
-    public typealias Kernel = Kernel_Namespace.Kernel
+    /// Windows kernel mechanisms — typealias to the windows-standard L2
+    /// `Kernel` namespace (G6.D parallel roots; locally declared).
+    public typealias Kernel = Kernel
 }
 
 // MARK: - Windows.Kernel.Descriptor Veneer
@@ -22,7 +22,7 @@ extension Windows_Standard_Core.Windows {
 #if os(Windows)
 public import WinSDK
 
-extension Kernel_Namespace.Kernel.Descriptor {
+extension Kernel.Descriptor {
     /// Creates a descriptor by borrowing a Windows HANDLE.
     ///
     /// - Parameter handle: The raw Windows HANDLE.

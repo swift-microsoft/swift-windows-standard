@@ -15,7 +15,6 @@ import Testing
 
     @testable import Windows_Kernel_Standard
     import Error_Primitives
-    import Kernel_IO_Primitives
 
     extension Kernel.IO.Completion.Port.Dequeue {
         enum Test {

@@ -11,7 +11,6 @@
 
 #if os(Windows)
 internal import WinSDK
-#endif
 
 extension Windows.Kernel.Socket {
     /// Windows socket descriptor with `closesocket`-on-deinit policy.
@@ -64,3 +63,4 @@ extension Windows.Kernel.Socket.Descriptor {
     @inlinable
     public var _rawValue: UInt { UInt(_raw) }
 }
+#endif

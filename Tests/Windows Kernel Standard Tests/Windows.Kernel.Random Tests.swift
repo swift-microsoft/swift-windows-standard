@@ -17,11 +17,8 @@ import Standard_Library_Extensions
 @testable import Windows_Kernel_Standard
 import Error_Primitives
 import Path_Primitives
-import Kernel_IO_Primitives
-import Kernel_Thread_Primitives
 import Clock_Primitives
 import Random_Primitives
-import Kernel_Environment_Primitives
 import System_Primitives
 
 extension Windows.Kernel.Random {

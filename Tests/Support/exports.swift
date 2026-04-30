@@ -9,6 +9,5 @@
 //
 // ===----------------------------------------------------------------------===//
 
-@_exported public import Kernel_Primitives_Test_Support
 @_exported public import Windows_Kernel_Standard
 @_exported public import Windows_Loader_Standard

@@ -11,7 +11,6 @@
 
 #if os(Windows)
     public import Error_Primitives
-    public import Kernel_IO_Primitives
 
     extension Windows.Kernel.IO.Completion.Port.Write {
         /// Result of initiating an overlapped write operation.

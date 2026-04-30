@@ -11,7 +11,6 @@
 
 #if os(Windows)
 @_spi(Syscall) public import Error_Primitives
-@_spi(Syscall) public import Kernel_IO_Primitives
 public import WinSDK
 
 // MARK: - Windows WriteFile syscall (raw @_spi(Syscall))

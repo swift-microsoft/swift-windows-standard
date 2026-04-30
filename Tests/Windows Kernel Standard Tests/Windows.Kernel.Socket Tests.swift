@@ -15,7 +15,6 @@ import Testing
 
 @testable import Windows_Kernel_Standard
 @_spi(Syscall) import Error_Primitives
-@_spi(Syscall) import Kernel_Socket_Primitives
 
 extension Windows.Kernel.Socket {
     enum Test {

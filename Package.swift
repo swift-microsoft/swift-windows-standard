@@ -195,7 +195,6 @@ let package = Package(
             name: "Windows Kernel Process Standard",
             dependencies: [
                 "Windows Kernel Standard Core",
-                .product(name: "Kernel Process Primitives", package: "swift-kernel-primitives"),
             ]
         ),
 

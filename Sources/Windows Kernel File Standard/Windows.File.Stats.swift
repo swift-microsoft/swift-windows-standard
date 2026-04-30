@@ -18,7 +18,6 @@ internal import Kernel_IO_Primitives
 internal import Kernel_Time_Primitives
 internal import Random_Primitives
 internal import Kernel_Environment_Primitives
-internal import Kernel_Process_Primitives
 internal import System_Primitives
 
 #if os(Windows)

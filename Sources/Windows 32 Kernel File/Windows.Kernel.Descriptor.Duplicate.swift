@@ -29,8 +29,7 @@ extension Windows.`32`.Kernel.Descriptor.Duplicate {
     /// - Parameter handle: HANDLE bit pattern to duplicate.
     /// - Returns: The duplicated HANDLE bit pattern.
     /// - Throws: `Windows.`32`.Kernel.Descriptor.Duplicate.Error` on failure.
-    @_spi(Syscall)
-    public static func duplicate(_ handle: UInt) throws(Error) -> UInt {
+        package static func duplicate(_ handle: UInt) throws(Error) -> UInt {
         let currentProcess = GetCurrentProcess()
         var newHandle: HANDLE? = nil
 

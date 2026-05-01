@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Send
@@ -71,8 +71,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - flags: Send flags.
     /// - Returns: Number of bytes sent (may be less than `length`).
     /// - Throws: `Error.send` on failure.
-    @_spi(Syscall)
-    public static func send(
+        package static func send(
         _ socket: UInt,
         buffer: UnsafeRawPointer,
         length: Int,
@@ -157,8 +156,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - destAddrLength: Size of the destination address structure.
     /// - Returns: Number of bytes sent.
     /// - Throws: `Error.send` on failure.
-    @_spi(Syscall)
-    public static func sendTo(
+        package static func sendTo(
         _ socket: UInt,
         buffer: UnsafeRawPointer,
         length: Int,

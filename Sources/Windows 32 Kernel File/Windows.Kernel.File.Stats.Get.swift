@@ -106,8 +106,7 @@ extension Windows.`32`.Kernel.File {
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: File stats on success.
     /// - Throws: `Windows.`32`.Kernel.File.Stats.Error` on failure.
-    @_spi(Syscall)
-    public static func getStats(
+        package static func getStats(
         _ handle: UInt
     ) throws(Windows.`32`.Kernel.File.Stats.Error) -> Stats {
         var info = BY_HANDLE_FILE_INFORMATION()
@@ -138,8 +137,7 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: File size in bytes, or nil on failure.
-    @_spi(Syscall)
-    public static func getSize(
+        package static func getSize(
         _ handle: UInt
     ) -> UInt64? {
         var size: LARGE_INTEGER = LARGE_INTEGER()
@@ -200,9 +198,8 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter path: The path as a null-terminated wide string.
     /// - Returns: True if the path exists, false otherwise.
-    @_spi(Syscall)
     @inlinable
-    public static func exists(path: UnsafePointer<WCHAR>) -> Bool {
+    package static func exists(path: UnsafePointer<WCHAR>) -> Bool {
         GetFileAttributesW(path) != INVALID_FILE_ATTRIBUTES
     }
 
@@ -273,9 +270,8 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: The file type.
-    @_spi(Syscall)
     @inlinable
-    public static func getType(
+    package static func getType(
         _ handle: UInt
     ) -> FileType {
         let type = GetFileType(UnsafeMutableRawPointer(bitPattern: handle)!)

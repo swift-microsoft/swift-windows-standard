@@ -126,8 +126,7 @@ extension Windows_32_Core.Windows.File.Stats {
     /// - Parameter path: The path as a wide string.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    @_spi(Syscall)
-    public static func get(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
+        package static func get(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
         let handle = CreateFileW(
             path,
             DWORD(FILE_READ_ATTRIBUTES),
@@ -165,8 +164,7 @@ extension Windows_32_Core.Windows.File.Stats {
     /// - Parameter path: The path as a wide string.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    @_spi(Syscall)
-    public static func lget(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
+        package static func lget(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
         let handle = CreateFileW(
             path,
             DWORD(FILE_READ_ATTRIBUTES),
@@ -197,8 +195,7 @@ extension Windows_32_Core.Windows.File.Stats {
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    @_spi(Syscall)
-    public static func get(handle: UInt) throws(Error) -> Self {
+        package static func get(handle: UInt) throws(Error) -> Self {
         var info = BY_HANDLE_FILE_INFORMATION()
         guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
             throw Error(_windowsError: GetLastError())

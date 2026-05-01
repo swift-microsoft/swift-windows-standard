@@ -52,15 +52,13 @@ extension Windows.`32`.Kernel.Socket {
 
 extension Windows.`32`.Kernel.Socket.Descriptor {
     /// Creates a socket descriptor from a raw Windows SOCKET value.
-    @_spi(Syscall)
     @inlinable
-    public init(_rawValue: UInt) {
+    package init(_rawValue: UInt) {
         self.init(_raw: UInt64(_rawValue))
     }
 
     /// The raw Windows SOCKET value.
-    @_spi(Syscall)
     @inlinable
-    public var _rawValue: UInt { UInt(_raw) }
+    package var _rawValue: UInt { UInt(_raw) }
 }
 #endif

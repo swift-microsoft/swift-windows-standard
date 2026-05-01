@@ -121,16 +121,14 @@ extension Windows.`32`.Kernel.Thread {
 
 extension Windows.`32`.Kernel.Thread.Handle {
     /// Creates a handle from a Windows HANDLE.
-    @_spi(Syscall)
     @inlinable
-    public init(_handle: HANDLE) {
+    package init(_handle: HANDLE) {
         self = Self(rawValue: UInt(bitPattern: _handle))
     }
 
     /// The underlying Windows HANDLE.
-    @_spi(Syscall)
     @inlinable
-    public var _handle: HANDLE {
+    package var _handle: HANDLE {
         HANDLE(bitPattern: Int(rawValue))!
     }
 }

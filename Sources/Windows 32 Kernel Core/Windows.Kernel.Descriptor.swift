@@ -61,14 +61,12 @@ extension Windows.`32`.Kernel {
 
 extension Windows.`32`.Kernel.Descriptor {
     /// Creates a descriptor from a raw Windows `HANDLE` value.
-    @_spi(Syscall)
     @inlinable
-    public init(_rawValue: UInt) {
+    package init(_rawValue: UInt) {
         self._raw = _rawValue
     }
 
     /// The raw Windows `HANDLE` value.
-    @_spi(Syscall)
     @inlinable
-    public var _rawValue: UInt { _raw }
+    package var _rawValue: UInt { _raw }
 }

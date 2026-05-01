@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Windows WriteFile syscall (raw @_spi(Syscall))
@@ -46,8 +46,7 @@ extension Windows.`32`.Kernel.IO.Write {
     ///   - buffer: The buffer to write from.
     /// - Returns: Number of bytes written (may be less than `buffer.count`).
     /// - Throws: ``Kernel/IO/Write/Error`` on failure.
-    @_spi(Syscall)
-    public static func write(
+        package static func write(
         _ handle: UInt,
         from buffer: UnsafeRawBufferPointer
     ) throws(Error) -> Int {
@@ -98,8 +97,7 @@ extension Windows.`32`.Kernel.IO.Write {
     ///   - offset: The file offset to write at.
     /// - Returns: Number of bytes written (may be less than `buffer.count`).
     /// - Throws: ``Kernel/IO/Write/Error`` on failure.
-    @_spi(Syscall)
-    public static func pwrite(
+        package static func pwrite(
         _ handle: UInt,
         from buffer: UnsafeRawBufferPointer,
         at offset: Windows.`32`.Kernel.File.Offset

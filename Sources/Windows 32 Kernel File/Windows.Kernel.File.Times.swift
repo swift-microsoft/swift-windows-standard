@@ -30,8 +30,7 @@ extension Windows.`32`.Kernel.File.Times {
     ///   - lastAccessTime: New last access time, or nil to leave unchanged.
     ///   - lastWriteTime: New last write time, or nil to leave unchanged.
     /// - Throws: `Windows.`32`.Kernel.File.Times.Error` on failure.
-    @_spi(Syscall)
-    public static func set(
+        package static func set(
         creation creationTime: FILETIME? = nil,
         access lastAccessTime: FILETIME? = nil,
         modification lastWriteTime: FILETIME? = nil,
@@ -72,10 +71,9 @@ extension Windows.`32`.Kernel.File.Times {
     ///   - lastAccessTime: Pointer to last access time, or nil to leave unchanged.
     ///   - lastWriteTime: Pointer to last write time, or nil to leave unchanged.
     /// - Returns: True on success, false on failure.
-    @_spi(Syscall)
     @inlinable
     @discardableResult
-    public static func set(
+    package static func set(
         creation creationTime: UnsafePointer<FILETIME>?,
         access lastAccessTime: UnsafePointer<FILETIME>?,
         modification lastWriteTime: UnsafePointer<FILETIME>?,
@@ -97,8 +95,7 @@ extension Windows.`32`.Kernel.File.Times {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: Tuple of (creationTime, lastAccessTime, lastWriteTime), or nil on failure.
-    @_spi(Syscall)
-    public static func getTimes(
+        package static func getTimes(
         _ handle: UInt
     ) -> (creation: FILETIME, access: FILETIME, write: FILETIME)? {
         var creation = FILETIME()
@@ -296,8 +293,7 @@ extension Windows.`32`.Kernel.File {
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: The basic file info.
     /// - Throws: Error on failure.
-    @_spi(Syscall)
-    public static func getBasicInfo(
+        package static func getBasicInfo(
         _ handle: UInt
     ) throws(Windows.`32`.Kernel.File.Stats.Error) -> BasicInfo {
         var info = FILE_BASIC_INFO()
@@ -327,8 +323,7 @@ extension Windows.`32`.Kernel.File {
     ///   - handle: HANDLE bit pattern.
     ///   - info: The basic file info to set.
     /// - Throws: Error on failure.
-    @_spi(Syscall)
-    public static func setBasicInfo(
+        package static func setBasicInfo(
         _ handle: UInt,
         _ info: BasicInfo
     ) throws(Windows.`32`.Kernel.File.Attributes.Error) {
@@ -408,8 +403,7 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: True on success, false on failure.
-    @_spi(Syscall)
-    public static func touch(_ handle: UInt) -> Bool {
+        package static func touch(_ handle: UInt) -> Bool {
         var now = FILETIME()
         GetSystemTimeAsFileTime(&now)
         return SetFileTime(UnsafeMutableRawPointer(bitPattern: handle)!, nil, &now, &now)

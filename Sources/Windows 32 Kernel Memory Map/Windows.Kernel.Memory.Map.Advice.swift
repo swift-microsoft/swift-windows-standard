@@ -10,8 +10,8 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
-@_spi(Syscall) public import Memory_Primitives
+public import Error_Primitives
+public import Memory_Primitives
 
 // MARK: - Windows Memory Advice Constants
 //

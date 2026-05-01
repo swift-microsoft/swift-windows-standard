@@ -74,9 +74,8 @@
         ///   - handle: File HANDLE bit pattern to associate.
         ///   - key: Application-defined value returned with completions.
         /// - Throws: `Error.associate` if association fails.
-        @_spi(Syscall)
         @inlinable
-        public static func associate(
+        package static func associate(
             _ port: UInt,
             handle: UInt,
             key: Key
@@ -105,10 +104,9 @@
         ///   - key: The completion key to return.
         ///   - overlapped: The overlapped pointer to return (can be nil).
         /// - Throws: `Error.post` on failure.
-        @_spi(Syscall)
         @unsafe
         @inlinable
-        public static func post(
+        package static func post(
             _ port: UInt,
             bytes: DWORD = 0,
             key: Key = .zero,
@@ -136,9 +134,8 @@
         /// `Dequeue` will receive an error on their next dequeue attempt.
         ///
         /// - Parameter port: The port HANDLE bit pattern to close.
-        @_spi(Syscall)
         @inlinable
-        public static func close(_ port: UInt) {
+        package static func close(_ port: UInt) {
             _ = Windows.`32`.Kernel.Close.close(port)
         }
 
@@ -155,10 +152,9 @@
         ///   - overlapped: The overlapped structure for this operation.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
-        @_spi(Syscall)
         @unsafe
         @inlinable
-        public static func read(
+        package static func read(
             _ handle: UInt,
             into buffer: UnsafeMutableRawBufferPointer,
             overlapped: inout Overlapped
@@ -199,10 +195,9 @@
         ///   - overlapped: The overlapped structure for this operation.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
-        @_spi(Syscall)
         @unsafe
         @inlinable
-        public static func write(
+        package static func write(
             _ handle: UInt,
             from buffer: UnsafeRawBufferPointer,
             overlapped: inout Overlapped
@@ -243,9 +238,8 @@
         ///   - wait: If `true`, blocks until the operation completes.
         /// - Returns: The number of bytes transferred.
         /// - Throws: `Error.result` on failure.
-        @_spi(Syscall)
         @inlinable
-        public static func result(
+        package static func result(
             _ handle: UInt,
             overlapped: inout Overlapped,
             wait: Bool = false

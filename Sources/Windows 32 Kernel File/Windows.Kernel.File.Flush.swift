@@ -27,8 +27,7 @@ extension Windows.`32`.Kernel.File.Flush {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Throws: `Windows.`32`.Kernel.File.Flush.Error` on failure.
-    @_spi(Syscall)
-    public static func flush(_ handle: UInt) throws(Windows.`32`.Kernel.File.Flush.Error) {
+        package static func flush(_ handle: UInt) throws(Windows.`32`.Kernel.File.Flush.Error) {
         guard FlushFileBuffers(UnsafeMutableRawPointer(bitPattern: handle)!) else {
             throw .current()
         }

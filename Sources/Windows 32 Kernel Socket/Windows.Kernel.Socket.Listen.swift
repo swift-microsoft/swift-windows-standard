@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Listen
@@ -50,8 +50,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - socket: SOCKET bit pattern.
     ///   - backlog: Maximum length of the pending connections queue.
     /// - Throws: `Error.listen` on failure.
-    @_spi(Syscall)
-    public static func listen(
+        package static func listen(
         _ socket: UInt,
         backlog: Windows.`32`.Kernel.Socket.Backlog
     ) throws(Error) {

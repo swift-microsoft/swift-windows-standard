@@ -10,8 +10,8 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
-@_spi(Syscall) public import Memory_Primitives
+public import Error_Primitives
+public import Memory_Primitives
 public import WinSDK
 
 // MARK: - Windows Memory Mapping (raw @_spi(Syscall))
@@ -36,8 +36,7 @@ extension Memory.Map {
     ///   - offset: Offset into the file.
     /// - Returns: Pointer to the mapped region.
     /// - Throws: `Error.map` on failure.
-    @_spi(Syscall)
-    public static func map(
+        package static func map(
         fd handle: UInt,
         length: Windows.`32`.Kernel.File.Size,
         protection: Protection,

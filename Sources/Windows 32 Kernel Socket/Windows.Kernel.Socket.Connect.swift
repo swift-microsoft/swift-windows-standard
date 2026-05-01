@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Connect
@@ -54,8 +54,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - address: Pointer to the remote address.
     ///   - addressLength: Size of the address structure.
     /// - Throws: `Error.connect` on failure.
-    @_spi(Syscall)
-    public static func connect(
+        package static func connect(
         _ socket: UInt,
         address: UnsafePointer<sockaddr>,
         addressLength: Int32

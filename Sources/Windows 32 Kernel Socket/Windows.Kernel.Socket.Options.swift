@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Options
@@ -125,8 +125,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - value: Pointer to receive the option value.
     ///   - length: On input, size of the value buffer. On output, actual size.
     /// - Throws: `Error.getOption` on failure.
-    @_spi(Syscall)
-    public static func getOption(
+        package static func getOption(
         _ socket: UInt,
         level: OptionLevel,
         name: OptionName,
@@ -178,8 +177,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - value: Pointer to the option value.
     ///   - length: Size of the option value.
     /// - Throws: `Error.setOption` on failure.
-    @_spi(Syscall)
-    public static func setOption(
+        package static func setOption(
         _ socket: UInt,
         level: OptionLevel,
         name: OptionName,
@@ -405,8 +403,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - addressLength: On input, size of the address buffer.
     ///                    On output, actual size of the returned address.
     /// - Throws: `Error.getSockName` on failure.
-    @_spi(Syscall)
-    public static func getSockName(
+        package static func getSockName(
         _ socket: UInt,
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>
@@ -446,8 +443,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - addressLength: On input, size of the address buffer.
     ///                    On output, actual size of the returned address.
     /// - Throws: `Error.getPeerName` on failure.
-    @_spi(Syscall)
-    public static func getPeerName(
+        package static func getPeerName(
         _ socket: UInt,
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>

@@ -142,8 +142,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     /// - Parameter handle: HANDLE bit pattern (server side).
     /// - Returns: `true` if a client connected, `false` if already connected.
     /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
-    @_spi(Syscall)
-    public static func connect(
+        package static func connect(
         _ handle: UInt
     ) throws(Windows.`32`.Kernel.Pipe.Error) -> Bool {
         if ConnectNamedPipe(UnsafeMutableRawPointer(bitPattern: handle)!, nil) {
@@ -166,8 +165,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     ///
     /// - Parameter handle: HANDLE bit pattern (server side).
     /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
-    @_spi(Syscall)
-    public static func disconnect(
+        package static func disconnect(
         _ handle: UInt
     ) throws(Windows.`32`.Kernel.Pipe.Error) {
         guard DisconnectNamedPipe(UnsafeMutableRawPointer(bitPattern: handle)!) else {
@@ -259,8 +257,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: Tuple of (currentInstances, maxInstances), or `nil` on failure.
-    @_spi(Syscall)
-    public static func getInfo(_ handle: UInt) -> (current: DWORD, max: DWORD)? {
+        package static func getInfo(_ handle: UInt) -> (current: DWORD, max: DWORD)? {
         var flags: DWORD = 0
         var outBufferSize: DWORD = 0
         var inBufferSize: DWORD = 0
@@ -291,8 +288,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     ///   - handle: HANDLE bit pattern.
     ///   - buffer: Buffer to receive peeked data (can be nil).
     /// - Returns: Tuple of (bytesRead, totalBytesAvailable, bytesLeftInMessage).
-    @_spi(Syscall)
-    public static func peek(
+        package static func peek(
         _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer? = nil
     ) -> (read: DWORD, available: DWORD, leftInMessage: DWORD)? {

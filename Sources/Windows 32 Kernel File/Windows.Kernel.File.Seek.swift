@@ -28,9 +28,8 @@ extension Windows.`32`.Kernel.File.Seek {
     ///   - origin: The reference point for the offset.
     /// - Returns: The resulting offset from the beginning of the file.
     /// - Throws: `Windows.`32`.Kernel.File.Seek.Error` on failure.
-    @_spi(Syscall)
     @discardableResult
-    public static func seek(
+    package static func seek(
         _ handle: UInt,
         offset: Int64,
         origin: Origin
@@ -62,8 +61,7 @@ extension Windows.`32`.Kernel.File.Seek {
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: The current offset from the beginning of the file.
     /// - Throws: `Windows.`32`.Kernel.File.Seek.Error` on failure.
-    @_spi(Syscall)
-    public static func tell(_ handle: UInt) throws(Error) -> Int64 {
+        package static func tell(_ handle: UInt) throws(Error) -> Int64 {
         try seek(handle, offset: 0, origin: .current)
     }
 }

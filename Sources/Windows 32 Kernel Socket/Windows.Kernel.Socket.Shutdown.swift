@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Shutdown
@@ -55,8 +55,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - socket: SOCKET bit pattern.
     ///   - how: Which operations to disable.
     /// - Throws: `Error.shutdown` on failure.
-    @_spi(Syscall)
-    public static func shutdown(
+        package static func shutdown(
         _ socket: UInt,
         how: Windows.`32`.Kernel.Socket.Shutdown.How
     ) throws(Error) {

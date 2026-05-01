@@ -53,9 +53,8 @@
         /// - Parameter handle: HANDLE bit pattern.
         /// - Returns: `true` if cancelled, `false` otherwise (use `GetLastError`
         ///   to inspect the failure mode).
-        @_spi(Syscall)
         @inlinable
-        public static func all(_ handle: UInt) -> Bool {
+        package static func all(_ handle: UInt) -> Bool {
             CancelIoEx(UnsafeMutableRawPointer(bitPattern: handle)!, nil)
         }
 
@@ -71,10 +70,9 @@
         ///   - overlapped: The OVERLAPPED pointer for the operation to cancel.
         /// - Returns: `true` if cancelled, `false` otherwise (use `GetLastError`
         ///   to inspect the failure mode).
-        @_spi(Syscall)
         @unsafe
         @inlinable
-        public static func pending(_ handle: UInt, overlapped: LPOVERLAPPED) -> Bool {
+        package static func pending(_ handle: UInt, overlapped: LPOVERLAPPED) -> Bool {
             unsafe CancelIoEx(UnsafeMutableRawPointer(bitPattern: handle)!, overlapped)
         }
     }

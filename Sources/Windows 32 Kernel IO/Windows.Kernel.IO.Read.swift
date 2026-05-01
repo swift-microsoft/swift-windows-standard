@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Windows ReadFile syscall (raw @_spi(Syscall))
@@ -31,8 +31,7 @@ extension Windows.`32`.Kernel.IO.Read {
     ///   - buffer: The buffer to read into.
     /// - Returns: Number of bytes read. Returns 0 on EOF.
     /// - Throws: ``Kernel/IO/Read/Error`` on failure.
-    @_spi(Syscall)
-    public static func read(
+        package static func read(
         _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer
     ) throws(Error) -> Int {
@@ -80,8 +79,7 @@ extension Windows.`32`.Kernel.IO.Read {
     ///   - offset: The file offset to read from.
     /// - Returns: Number of bytes read. Returns 0 on EOF.
     /// - Throws: ``Kernel/IO/Read/Error`` on failure.
-    @_spi(Syscall)
-    public static func pread(
+        package static func pread(
         _ handle: UInt,
         into buffer: UnsafeMutableRawBufferPointer,
         at offset: Windows.`32`.Kernel.File.Offset

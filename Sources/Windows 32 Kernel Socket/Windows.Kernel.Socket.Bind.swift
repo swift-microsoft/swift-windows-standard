@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Bind
@@ -65,8 +65,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - address: Pointer to the address structure.
     ///   - addressLength: Size of the address structure.
     /// - Throws: `Error.bind` on failure.
-    @_spi(Syscall)
-    public static func bind(
+        package static func bind(
         _ socket: UInt,
         address: UnsafePointer<sockaddr>,
         addressLength: Int32

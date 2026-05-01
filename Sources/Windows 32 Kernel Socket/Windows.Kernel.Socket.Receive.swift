@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Receive
@@ -75,8 +75,7 @@ extension Windows.`32`.Kernel.Socket {
     ///   - flags: Receive flags.
     /// - Returns: Number of bytes received, or 0 if the connection was closed.
     /// - Throws: `Error.receive` on failure.
-    @_spi(Syscall)
-    public static func receive(
+        package static func receive(
         _ socket: UInt,
         buffer: UnsafeMutableRawPointer,
         length: Int,
@@ -163,8 +162,7 @@ extension Windows.`32`.Kernel.Socket {
     ///                    On output, actual size of the returned address.
     /// - Returns: Number of bytes received.
     /// - Throws: `Error.receive` on failure.
-    @_spi(Syscall)
-    public static func receiveFrom(
+        package static func receiveFrom(
         _ socket: UInt,
         buffer: UnsafeMutableRawPointer,
         length: Int,

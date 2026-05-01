@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-@_spi(Syscall) public import Error_Primitives
+public import Error_Primitives
 public import WinSDK
 
 // MARK: - Socket Accept (raw @_spi(Syscall))
@@ -25,8 +25,7 @@ extension Windows.`32`.Kernel.Socket {
     /// - Parameter socket: SOCKET bit pattern (listening).
     /// - Returns: New connected SOCKET bit pattern.
     /// - Throws: `Error.accept` on failure.
-    @_spi(Syscall)
-    public static func accept(
+        package static func accept(
         _ socket: UInt
     ) throws(Error) -> UInt {
         let clientSocket = WinSDK.accept(SOCKET(socket), nil, nil)
@@ -50,8 +49,7 @@ extension Windows.`32`.Kernel.Socket {
     ///                    On output, the actual size of the returned address.
     /// - Returns: New connected SOCKET bit pattern.
     /// - Throws: `Error.accept` on failure.
-    @_spi(Syscall)
-    public static func accept(
+        package static func accept(
         _ socket: UInt,
         address: UnsafeMutablePointer<sockaddr>,
         addressLength: UnsafeMutablePointer<Int32>

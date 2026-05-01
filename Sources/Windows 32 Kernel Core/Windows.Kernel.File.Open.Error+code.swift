@@ -15,9 +15,8 @@
 
 extension Windows.`32`.Kernel.File.Open.Error {
     /// Creates an error by mapping a Windows error code to the appropriate case.
-    @_spi(Syscall)
     @inlinable
-    public init(code: Error_Primitives.Error.Code) {
+    package init(code: Error_Primitives.Error.Code) {
         if let e = Path.Resolution.Error(code: code) {
             self = .path(e)
             return

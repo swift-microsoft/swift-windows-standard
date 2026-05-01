@@ -125,9 +125,8 @@
         /// - Returns: The dequeued completion item.
         /// - Throws: `.timeout` on timeout, `.dequeue` only on actual port failure.
         ///   Operation failures are returned via `Item.status`.
-        @_spi(Syscall)
         @inlinable
-        public static func single(
+        package static func single(
             _ port: UInt,
             timeout: UInt32
         ) throws(Windows.`32`.Kernel.IO.Completion.Port.Error) -> Item {
@@ -199,10 +198,9 @@
         ///   - timeout: Timeout in milliseconds.
         /// - Returns: Number of entries dequeued (0 on timeout).
         /// - Throws: `Error.dequeue` on failure.
-        @_spi(Syscall)
         @unsafe
         @inlinable
-        public static func batch(
+        package static func batch(
             _ port: UInt,
             entries: UnsafeMutableBufferPointer<Windows.`32`.Kernel.IO.Completion.Port.Entry>,
             timeout: UInt32

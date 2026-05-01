@@ -20,21 +20,20 @@ extension Windows.`32`.Kernel.Close {
     /// Raw Windows `CloseHandle` syscall.
     ///
     /// Spec-literal: takes a HANDLE, returns the BOOL result. Zero policy:
-    /// NO `GetLastError` read, NO error mapping, NO throwing. The caller
-    /// inspects the return value and reads the last error on failure if
-    /// needed.
+    /// NO `GetLastError` read, NO error mapping, NO throwing.
     ///
-    /// L3-policy throwing wrappers (`Windows.`32`.Kernel.Close.close(_:)` in
-    /// swift-windows) compose this raw call with last-error-to-
-    /// `Windows.`32`.Kernel.Close.Error` mapping per [PLAT-ARCH-008e]. L1 syscall
-    /// callers MUST NOT call this function directly; the L1 → L3-policy →
-    /// L2 chain is mandatory.
+    /// **Internal scope only.** Per [PLAT-ARCH-008l] (Wave 4c-deinit-helper,
+    /// 2026-05-01), L2 deinit-context APIs use the typed throwing form via
+    /// `try?`; raw `(_ handle: UInt) -> Bool` companion forms are not L2
+    /// public surface. The typed form (`close(_:consuming Descriptor)` at
+    /// `Windows 32 Kernel Core/Windows.Kernel.Close.swift`) inlines
+    /// `CloseHandle` directly — this raw form is retained at internal scope
+    /// for future delegation use.
     ///
     /// - Parameter handle: HANDLE to close.
     /// - Returns: `true` on success, `false` on failure (use
     ///   `GetLastError` to inspect the error code).
-    @_spi(Syscall)
-    public static func close(_ handle: UInt) -> Bool {
+    internal static func close(_ handle: UInt) -> Bool {
         #if os(Windows)
         guard let pointer = UnsafeMutableRawPointer(bitPattern: handle) else {
             return false

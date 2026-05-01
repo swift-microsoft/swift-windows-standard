@@ -123,22 +123,6 @@
             }
         }
 
-        /// Closes a port HANDLE bit pattern.
-        ///
-        /// Spec-literal raw delegate to `Windows.`32`.Kernel.Close.close(_:)`. The
-        /// typed L2 convenience (`close(_:)` taking `Windows.`32`.Kernel.Descriptor`)
-        /// delegates to this raw SPI internally via `descriptor._rawValue`
-        /// after a fast-fail validity check.
-        ///
-        /// Fire-and-forget: errors are ignored. Any threads blocked in
-        /// `Dequeue` will receive an error on their next dequeue attempt.
-        ///
-        /// - Parameter port: The port HANDLE bit pattern to close.
-        @inlinable
-        package static func close(_ port: UInt) {
-            _ = Windows.`32`.Kernel.Close.close(port)
-        }
-
         /// Initiates an overlapped read on a HANDLE bit pattern.
         ///
         /// Spec-literal raw `ReadFile` over an overlapped structure. The

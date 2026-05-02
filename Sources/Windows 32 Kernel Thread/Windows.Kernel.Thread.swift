@@ -12,6 +12,25 @@
 #if os(Windows)
 public import WinSDK
 
+// MARK: - Windows.`32`.Kernel.Thread namespace anchor (Tier 5-Windows-FOS+Affinity-Combined Phase 3, 2026-05-02)
+//
+// L2 spec form per [PLAT-ARCH-005] L2-canonical-where-spec-layer-exists +
+// [PLAT-ARCH-008k] Spec/Policy Namespace Split. Hosts thread primitives
+// (`Index`, `ID`, `Affinity`, `Affinity.{Kind,Error,Failure,Support}`) and
+// the syscall wrappers (`create`, `join`, `close`, `yield`, `current`).
+// Mirrors the `ISO_9945.Kernel.Thread` shape as a nominally distinct type
+// (Windows is not POSIX per [PLAT-ARCH-007]).
+//
+// The anchor was missing in the post-Wave-1.9 + post-Wave-2 state — the
+// existing `Windows.Kernel.Thread.{Index,ID,Affinity,...}.swift` files all
+// extend the namespace but none declared it. Path X G6.D refinement pulled
+// `Windows.Kernel` apart but did not consolidate the L2 spec form anchors.
+
+extension Windows.`32`.Kernel {
+    /// Root namespace for Win32 thread APIs (L2 spec form).
+    public enum Thread: Sendable {}
+}
+
 // MARK: - Windows Thread Creation
 
 extension Windows.`32`.Kernel.Thread {

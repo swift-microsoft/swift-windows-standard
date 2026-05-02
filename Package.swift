@@ -213,6 +213,7 @@ let package = Package(
             name: "Windows 32 Kernel Thread",
             dependencies: [
                 "Windows 32 Kernel Core",
+                .product(name: "Error Primitives", package: "swift-error-primitives"),
             ]
         ),
 

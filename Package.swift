@@ -42,6 +42,10 @@ let package = Package(
             targets: ["Windows 32 Kernel IO"]
         ),
         .library(
+            name: "Windows 32 Kernel Terminal",
+            targets: ["Windows 32 Kernel Terminal"]
+        ),
+        .library(
             name: "Windows 32 Kernel Memory Map",
             targets: ["Windows 32 Kernel Memory Map"]
         ),
@@ -100,6 +104,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-system-primitives"),
         .package(path: "../../swift-primitives/swift-binary-primitives"),
         .package(path: "../../swift-primitives/swift-dimension-primitives"),
+        .package(path: "../../swift-primitives/swift-terminal-primitives"),
     ],
     targets: [
         // MARK: - Core
@@ -178,6 +183,16 @@ let package = Package(
             ]
         ),
 
+        // MARK: - Kernel Terminal
+        .target(
+            name: "Windows 32 Kernel Terminal",
+            dependencies: [
+                "Windows 32 Kernel Core",
+                "Windows 32 Kernel IO",
+                .product(name: "Terminal Primitives", package: "swift-terminal-primitives"),
+            ]
+        ),
+
         // MARK: - Kernel Memory Map
         .target(
             name: "Windows 32 Kernel Memory Map",
@@ -241,6 +256,7 @@ let package = Package(
                 "Windows 32 Kernel Environment",
                 "Windows 32 Kernel File",
                 "Windows 32 Kernel IO",
+                "Windows 32 Kernel Terminal",
                 "Windows 32 Kernel Memory Map",
                 "Windows 32 Kernel Process",
                 "Windows 32 Kernel Socket",

@@ -183,20 +183,8 @@ extension Windows.`32`.Kernel.Process {
     }
 }
 
-// MARK: - Error Type
-
-extension Windows.`32`.Kernel.Process {
-    /// Errors from process operations.
-    public enum Error: Swift.Error, Sendable, Equatable {
-        /// Process creation failed.
-        case create(Error_Primitives.Error.Code)
-
-        /// Wait operation failed.
-        case wait(Error_Primitives.Error.Code)
-
-        /// Platform error.
-        case platform(Error_Primitives.Error)
-    }
-}
+// Process.Error is declared at Windows.Kernel.Process.Namespace.swift
+// (un-gated) so cross-platform name resolution sees the type without a
+// #if os(Windows) gate.
 
 #endif

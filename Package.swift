@@ -105,6 +105,7 @@ let package = Package(
         .package(path: "../../swift-primitives/swift-binary-primitives"),
         .package(path: "../../swift-primitives/swift-dimension-primitives"),
         .package(path: "../../swift-primitives/swift-terminal-primitives"),
+        .package(path: "../../swift-primitives/swift-pair-primitives"),
     ],
     targets: [
         // MARK: - Core
@@ -172,6 +173,7 @@ let package = Package(
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Binary Primitives Core", package: "swift-binary-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
+                .product(name: "Pair Primitives", package: "swift-pair-primitives"),
             ]
         ),
 
@@ -207,6 +209,8 @@ let package = Package(
             name: "Windows 32 Kernel Process",
             dependencies: [
                 "Windows 32 Kernel Core",
+                "Windows 32 Kernel File",
+                .product(name: "Path Primitives", package: "swift-path-primitives"),
             ]
         ),
 

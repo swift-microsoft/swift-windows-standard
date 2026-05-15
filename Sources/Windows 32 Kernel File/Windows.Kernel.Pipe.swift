@@ -1,107 +1,106 @@
 // ===----------------------------------------------------------------------===//
 //
-// This source file is part of the swift-windows open source project
+// This source file is part of the swift-windows-32 open source project
 //
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
+// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-windows-32 project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE for license information
 //
 // ===----------------------------------------------------------------------===//
 
-#if os(Windows)
-public import WinSDK
+public import Pair_Primitives
 
-// MARK: - Windows Pipe Operations
+#if os(Windows)
+internal import WinSDK
+#endif
+
+// MARK: - Pipe.Descriptors (Tagged<Pipe, Pair<Descriptor, Descriptor>>)
 
 extension Windows.`32`.Kernel.Pipe {
-    /// A pair of pipe endpoints (read and write).
-    public struct Pair {
-        /// The read end of the pipe.
-        public let read: Windows.`32`.Kernel.Descriptor
-        /// The write end of the pipe.
-        public let write: Windows.`32`.Kernel.Descriptor
+    /// The result of creating a pipe: a `~Copyable` pair of read and write
+    /// descriptors.
+    ///
+    /// `Descriptors` mirrors the POSIX iso-9945 shape
+    /// (``ISO_9945/Kernel/Pipe/Descriptors``) for cross-platform consumer
+    /// parity. Each end has its own deinit-close path, so dropping a
+    /// `Descriptors` value closes both handles via the underlying
+    /// `Windows.\`32\`.Kernel.Descriptor` ``deinit`` (which invokes
+    /// `CloseHandle`).
+    public typealias Descriptors = Tagged<
+        Windows.`32`.Kernel.Pipe,
+        Pair<Windows.`32`.Kernel.Descriptor, Windows.`32`.Kernel.Descriptor>
+    >
+}
+
+extension Tagged
+where Tag == Windows.`32`.Kernel.Pipe,
+      Underlying == Pair<Windows.`32`.Kernel.Descriptor, Windows.`32`.Kernel.Descriptor>
+{
+    /// The read end of the pipe.
+    public var read: Windows.`32`.Kernel.Descriptor {
+        @inlinable _read { yield underlying.first }
     }
 
-    /// Creates an anonymous pipe.
+    /// The write end of the pipe.
+    public var write: Windows.`32`.Kernel.Descriptor {
+        @inlinable _read { yield underlying.second }
+    }
+
+    /// Creates pipe descriptors from read and write ends.
+    @inlinable
+    internal init(
+        read: consuming Windows.`32`.Kernel.Descriptor,
+        write: consuming Windows.`32`.Kernel.Descriptor
+    ) {
+        self.init(_unchecked: Pair(read, write))
+    }
+}
+
+// MARK: - CreatePipe wrapper
+
+extension Windows.`32`.Kernel.Pipe {
+    /// Creates an anonymous pipe via Win32 `CreatePipe`.
     ///
-    /// - Parameter bufferSize: Suggested buffer size (0 for default).
-    /// - Returns: A pair of descriptors (read, write).
-    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
-    public static func create(
-        bufferSize: UInt32 = 0
-    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Pair {
+    /// Both handles are created as INHERITABLE by default so the pipe ends
+    /// can be passed across a `CreateProcessW` call for child-process
+    /// stdio redirection. Callers that want to keep specific ends out of
+    /// child processes SHOULD strip inheritance via `SetHandleInformation`
+    /// on a per-end basis, OR use ``Process/Spawn/Configuration`` which
+    /// applies the precise inheritance discipline via
+    /// `PROC_THREAD_ATTRIBUTE_HANDLE_LIST`.
+    ///
+    /// - Returns: A ``Descriptors`` value bundling the read and write ends.
+    /// - Throws: ``Error`` on `CreatePipe` failure.
+    public static func pipe() throws(Error) -> Descriptors {
+        #if os(Windows)
         var readHandle: HANDLE? = nil
         var writeHandle: HANDLE? = nil
 
-        guard CreatePipe(&readHandle, &writeHandle, nil, bufferSize) else {
-            throw .current()
+        // CreatePipe with inheritable SECURITY_ATTRIBUTES; bufferSize 0
+        // selects the system default.
+        var security = SECURITY_ATTRIBUTES()
+        security.nLength = DWORD(MemoryLayout<SECURITY_ATTRIBUTES>.size)
+        security.bInheritHandle = true
+        security.lpSecurityDescriptor = nil
+
+        guard unsafe CreatePipe(&readHandle, &writeHandle, &security, 0) else {
+            throw Error.current()
         }
 
         guard let read = readHandle, let write = writeHandle else {
-            throw .current()
+            throw Error.current()
         }
 
-        return Pair(
-            read: Windows.`32`.Kernel.Descriptor.borrowing(handle: read),
-            write: Windows.`32`.Kernel.Descriptor.borrowing(handle: write)
+        return Descriptors(
+            read: Windows.`32`.Kernel.Descriptor(_raw: UInt(bitPattern: read)),
+            write: Windows.`32`.Kernel.Descriptor(_raw: UInt(bitPattern: write))
         )
-    }
-
-    /// Creates an anonymous pipe with inheritable handles.
-    ///
-    /// Used when creating pipes for child process I/O redirection.
-    ///
-    /// - Parameters:
-    ///   - bufferSize: Suggested buffer size (0 for default).
-    ///   - inheritRead: Whether the read handle should be inheritable.
-    ///   - inheritWrite: Whether the write handle should be inheritable.
-    /// - Returns: A pair of descriptors (read, write).
-    /// - Throws: `Windows.`32`.Kernel.Pipe.Error` on failure.
-    public static func create(
-        bufferSize: UInt32 = 0,
-        inheritRead: Bool,
-        inheritWrite: Bool
-    ) throws(Windows.`32`.Kernel.Pipe.Error) -> Pair {
-        var securityAttributes = SECURITY_ATTRIBUTES()
-        securityAttributes.nLength = DWORD(MemoryLayout<SECURITY_ATTRIBUTES>.size)
-        securityAttributes.bInheritHandle = true
-        securityAttributes.lpSecurityDescriptor = nil
-
-        var readHandle: HANDLE? = nil
-        var writeHandle: HANDLE? = nil
-
-        guard CreatePipe(&readHandle, &writeHandle, &securityAttributes, bufferSize) else {
-            throw .current()
-        }
-
-        guard var read = readHandle, var write = writeHandle else {
-            throw .current()
-        }
-
-        // Make handles non-inheritable as requested
-        if !inheritRead {
-            let success = SetHandleInformation(read, DWORD(HANDLE_FLAG_INHERIT), 0)
-            if !success {
-                _ = CloseHandle(read)
-                _ = CloseHandle(write)
-                throw .current()
-            }
-        }
-
-        if !inheritWrite {
-            let success = SetHandleInformation(write, DWORD(HANDLE_FLAG_INHERIT), 0)
-            if !success {
-                _ = CloseHandle(read)
-                _ = CloseHandle(write)
-                throw .current()
-            }
-        }
-
-        return Pair(
-            read: Windows.`32`.Kernel.Descriptor.borrowing(handle: read),
-            write: Windows.`32`.Kernel.Descriptor.borrowing(handle: write)
-        )
+        #else
+        // Non-Windows builds: this code path is unreachable at runtime but
+        // the symbol must exist for cross-platform builds to link cleanly.
+        throw Error.platform(Error_Primitives.Error(code: .win32(0)))
+        #endif
     }
 }
 
@@ -111,8 +110,10 @@ extension Windows.`32`.Kernel.Pipe.Error {
     /// Creates an error from the current Win32 last error.
     @usableFromInline
     internal static func current() -> Self {
-        Self(code: Error_Primitives.Error.captureLastError())
+        #if os(Windows)
+        return Self(code: Error_Primitives.Error.captureLastError())
+        #else
+        return .platform(Error_Primitives.Error(code: .win32(0)))
+        #endif
     }
 }
-
-#endif

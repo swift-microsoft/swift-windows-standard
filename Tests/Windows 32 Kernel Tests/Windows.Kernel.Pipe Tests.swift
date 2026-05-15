@@ -1,8 +1,8 @@
 // ===----------------------------------------------------------------------===//
 //
-// This source file is part of the swift-windows open source project
+// This source file is part of the swift-windows-32 open source project
 //
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
+// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-windows-32 project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE for license information
@@ -38,8 +38,8 @@ extension Windows.`32`.Kernel.Pipe.Test.Unit {
     }
 
     @Test
-    func `Pipe.Pair type exists`() {
-        _ = Windows.`32`.Kernel.Pipe.Pair.self
+    func `Pipe.Descriptors type exists`() {
+        _ = Windows.`32`.Kernel.Pipe.Descriptors.self
     }
 }
 
@@ -47,85 +47,11 @@ extension Windows.`32`.Kernel.Pipe.Test.Unit {
 
 extension Windows.`32`.Kernel.Pipe.Test.Unit {
     @Test
-    func `create returns valid pair`() throws {
-        let pair = try Windows.`32`.Kernel.Pipe.create()
+    func `pipe() returns valid Descriptors`() throws {
+        let descriptors = try Windows.`32`.Kernel.Pipe.pipe()
 
-        #expect(pair.read.isValid)
-        #expect(pair.write.isValid)
-        #expect(pair.read.rawValue != pair.write.rawValue)
-
-        // Clean up
-        try? Kernel.Close.close(pair.read)
-        try? Kernel.Close.close(pair.write)
-    }
-
-    @Test
-    func `create with buffer size`() throws {
-        let pair = try Windows.`32`.Kernel.Pipe.create(bufferSize: 4096)
-
-        #expect(pair.read.isValid)
-        #expect(pair.write.isValid)
-
-        // Clean up
-        try? Kernel.Close.close(pair.read)
-        try? Kernel.Close.close(pair.write)
-    }
-
-    @Test
-    func `create with inheritance flags`() throws {
-        let pair = try Windows.`32`.Kernel.Pipe.create(
-            bufferSize: 0,
-            inheritRead: true,
-            inheritWrite: false
-        )
-
-        #expect(pair.read.isValid)
-        #expect(pair.write.isValid)
-
-        // Clean up
-        try? Kernel.Close.close(pair.read)
-        try? Kernel.Close.close(pair.write)
-    }
-
-    @Test
-    func `create multiple pipes are independent`() throws {
-        let pair1 = try Windows.`32`.Kernel.Pipe.create()
-        let pair2 = try Windows.`32`.Kernel.Pipe.create()
-
-        #expect(pair1.read.rawValue != pair2.read.rawValue)
-        #expect(pair1.write.rawValue != pair2.write.rawValue)
-
-        // Clean up
-        try? Kernel.Close.close(pair1.read)
-        try? Kernel.Close.close(pair1.write)
-        try? Kernel.Close.close(pair2.read)
-        try? Kernel.Close.close(pair2.write)
-    }
-}
-
-// MARK: - Pair Properties Tests
-
-extension Windows.`32`.Kernel.Pipe.Test.Unit {
-    @Test
-    func `Pair.read is accessible`() throws {
-        let pair = try Windows.`32`.Kernel.Pipe.create()
-        defer {
-            try? Kernel.Close.close(pair.read)
-            try? Kernel.Close.close(pair.write)
-        }
-
-        #expect(pair.read.isValid)
-    }
-
-    @Test
-    func `Pair.write is accessible`() throws {
-        let pair = try Windows.`32`.Kernel.Pipe.create()
-        defer {
-            try? Kernel.Close.close(pair.read)
-            try? Kernel.Close.close(pair.write)
-        }
-
-        #expect(pair.write.isValid)
+        #expect(descriptors.read.isValid)
+        #expect(descriptors.write.isValid)
     }
 }
 
@@ -135,9 +61,9 @@ extension Windows.`32`.Kernel.Pipe.Test.EdgeCase {
     @Test
     func `create and close many pipes`() throws {
         for _ in 0..<100 {
-            let pair = try Windows.`32`.Kernel.Pipe.create()
-            try? Kernel.Close.close(pair.read)
-            try? Kernel.Close.close(pair.write)
+            _ = try Windows.`32`.Kernel.Pipe.pipe()
+            // descriptors deinit closes both handles via the ~Copyable
+            // Descriptor's CloseHandle path.
         }
     }
 }

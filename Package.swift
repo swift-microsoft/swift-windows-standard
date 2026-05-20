@@ -171,7 +171,7 @@ let package = Package(
                 "Windows 32 Kernel Core",
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
-                .product(name: "Binary Primitives Core", package: "swift-binary-primitives"),
+                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
                 .product(name: "Pair Primitives", package: "swift-pair-primitives"),
             ]

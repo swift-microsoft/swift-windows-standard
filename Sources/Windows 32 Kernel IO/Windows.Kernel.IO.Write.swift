@@ -204,7 +204,7 @@ extension Windows.`32`.Kernel.IO.Write {
     @inlinable
     public static func write(
         _ descriptor: Windows.`32`.Kernel.Descriptor,
-        from span: Span<UInt8>
+        from span: Swift.Span<UInt8>
     ) throws(Error) -> Int {
         try span.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) throws(Error) -> Int in
             try write(descriptor, from: buffer)
@@ -222,7 +222,7 @@ extension Windows.`32`.Kernel.IO.Write {
     @inlinable
     public static func pwrite(
         _ descriptor: Windows.`32`.Kernel.Descriptor,
-        from span: Span<UInt8>,
+        from span: Swift.Span<UInt8>,
         at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {
         try span.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) throws(Error) -> Int in

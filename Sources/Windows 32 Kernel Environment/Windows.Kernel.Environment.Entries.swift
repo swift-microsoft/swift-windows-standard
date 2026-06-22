@@ -99,7 +99,7 @@ extension Windows.`32`.Kernel.Environment.Entries {
         private var _element: Entry? = nil
 
         @_lifetime(&self)
-        public mutating func nextSpan(maximumCount: Cardinal) -> Span<Entry> {
+        public mutating func nextSpan(maximumCount: Cardinal) -> Swift.Span<Entry> {
             let ptr = unsafe withUnsafeMutablePointer(to: &_element) { p in
                 unsafe UnsafePointer<Entry>(
                     unsafe UnsafeRawPointer(p).assumingMemoryBound(to: Entry.self)

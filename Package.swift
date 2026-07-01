@@ -106,6 +106,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-dimension-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-terminal-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-pair-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-equation-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Core
@@ -126,6 +127,7 @@ let package = Package(
                 .product(name: "Error Primitives", package: "swift-error-primitives"),
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
+                .product(name: "Equation Protocol Primitives", package: "swift-equation-primitives"),
             ]
         ),
 

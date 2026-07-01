@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-import Equation_Primitives_Core
+import Equation_Protocol_Primitives
 
 extension Windows.`32`.Kernel.Descriptor: Equation.`Protocol` {
     @inlinable

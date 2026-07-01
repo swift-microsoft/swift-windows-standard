@@ -9,7 +9,7 @@
 //
 // ===----------------------------------------------------------------------===//
 
-import Hash_Primitives_Core
+import Hash_Protocol_Primitives
 
 extension Windows.`32`.Kernel.Descriptor: Hash.`Protocol` {
     @inlinable

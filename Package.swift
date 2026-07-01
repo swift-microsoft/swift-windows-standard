@@ -107,6 +107,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-terminal-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-pair-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-equation-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-hash-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Core
@@ -128,6 +129,7 @@ let package = Package(
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
                 .product(name: "Equation Protocol Primitives", package: "swift-equation-primitives"),
+                .product(name: "Hash Protocol Primitives", package: "swift-hash-primitives"),
             ]
         ),
 

@@ -136,7 +136,6 @@ let package = Package(
                 .product(name: "Equation Protocol Primitives", package: "swift-equation-primitives"),
                 .product(name: "Hash Protocol Primitives", package: "swift-hash-primitives"),
                 .product(name: "Time Primitives", package: "swift-time-primitives"),
-                .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
             ]
         ),

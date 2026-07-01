@@ -18,7 +18,6 @@
 
 #if os(Windows)
 
-public import Binary_Primitives
 public import Dimension_Primitives
 
 extension Windows.`32`.Kernel.File {

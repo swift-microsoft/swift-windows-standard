@@ -32,8 +32,11 @@ extension Windows.Identity.UUID {
     public static func parse(_ string: String) -> Bytes? {
         var winUUID = WinSDK.UUID()
         let status = string.withCString { cString in
-            // UuidFromStringA expects RPC_CSTR which is unsigned char*
-            UuidFromStringA(RPC_CSTR(mutating: cString), &winUUID)
+            // UuidFromStringA expects RPC_CSTR (unsigned char*); withCString yields
+            // UnsafePointer<CChar> (Int8), so rebind the same bytes to UInt8.
+            cString.withMemoryRebound(to: UInt8.self, capacity: string.utf8.count + 1) { rebound in
+                UuidFromStringA(RPC_CSTR(mutating: rebound), &winUUID)
+            }
         }
         guard status == RPC_S_OK else { return nil }
 

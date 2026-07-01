@@ -15,6 +15,9 @@
 #if defined(_WIN32)
 
 #include <windows.h>
+// PROCESS_MEMORY_COUNTERS_EX and GetProcessMemoryInfo are declared in <psapi.h>,
+// which must be included after <windows.h> (it depends on its types).
+#include <psapi.h>
 
 /// Memory statistics structure for Windows.
 typedef struct {

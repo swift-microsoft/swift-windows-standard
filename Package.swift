@@ -117,7 +117,11 @@ let package = Package(
         ),
         .target(
             name: "CWindowsMemoryShim",
-            dependencies: []
+            dependencies: [],
+            linkerSettings: [
+                // GetProcessMemoryInfo (Psapi) — link the import library on Windows.
+                .linkedLibrary("Psapi", .when(platforms: [.windows]))
+            ]
         ),
 
         // MARK: - Kernel Core

@@ -23,10 +23,8 @@ extension Path.Canonical.Error {
             self = .path(e)
             return
         }
-        if let e = Windows.`32`.Kernel.Permission.Error(code: code) {
-            self = .permission(e)
-            return
-        }
+        // Path.Canonical.Error has no `.permission` case (only .path / .platform);
+        // access-denied and similar Win32 codes fold into .platform.
         self = .platform(Error_Primitives.Error(code: code))
     }
 }

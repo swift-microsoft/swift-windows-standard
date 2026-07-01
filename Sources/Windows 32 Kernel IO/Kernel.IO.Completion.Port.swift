@@ -295,15 +295,14 @@
 
         /// Closes the completion port.
         ///
-        /// Typed L2 form. Delegates to the raw `close(_:)` SPI via
-        /// `descriptor._rawValue`. Fire-and-forget: errors are ignored.
+        /// Consumes the descriptor and delegates to the canonical
+        /// ``Kernel/Close/close(_:)``. Fire-and-forget: errors are ignored.
         /// Any threads blocked in `Dequeue` will receive an error on their
         /// next dequeue attempt.
         ///
-        /// - Parameter port: The port handle to close.
-        @inlinable
-        public static func close(_ port: borrowing Windows.`32`.Kernel.Descriptor) {
-            close(port._rawValue)
+        /// - Parameter port: The port handle to close (consumed).
+        public static func close(_ port: consuming Windows.`32`.Kernel.Descriptor) {
+            try? Windows.`32`.Kernel.Close.close(port)
         }
 
         /// Initiates an overlapped read operation.

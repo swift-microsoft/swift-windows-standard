@@ -238,7 +238,7 @@ private func extractFileName(from findData: inout WIN32_FIND_DATAW) -> Swift.Str
     unsafe withUnsafePointer(to: &findData.cFileName) { ptr in
         unsafe ptr.withMemoryRebound(to: WCHAR.self, capacity: 260) { wcharPtr in
             var length = 0
-            while length < 260 && unsafe wcharPtr[length] != 0 {
+            while length < 260, unsafe wcharPtr[length] != 0 {
                 length += 1
             }
             let buffer = unsafe UnsafeBufferPointer(start: wcharPtr, count: length)

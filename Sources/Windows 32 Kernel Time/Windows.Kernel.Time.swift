@@ -55,7 +55,7 @@ extension Windows.`32`.Kernel.Time {
         let intervals = systemTimeRaw()
         let sinceUnix = intervals - windowsEpochDiff
         return Windows.`32`.Kernel.Time(
-            __unchecked: (),
+            _unchecked: (),
             secondsSinceUnixEpoch: Int64(sinceUnix / 10_000_000),
             nanosecondFraction: Int32(sinceUnix % 10_000_000) * 100
         )

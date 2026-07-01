@@ -21,7 +21,7 @@ extension System {
     /// longer paths (up to 32,767 characters with \\?\ prefix).
     /// Returns the legacy limit for compatibility.
     public static var pathMax: System.Path.Length {
-        System.Path.Length(__unchecked: (), Cardinal(UInt(260)))  // MAX_PATH
+        System.Path.Length(_unchecked: Cardinal(UInt(260)))  // MAX_PATH
     }
 
     /// Memory page size in bytes.
@@ -31,7 +31,7 @@ extension System {
     public static var pageSize: System.Page.Size {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
-        return System.Page.Size(__unchecked: (), Cardinal(UInt(sysInfo.dwPageSize)))
+        return System.Page.Size(_unchecked: Cardinal(UInt(sysInfo.dwPageSize)))
     }
 
     /// Number of active/online processors.
@@ -40,7 +40,7 @@ extension System {
     public static var processorCount: System.Processor.Count {
         var sysInfo = SYSTEM_INFO()
         GetSystemInfo(&sysInfo)
-        return System.Processor.Count(__unchecked: (), Cardinal(UInt(sysInfo.dwNumberOfProcessors)))
+        return System.Processor.Count(_unchecked: Cardinal(UInt(sysInfo.dwNumberOfProcessors)))
     }
 
     /// Sleeps for the specified duration.

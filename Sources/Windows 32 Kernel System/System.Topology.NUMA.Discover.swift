@@ -78,7 +78,7 @@ extension System.Topology.NUMA {
     private static func getCPUsForNode(_ nodeNumber: UCHAR) -> Set<Int>? {
         var groupAffinity = GROUP_AFFINITY()
 
-        guard GetNumaNodeProcessorMaskEx(nodeNumber, &groupAffinity) else {
+        guard GetNumaNodeProcessorMaskEx(USHORT(nodeNumber), &groupAffinity) else {
             var mask: ULONGLONG = 0
             guard GetNumaNodeProcessorMask(nodeNumber, &mask) else {
                 return nil

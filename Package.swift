@@ -95,6 +95,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/swift-primitives/swift-memory-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-clock-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-time-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-loader-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-sequence-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-standard-library-extensions.git", branch: "main"),
@@ -130,6 +131,7 @@ let package = Package(
                 .product(name: "Path Primitives", package: "swift-path-primitives"),
                 .product(name: "Equation Protocol Primitives", package: "swift-equation-primitives"),
                 .product(name: "Hash Protocol Primitives", package: "swift-hash-primitives"),
+                .product(name: "Time Primitives", package: "swift-time-primitives"),
             ]
         ),
 

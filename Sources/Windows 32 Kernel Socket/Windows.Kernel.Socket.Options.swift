@@ -28,13 +28,13 @@ extension Windows.`32`.Kernel.Socket {
         public static let socket = OptionLevel(rawValue: SOL_SOCKET)
 
         /// TCP-level options.
-        public static let tcp = OptionLevel(rawValue: IPPROTO_TCP)
+        public static let tcp = OptionLevel(rawValue: IPPROTO_TCP.rawValue)
 
         /// IPv4-level options.
         public static let ipv4 = OptionLevel(rawValue: IPPROTO_IP)
 
         /// IPv6-level options.
-        public static let ipv6 = OptionLevel(rawValue: IPPROTO_IPV6)
+        public static let ipv6 = OptionLevel(rawValue: IPPROTO_IPV6.rawValue)
     }
 
     /// Socket option name.

@@ -99,7 +99,7 @@ extension Windows.`32`.Kernel.Thread.Mutex {
         ///
         /// - Throws: `Error.contention` if the mutex is held by another thread.
         public func immediate() throws(Error) {
-            guard TryAcquireSRWLockExclusive(&mutex.srwlock) else {
+            guard TryAcquireSRWLockExclusive(&mutex.srwlock) != 0 else {
                 throw .contention
             }
         }

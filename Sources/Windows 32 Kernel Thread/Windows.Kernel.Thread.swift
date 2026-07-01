@@ -70,7 +70,7 @@ extension Windows.`32`.Kernel.Thread {
         guard let handle else {
             context.deinitialize(count: 1)
             context.deallocate()
-            throw .create(Error_Primitives.Error.captureLastError())
+            throw .create(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }
 
         return Windows.`32`.Kernel.Thread.Handle(_handle: handle)

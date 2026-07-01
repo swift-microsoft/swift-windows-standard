@@ -89,12 +89,15 @@ extension Path.Canonical {
         }
 
         var buffer = [UInt16](repeating: 0, count: Int(requiredSize))
-        let result = try buffer.withUnsafeMutableBufferPointer { bufferPtr in
-            try resolve(unsafePath: unsafePath, into: bufferPtr)
+        // Call GetFullPathNameW directly: routing through resolve(unsafePath:into:)
+        // inside withUnsafeMutableBufferPointer erases the typed throw to any Error.
+        let written = GetFullPathNameW(wpath, requiredSize, &buffer, nil)
+        guard written > 0, written < requiredSize else {
+            throw .current()
         }
 
         // Trim to actual length (excluding null terminator)
-        return Array(buffer.prefix(result))
+        return Array(buffer.prefix(Int(written)))
     }
 }
 

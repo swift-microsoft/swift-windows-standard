@@ -266,7 +266,6 @@ extension Windows.`32`.Kernel.Console {
     ///
     /// - Parameter handle: The console output handle.
     /// - Returns: Screen buffer info, or `nil` on failure.
-    @inlinable
     public static func getScreenBufferInfo(_ handle: HANDLE) -> ScreenBufferInfo? {
         var info = CONSOLE_SCREEN_BUFFER_INFO()
         guard GetConsoleScreenBufferInfo(handle, &info) else { return nil }

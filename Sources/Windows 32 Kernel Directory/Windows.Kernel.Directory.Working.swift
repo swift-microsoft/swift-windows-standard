@@ -50,12 +50,15 @@ extension Windows.`32`.Kernel.Directory.Working {
         }
 
         var buffer = [UInt16](repeating: 0, count: Int(requiredSize))
-        let result = try buffer.withUnsafeMutableBufferPointer { bufferPtr in
-            try get(into: bufferPtr)
+        // Call GetCurrentDirectoryW directly: routing through get(into:) inside
+        // withUnsafeMutableBufferPointer erases the typed throw to any Error.
+        let written = GetCurrentDirectoryW(requiredSize, &buffer)
+        guard written > 0, written < requiredSize else {
+            throw .current()
         }
 
         // Trim to actual length (excluding null terminator)
-        return Array(buffer.prefix(result))
+        return Array(buffer.prefix(Int(written)))
     }
 
     /// Sets the current working directory.

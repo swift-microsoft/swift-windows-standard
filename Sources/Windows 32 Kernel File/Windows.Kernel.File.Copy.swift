@@ -100,7 +100,7 @@ extension Windows.`32`.Kernel.File.Copy {
 
         // CopyFileW: bFailIfExists = true means fail if destination exists
         // So we pass !overwrite
-        let failIfExists: WindowsBool = overwrite ? false : true
+        let failIfExists = !overwrite
 
         guard CopyFileW(wSource, wDest, failIfExists) else {
             throw Error.current()

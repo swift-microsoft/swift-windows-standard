@@ -99,19 +99,18 @@ extension Windows.`32`.Kernel.Directory.Iterator {
         patternLength += 1
         pattern[patternLength] = 0  // null terminator
 
-        return try pattern.withUnsafeBufferPointer { patternBuffer in
+        var findData = WIN32_FIND_DATAW()
+        let handle = pattern.withUnsafeBufferPointer { patternBuffer in
             let wpath = UnsafeRawPointer(patternBuffer.baseAddress!).assumingMemoryBound(to: WCHAR.self)
-
-            var findData = WIN32_FIND_DATAW()
-            let handle = FindFirstFileW(wpath, &findData)
-
-            guard handle != INVALID_HANDLE_VALUE else {
-                let error = GetLastError()
-                throw Windows.`32`.Kernel.Directory.Error(_windowsError: error)
-            }
-
-            return Self(handle: handle, findData: findData)
+            return FindFirstFileW(wpath, &findData)
         }
+
+        guard let handle, handle != INVALID_HANDLE_VALUE else {
+            let error = GetLastError()
+            throw Windows.`32`.Kernel.Directory.Error(_windowsError: error)
+        }
+
+        return Self(handle: handle, findData: findData)
     }
 
     /// Returns the next directory entry, or `nil` if iteration is complete.

@@ -265,7 +265,7 @@ extension Instant {
         let seconds = unixIntervals / 10_000_000
         let nanoseconds = Int32((unixIntervals % 10_000_000) * 100)
         self.init(
-            __unchecked: (),
+            _unchecked: (),
             secondsSinceUnixEpoch: seconds,
             nanosecondFraction: nanoseconds
         )

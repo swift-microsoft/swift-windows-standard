@@ -15,8 +15,7 @@
 
 extension Windows.`32`.Kernel.Directory.Working.Error {
     /// Creates an error from a Windows error code.
-    @usableFromInline
-    internal init(code: Error_Primitives.Error.Code) {
+    package init(code: Error_Primitives.Error.Code) {
         if let e = Path.Resolution.Error(code: code) {
             self = .path(e)
             return

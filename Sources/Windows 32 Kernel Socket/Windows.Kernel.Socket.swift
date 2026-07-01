@@ -1,8 +1,8 @@
 // ===----------------------------------------------------------------------===//
 //
-// This source file is part of the swift-windows open source project
+// This source file is part of the swift-windows-standard open source project
 //
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
+// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-windows-standard project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE for license information
@@ -89,7 +89,7 @@ extension Windows.`32`.Kernel.Socket {
     }
 
     /// Socket protocol.
-    public struct Protocol: RawRepresentable, Sendable, Equatable {
+    public struct `Protocol`: RawRepresentable, Sendable, Equatable {
         public let rawValue: Int32
 
         public init(rawValue: Int32) {
@@ -97,13 +97,13 @@ extension Windows.`32`.Kernel.Socket {
         }
 
         /// TCP protocol.
-        public static let tcp = Protocol(rawValue: IPPROTO_TCP)
+        public static let tcp = `Protocol`(rawValue: IPPROTO_TCP.rawValue)
 
         /// UDP protocol.
-        public static let udp = Protocol(rawValue: IPPROTO_UDP)
+        public static let udp = `Protocol`(rawValue: IPPROTO_UDP.rawValue)
 
         /// Default protocol (let system choose).
-        public static let `default` = Protocol(rawValue: 0)
+        public static let `default` = `Protocol`(rawValue: 0)
     }
 
     /// Creates a socket.
@@ -117,7 +117,7 @@ extension Windows.`32`.Kernel.Socket {
     public static func create(
         family: Family,
         type: SocketType,
-        protocol: Protocol = .default
+        protocol: `Protocol` = .default
     ) throws(Error) -> Windows.`32`.Kernel.Socket.Descriptor {
         let sock = socket(family.rawValue, type.rawValue, `protocol`.rawValue)
         guard sock != INVALID_SOCKET else {

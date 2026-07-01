@@ -14,16 +14,6 @@ public import Error_Primitives
 public import Memory_Primitives
 public import WinSDK
 
-// MARK: - Windows Shared Memory
-
-extension Memory {
-    /// Namespace for shared memory operations.
-    ///
-    /// Windows shared memory is implemented using named file mappings backed
-    /// by the system paging file. This is the equivalent of POSIX `shm_open`.
-    public enum Shared {}
-}
-
 // MARK: - Create/Open Shared Memory
 
 extension Memory.Shared {
@@ -37,26 +27,26 @@ extension Memory.Shared {
     ///   - size: The size of the shared memory region in bytes.
     ///   - protection: Memory protection flags.
     /// - Returns: Handle to the file mapping object.
-    /// - Throws: `Memory.Error` on failure.
+    /// - Throws: `Memory.Shared.Error` on failure.
     public static func create(
         name: UnsafePointer<WCHAR>,
         size: UInt64,
         protection: Memory.Map.Protection = .readWrite
-    ) throws(Memory.Error) -> HANDLE {
+    ) throws(Memory.Shared.Error) -> HANDLE {
         let sizeHigh = DWORD(size >> 32)
         let sizeLow = DWORD(size & 0xFFFFFFFF)
 
         let handle = CreateFileMappingW(
             INVALID_HANDLE_VALUE,  // Use paging file
             nil,                    // Default security
-            protection.rawValue,
+            protection.windowsFileMapProtect,
             sizeHigh,
             sizeLow,
             name
         )
 
         guard let handle, handle != INVALID_HANDLE_VALUE else {
-            throw .map(.create(Error_Primitives.Error.captureLastError()))
+            throw .open(Error_Primitives.Error.captureLastError())
         }
 
         return handle
@@ -68,11 +58,12 @@ extension Memory.Shared {
     ///   - name: The name of the shared memory object.
     ///   - access: Desired access (FILE_MAP_READ, FILE_MAP_WRITE, FILE_MAP_ALL_ACCESS).
     /// - Returns: Handle to the file mapping object.
-    /// - Throws: `Memory.Error` on failure.
+    /// - Throws: `Memory.Shared.Error` on failure.
     public static func open(
         name: UnsafePointer<WCHAR>,
-        access: DWORD = DWORD(FILE_MAP_ALL_ACCESS)
-    ) throws(Memory.Error) -> HANDLE {
+        // FILE_MAP_ALL_ACCESS is a compound macro not importable by Swift; value = SECTION_ALL_ACCESS = 0xF001F
+        access: DWORD = 0xF001F
+    ) throws(Memory.Shared.Error) -> HANDLE {
         let handle = OpenFileMappingW(
             access,
             false,  // Don't inherit handle
@@ -80,7 +71,7 @@ extension Memory.Shared {
         )
 
         guard let handle, handle != INVALID_HANDLE_VALUE else {
-            throw .map(.open(Error_Primitives.Error.captureLastError()))
+            throw .open(Error_Primitives.Error.captureLastError())
         }
 
         return handle
@@ -106,13 +97,14 @@ extension Memory.Shared {
     ///   - offset: Offset into the shared memory to start the view.
     ///   - size: Size of the view (0 for entire mapping from offset).
     /// - Returns: Pointer to the mapped view.
-    /// - Throws: `Memory.Error` on failure.
+    /// - Throws: `Memory.Shared.Error` on failure.
     public static func map(
         _ handle: HANDLE,
-        access: DWORD = DWORD(FILE_MAP_ALL_ACCESS),
+        // FILE_MAP_ALL_ACCESS is a compound macro not importable by Swift; value = SECTION_ALL_ACCESS = 0xF001F
+        access: DWORD = 0xF001F,
         offset: UInt64 = 0,
         size: Int = 0
-    ) throws(Memory.Error) -> UnsafeMutableRawPointer {
+    ) throws(Memory.Shared.Error) -> UnsafeMutableRawPointer {
         let offsetHigh = DWORD(offset >> 32)
         let offsetLow = DWORD(offset & 0xFFFFFFFF)
 
@@ -123,7 +115,7 @@ extension Memory.Shared {
             offsetLow,
             SIZE_T(size)
         ) else {
-            throw .map(.mapView(Error_Primitives.Error.captureLastError()))
+            throw .open(Error_Primitives.Error.captureLastError())
         }
 
         return ptr
@@ -161,32 +153,14 @@ extension Memory.Shared {
         public static let readWrite: Access = [.read, .write]
 
         /// All access (read, write, copy).
-        public static let all = Access(rawValue: UInt32(FILE_MAP_ALL_ACCESS))
+        // FILE_MAP_ALL_ACCESS is a compound macro not importable by Swift; value = SECTION_ALL_ACCESS = 0xF001F
+        public static let all = Access(rawValue: 0xF001F)
 
         /// Copy-on-write access.
         public static let copy = Access(rawValue: UInt32(FILE_MAP_COPY))
 
         /// Execute access (requires PAGE_EXECUTE_* protection).
         public static let execute = Access(rawValue: UInt32(FILE_MAP_EXECUTE))
-    }
-}
-
-// MARK: - Error Extension
-
-extension Memory.Map.Error {
-    /// Error from file mapping creation.
-    static func create(_ code: Error_Primitives.Error.Code) -> Self {
-        Self(code: code)
-    }
-
-    /// Error from opening existing file mapping.
-    static func open(_ code: Error_Primitives.Error.Code) -> Self {
-        Self(code: code)
-    }
-
-    /// Error from mapping a view.
-    static func mapView(_ code: Error_Primitives.Error.Code) -> Self {
-        Self(code: code)
     }
 }
 

@@ -61,13 +61,4 @@ extension Memory.Map {
     }
 }
 
-// MARK: - Sync Error Extension
-
-extension Memory.Map.Error {
-    /// Creates an error from a sync failure.
-    static func sync(_ code: Error_Primitives.Error.Code) -> Self {
-        Self(code: code)
-    }
-}
-
 #endif

@@ -16,7 +16,7 @@ public import WinSDK
 
 // MARK: - Windows Memory Map Flags
 
-extension Memory.Map.Flags {
+extension Memory.Map.Options {
     /// Shares modifications with other processes mapping the same file.
     ///
     /// On Windows, this is the default behavior for file mappings.
@@ -35,7 +35,7 @@ extension Memory.Map.Flags {
 
 // MARK: - Windows Flags Queries
 
-extension Memory.Map.Flags {
+extension Memory.Map.Options {
     /// Returns true if this is an anonymous (no file) mapping.
     @usableFromInline
     internal var isAnonymous: Bool {

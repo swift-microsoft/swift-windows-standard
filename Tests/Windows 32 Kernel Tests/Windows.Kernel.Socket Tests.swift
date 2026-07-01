@@ -149,19 +149,19 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
 extension Windows.`32`.Kernel.Socket.Test.Unit {
     @Test
     func `Protocol.tcp exists`() {
-        let proto = Windows.`32`.Kernel.Socket.Protocol.tcp
-        #expect(proto.rawValue == IPPROTO_TCP)
+        let proto = Windows.`32`.Kernel.Socket.`Protocol`.tcp
+        #expect(proto.rawValue == IPPROTO_TCP.rawValue)
     }
 
     @Test
     func `Protocol.udp exists`() {
-        let proto = Windows.`32`.Kernel.Socket.Protocol.udp
-        #expect(proto.rawValue == IPPROTO_UDP)
+        let proto = Windows.`32`.Kernel.Socket.`Protocol`.udp
+        #expect(proto.rawValue == IPPROTO_UDP.rawValue)
     }
 
     @Test
     func `Protocol.default exists`() {
-        let proto = Windows.`32`.Kernel.Socket.Protocol.default
+        let proto = Windows.`32`.Kernel.Socket.`Protocol`.default
         #expect(proto.rawValue == 0)
     }
 }

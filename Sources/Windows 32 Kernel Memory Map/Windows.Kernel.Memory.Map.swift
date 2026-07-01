@@ -38,12 +38,12 @@ extension Memory.Map {
     /// - Throws: `Error.map` on failure.
         package static func map(
         fd handle: UInt,
-        length: Windows.`32`.Kernel.File.Size,
+        length: Memory.Address.Count,
         protection: Protection,
-        flags: Flags,
+        flags: Options,
         offset: Windows.`32`.Kernel.File.Offset = .zero
     ) throws(Memory.Map.Error) -> Memory.Address {
-        guard length.isPositive else {
+        guard length.underlying.rawValue > 0 else {
             throw .invalid(.length)
         }
 
@@ -53,8 +53,8 @@ extension Memory.Map {
             UnsafeMutableRawPointer(bitPattern: handle)!,
             nil,
             fileMappingProtect,
-            DWORD((offset.rawValue + length.rawValue) >> 32),
-            DWORD((offset.rawValue + length.rawValue) & 0xFFFFFFFF),
+            DWORD((offset.underlying + Int64(length.underlying.rawValue)) >> 32),
+            DWORD((offset.underlying + Int64(length.underlying.rawValue)) & 0xFFFFFFFF),
             nil
         )
 
@@ -67,9 +67,9 @@ extension Memory.Map {
         let baseAddress = MapViewOfFile(
             mappingHandle,
             desiredAccess,
-            DWORD(offset.rawValue >> 32),
-            DWORD(offset.rawValue & 0xFFFFFFFF),
-            SIZE_T(length.rawValue)
+            DWORD(offset.underlying >> 32),
+            DWORD(offset.underlying & 0xFFFFFFFF),
+            SIZE_T(length.underlying.rawValue)
         )
 
         // Close the mapping handle - the view keeps it alive
@@ -97,9 +97,9 @@ extension Memory.Map {
     /// - Throws: `Error.map` on failure.
     public static func map(
         fd: Windows.`32`.Kernel.Descriptor,
-        length: Windows.`32`.Kernel.File.Size,
+        length: Memory.Address.Count,
         protection: Protection,
-        flags: Flags,
+        flags: Options,
         offset: Windows.`32`.Kernel.File.Offset = .zero
     ) throws(Memory.Map.Error) -> Memory.Address {
         try map(
@@ -123,17 +123,17 @@ extension Memory.Map {
     /// - Throws: `Error.map` on failure.
     public static func mapAnonymous(
         addr: Memory.Address? = nil,
-        length: Windows.`32`.Kernel.File.Size,
+        length: Memory.Address.Count,
         protection: Protection
     ) throws(Memory.Map.Error) -> Memory.Address {
-        guard length.isPositive else {
+        guard length.underlying.rawValue > 0 else {
             throw .invalid(.length)
         }
 
         let allocationType = DWORD(MEM_COMMIT | MEM_RESERVE)
         let result = unsafe VirtualAlloc(
             addr?.mutablePointer,
-            SIZE_T(length.rawValue),
+            SIZE_T(length.underlying.rawValue),
             allocationType,
             protection.windowsVirtualProtect
         )
@@ -154,7 +154,7 @@ extension Memory.Map {
     /// - Throws: `Error.unmap` on failure.
     public static func unmap(
         addr: Memory.Address,
-        length: Windows.`32`.Kernel.File.Size,
+        length: Memory.Address.Count,
         isAnonymous: Bool = false
     ) throws(Memory.Map.Error) {
         let success: Bool
@@ -177,9 +177,9 @@ extension Memory.Map {
     /// - Throws: `Error.sync` on failure.
     public static func sync(
         addr: Memory.Address,
-        length: Windows.`32`.Kernel.File.Size
+        length: Memory.Address.Count
     ) throws(Memory.Map.Error) {
-        guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.rawValue)) else {
+        guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.underlying.rawValue)) else {
             throw .sync(Error_Primitives.Error.captureLastError())
         }
     }
@@ -193,13 +193,13 @@ extension Memory.Map {
     /// - Throws: `Error.protect` on failure.
     public static func protect(
         addr: Memory.Address,
-        length: Windows.`32`.Kernel.File.Size,
+        length: Memory.Address.Count,
         protection: Protection
     ) throws(Memory.Map.Error) {
         var oldProtect: DWORD = 0
         guard unsafe VirtualProtect(
             addr.mutablePointer,
-            SIZE_T(length.rawValue),
+            SIZE_T(length.underlying.rawValue),
             protection.windowsVirtualProtect,
             &oldProtect
         ) else {

@@ -94,6 +94,10 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swift-primitives/swift-memory-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-memory-map-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-memory-lock-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-memory-shared-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-memory-allocation-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-clock-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-time-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-loader-primitives.git", branch: "main"),
@@ -207,6 +211,10 @@ let package = Package(
             dependencies: [
                 "Windows 32 Kernel Core",
                 .product(name: "Memory Primitives", package: "swift-memory-primitives"),
+                .product(name: "Memory Map Primitives", package: "swift-memory-map-primitives"),
+                .product(name: "Memory Lock Primitives", package: "swift-memory-lock-primitives"),
+                .product(name: "Memory Shared Primitives", package: "swift-memory-shared-primitives"),
+                .product(name: "Memory Allocation Primitives", package: "swift-memory-allocation-primitives"),
             ]
         ),
 

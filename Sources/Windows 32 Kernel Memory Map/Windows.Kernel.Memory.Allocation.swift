@@ -13,7 +13,6 @@
 public import Error_Primitives
 public import Memory_Primitives
 public import WinSDK
-public import Binary_Primitives
 
 // MARK: - Windows Virtual Memory Allocation
 
@@ -30,9 +29,9 @@ extension Memory.Allocation {
         addr: Memory.Address? = nil,
         size: Int,
         protection: Memory.Map.Protection
-    ) throws(Error) -> Memory.Address {
+    ) throws(Memory.Map.Error) -> Memory.Address {
         guard size > 0 else {
-            throw .invalidSize
+            throw .invalid(.length)
         }
 
         let result = unsafe VirtualAlloc(
@@ -43,7 +42,7 @@ extension Memory.Allocation {
         )
 
         guard let result else {
-            throw .current()
+            throw .map(Error_Primitives.Error.captureLastError())
         }
 
         return unsafe Memory.Address(result)
@@ -55,9 +54,9 @@ extension Memory.Allocation {
     /// - Throws: `Memory.Allocation.Error` on failure.
     public static func free(
         addr: Memory.Address
-    ) throws(Error) {
+    ) throws(Memory.Map.Error) {
         guard unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE)) else {
-            throw .free(Error_Primitives.Error.captureLastError())
+            throw .unmap(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -75,7 +74,7 @@ extension Memory.Allocation {
         size: Int,
         alignment: Int,
         protection: Memory.Map.Protection
-    ) throws(Error) -> Memory.Address {
+    ) throws(Memory.Map.Error) -> Memory.Address {
         // Windows VirtualAlloc returns page-aligned memory
         // For larger alignments, we need to allocate extra and align manually
         let pageSize = Int(systemPageSize())
@@ -102,7 +101,7 @@ extension Memory.Allocation {
         // would use VirtualAlloc with MEM_RESERVE, then MEM_COMMIT
         // at the aligned address.
         try? free(addr: baseAddr)
-        throw .alignmentNotSupported
+        throw .invalid(.alignment)
     }
 
     /// Returns the system page size.
@@ -124,38 +123,6 @@ extension Memory.Allocation {
         let granularity = Int(sysInfo.dwAllocationGranularity)
         // Safe: allocation granularity is always a power of 2
         return Memory.Allocation.Granularity(try! Memory.Alignment(granularity))
-    }
-}
-
-// MARK: - Error Type
-
-extension Memory.Allocation {
-    /// Errors from memory allocation operations.
-    public enum Error: Swift.Error, Sendable, Equatable {
-        /// Invalid size requested.
-        case invalidSize
-
-        /// Alignment not supported.
-        case alignmentNotSupported
-
-        /// Allocation failed with platform error.
-        case allocate(Error_Primitives.Error.Code)
-
-        /// Free failed with platform error.
-        case free(Error_Primitives.Error.Code)
-
-        /// Platform error.
-        case platform(Error_Primitives.Error)
-    }
-}
-
-// MARK: - Error Construction
-
-extension Memory.Allocation.Error {
-    /// Creates an error from the current Win32 last error.
-    @usableFromInline
-    internal static func current() -> Self {
-        .allocate(Error_Primitives.Error.captureLastError())
     }
 }
 

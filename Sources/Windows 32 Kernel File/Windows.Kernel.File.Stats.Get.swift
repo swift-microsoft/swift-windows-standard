@@ -1,8 +1,8 @@
 // ===----------------------------------------------------------------------===//
 //
-// This source file is part of the swift-windows open source project
+// This source file is part of the swift-windows-standard open source project
 //
-// Copyright (c) 2024-2025 Coen ten Thije Boonkkamp and the swift-windows project authors
+// Copyright (c) 2024-2026 Coen ten Thije Boonkkamp and the swift-windows-standard project authors
 // Licensed under Apache License v2.0
 //
 // See LICENSE for license information
@@ -12,85 +12,51 @@
 #if os(Windows)
 public import WinSDK
 
-// MARK: - Windows File Stats
-
-extension Windows.`32`.Kernel.File {
-    /// File information retrieved from Windows.
-    public struct Stats: Sendable {
-        /// File attributes (readonly, hidden, system, directory, archive, etc.).
-        public let attributes: DWORD
-
-        /// Creation time as FILETIME.
-        public let creationTime: FILETIME
-
-        /// Last access time as FILETIME.
-        public let lastAccessTime: FILETIME
-
-        /// Last write time as FILETIME.
-        public let lastWriteTime: FILETIME
-
-        /// Volume serial number.
-        public let volumeSerialNumber: DWORD
-
-        /// File size in bytes.
-        public let size: UInt64
-
-        /// Number of hard links.
-        public let numberOfLinks: DWORD
-
-        /// File index (unique identifier on the volume).
-        public let fileIndex: UInt64
-
-        init(_ info: BY_HANDLE_FILE_INFORMATION) {
-            self.attributes = info.dwFileAttributes
-            self.creationTime = info.ftCreationTime
-            self.lastAccessTime = info.ftLastAccessTime
-            self.lastWriteTime = info.ftLastWriteTime
-            self.volumeSerialNumber = info.dwVolumeSerialNumber
-            self.size = (UInt64(info.nFileSizeHigh) << 32) | UInt64(info.nFileSizeLow)
-            self.numberOfLinks = info.nNumberOfLinks
-            self.fileIndex = (UInt64(info.nFileIndexHigh) << 32) | UInt64(info.nFileIndexLow)
-        }
-    }
-}
-
-// MARK: - Attribute Helpers
+// MARK: - Stats Synthesis
 
 extension Windows.`32`.Kernel.File.Stats {
-    /// Whether this is a directory.
-    @inlinable
-    public var isDirectory: Bool {
-        (attributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0
-    }
+    /// Creates kernel file stats from a BY_HANDLE_FILE_INFORMATION structure.
+    ///
+    /// Synthesizes the POSIX-mirror fields from Win32 file information:
+    /// type from attributes, permissions from the readonly bit, inode from
+    /// the file index, device from the volume serial number, and
+    /// `changeTime` from `ftLastWriteTime` (Windows has no ctime).
+    internal init(_from info: BY_HANDLE_FILE_INFORMATION) {
+        let size = (Int64(info.nFileSizeHigh) << 32) | Int64(info.nFileSizeLow)
 
-    /// Whether this is a regular file.
-    @inlinable
-    public var isRegularFile: Bool {
-        !isDirectory && !isSymlink
-    }
+        let type: Windows.`32`.Kernel.File.Stats.Kind
+        if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
+            type = .directory
+        } else if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0 {
+            type = .link(.symbolic)
+        } else {
+            type = .regular
+        }
 
-    /// Whether this is a symbolic link (reparse point).
-    @inlinable
-    public var isSymlink: Bool {
-        (attributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0
-    }
+        // Synthesize POSIX-like permissions from Windows attributes
+        var permissions: Windows.`32`.Kernel.File.Permissions = .standard  // Default: rw-r--r-- (0o644)
+        if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_READONLY)) != 0 {
+            permissions = Windows.`32`.Kernel.File.Permissions(rawValue: 0o444)  // r--r--r--
+        }
+        if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
+            permissions = permissions | Windows.`32`.Kernel.File.Permissions(rawValue: 0o111)  // Add execute for directories
+        }
 
-    /// Whether the file is read-only.
-    @inlinable
-    public var isReadOnly: Bool {
-        (attributes & DWORD(FILE_ATTRIBUTE_READONLY)) != 0
-    }
+        let inode = (UInt64(info.nFileIndexHigh) << 32) | UInt64(info.nFileIndexLow)
 
-    /// Whether the file is hidden.
-    @inlinable
-    public var isHidden: Bool {
-        (attributes & DWORD(FILE_ATTRIBUTE_HIDDEN)) != 0
-    }
-
-    /// Whether the file is a system file.
-    @inlinable
-    public var isSystem: Bool {
-        (attributes & DWORD(FILE_ATTRIBUTE_SYSTEM)) != 0
+        self.init(
+            size: Windows.`32`.Kernel.File.Size(size),
+            type: type,
+            permissions: permissions,
+            uid: .root,
+            gid: .root,
+            inode: Windows.`32`.Kernel.Inode(inode),
+            device: Windows.`32`.Kernel.Device(UInt64(info.dwVolumeSerialNumber)),
+            linkCount: Windows.`32`.Kernel.Link.Count(__unchecked: (), Cardinal(UInt(info.nNumberOfLinks))),
+            accessTime: Instant(_from: info.ftLastAccessTime),
+            modificationTime: Instant(_from: info.ftLastWriteTime),
+            changeTime: Instant(_from: info.ftLastWriteTime)  // Windows doesn't have ctime
+        )
     }
 }
 
@@ -106,16 +72,16 @@ extension Windows.`32`.Kernel.File {
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: File stats on success.
     /// - Throws: `Windows.`32`.Kernel.File.Stats.Error` on failure.
-        package static func getStats(
+    package static func getStats(
         _ handle: UInt
     ) throws(Windows.`32`.Kernel.File.Stats.Error) -> Stats {
         var info = BY_HANDLE_FILE_INFORMATION()
 
         guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
-            throw .get(Error_Primitives.Error.captureLastError())
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }
 
-        return Stats(info)
+        return Stats(_from: info)
     }
 
     /// Gets file attributes by path.
@@ -137,7 +103,7 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter handle: HANDLE bit pattern.
     /// - Returns: File size in bytes, or nil on failure.
-        package static func getSize(
+    package static func getSize(
         _ handle: UInt
     ) -> UInt64? {
         var size: LARGE_INTEGER = LARGE_INTEGER()
@@ -160,7 +126,7 @@ extension Windows.`32`.Kernel.File {
     /// - Returns: File stats on success.
     /// - Throws: `Windows.`32`.Kernel.File.Stats.Error` on failure.
     public static func getStats(
-        _ descriptor: Windows.`32`.Kernel.Descriptor
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) throws(Windows.`32`.Kernel.File.Stats.Error) -> Stats {
         try getStats(descriptor._rawValue)
     }
@@ -173,7 +139,7 @@ extension Windows.`32`.Kernel.File {
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: File size in bytes, or nil on failure.
     public static func getSize(
-        _ descriptor: Windows.`32`.Kernel.Descriptor
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) -> UInt64? {
         getSize(descriptor._rawValue)
     }
@@ -188,7 +154,7 @@ extension Windows.`32`.Kernel.File {
     /// - Returns: True if the path exists, false otherwise.
     @inlinable
     public static func exists(path: borrowing Path) -> Bool {
-        path.withUnsafeCString { ptr in
+        unsafe path.view.withUnsafePointer { ptr in
             let wpath = UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self)
             return GetFileAttributesW(wpath) != INVALID_FILE_ATTRIBUTES
         }
@@ -209,7 +175,7 @@ extension Windows.`32`.Kernel.File {
     /// - Returns: The file attributes, or nil if the file doesn't exist.
     @inlinable
     public static func getAttributes(path: borrowing Path) -> Attributes? {
-        path.withUnsafeCString { ptr in
+        unsafe path.view.withUnsafePointer { ptr in
             let wpath = UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self)
             let result = GetFileAttributesW(wpath)
             guard result != INVALID_FILE_ATTRIBUTES else {
@@ -285,9 +251,8 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: The file type.
-    @inlinable
     public static func getType(
-        _ descriptor: Windows.`32`.Kernel.Descriptor
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) -> FileType {
         getType(descriptor._rawValue)
     }

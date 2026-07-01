@@ -113,6 +113,8 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-pair-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-equation-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-hash-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-cardinal-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Core
@@ -137,6 +139,8 @@ let package = Package(
                 .product(name: "Hash Protocol Primitives", package: "swift-hash-primitives"),
                 .product(name: "Time Primitives", package: "swift-time-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
+                .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
+                .product(name: "Cardinal Primitives", package: "swift-cardinal-primitives"),
             ]
         ),
 
@@ -172,6 +176,7 @@ let package = Package(
             dependencies: [
                 "Windows 32 Kernel Core",
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
+                .product(name: "Error Primitives", package: "swift-error-primitives"),
             ]
         ),
 

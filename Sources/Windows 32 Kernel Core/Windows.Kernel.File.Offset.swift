@@ -16,8 +16,6 @@
 // `Coordinate.X<Space>.Value<Int64>` per principal Q3 disposition (POSIX-
 // mirror; NOT a canonical struct).
 
-#if os(Windows)
-
 public import Dimension_Primitives
 
 extension Windows.`32`.Kernel.File {
@@ -59,5 +57,3 @@ extension Windows.`32`.Kernel.File.Offset {
         self.init(Int64(value))
     }
 }
-
-#endif

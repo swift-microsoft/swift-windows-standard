@@ -12,6 +12,35 @@
 #if os(Windows)
 public import WinSDK
 
+// MARK: - Portable Options
+
+extension Windows.`32`.Kernel.File.Open.Options {
+    /// Create the file if it does not exist.
+    public static let create = Self(rawValue: 1 << 0)
+
+    /// Truncate the file to zero length on open.
+    public static let truncate = Self(rawValue: 1 << 1)
+
+    /// Append writes to the end of the file.
+    public static let append = Self(rawValue: 1 << 2)
+
+    /// With `.create`, fail if the file already exists.
+    public static let exclusive = Self(rawValue: 1 << 3)
+
+    /// Do not inherit the handle across process creation
+    /// (POSIX `O_CLOEXEC` analog).
+    public static let execClose = Self(rawValue: 1 << 4)
+
+    /// Non-blocking I/O (POSIX `O_NONBLOCK` analog).
+    public static let nonBlocking = Self(rawValue: 1 << 5)
+
+    /// Do not follow symbolic links (opens the reparse point itself).
+    public static let noFollow = Self(rawValue: 1 << 6)
+
+    /// Direct (unbuffered, write-through) I/O.
+    public static let direct = Self(rawValue: 1 << 7)
+}
+
 // MARK: - Windows file open options conversion
 
 extension Windows.`32`.Kernel.File.Open.Options {

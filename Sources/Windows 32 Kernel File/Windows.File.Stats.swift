@@ -116,7 +116,7 @@ extension Windows_32_Core.Windows.File.Stats {
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
     public static func get(path: borrowing Path) throws(Error) -> Self {
-        try path.withUnsafeCString { ptr throws(Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Error) in
             try get(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
         }
     }
@@ -154,7 +154,7 @@ extension Windows_32_Core.Windows.File.Stats {
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
     public static func lget(path: borrowing Path) throws(Error) -> Self {
-        try path.withUnsafeCString { ptr throws(Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Error) in
             try lget(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
         }
     }
@@ -211,7 +211,7 @@ extension Windows_32_Core.Windows.File.Stats {
     /// - Parameter descriptor: The file descriptor to stat.
     /// - Returns: Windows file metadata including creation time.
     /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func get(descriptor: Windows.`32`.Kernel.Descriptor) throws(Error) -> Self {
+    public static func get(descriptor: borrowing Windows.`32`.Kernel.Descriptor) throws(Error) -> Self {
         try get(handle: descriptor._rawValue)
     }
 }
@@ -220,49 +220,14 @@ extension Windows_32_Core.Windows.File.Stats {
 
 extension Windows_32_Core.Windows.File.Stats {
     /// Creates Windows file stats from a BY_HANDLE_FILE_INFORMATION structure.
+    ///
+    /// The POSIX-mirror fields are synthesized by the kernel
+    /// `Stats(_from:)`; this adapter adds the Windows-native creation time.
     internal init(_from info: BY_HANDLE_FILE_INFORMATION) {
-        let size = (Int64(info.nFileSizeHigh) << 32) | Int64(info.nFileSizeLow)
-
-        let type: Windows.`32`.Kernel.File.Stats.Kind
-        if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
-            type = .directory
-        } else if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0 {
-            type = .link(.symbolic)
-        } else {
-            type = .regular
-        }
-
-        // Synthesize POSIX-like permissions from Windows attributes
-        var permissions: Windows.`32`.Kernel.File.Permissions = .standard  // Default: rw-r--r-- (0o644)
-        if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_READONLY)) != 0 {
-            permissions = Windows.`32`.Kernel.File.Permissions(rawValue: 0o444)  // r--r--r--
-        }
-        if (info.dwFileAttributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0 {
-            permissions = Windows.`32`.Kernel.File.Permissions(rawValue: permissions.rawValue | 0o111)  // Add execute for directories
-        }
-
-        let inode = (UInt64(info.nFileIndexHigh) << 32) | UInt64(info.nFileIndexLow)
-
-        let accessTime = Instant(_from: info.ftLastAccessTime)
-        let modificationTime = Instant(_from: info.ftLastWriteTime)
-        let changeTime = Instant(_from: info.ftLastWriteTime)  // Windows doesn't have ctime
-        let creationTime = Instant(_from: info.ftCreationTime)
-
-        let base = Windows.`32`.Kernel.File.Stats(
-            size: Windows.`32`.Kernel.File.Size(size),
-            type: type,
-            permissions: permissions,
-            uid: .root,
-            gid: .root,
-            inode: Windows.`32`.Kernel.Inode(inode),
-            device: Windows.`32`.Kernel.Device(UInt64(info.dwVolumeSerialNumber)),
-            linkCount: Windows.`32`.Kernel.Link.Count(__unchecked: (), Cardinal(UInt(info.nNumberOfLinks))),
-            accessTime: accessTime,
-            modificationTime: modificationTime,
-            changeTime: changeTime
+        self.init(
+            base: Windows.`32`.Kernel.File.Stats(_from: info),
+            creationTime: Instant(_from: info.ftCreationTime)
         )
-
-        self.init(base: base, creationTime: creationTime)
     }
 }
 

@@ -175,4 +175,59 @@ extension Windows.`32`.Kernel.File {
     }
 }
 
+// MARK: - Error
+
+extension Windows.`32`.Kernel.File.Attributes {
+    /// Errors that can occur during file attributes operations.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Attributes.Error`.
+    public enum Error: Swift.Error, Sendable, Equatable {
+        /// The path does not exist.
+        case path(Path)
+
+        /// Permission errors.
+        case permission(Permission)
+
+        /// I/O errors.
+        case io(IO)
+
+        /// Platform-specific error.
+        case platform(Error_Primitives.Error)
+
+        // Path-related errors
+        public enum Path: Swift.Error, Sendable, Equatable {
+            case notFound
+            case tooLong
+            case loop
+        }
+
+        // Permission-related errors
+        public enum Permission: Swift.Error, Sendable, Equatable {
+            case denied
+            case notPermitted
+            case readOnlyFilesystem
+        }
+
+        // I/O errors
+        public enum IO: Swift.Error, Sendable, Equatable {
+            case hardware
+        }
+    }
+}
+
+extension Windows.`32`.Kernel.File.Attributes.Error: CustomStringConvertible {
+    public var description: Swift.String {
+        switch self {
+        case .path(let pathError):
+            return "file attributes path error: \(pathError)"
+        case .permission(let permError):
+            return "file attributes permission error: \(permError)"
+        case .io(let ioError):
+            return "file attributes I/O error: \(ioError)"
+        case .platform(let e):
+            return "file attributes error: \(e)"
+        }
+    }
+}
+
 #endif

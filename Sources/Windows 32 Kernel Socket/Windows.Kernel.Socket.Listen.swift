@@ -56,7 +56,7 @@ extension Windows.`32`.Kernel.Socket {
     ) throws(Error) {
         let result = WinSDK.listen(SOCKET(socket), backlog.rawValue)
         guard result == 0 else {
-            throw .listen(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 }

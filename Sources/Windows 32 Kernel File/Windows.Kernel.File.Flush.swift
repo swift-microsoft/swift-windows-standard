@@ -84,9 +84,6 @@ extension Windows.`32`.Kernel.File.Flush.Error {
         if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
             return .handle(e)
         }
-        if let e = Windows.`32`.Kernel.IO.Error(code: code) {
-            return .io(e)
-        }
         return .platform(Error_Primitives.Error(code: code))
     }
 }

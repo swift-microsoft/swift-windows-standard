@@ -72,7 +72,7 @@ extension Windows.`32`.Kernel.Socket {
     ) throws(Error) {
         let result = WinSDK.bind(SOCKET(socket), address, addressLength)
         guard result == 0 else {
-            throw .bind(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 }

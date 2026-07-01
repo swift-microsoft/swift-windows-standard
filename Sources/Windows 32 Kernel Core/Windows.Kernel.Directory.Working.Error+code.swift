@@ -21,10 +21,6 @@ extension Windows.`32`.Kernel.Directory.Working.Error {
             self = .path(e)
             return
         }
-        if let e = Windows.`32`.Kernel.Permission.Error(code: code) {
-            self = .permission(e)
-            return
-        }
         self = .platform(Error_Primitives.Error(code: code))
     }
 }

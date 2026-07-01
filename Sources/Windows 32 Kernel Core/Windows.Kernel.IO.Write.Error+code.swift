@@ -20,9 +20,6 @@ extension Windows.`32`.Kernel.IO.Write.Error {
         switch self {
         case .handle(let e): return e.code
         case .blocking: return .Windows.ERROR_NOT_SUPPORTED
-        case .io(let e): return e.code
-        case .space(let e): return e.code
-        case .memory(let e): return e.code
         case .platform(let e): return e.code
         }
     }
@@ -32,26 +29,14 @@ extension Windows.`32`.Kernel.IO.Write.Error {
 
 extension Windows.`32`.Kernel.IO.Write.Error {
     /// Creates an error from a Windows error code.
-    @usableFromInline
-    internal init(code: Error_Primitives.Error.Code) {
+    @inlinable
+    public init(code: Error_Primitives.Error.Code) {
         if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
             return
         }
         if let e = Windows.`32`.Kernel.IO.Blocking.Error(code: code) {
             self = .blocking(e)
-            return
-        }
-        if let e = Windows.`32`.Kernel.IO.Error(code: code) {
-            self = .io(e)
-            return
-        }
-        if let e = Windows.`32`.Kernel.Storage.Error(code: code) {
-            self = .space(e)
-            return
-        }
-        if let e = Memory.Error(code: code) {
-            self = .memory(e)
             return
         }
         self = .platform(Error_Primitives.Error(code: code))

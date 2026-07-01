@@ -21,20 +21,8 @@ extension Windows.`32`.Kernel.File.Open.Error {
             self = .path(e)
             return
         }
-        if let e = Windows.`32`.Kernel.Permission.Error(code: code) {
-            self = .permission(e)
-            return
-        }
         if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
             self = .handle(e)
-            return
-        }
-        if let e = Windows.`32`.Kernel.Storage.Error(code: code) {
-            self = .space(e)
-            return
-        }
-        if let e = Windows.`32`.Kernel.IO.Error(code: code) {
-            self = .io(e)
             return
         }
         self = .platform(Error_Primitives.Error(code: code))

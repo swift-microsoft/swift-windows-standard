@@ -13,30 +13,6 @@
 public import Error_Primitives
 public import WinSDK
 
-// MARK: - Socket Namespace
-
-extension Windows.`32`.Kernel {
-    /// Windows socket (Winsock2) operations.
-    ///
-    /// Provides low-level Winsock2 API wrappers for socket operations.
-    ///
-    /// ## Initialization
-    ///
-    /// Unlike POSIX, Winsock2 requires explicit initialization via `WSAStartup`
-    /// before any socket operations. Call `startup()` before using sockets
-    /// and `cleanup()` when done.
-    ///
-    /// ```swift
-    /// try Windows.`32`.Kernel.Socket.startup()
-    /// defer { Windows.`32`.Kernel.Socket.cleanup() }
-    ///
-    /// let sock = try Windows.`32`.Kernel.Socket.create(family: .inet, type: .stream)
-    /// // ... use socket ...
-    /// try Windows.`32`.Kernel.Socket.close(sock)
-    /// ```
-    public enum Socket {}
-}
-
 // MARK: - Winsock Initialization
 
 extension Windows.`32`.Kernel.Socket {
@@ -54,7 +30,7 @@ extension Windows.`32`.Kernel.Socket {
         var wsaData = WSADATA()
         let result = WSAStartup(MAKEWORD(2, 2), &wsaData)
         guard result == 0 else {
-            throw .startup(Error_Primitives.Error.Code.win32(DWORD(result)))
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.Code.win32(DWORD(result))))
         }
     }
 
@@ -145,7 +121,7 @@ extension Windows.`32`.Kernel.Socket {
     ) throws(Error) -> Windows.`32`.Kernel.Socket.Descriptor {
         let sock = socket(family.rawValue, type.rawValue, `protocol`.rawValue)
         guard sock != INVALID_SOCKET else {
-            throw .create(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
         return Windows.`32`.Kernel.Socket.Descriptor(_rawValue: UInt(sock))
     }
@@ -166,6 +142,14 @@ extension Windows.`32`.Kernel.Socket {
 @inlinable
 internal func MAKEWORD(_ low: UInt8, _ high: UInt8) -> WORD {
     WORD(low) | (WORD(high) << 8)
+}
+
+// MARK: - Error Capture
+
+/// Captures the current Winsock error as a Error_Primitives.Error.Code.
+@usableFromInline
+internal func captureLastSocketError() -> Error_Primitives.Error.Code {
+    .win32(DWORD(WSAGetLastError()))
 }
 
 #endif

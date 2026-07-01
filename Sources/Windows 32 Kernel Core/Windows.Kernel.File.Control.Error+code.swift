@@ -21,10 +21,6 @@ extension Windows.`32`.Kernel.File.Control.Error {
             self = .handle(e)
             return
         }
-        if let e = Windows.`32`.Kernel.IO.Error(code: code) {
-            self = .io(e)
-            return
-        }
         self = .platform(Error_Primitives.Error(code: code))
     }
 }

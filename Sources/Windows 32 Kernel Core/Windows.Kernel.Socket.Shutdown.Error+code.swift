@@ -17,14 +17,6 @@ extension Windows.`32`.Kernel.Socket.Shutdown.Error {
     /// Creates an error from a Windows error code.
     @usableFromInline
     internal init(code: Error_Primitives.Error.Code) {
-        if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: code) {
-            self = .handle(e)
-            return
-        }
-        if let e = Windows.`32`.Kernel.IO.Error(code: code) {
-            self = .io(e)
-            return
-        }
         self = .platform(Error_Primitives.Error(code: code))
     }
 }

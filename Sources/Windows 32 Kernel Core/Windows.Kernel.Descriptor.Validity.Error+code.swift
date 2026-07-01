@@ -32,4 +32,17 @@ extension Windows.`32`.Kernel.Descriptor.Validity.Error {
         }
     }
 }
+
+// MARK: - Windows Error Code Access
+
+extension Windows.`32`.Kernel.Descriptor.Validity.Error {
+    /// The underlying Windows error code.
+    @inlinable
+    public var code: Error_Primitives.Error.Code {
+        switch self {
+        case .invalid: return .Windows.ERROR_INVALID_HANDLE
+        case .limit: return .Windows.ERROR_TOO_MANY_OPEN_FILES
+        }
+    }
+}
 #endif

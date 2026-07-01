@@ -9,8 +9,6 @@
 //
 // ===----------------------------------------------------------------------===//
 
-#if os(Windows)
-
 extension Windows.`32`.Kernel.IO {
     /// I/O operation errors.
     ///
@@ -68,5 +66,3 @@ extension Windows.`32`.Kernel.IO.Error: CustomStringConvertible {
         }
     }
 }
-
-#endif

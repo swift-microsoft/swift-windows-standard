@@ -14,23 +14,6 @@
 // MARK: - Windows Translation from Syscall
 
 extension Windows.`32`.Kernel.File.Direct.Error {
-    /// Creates a semantic error from a raw syscall error.
-    public init(from syscall: Syscall) {
-        switch syscall {
-        case .invalidDescriptor:
-            self = .invalidHandle
-
-        case .alignmentViolation(let operation):
-            self = .platform(code: .win32(0xFFFFFFFF), operation: operation)
-
-        case .notSupported:
-            self = .notSupported
-
-        case .platform(let code, let operation):
-            self.init(code: code, operation: operation)
-        }
-    }
-
     /// Maps a Windows error code to a semantic error.
     @usableFromInline
     internal init(code: Error_Primitives.Error.Code, operation: Operation) {

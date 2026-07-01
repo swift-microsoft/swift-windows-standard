@@ -84,7 +84,7 @@ extension Windows.`32`.Kernel.Socket {
             flags.rawValue
         )
         guard result != SOCKET_ERROR else {
-            throw .send(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
         return Int(result)
     }
@@ -173,7 +173,7 @@ extension Windows.`32`.Kernel.Socket {
             destAddrLength
         )
         guard result != SOCKET_ERROR else {
-            throw .send(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
         return Int(result)
     }

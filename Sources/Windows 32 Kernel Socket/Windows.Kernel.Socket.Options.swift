@@ -140,7 +140,7 @@ extension Windows.`32`.Kernel.Socket {
             length
         )
         guard result == 0 else {
-            throw .getOption(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 
@@ -192,7 +192,7 @@ extension Windows.`32`.Kernel.Socket {
             length
         )
         guard result == 0 else {
-            throw .setOption(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 
@@ -410,7 +410,7 @@ extension Windows.`32`.Kernel.Socket {
     ) throws(Error) {
         let result = getsockname(SOCKET(socket), address, addressLength)
         guard result == 0 else {
-            throw .getSockName(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 
@@ -450,7 +450,7 @@ extension Windows.`32`.Kernel.Socket {
     ) throws(Error) {
         let result = getpeername(SOCKET(socket), address, addressLength)
         guard result == 0 else {
-            throw .getPeerName(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 }

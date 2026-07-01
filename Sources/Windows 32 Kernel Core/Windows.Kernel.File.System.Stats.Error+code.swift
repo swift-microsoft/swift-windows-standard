@@ -25,18 +25,6 @@ extension Windows.`32`.Kernel.File.System.Stats.Error {
             self = .handle(e)
             return
         }
-        if let e = Windows.`32`.Kernel.Permission.Error(code: code) {
-            self = .permission(e)
-            return
-        }
-        if let e = Memory.Error(code: code) {
-            self = .memory(e)
-            return
-        }
-        if let e = Windows.`32`.Kernel.IO.Error(code: code) {
-            self = .io(e)
-            return
-        }
         self = .platform(Error_Primitives.Error(code: code))
     }
 }

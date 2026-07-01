@@ -41,7 +41,7 @@ extension Windows.`32`.Kernel.Socket {
     public static func shutdown(
         _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
         how: Windows.`32`.Kernel.Socket.Shutdown.How
-    ) throws(Error) {
+    ) throws(Windows.`32`.Kernel.Socket.Shutdown.Error) {
         try shutdown(socket._rawValue, how: how)
     }
 
@@ -58,7 +58,7 @@ extension Windows.`32`.Kernel.Socket {
         package static func shutdown(
         _ socket: UInt,
         how: Windows.`32`.Kernel.Socket.Shutdown.How
-    ) throws(Error) {
+    ) throws(Windows.`32`.Kernel.Socket.Shutdown.Error) {
         let sdHow: Int32
         switch how {
         case .read:
@@ -71,7 +71,7 @@ extension Windows.`32`.Kernel.Socket {
 
         let result = WinSDK.shutdown(SOCKET(socket), sdHow)
         guard result == 0 else {
-            throw .shutdown(captureLastSocketError())
+            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
         }
     }
 }

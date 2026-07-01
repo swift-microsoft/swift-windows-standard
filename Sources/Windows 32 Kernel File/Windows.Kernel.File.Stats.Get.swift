@@ -52,7 +52,7 @@ extension Windows.`32`.Kernel.File.Stats {
             gid: .root,
             inode: Windows.`32`.Kernel.Inode(inode),
             device: Windows.`32`.Kernel.Device(UInt64(info.dwVolumeSerialNumber)),
-            linkCount: Windows.`32`.Kernel.Link.Count(__unchecked: (), Cardinal(UInt(info.nNumberOfLinks))),
+            linkCount: Windows.`32`.Kernel.Link.Count(_unchecked: Cardinal(UInt(info.nNumberOfLinks))),
             accessTime: Instant(_from: info.ftLastAccessTime),
             modificationTime: Instant(_from: info.ftLastWriteTime),
             changeTime: Instant(_from: info.ftLastWriteTime)  // Windows doesn't have ctime

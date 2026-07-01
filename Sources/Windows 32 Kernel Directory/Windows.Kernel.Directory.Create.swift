@@ -23,7 +23,7 @@ extension Windows.`32`.Kernel.Directory.Create {
     /// - Throws: `Windows.`32`.Kernel.Directory.Create.Error` on failure.
     public static func create(
         path: borrowing Path,
-        permissions: Windows.`32`.Kernel.File.Permissions = .directoryDefault
+        permissions: Windows.`32`.Kernel.File.Permissions = .standardDirectory
     ) throws(Windows.`32`.Kernel.Directory.Create.Error) {
         try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Directory.Create.Error) in
             try create(unsafePath: ptr, permissions: permissions)
@@ -38,7 +38,7 @@ extension Windows.`32`.Kernel.Directory.Create {
     /// - Throws: `Windows.`32`.Kernel.Directory.Create.Error` on failure.
     public static func create(
         unsafePath: UnsafePointer<Path.Char>,
-        permissions: Windows.`32`.Kernel.File.Permissions = .directoryDefault
+        permissions: Windows.`32`.Kernel.File.Permissions = .standardDirectory
     ) throws(Windows.`32`.Kernel.Directory.Create.Error) {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
         guard CreateDirectoryW(wpath, nil) else {

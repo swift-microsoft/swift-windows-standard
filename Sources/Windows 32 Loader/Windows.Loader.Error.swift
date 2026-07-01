@@ -12,6 +12,7 @@
 #if os(Windows)
 public import Loader_Primitives
 public import WinSDK
+internal import String_Primitives
 
 // MARK: - Windows Loader Error Utilities
 
@@ -22,34 +23,41 @@ public import WinSDK
 internal func captureLastErrorMessage() -> Loader.Message {
     let errorCode = GetLastError()
 
+    // FORMAT_MESSAGE_ALLOCATE_BUFFER makes FormatMessageW treat the lpBuffer slot as
+    // `LPWSTR*`: it allocates a buffer and writes its address into `buffer`. The
+    // `(LPWSTR)&buffer` cast is expressed via unsafeBitCast of the inout address.
     var buffer: LPWSTR?
-    let length = FormatMessageW(
-        DWORD(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS),
-        nil,
-        errorCode,
-        0,  // Default language
-        unsafeBitCast(&buffer, to: LPWSTR.self),
-        0,
-        nil
-    )
+    let length = withUnsafeMutablePointer(to: &buffer) { bufferSlot in
+        unsafe FormatMessageW(
+            DWORD(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS),
+            nil,
+            errorCode,
+            0,  // Default language
+            unsafe unsafeBitCast(bufferSlot, to: LPWSTR.self),
+            0,
+            nil
+        )
+    }
 
     defer {
         if let buffer {
-            LocalFree(buffer)
+            unsafe LocalFree(buffer)
         }
     }
 
-    if length > 0, let buffer {
-        // Convert wide string to Swift String
-        var message = String(decodingCString: buffer, as: UTF16.self)
-        // Remove trailing newline/carriage return
-        while message.hasSuffix("\r") || message.hasSuffix("\n") {
-            message.removeLast()
-        }
-        return Loader.Message("(error \(errorCode)) \(message)")
-    } else {
-        return Loader.Message("Win32 error code \(errorCode)")
+    guard length > 0, let buffer else {
+        return Loader.Message(ascii: "Win32 loader error (no message text available)")
     }
+
+    // FormatMessageW writes UTF-16. On Windows `String_Primitives.String.Char` is
+    // `UInt16` (UTF-16), so the wide buffer is a `String.Char` buffer directly — no
+    // transcoding. Trim the trailing CR/LF FormatMessageW appends.
+    var count = Int(length)
+    while count > 0, unsafe (buffer[count - 1] == 0x000D || buffer[count - 1] == 0x000A) {
+        count -= 1
+    }
+    let view = unsafe String_Primitives.String.Borrowed(UnsafePointer(buffer), count: count)
+    return unsafe Loader.Message(copying: view)
 }
 
 // MARK: - Common Loader Error Codes

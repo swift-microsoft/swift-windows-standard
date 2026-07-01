@@ -83,7 +83,7 @@ extension Windows.Loader.Library {
     /// occurring on this handle.
     @unsafe
     public static func close(_ handle: Loader.Library.Handle) throws(Loader.Error) {
-        let success = unsafe FreeLibrary(HMODULE(handle.rawValue))
+        let success = unsafe FreeLibrary(handle.rawValue.assumingMemoryBound(to: HINSTANCE__.self))
         guard success else {
             throw .close(captureLastErrorMessage())
         }

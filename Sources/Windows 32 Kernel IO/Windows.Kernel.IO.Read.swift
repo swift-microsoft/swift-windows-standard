@@ -101,7 +101,7 @@ extension Windows.`32`.Kernel.IO.Read {
 
         // Seek to offset
         var targetPos: LARGE_INTEGER = LARGE_INTEGER()
-        targetPos.QuadPart = offset.rawValue
+        targetPos.QuadPart = offset.underlying
         guard SetFilePointerEx(pointer, targetPos, nil, DWORD(FILE_BEGIN)) else {
             throw .current()
         }
@@ -148,7 +148,7 @@ extension Windows.`32`.Kernel.IO.Read {
     /// - Returns: Number of bytes read. Returns 0 on EOF.
     /// - Throws: ``Kernel/IO/Read/Error`` on failure.
     public static func read(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         into buffer: UnsafeMutableRawBufferPointer
     ) throws(Error) -> Int {
         guard descriptor.isValid else {
@@ -173,7 +173,7 @@ extension Windows.`32`.Kernel.IO.Read {
     /// - Returns: Number of bytes read. Returns 0 on EOF.
     /// - Throws: ``Kernel/IO/Read/Error`` on failure.
     public static func pread(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         into buffer: UnsafeMutableRawBufferPointer,
         at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {
@@ -196,7 +196,7 @@ extension Windows.`32`.Kernel.IO.Read {
     /// - Throws: `Windows.`32`.Kernel.IO.Read.Error` on failure.
     @inlinable
     public static func read(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         into span: inout MutableSpan<UInt8>
     ) throws(Error) -> Int {
         try span.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) throws(Error) -> Int in
@@ -214,7 +214,7 @@ extension Windows.`32`.Kernel.IO.Read {
     /// - Throws: `Windows.`32`.Kernel.IO.Read.Error` on failure.
     @inlinable
     public static func pread(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         into span: inout MutableSpan<UInt8>,
         at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {

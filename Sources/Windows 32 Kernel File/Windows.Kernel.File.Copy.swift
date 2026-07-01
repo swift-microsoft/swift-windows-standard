@@ -31,13 +31,13 @@ extension Windows.`32`.Kernel.File.Copy {
         }
 
         /// Source file was not found.
-        public static let sourceNotFound = Error(code: .init(win32: Error_Primitives.Error.Code.File.notFound))
+        public static let sourceNotFound = Error(code: .win32(Error_Primitives.Error.Code.File.notFound))
 
         /// Destination file already exists.
-        public static let destinationExists = Error(code: .init(win32: Error_Primitives.Error.Code.File.alreadyExists))
+        public static let destinationExists = Error(code: .win32(Error_Primitives.Error.Code.File.alreadyExists))
 
         /// Permission denied.
-        public static let permissionDenied = Error(code: .init(win32: Error_Primitives.Error.Code.Access.denied))
+        public static let permissionDenied = Error(code: .win32(Error_Primitives.Error.Code.Access.denied))
 
         /// Creates an error from the current Win32 last error.
         @usableFromInline
@@ -72,8 +72,8 @@ extension Windows.`32`.Kernel.File.Copy {
         to destination: borrowing Path,
         overwrite: Bool = false
     ) throws(Error) {
-        try source.withUnsafeCString { srcPtr throws(Error) in
-            try destination.withUnsafeCString { dstPtr throws(Error) in
+        try unsafe source.view.withUnsafePointer { srcPtr throws(Error) in
+            try unsafe destination.view.withUnsafePointer { dstPtr throws(Error) in
                 try copy(
                     from: srcPtr,
                     to: dstPtr,

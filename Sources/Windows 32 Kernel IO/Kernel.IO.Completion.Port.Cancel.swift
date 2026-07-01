@@ -81,34 +81,32 @@
 
     extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Result of cancelling all pending I/O operations.
+        ///
+        /// Holds the HANDLE bit pattern rather than the descriptor itself:
+        /// `Descriptor` is `~Copyable`, so an ephemeral accessor borrows the
+        /// handle value and must not outlive the descriptor.
         public struct All: Sendable {
-            @usableFromInline
-            let descriptor: Windows.`32`.Kernel.Descriptor
+            let handle: UInt
 
-            @usableFromInline
-            init(_ descriptor: Windows.`32`.Kernel.Descriptor) {
-                self.descriptor = descriptor
+            init(_ handle: UInt) {
+                self.handle = handle
             }
 
             /// Cancels all pending I/O (fire-and-forget).
             ///
-            /// Delegates to the raw `Cancel.all(_:)` SPI via
-            /// `descriptor._rawValue`. Returns silently if no operations are
-            /// pending.
-            @inlinable
+            /// Delegates to the raw `Cancel.all(_:)` SPI. Returns silently if
+            /// no operations are pending.
             public func callAsFunction() {
-                _ = Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(descriptor._rawValue)
+                _ = Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle)
             }
 
             /// Returns whether cancellation succeeded.
             ///
-            /// Delegates to the raw `Cancel.all(_:)` SPI via
-            /// `descriptor._rawValue`.
+            /// Delegates to the raw `Cancel.all(_:)` SPI.
             ///
             /// - Returns: `true` if cancelled, `false` if no pending operations.
-            @inlinable
             public var status: Bool {
-                if Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(descriptor._rawValue) {
+                if Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle) {
                     return true
                 }
                 return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
@@ -123,9 +121,8 @@
         ///
         /// - Parameter descriptor: The descriptor with pending I/O.
         /// - Returns: An accessor for cancel operations.
-        @inlinable
-        public static func all(_ descriptor: Windows.`32`.Kernel.Descriptor) -> All {
-            All(descriptor)
+        public static func all(_ descriptor: borrowing Windows.`32`.Kernel.Descriptor) -> All {
+            All(descriptor._rawValue)
         }
     }
 
@@ -133,45 +130,42 @@
 
     extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Result of cancelling a specific pending I/O operation.
+        ///
+        /// Holds the HANDLE bit pattern rather than the descriptor itself:
+        /// `Descriptor` is `~Copyable`, so an ephemeral accessor borrows the
+        /// handle value and must not outlive the descriptor.
         @safe
         public struct Pending: @unchecked Sendable {
-            @usableFromInline
-            let descriptor: Windows.`32`.Kernel.Descriptor
+            let handle: UInt
 
-            @usableFromInline
             let overlappedPtr: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>
 
             @unsafe
-            @usableFromInline
-            init(_ descriptor: Windows.`32`.Kernel.Descriptor, overlapped: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>) {
-                self.descriptor = descriptor
-                unsafe { self.overlappedPtr = overlapped }
+            init(_ handle: UInt, overlapped: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>) {
+                self.handle = handle
+                self.overlappedPtr = unsafe overlapped
             }
 
             /// Cancels the specific pending I/O (fire-and-forget).
             ///
-            /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI via
-            /// `descriptor._rawValue`. Returns silently if the operation
-            /// already completed.
-            @inlinable
+            /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI.
+            /// Returns silently if the operation already completed.
             public func callAsFunction() {
                 let ptr = unsafe overlappedPtr
                 _ = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
-                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(descriptor._rawValue, overlapped: rawPtr)
+                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
                 }
             }
 
             /// Returns whether cancellation succeeded.
             ///
-            /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI via
-            /// `descriptor._rawValue`.
+            /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI.
             ///
             /// - Returns: `true` if cancelled, `false` if already completed.
-            @inlinable
             public var status: Bool {
                 let ptr = unsafe overlappedPtr
                 let result = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
-                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(descriptor._rawValue, overlapped: rawPtr)
+                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
                 }
                 if result {
                     return true
@@ -190,13 +184,13 @@
         ///   - descriptor: The descriptor with pending I/O.
         ///   - overlapped: The overlapped structure for the operation to cancel.
         /// - Returns: An accessor for cancel operations.
-        @inlinable
         public static func pending(
-            _ descriptor: Windows.`32`.Kernel.Descriptor,
+            _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
             overlapped: inout Windows.`32`.Kernel.IO.Completion.Port.Overlapped
         ) -> Pending {
-            unsafe withUnsafeMutablePointer(to: &overlapped) { ptr in
-                unsafe Pending(descriptor, overlapped: ptr)
+            let handle = descriptor._rawValue
+            return unsafe withUnsafeMutablePointer(to: &overlapped) { ptr in
+                unsafe Pending(handle, overlapped: ptr)
             }
         }
 
@@ -211,12 +205,11 @@
         ///   - overlapped: Pointer to the overlapped structure for the operation to cancel.
         /// - Returns: An accessor for cancel operations.
         @unsafe
-        @inlinable
         public static func pending(
-            _ descriptor: Windows.`32`.Kernel.Descriptor,
+            _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
             overlapped: UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>
         ) -> Pending {
-            unsafe Pending(descriptor, overlapped: overlapped)
+            unsafe Pending(descriptor._rawValue, overlapped: overlapped)
         }
     }
 

@@ -65,7 +65,7 @@ extension Windows.`32`.Kernel.Directory.Iterator {
     public static func open(
         path: borrowing Path
     ) throws(Windows.`32`.Kernel.Directory.Error) -> Self {
-        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Directory.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Directory.Error) in
             try open(unsafePath: ptr)
         }
     }

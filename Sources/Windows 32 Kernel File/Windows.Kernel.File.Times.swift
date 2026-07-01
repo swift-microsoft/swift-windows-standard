@@ -129,7 +129,7 @@ extension Windows.`32`.Kernel.File.Times {
         creation creationTime: FILETIME? = nil,
         access lastAccessTime: FILETIME? = nil,
         modification lastWriteTime: FILETIME? = nil,
-        on descriptor: Windows.`32`.Kernel.Descriptor
+        on descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) throws(Windows.`32`.Kernel.File.Times.Error) {
         try set(
             creation: creationTime,
@@ -156,7 +156,7 @@ extension Windows.`32`.Kernel.File.Times {
         creation creationTime: UnsafePointer<FILETIME>?,
         access lastAccessTime: UnsafePointer<FILETIME>?,
         modification lastWriteTime: UnsafePointer<FILETIME>?,
-        on descriptor: Windows.`32`.Kernel.Descriptor
+        on descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) -> Bool {
         set(
             creation: creationTime,
@@ -174,7 +174,7 @@ extension Windows.`32`.Kernel.File.Times {
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: Tuple of (creationTime, lastAccessTime, lastWriteTime), or nil on failure.
     public static func getTimes(
-        _ descriptor: Windows.`32`.Kernel.Descriptor
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) -> (creation: FILETIME, access: FILETIME, write: FILETIME)? {
         getTimes(descriptor._rawValue)
     }
@@ -306,7 +306,7 @@ extension Windows.`32`.Kernel.File {
         )
 
         guard success else {
-            throw .get(Error_Primitives.Error.captureLastError())
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
         }
 
         return BasicInfo(info)
@@ -351,7 +351,7 @@ extension Windows.`32`.Kernel.File {
     /// - Returns: The basic file info.
     /// - Throws: Error on failure.
     public static func getBasicInfo(
-        _ descriptor: Windows.`32`.Kernel.Descriptor
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor
     ) throws(Windows.`32`.Kernel.File.Stats.Error) -> BasicInfo {
         try getBasicInfo(descriptor._rawValue)
     }
@@ -367,7 +367,7 @@ extension Windows.`32`.Kernel.File {
     ///   - info: The basic file info to set.
     /// - Throws: Error on failure.
     public static func setBasicInfo(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         _ info: BasicInfo
     ) throws(Windows.`32`.Kernel.File.Attributes.Error) {
         try setBasicInfo(descriptor._rawValue, info)
@@ -382,8 +382,8 @@ extension Windows.`32`.Kernel.File {
     ///   - destination: The destination file descriptor.
     /// - Throws: Error on failure.
     public static func copyBasicInfo(
-        from source: Windows.`32`.Kernel.Descriptor,
-        to destination: Windows.`32`.Kernel.Descriptor
+        from source: borrowing Windows.`32`.Kernel.Descriptor,
+        to destination: borrowing Windows.`32`.Kernel.Descriptor
     ) throws {
         let info = try getBasicInfo(source)
         try setBasicInfo(destination, info)
@@ -416,7 +416,7 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter descriptor: The file descriptor.
     /// - Returns: True on success, false on failure.
-    public static func touch(_ descriptor: Windows.`32`.Kernel.Descriptor) -> Bool {
+    public static func touch(_ descriptor: borrowing Windows.`32`.Kernel.Descriptor) -> Bool {
         touch(descriptor._rawValue)
     }
 }

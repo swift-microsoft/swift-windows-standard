@@ -47,7 +47,7 @@ extension Windows.`32`.Kernel.File.Open {
         options: Windows.`32`.Kernel.File.Open.Options,
         permissions: Windows.`32`.Kernel.File.Permissions = .standard
     ) throws(Windows.`32`.Kernel.File.Open.Error) -> Windows.`32`.Kernel.Descriptor {
-        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.File.Open.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.File.Open.Error) in
             try open(
                 unsafePath: ptr,
                 mode: mode,
@@ -81,7 +81,7 @@ extension Windows.`32`.Kernel.File.Open {
         var flagsAndAttributes = options.windowsFlagsAndAttributesFull
 
         // Apply readonly from permissions if no write requested
-        if !permissions.owner.write && !mode.contains(.write) {
+        if (permissions & .ownerWrite) == .none && !mode.write {
             flagsAndAttributes |= DWORD(FILE_ATTRIBUTE_READONLY)
         }
 
@@ -102,7 +102,7 @@ extension Windows.`32`.Kernel.File.Open {
             throw .current()
         }
 
-        return Windows.`32`.Kernel.Descriptor.borrowing(handle: handle)
+        return Windows.`32`.Kernel.Descriptor(_raw: UInt(bitPattern: handle))
     }
 }
 

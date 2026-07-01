@@ -55,9 +55,9 @@
                 DWORD(threads)
             )
             guard let handle, handle != INVALID_HANDLE_VALUE else {
-                throw .create(.captureLastError())
+                throw .create(Error_Primitives.Error.captureLastError())
             }
-            return Windows.`32`.Kernel.Descriptor(rawValue: handle)
+            return Windows.`32`.Kernel.Descriptor(_raw: UInt(bitPattern: handle))
         }
 
         /// Associates a file handle bit pattern with a completion port bit pattern.
@@ -87,7 +87,7 @@
                 0
             )
             guard result != nil else {
-                throw .associate(.captureLastError())
+                throw .associate(Error_Primitives.Error.captureLastError())
             }
         }
 
@@ -119,7 +119,7 @@
                 overlapped
             )
             guard result else {
-                throw .post(.captureLastError())
+                throw .post(Error_Primitives.Error.captureLastError())
             }
         }
 
@@ -242,7 +242,7 @@
                 return count
             }
 
-            throw .result(.captureLastError())
+            throw .result(Error_Primitives.Error.captureLastError())
         }
     }
 
@@ -262,8 +262,8 @@
         /// - Throws: `Error.associate` if association fails.
         @inlinable
         public static func associate(
-            _ port: Windows.`32`.Kernel.Descriptor,
-            handle: Windows.`32`.Kernel.Descriptor,
+            _ port: borrowing Windows.`32`.Kernel.Descriptor,
+            handle: borrowing Windows.`32`.Kernel.Descriptor,
             key: Key
         ) throws(Error) {
             try associate(port._rawValue, handle: handle._rawValue, key: key)
@@ -285,7 +285,7 @@
         @unsafe
         @inlinable
         public static func post(
-            _ port: Windows.`32`.Kernel.Descriptor,
+            _ port: borrowing Windows.`32`.Kernel.Descriptor,
             bytes: DWORD = 0,
             key: Key = .zero,
             overlapped: LPOVERLAPPED? = nil
@@ -302,7 +302,7 @@
         ///
         /// - Parameter port: The port handle to close.
         @inlinable
-        public static func close(_ port: Windows.`32`.Kernel.Descriptor) {
+        public static func close(_ port: borrowing Windows.`32`.Kernel.Descriptor) {
             close(port._rawValue)
         }
 
@@ -320,7 +320,7 @@
         @unsafe
         @inlinable
         public static func read(
-            _ handle: Windows.`32`.Kernel.Descriptor,
+            _ handle: borrowing Windows.`32`.Kernel.Descriptor,
             into buffer: UnsafeMutableRawBufferPointer,
             overlapped: inout Overlapped
         ) throws(Error) -> Read.Result {
@@ -341,7 +341,7 @@
         @unsafe
         @inlinable
         public static func write(
-            _ handle: Windows.`32`.Kernel.Descriptor,
+            _ handle: borrowing Windows.`32`.Kernel.Descriptor,
             from buffer: UnsafeRawBufferPointer,
             overlapped: inout Overlapped
         ) throws(Error) -> Write.Result {
@@ -361,7 +361,7 @@
         /// - Throws: `Error.result` on failure.
         @inlinable
         public static func result(
-            _ handle: Windows.`32`.Kernel.Descriptor,
+            _ handle: borrowing Windows.`32`.Kernel.Descriptor,
             overlapped: inout Overlapped,
             wait: Bool = false
         ) throws(Error) -> UInt32 {

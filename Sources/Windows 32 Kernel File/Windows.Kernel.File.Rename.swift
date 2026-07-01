@@ -34,16 +34,16 @@ extension Windows.`32`.Kernel.File.Rename {
         }
 
         /// Destination file already exists.
-        public static let destinationExists = Error(code: .init(win32: Error_Primitives.Error.Code.File.alreadyExists))
+        public static let destinationExists = Error(code: .win32(Error_Primitives.Error.Code.File.alreadyExists))
 
         /// Permission denied.
-        public static let permissionDenied = Error(code: .init(win32: Error_Primitives.Error.Code.Access.denied))
+        public static let permissionDenied = Error(code: .win32(Error_Primitives.Error.Code.Access.denied))
 
         /// File is in use by another process.
-        public static let sharingViolation = Error(code: .init(win32: Error_Primitives.Error.Code.Access.sharingViolation))
+        public static let sharingViolation = Error(code: .win32(Error_Primitives.Error.Code.Access.sharingViolation))
 
         /// The operation is not supported (e.g., struct layout unavailable).
-        public static let notSupported = Error(code: .init(win32: 0x32)) // ERROR_NOT_SUPPORTED
+        public static let notSupported = Error(code: .win32(0x32)) // ERROR_NOT_SUPPORTED
 
         /// Creates an error from the current Win32 last error.
         @usableFromInline
@@ -110,8 +110,8 @@ extension Windows.`32`.Kernel.File.Rename {
         to destination: borrowing Path,
         replaceExisting: Bool
     ) throws(Error) {
-        try source.withUnsafeCString { srcPtr throws(Error) in
-            try destination.withUnsafeCString { dstPtr throws(Error) in
+        try unsafe source.view.withUnsafePointer { srcPtr throws(Error) in
+            try unsafe destination.view.withUnsafePointer { dstPtr throws(Error) in
                 try atomic(
                     from: srcPtr,
                     to: dstPtr,

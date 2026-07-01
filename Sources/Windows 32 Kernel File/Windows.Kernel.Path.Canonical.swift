@@ -26,7 +26,7 @@ extension Path.Canonical {
         path: borrowing Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Path.Canonical.Error) -> Int {
-        try path.withUnsafeCString { ptr throws(Path.Canonical.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Path.Canonical.Error) in
             try resolve(unsafePath: ptr, into: buffer)
         }
     }
@@ -67,7 +67,7 @@ extension Path.Canonical {
     public static func resolve(
         path: borrowing Path
     ) throws(Path.Canonical.Error) -> [UInt16] {
-        try path.withUnsafeCString { ptr throws(Path.Canonical.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Path.Canonical.Error) in
             try resolve(unsafePath: ptr)
         }
     }

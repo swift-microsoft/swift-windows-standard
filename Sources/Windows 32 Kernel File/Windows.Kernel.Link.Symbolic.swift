@@ -30,8 +30,8 @@ extension Windows.`32`.Kernel.Link.Symbolic {
         linkPath: borrowing Path,
         isDirectory: Bool = false
     ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) {
-        try target.withUnsafeCString { targetPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
-            try linkPath.withUnsafeCString { linkPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
+        try unsafe target.view.withUnsafePointer { targetPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
+            try unsafe linkPath.view.withUnsafePointer { linkPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
                 try create(
                     target: targetPtr,
                     linkPath: linkPtr,
@@ -77,7 +77,7 @@ extension Windows.`32`.Kernel.Link.Symbolic {
         path: borrowing Path,
         into buffer: UnsafeMutableBufferPointer<UInt16>
     ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) -> Int {
-        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
             try readTarget(unsafePath: ptr, into: buffer)
         }
     }

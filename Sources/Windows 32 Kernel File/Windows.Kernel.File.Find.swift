@@ -39,10 +39,8 @@ extension Windows.`32`.Kernel.File.Find {
     /// `~Copyable` move-only ownership ensures the handle is closed exactly
     /// once. Use ``next()`` to advance the iteration.
     public struct Handle: ~Copyable, @unchecked Sendable {
-        @usableFromInline
         package var _raw: UnsafeMutableRawPointer
 
-        @usableFromInline
         package init(_raw: UnsafeMutableRawPointer) {
             self._raw = _raw
         }
@@ -61,23 +59,19 @@ extension Windows.`32`.Kernel.File.Find {
         /// The filename (without leading path components).
         public let name: Swift.String
 
-        @usableFromInline
         internal let attributes: DWORD
 
-        @usableFromInline
         internal init(name: Swift.String, attributes: DWORD) {
             self.name = name
             self.attributes = attributes
         }
 
         /// Whether the entry is a directory.
-        @inlinable
         public var isDirectory: Bool {
             (attributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0
         }
 
         /// Whether the entry is a reparse point (symlink, junction, etc.).
-        @inlinable
         public var isReparsePoint: Bool {
             (attributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0
         }
@@ -110,7 +104,6 @@ extension Windows.`32`.Kernel.File.Find {
         /// Generic I/O failure.
         case io
 
-        @usableFromInline
         internal init(lastError: DWORD) {
             switch lastError {
             case DWORD(ERROR_ACCESS_DENIED), DWORD(ERROR_SHARING_VIOLATION):
@@ -130,6 +123,29 @@ extension Windows.`32`.Kernel.File.Find {
     }
 }
 
+// MARK: - First (handle + first entry)
+
+extension Windows.`32`.Kernel.File.Find {
+    /// The result of beginning a file-find iteration: the owning Handle
+    /// plus the first entry.
+    ///
+    /// A struct rather than a tuple because tuples cannot carry noncopyable
+    /// elements; `First` is itself `~Copyable` since it owns the Handle.
+    public struct First: ~Copyable {
+        /// The handle owning the find resource. Use ``Handle/next()`` to
+        /// advance the iteration.
+        public var handle: Handle
+
+        /// The first directory entry.
+        public let entry: Entry
+
+        package init(handle: consuming Handle, entry: Entry) {
+            self.handle = handle
+            self.entry = entry
+        }
+    }
+}
+
 // MARK: - Iteration entry point
 
 extension Windows.`32`.Kernel.File.Find {
@@ -141,9 +157,9 @@ extension Windows.`32`.Kernel.File.Find {
     /// UTF-16 internally.
     ///
     /// - Parameter path: Win32 file-find pattern.
-    /// - Returns: A Handle (RAII for FindClose) and the first entry.
+    /// - Returns: A ``First`` carrying the Handle (RAII for FindClose) and the first entry.
     /// - Throws: ``Error`` if the find fails.
-    public static func first(path: Swift.String) throws(Error) -> (Handle, Entry) {
+    public static func first(path: Swift.String) throws(Error) -> First {
         var findData = WIN32_FIND_DATAW()
         let handle = unsafe withWideString(path) { wpath in
             unsafe FindFirstFileW(wpath, &findData)
@@ -155,7 +171,7 @@ extension Windows.`32`.Kernel.File.Find {
             name: extractFileName(from: &findData),
             attributes: findData.dwFileAttributes
         )
-        return (Handle(_raw: raw), entry)
+        return First(handle: Handle(_raw: raw), entry: entry)
     }
 }
 
@@ -189,7 +205,6 @@ extension Windows.`32`.Kernel.File {
     ///
     /// Wraps `GetFileAttributesW`, treating `INVALID_FILE_ATTRIBUTES` as the
     /// "does not exist" sentinel.
-    @inlinable
     public static func pathExists(_ path: Swift.String) -> Bool {
         unsafe withWideString(path) { wpath in
             unsafe GetFileAttributesW(wpath) != INVALID_FILE_ATTRIBUTES

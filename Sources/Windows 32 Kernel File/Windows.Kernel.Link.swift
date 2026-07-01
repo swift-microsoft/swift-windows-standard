@@ -25,8 +25,8 @@ extension Windows.`32`.Kernel.Link {
         source: borrowing Path,
         linkPath: borrowing Path
     ) throws(Windows.`32`.Kernel.Link.Error) {
-        try source.withUnsafeCString { sourcePtr throws(Windows.`32`.Kernel.Link.Error) in
-            try linkPath.withUnsafeCString { linkPtr throws(Windows.`32`.Kernel.Link.Error) in
+        try unsafe source.view.withUnsafePointer { sourcePtr throws(Windows.`32`.Kernel.Link.Error) in
+            try unsafe linkPath.view.withUnsafePointer { linkPtr throws(Windows.`32`.Kernel.Link.Error) in
                 try create(source: sourcePtr, linkPath: linkPtr)
             }
         }

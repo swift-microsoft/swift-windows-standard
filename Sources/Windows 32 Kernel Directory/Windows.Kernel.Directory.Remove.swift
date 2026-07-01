@@ -22,7 +22,7 @@ extension Windows.`32`.Kernel.Directory.Remove {
     public static func remove(
         path: borrowing Path
     ) throws(Windows.`32`.Kernel.Directory.Remove.Error) {
-        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Directory.Remove.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Directory.Remove.Error) in
             try remove(unsafePath: ptr)
         }
     }

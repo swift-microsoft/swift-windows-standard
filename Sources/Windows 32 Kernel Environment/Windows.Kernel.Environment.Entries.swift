@@ -11,7 +11,6 @@
 
 #if os(Windows)
 public import WinSDK
-public import Sequence_Primitives
 
 // MARK: - Windows Environment Enumeration
 
@@ -23,13 +22,21 @@ extension Windows.`32`.Kernel.Environment {
     ///
     /// ## Usage
     /// ```swift
-    /// for entry in Windows.`32`.Kernel.Environment.Entries() {
-    ///     if let (name, value) = entry.parsed {
-    ///         print("\(name)=\(value)")
+    /// if let entries = Windows.`32`.Kernel.Environment.Entries() {
+    ///     var iterator = entries.makeIterator()
+    ///     while let entry = iterator.next() {
+    ///         if let (name, value) = entry.parsed {
+    ///             print("\(name)=\(value)")
+    ///         }
     ///     }
     /// }
     /// ```
-    public struct Entries: ~Copyable, Sequence {
+    ///
+    /// `Entries` is `~Copyable` (it owns the environment block and frees it
+    /// on deinit), so it cannot conform to `Swift.Sequence`; iterate via
+    /// ``makeIterator()`` and `next()` (mirrors the ISO 9945 `Entries`
+    /// shape, which also iterates without a `Sequence` conformance).
+    public struct Entries: ~Copyable {
         private let block: LPWCH
 
         /// Creates an iterator over all environment variables.
@@ -89,33 +96,11 @@ extension Windows.`32`.Kernel.Environment.Entries {
 
 extension Windows.`32`.Kernel.Environment.Entries {
     /// Iterator over environment variable entries.
-    public struct Iterator: Sequence.Iterator.`Protocol`, IteratorProtocol {
+    public struct Iterator: IteratorProtocol {
         private var current: LPWCH
 
         init(current: LPWCH) {
             self.current = current
-        }
-
-        private var _element: Entry? = nil
-
-        @_lifetime(&self)
-        public mutating func nextSpan(maximumCount: Cardinal) -> Swift.Span<Entry> {
-            let ptr = unsafe withUnsafeMutablePointer(to: &_element) { p in
-                unsafe UnsafePointer<Entry>(
-                    unsafe UnsafeRawPointer(p).assumingMemoryBound(to: Entry.self)
-                )
-            }
-            guard maximumCount > .zero else {
-                let span = unsafe Span(_unsafeStart: ptr, count: 0)
-                return unsafe _overrideLifetime(span, mutating: &self)
-            }
-            guard let value = next() else {
-                let span = unsafe Span(_unsafeStart: ptr, count: 0)
-                return unsafe _overrideLifetime(span, mutating: &self)
-            }
-            _element = value
-            let span = unsafe Span(_unsafeStart: ptr, count: 1)
-            return unsafe _overrideLifetime(span, mutating: &self)
         }
 
         public mutating func next() -> Entry? {
@@ -160,7 +145,8 @@ extension Windows.`32`.Kernel.Environment {
         guard let entries = Entries() else { return nil }
 
         var result = [String: String]()
-        for entry in entries {
+        var iterator = entries.makeIterator()
+        while let entry = iterator.next() {
             if let (name, value) = entry.parsed {
                 result[name] = value
             }

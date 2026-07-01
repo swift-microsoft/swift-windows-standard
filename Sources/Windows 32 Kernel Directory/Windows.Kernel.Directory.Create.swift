@@ -25,7 +25,7 @@ extension Windows.`32`.Kernel.Directory.Create {
         path: borrowing Path,
         permissions: Windows.`32`.Kernel.File.Permissions = .directoryDefault
     ) throws(Windows.`32`.Kernel.Directory.Create.Error) {
-        try path.withUnsafeCString { ptr throws(Windows.`32`.Kernel.Directory.Create.Error) in
+        try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Directory.Create.Error) in
             try create(unsafePath: ptr, permissions: permissions)
         }
     }

@@ -119,7 +119,7 @@ extension Windows.`32`.Kernel.IO.Write {
 
         // Seek to offset
         var targetPos: LARGE_INTEGER = LARGE_INTEGER()
-        targetPos.QuadPart = offset.rawValue
+        targetPos.QuadPart = offset.underlying
         guard SetFilePointerEx(pointer, targetPos, nil, DWORD(FILE_BEGIN)) else {
             throw .current()
         }
@@ -159,7 +159,7 @@ extension Windows.`32`.Kernel.IO.Write {
     /// - Returns: Number of bytes written (may be less than `buffer.count`).
     /// - Throws: ``Kernel/IO/Write/Error`` on failure.
     public static func write(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         from buffer: UnsafeRawBufferPointer
     ) throws(Error) -> Int {
         guard descriptor.isValid else {
@@ -180,7 +180,7 @@ extension Windows.`32`.Kernel.IO.Write {
     /// - Returns: Number of bytes written (may be less than `buffer.count`).
     /// - Throws: ``Kernel/IO/Write/Error`` on failure.
     public static func pwrite(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         from buffer: UnsafeRawBufferPointer,
         at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {
@@ -203,7 +203,7 @@ extension Windows.`32`.Kernel.IO.Write {
     /// - Throws: `Windows.`32`.Kernel.IO.Write.Error` on failure.
     @inlinable
     public static func write(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         from span: Swift.Span<UInt8>
     ) throws(Error) -> Int {
         try span.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) throws(Error) -> Int in
@@ -221,7 +221,7 @@ extension Windows.`32`.Kernel.IO.Write {
     /// - Throws: `Windows.`32`.Kernel.IO.Write.Error` on failure.
     @inlinable
     public static func pwrite(
-        _ descriptor: Windows.`32`.Kernel.Descriptor,
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         from span: Swift.Span<UInt8>,
         at offset: Windows.`32`.Kernel.File.Offset
     ) throws(Error) -> Int {

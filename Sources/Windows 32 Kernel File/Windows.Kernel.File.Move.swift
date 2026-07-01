@@ -71,8 +71,8 @@ extension Windows.`32`.Kernel.File.Move {
         to newPath: borrowing Path,
         options: Options
     ) throws(Windows.`32`.Kernel.File.Move.Error) {
-        try oldPath.withUnsafeCString { oldPtr throws(Windows.`32`.Kernel.File.Move.Error) in
-            try newPath.withUnsafeCString { newPtr throws(Windows.`32`.Kernel.File.Move.Error) in
+        try unsafe oldPath.view.withUnsafePointer { oldPtr throws(Windows.`32`.Kernel.File.Move.Error) in
+            try unsafe newPath.view.withUnsafePointer { newPtr throws(Windows.`32`.Kernel.File.Move.Error) in
                 try move(
                     from: oldPtr,
                     to: newPtr,

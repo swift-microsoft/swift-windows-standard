@@ -83,7 +83,7 @@ extension Windows.`32`.Kernel.IO.Completion.Port {
     @unsafe
     @inlinable
     public static func wakeup(
-        _ port: Windows.`32`.Kernel.Descriptor
+        _ port: borrowing Windows.`32`.Kernel.Descriptor
     ) -> @Sendable () -> Void {
         let rawPort = port._rawValue
         return {

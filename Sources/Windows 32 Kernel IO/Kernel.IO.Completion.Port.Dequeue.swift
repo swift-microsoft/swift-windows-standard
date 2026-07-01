@@ -101,7 +101,7 @@
             ) {
                 self.bytes = bytes
                 self.key = key
-                unsafe { self.overlapped = overlapped }
+                self.overlapped = unsafe overlapped
                 self.status = status
             }
         }
@@ -253,7 +253,7 @@
         ///   Operation failures are returned via `Item.status`.
         @inlinable
         public static func single(
-            _ port: Windows.`32`.Kernel.Descriptor,
+            _ port: borrowing Windows.`32`.Kernel.Descriptor,
             timeout: UInt32
         ) throws(Windows.`32`.Kernel.IO.Completion.Port.Error) -> Item {
             try single(port._rawValue, timeout: timeout)
@@ -276,7 +276,7 @@
         @unsafe
         @inlinable
         public static func batch(
-            _ port: Windows.`32`.Kernel.Descriptor,
+            _ port: borrowing Windows.`32`.Kernel.Descriptor,
             entries: UnsafeMutableBufferPointer<Windows.`32`.Kernel.IO.Completion.Port.Entry>,
             timeout: UInt32
         ) throws(Windows.`32`.Kernel.IO.Completion.Port.Error) -> Int {

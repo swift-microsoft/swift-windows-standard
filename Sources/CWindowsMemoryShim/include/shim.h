@@ -17,6 +17,11 @@
 #include <windows.h>
 // PROCESS_MEMORY_COUNTERS_EX and GetProcessMemoryInfo are declared in <psapi.h>,
 // which must be included after <windows.h> (it depends on its types).
+//
+// PSAPI_VERSION 2 remaps GetProcessMemoryInfo to K32GetProcessMemoryInfo, which
+// is exported directly from kernel32.dll (Windows 7+). kernel32 is always in the
+// default link set, so no separate Psapi.lib link is required.
+#define PSAPI_VERSION 2
 #include <psapi.h>
 
 /// Memory statistics structure for Windows.

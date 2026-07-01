@@ -96,7 +96,7 @@ extension Memory.Map {
     /// - Returns: Pointer to the mapped region.
     /// - Throws: `Error.map` on failure.
     public static func map(
-        fd: Windows.`32`.Kernel.Descriptor,
+        fd: borrowing Windows.`32`.Kernel.Descriptor,
         length: Memory.Address.Count,
         protection: Protection,
         flags: Options,

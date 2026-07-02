@@ -71,6 +71,8 @@ extension Windows.Loader.Test.Unit {
             Issue.record("Expected Loader.Error")
         } catch is Loader.Error {
             // Expected
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
         }
     }
 
@@ -133,6 +135,8 @@ extension Windows.Loader.Test.Unit {
             Issue.record("Expected Loader.Error")
         } catch is Loader.Error {
             // Expected (do/catch: see `open nonexistent library fails`)
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
         }
     }
 
@@ -157,6 +161,8 @@ extension Windows.Loader.Test.Unit {
             Issue.record("Expected Loader.Error")
         } catch is Loader.Error {
             // Expected (do/catch: see `open nonexistent library fails`)
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
         }
     }
 }

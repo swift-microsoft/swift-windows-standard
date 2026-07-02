@@ -115,6 +115,7 @@ let package = Package(
         .package(url: "https://github.com/swift-primitives/swift-hash-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-tagged-primitives.git", branch: "main"),
         .package(url: "https://github.com/swift-primitives/swift-cardinal-primitives.git", branch: "main"),
+        .package(url: "https://github.com/swift-primitives/swift-string-primitives.git", branch: "main"),
     ],
     targets: [
         // MARK: - Core
@@ -191,6 +192,7 @@ let package = Package(
                 .product(name: "Binary Primitives", package: "swift-binary-primitives"),
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
                 .product(name: "Pair Primitives", package: "swift-pair-primitives"),
+                .product(name: "String Primitives", package: "swift-string-primitives"),
             ]
         ),
 

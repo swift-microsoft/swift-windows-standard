@@ -45,8 +45,13 @@ extension Windows.`32`.Kernel.Close.Test.Unit {
     func `close with invalid descriptor throws handle error`() {
         let invalid = Kernel.Descriptor.invalid
 
-        #expect(throws: Kernel.Close.Error.self) {
+        do {
             try Windows.`32`.Kernel.Close.close(invalid)
+            Issue.record("Expected error")
+        } catch is Kernel.Close.Error {
+            // Expected
+        } catch {
+            Issue.record("Unexpected error type: \(error)")
         }
     }
 

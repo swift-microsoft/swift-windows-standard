@@ -61,8 +61,16 @@ extension Windows.Loader.Test.Unit {
 
     @Test
     func `open nonexistent library fails`() {
-        #expect(throws: Loader.Error.self) {
+        // do/catch, not #expect(throws:): swift-testing's throws-matcher
+        // crashes the process on Windows when the thrown Loader.Error
+        // (Ownership.Shared<String> payload) passes through it — probe runs
+        // 28561512482/28561881582 isolate the crash to the #expect wrapper
+        // while the identical do/catch path passes.
+        do {
             _ = try Windows.Loader.Library.open(path: "nonexistent_library_12345.dll")
+            Issue.record("Expected Loader.Error")
+        } catch is Loader.Error {
+            // Expected
         }
     }
 
@@ -120,8 +128,11 @@ extension Windows.Loader.Test.Unit {
         let handle = try Windows.Loader.Library.open(path: "kernel32.dll")
         defer { try? Windows.Loader.Library.close(handle) }
 
-        #expect(throws: Loader.Error.self) {
+        do {
             _ = try Windows.Loader.Symbol.lookup(name: "NonexistentFunction12345", in: .handle(handle))
+            Issue.record("Expected Loader.Error")
+        } catch is Loader.Error {
+            // Expected (do/catch: see `open nonexistent library fails`)
         }
     }
 
@@ -141,8 +152,11 @@ extension Windows.Loader.Test.Unit {
         let handle = try Windows.Loader.Library.open(path: "kernel32.dll")
         defer { try? Windows.Loader.Library.close(handle) }
 
-        #expect(throws: Loader.Error.self) {
+        do {
             _ = try Windows.Loader.Symbol.lookup(name: "GetLastError", in: .next)
+            Issue.record("Expected Loader.Error")
+        } catch is Loader.Error {
+            // Expected (do/catch: see `open nonexistent library fails`)
         }
     }
 }
@@ -256,96 +270,5 @@ extension Windows.Loader.Test.EdgeCase {
     }
 }
 
-
-// MARK: - TEMPORARY crash probe
-//
-// The `open nonexistent library fails` test kills the process with no
-// output (probe runs 28560007585 / 28560455342). This test replicates
-// captureLastErrorMessage stepwise with flushed prints to locate the
-// crashing statement. DELETE once the crash is fixed.
-
-import String_Primitives
-
-extension Windows.Loader.Test.Unit {
-    @Test
-    func `crashprobe stepwise error capture`() {
-        func step(_ msg: Swift.String) {
-            print(msg)
-            fflush(nil)
-        }
-        step("s1: LoadLibraryW on nonexistent path")
-        let h = "nonexistent_library_12345.dll".withCString(encodedAs: UTF16.self) { LoadLibraryW($0) }
-        step("s2: handle = \(Swift.String(describing: h))")
-        let code = GetLastError()
-        step("s3: lastError = \(code)")
-
-        var buffer: LPWSTR?
-        let length = withUnsafeMutablePointer(to: &buffer) { slot in
-            unsafe FormatMessageW(
-                DWORD(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS),
-                nil,
-                code,
-                0,
-                unsafe unsafeBitCast(slot, to: LPWSTR.self),
-                0,
-                nil
-            )
-        }
-        step("s4: FormatMessageW length = \(length), buffer = \(Swift.String(describing: buffer))")
-
-        guard length > 0, let buffer else {
-            step("s4a: empty message path")
-            return
-        }
-
-        var count = Int(length)
-        while count > 0, unsafe (buffer[count - 1] == 0x000D || buffer[count - 1] == 0x000A) {
-            count -= 1
-        }
-        step("s5: trimmed count = \(count)")
-
-        let view = unsafe String_Primitives.String.Borrowed(UnsafePointer(buffer), count: count)
-        step("s6: Borrowed constructed")
-
-        let message = unsafe Loader.Message(copying: view)
-        step("s7: Message constructed")
-
-        let error = Windows.Loader.Error.open(message)
-        step("s8: Error constructed: \(error)")
-
-        unsafe LocalFree(buffer)
-        step("s9: LocalFree done")
-    }
-
-    @Test
-    func `crashprobe t real open via do catch`() {
-        func step(_ msg: Swift.String) {
-            print(msg)
-            fflush(nil)
-        }
-        step("t1: calling Library.open on nonexistent path")
-        do {
-            _ = try Windows.Loader.Library.open(path: "nonexistent_library_12345.dll")
-            step("t2: unexpectedly succeeded")
-        } catch {
-            step("t3: caught error")
-            step("t4: description = \(error)")
-        }
-        step("t5: done")
-    }
-
-    @Test
-    func `crashprobe u expect throws wrapper`() {
-        func step(_ msg: Swift.String) {
-            print(msg)
-            fflush(nil)
-        }
-        step("u1: entering #expect(throws:)")
-        #expect(throws: Windows.Loader.Error.self) {
-            _ = try Windows.Loader.Library.open(path: "nonexistent_library_12345.dll")
-        }
-        step("u2: after #expect(throws:)")
-    }
-}
 
 #endif

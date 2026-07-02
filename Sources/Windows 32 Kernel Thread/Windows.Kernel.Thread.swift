@@ -152,4 +152,26 @@ extension Windows.`32`.Kernel.Thread.Handle {
     }
 }
 
+// MARK: - Instance join / identity (ISO parity)
+
+extension Windows.`32`.Kernel.Thread.Handle {
+    /// Whether this handle refers to the calling thread.
+    ///
+    /// Mirrors `ISO_9945.Kernel.Thread.Handle.isCurrent`. `GetThreadId`
+    /// resolves pseudo-handles to the calling thread, so this is correct
+    /// for handles from both `create()` and `current()`.
+    public var isCurrent: Bool {
+        GetThreadId(_handle) == GetCurrentThreadId()
+    }
+
+    /// Waits for the thread to finish and releases the handle.
+    ///
+    /// Mirrors `ISO_9945.Kernel.Thread.Handle.join()` (consuming: the
+    /// handle is closed and must not be reused).
+    public consuming func join() {
+        _ = WaitForSingleObject(_handle, INFINITE)
+        _ = CloseHandle(_handle)
+    }
+}
+
 #endif

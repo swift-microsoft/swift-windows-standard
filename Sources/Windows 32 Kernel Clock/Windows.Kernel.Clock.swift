@@ -20,7 +20,7 @@ extension Clock.Continuous {
     /// Uses `QueryPerformanceCounter` which advances during system sleep,
     /// providing wall-clock time measurement.
     @inlinable
-    public static func now() -> Clock.Continuous.Instant {
+    public static var now: Clock.Continuous.Instant {
         var counter = LARGE_INTEGER()
         var frequency = LARGE_INTEGER()
         QueryPerformanceCounter(&counter)
@@ -46,7 +46,7 @@ extension Clock.Suspending {
     /// Uses `QueryUnbiasedInterruptTime` which pauses during system sleep,
     /// measuring only active execution time.
     @inlinable
-    public static func now() -> Clock.Suspending.Instant {
+    public static var now: Clock.Suspending.Instant {
         var unbiasedTime: ULONGLONG = 0
         QueryUnbiasedInterruptTime(&unbiasedTime)
 

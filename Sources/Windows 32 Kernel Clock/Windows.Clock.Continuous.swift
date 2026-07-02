@@ -18,12 +18,12 @@ extension Clock.Continuous: _Concurrency.Clock {
     ///
     /// Delegates directly to `Clock.Continuous.now`, which
     /// wraps `QueryPerformanceCounter` on Windows.
-    public var now: Instant { Clock.Continuous.now() }
+    public var now: Instant { Clock.Continuous.now }
 
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
-        while Clock.Continuous.now() < deadline {
+        while Clock.Continuous.now < deadline {
             try Task.checkCancellation()
             try await Task.sleep(for: .nanoseconds(1_000_000))
         }
@@ -37,12 +37,12 @@ extension Clock.Suspending: _Concurrency.Clock {
     ///
     /// Delegates directly to `Clock.Suspending.now`, which
     /// wraps `QueryUnbiasedInterruptTime` on Windows.
-    public var now: Instant { Clock.Suspending.now() }
+    public var now: Instant { Clock.Suspending.now }
 
     /// Suspends until the given deadline, checking for cancellation.
     nonisolated(nonsending)
     public func sleep(until deadline: Instant, tolerance: Duration? = nil) async throws {
-        while Clock.Suspending.now() < deadline {
+        while Clock.Suspending.now < deadline {
             try Task.checkCancellation()
             try await Task.sleep(for: .nanoseconds(1_000_000))
         }

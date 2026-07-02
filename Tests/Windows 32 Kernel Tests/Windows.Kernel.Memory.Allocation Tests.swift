@@ -68,8 +68,8 @@ extension Memory.Allocation.Test.Unit {
 
 extension Memory.Allocation.Test.Unit {
     @Test
-    func `allocate with zero size throws invalidSize`() {
-        #expect(throws: Memory.Allocation.Error.self) {
+    func `allocate with zero size throws invalid length`() {
+        #expect(throws: Memory.Map.Error.self) {
             _ = try Memory.Allocation.allocate(
                 size: 0,
                 protection: .readWrite

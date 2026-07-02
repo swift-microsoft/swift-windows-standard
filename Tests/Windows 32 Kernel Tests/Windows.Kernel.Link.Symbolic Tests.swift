@@ -96,11 +96,11 @@ extension Windows.`32`.Kernel.Link.Symbolic.Test.Unit {
 
 extension Windows.`32`.Kernel.Link.Symbolic.Test.EdgeCase {
     @Test
-    func `symlink may require privileges`() {
-        // Symlinks on Windows typically require:
-        // - Administrator privileges, or
-        // - Developer Mode enabled
-        // This test just verifies the function exists and throws expected errors
+    func `symlink creation succeeds or throws a Symbolic error`() throws {
+        // Symlinks on Windows require Administrator privileges or Developer
+        // Mode. CI runners typically have one of them (creation of a
+        // dangling symlink then SUCCEEDS); local runs may not. Both
+        // outcomes pass — only a non-Symbolic error fails the test.
 
         let targetPath = "C:\\target_\(GetCurrentProcessId())"
         let linkPath = "C:\\symlink_\(GetCurrentProcessId())"
@@ -108,8 +108,7 @@ extension Windows.`32`.Kernel.Link.Symbolic.Test.EdgeCase {
         var target = Array(targetPath.utf16) + [0]
         var link = Array(linkPath.utf16) + [0]
 
-        // Should throw (either permission or notFound)
-        #expect(throws: Kernel.Link.Symbolic.Error.self) {
+        do {
             try target.withUnsafeBufferPointer { targetPtr in
                 try link.withUnsafeBufferPointer { linkPtr in
                     let wtarget = UnsafeRawPointer(targetPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
@@ -117,6 +116,13 @@ extension Windows.`32`.Kernel.Link.Symbolic.Test.EdgeCase {
                     try Windows.`32`.Kernel.Link.Symbolic.create(target: wtarget, linkPath: wlink)
                 }
             }
+            // Privileged runner: clean up the dangling link.
+            link.withUnsafeBufferPointer { linkPtr in
+                let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: Path.Char.self)
+                try? Windows.`32`.Kernel.File.Delete.delete(unsafePath: wlink)
+            }
+        } catch is Kernel.Link.Symbolic.Error {
+            // Unprivileged runner: expected.
         }
     }
 }

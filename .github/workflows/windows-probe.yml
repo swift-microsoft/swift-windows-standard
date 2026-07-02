@@ -28,4 +28,5 @@ jobs:
       - name: Serial test run
         run: |
           swift --version
-          swift test -c debug --no-parallel
+          swift test -c debug --no-parallel --filter "nonexistent"
+          echo "exit: $LASTEXITCODE"

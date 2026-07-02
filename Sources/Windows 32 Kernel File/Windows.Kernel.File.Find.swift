@@ -10,6 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
+public import Pair_Primitives
 internal import WinSDK
 
 extension Windows.`32`.Kernel.File {
@@ -129,21 +130,10 @@ extension Windows.`32`.Kernel.File.Find {
     /// The result of beginning a file-find iteration: the owning Handle
     /// plus the first entry.
     ///
-    /// A struct rather than a tuple because tuples cannot carry noncopyable
-    /// elements; `First` is itself `~Copyable` since it owns the Handle.
-    public struct First: ~Copyable {
-        /// The handle owning the find resource. Use ``Handle/next()`` to
-        /// advance the iteration.
-        public var handle: Handle
-
-        /// The first directory entry.
-        public let entry: Entry
-
-        package init(handle: consuming Handle, entry: Entry) {
-            self.handle = handle
-            self.entry = entry
-        }
-    }
+    /// A `Pair` rather than a tuple because tuples cannot carry noncopyable
+    /// elements. `Pair` is frozen, so downstream modules can consume the
+    /// handle component without resilience blocking the move.
+    public typealias First = Pair<Handle, Entry>
 }
 
 // MARK: - Iteration entry point
@@ -171,7 +161,7 @@ extension Windows.`32`.Kernel.File.Find {
             name: extractFileName(from: &findData),
             attributes: findData.dwFileAttributes
         )
-        return First(handle: Handle(_raw: raw), entry: entry)
+        return First(Handle(_raw: raw), entry)
     }
 }
 

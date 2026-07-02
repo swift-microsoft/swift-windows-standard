@@ -172,6 +172,16 @@ extension Windows.`32`.Kernel.Thread.Handle {
         _ = WaitForSingleObject(_handle, INFINITE)
         _ = CloseHandle(_handle)
     }
+
+    /// Releases the handle without waiting for the thread.
+    ///
+    /// Mirrors `ISO_9945.Kernel.Thread.Handle.detach()` (consuming: the
+    /// handle must not be reused). Windows has no detached-thread state —
+    /// closing the last handle is the analog: the thread keeps running
+    /// and the OS reclaims its resources when it exits.
+    public consuming func detach() {
+        _ = CloseHandle(_handle)
+    }
 }
 
 #endif

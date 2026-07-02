@@ -9,6 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
+// Windows-only: `.Windows` error-code constants and `.win32` cases exist
+// in Error_Primitives only on Windows.
+#if os(Windows)
+
 public import Error_Primitives
 public import Memory_Allocation_Primitives
 
@@ -34,3 +38,5 @@ extension Memory.Allocation.Error {
         }
     }
 }
+
+#endif

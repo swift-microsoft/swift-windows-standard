@@ -62,28 +62,22 @@ extension Windows.`32`.Kernel.Process.Spawn {
         /// `InitializeProcThreadAttributeList(nil, …, &size)` +
         /// `malloc(size)` +
         /// `InitializeProcThreadAttributeList(buf, …, &size)` shape.
-        @usableFromInline
         internal var _attributeListRaw: UnsafeMutableRawPointer?
 
         /// Heap-allocated array of inheritable HANDLEs referenced by the
         /// attribute list. Lifetime is bound to `self`; the array is freed
         /// by `deinit`.
-        @usableFromInline
         internal var _inheritHandlesRaw: UnsafeMutablePointer<HANDLE?>?
 
         /// Number of HANDLEs allocated at `_inheritHandlesRaw`.
-        @usableFromInline
         internal var _inheritHandlesCount: Int = 0
 
         /// Stdin / stdout / stderr override handles (only set when the
         /// caller explicitly redirected the slot).
-        @usableFromInline
         internal var _stdinHandle: HANDLE?
 
-        @usableFromInline
         internal var _stdoutHandle: HANDLE?
 
-        @usableFromInline
         internal var _stderrHandle: HANDLE?
         #endif
 
@@ -152,18 +146,22 @@ extension Windows.`32`.Kernel.Process.Spawn {
 
 #if os(Windows)
 
+/// `PROC_THREAD_ATTRIBUTE_HANDLE_LIST` is a C macro
+/// (`ProcThreadAttributeValue(ProcThreadAttributeHandleList, FALSE, TRUE,
+/// FALSE)`), so WinSDK does not import it — the composed value is
+/// `2 | PROC_THREAD_ATTRIBUTE_INPUT` (0x20002).
+private let PROC_THREAD_ATTRIBUTE_HANDLE_LIST: DWORD = 0x20002
+
 // MARK: - Internal accessors used by spawn
 
 extension Windows.`32`.Kernel.Process.Spawn.Actions {
     /// The LPPROC_THREAD_ATTRIBUTE_LIST for `STARTUPINFOEX.lpAttributeList`.
-    @usableFromInline
     internal var _attributeList: LPPROC_THREAD_ATTRIBUTE_LIST? {
         unsafe (_attributeListRaw.map { LPPROC_THREAD_ATTRIBUTE_LIST($0) })
     }
 
     /// Stdio handle triple if any slot was overridden; `nil` if no slots
     /// were redirected (child inherits parent stdio).
-    @usableFromInline
     internal var _stdioHandles: (stdin: HANDLE?, stdout: HANDLE?, stderr: HANDLE?)? {
         let s_in = unsafe _stdinHandle
         let s_out = unsafe _stdoutHandle
@@ -257,7 +255,7 @@ extension Windows.`32`.Kernel.Process.Spawn.Actions {
             unsafe old.deinitialize(count: _inheritHandlesCount)
             unsafe old.deallocate()
         }
-        unsafe newRaw[_inheritHandlesCount].initialize(to: handle)
+        unsafe (newRaw + _inheritHandlesCount).initialize(to: handle)
         unsafe (self._inheritHandlesRaw = newRaw)
         self._inheritHandlesCount = newCount
 

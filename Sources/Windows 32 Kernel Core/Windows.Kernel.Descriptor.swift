@@ -68,11 +68,5 @@ extension Windows.`32`.Kernel.Descriptor {
 
     /// The raw Windows `HANDLE` value.
     @inlinable
-    /// Raw HANDLE bit pattern for syscall layers.
-    ///
-    /// `@_spi(Syscall)` public (not package): the L3 unifier's typed
-    /// conversions (swift-kernel) reach the raw value the same way they do
-    /// on POSIX, where `_rawValue` is SPI-public on the ISO descriptor.
-    @_spi(Syscall)
-    public var _rawValue: UInt { _raw }
+    package var _rawValue: UInt { _raw }
 }

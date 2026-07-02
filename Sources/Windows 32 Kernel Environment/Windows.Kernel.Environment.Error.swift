@@ -36,6 +36,9 @@ extension Windows.`32`.Kernel.Environment.Error {
 
 // MARK: - Code Mapping
 
+// Windows-only: `Permission.Error(code:)` maps Win32 constants that
+// Error_Primitives declares only on Windows.
+#if os(Windows)
 extension Windows.`32`.Kernel.Environment.Error {
     /// Creates an error from a canonical error code.
     ///
@@ -49,6 +52,7 @@ extension Windows.`32`.Kernel.Environment.Error {
         }
     }
 }
+#endif
 
 // MARK: - Equatable
 

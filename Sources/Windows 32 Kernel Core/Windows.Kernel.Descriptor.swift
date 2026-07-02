@@ -24,11 +24,17 @@ extension Windows.`32`.Kernel {
     ///
     /// ## Design
     ///
-    /// Raw value access is available only via `@_spi(Syscall)` for syscall
-    /// implementation layers. Application code should use the unified API in
-    /// swift-kernel, where `Windows.`32`.Kernel.Descriptor` is a typealias to this type
-    /// on Windows.
+    /// Raw value access is public, mirroring `ISO_9945.Kernel.Descriptor`
+    /// (`_rawValue: Int32` there, `UInt`-shaped `HANDLE` here). Application
+    /// code should use the unified API in swift-kernel, where
+    /// `Kernel.Descriptor` resolves to this type on Windows.
     public struct Descriptor: ~Copyable, Sendable {
+        /// The raw-representation type (`HANDLE` bit pattern).
+        ///
+        /// The POSIX counterpart is `Int32`; consumers that surface the
+        /// platform handle spell it `Kernel.Descriptor.RawValue`.
+        public typealias RawValue = UInt
+
         @usableFromInline
         package var _raw: UInt
 
@@ -61,12 +67,16 @@ extension Windows.`32`.Kernel {
 
 extension Windows.`32`.Kernel.Descriptor {
     /// Creates a descriptor from a raw Windows `HANDLE` value.
+    ///
+    /// Public per ISO 9945 parity (`ISO_9945.Kernel.Descriptor.init(_rawValue:)`).
     @inlinable
-    package init(_rawValue: UInt) {
+    public init(_rawValue: UInt) {
         self._raw = _rawValue
     }
 
     /// The raw Windows `HANDLE` value.
+    ///
+    /// Public per ISO 9945 parity (`ISO_9945.Kernel.Descriptor._rawValue`).
     @inlinable
-    package var _rawValue: UInt { _raw }
+    public var _rawValue: UInt { _raw }
 }

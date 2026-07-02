@@ -78,6 +78,26 @@ extension Windows.`32`.Kernel.Directory.Iterator {
     public static func open(
         unsafePath: UnsafePointer<Path.Char>
     ) throws(Windows.`32`.Kernel.Directory.Error) -> Self {
+        var findData = WIN32_FIND_DATAW()
+        let handle = _findFirst(unsafePath: unsafePath, findData: &findData)
+
+        guard let handle, handle != INVALID_HANDLE_VALUE else {
+            let error = GetLastError()
+            throw Windows.`32`.Kernel.Directory.Error(_windowsError: error)
+        }
+
+        return Self(handle: handle, findData: findData)
+    }
+
+    /// Builds the `path\*` search pattern and issues `FindFirstFileW`.
+    ///
+    /// Shared by ``open(unsafePath:)`` and the ISO-parity
+    /// ``Windows/32/Kernel/Directory/Stream``. On failure returns the
+    /// handle as-is; the caller captures `GetLastError()`.
+    internal static func _findFirst(
+        unsafePath: UnsafePointer<Path.Char>,
+        findData: inout WIN32_FIND_DATAW
+    ) -> HANDLE? {
         // Append \* to the path for FindFirstFileW pattern
         let pathChars = unsafePath
         var length = 0
@@ -99,18 +119,10 @@ extension Windows.`32`.Kernel.Directory.Iterator {
         patternLength += 1
         pattern[patternLength] = 0  // null terminator
 
-        var findData = WIN32_FIND_DATAW()
-        let handle = pattern.withUnsafeBufferPointer { patternBuffer in
+        return pattern.withUnsafeBufferPointer { patternBuffer in
             let wpath = UnsafeRawPointer(patternBuffer.baseAddress!).assumingMemoryBound(to: WCHAR.self)
             return FindFirstFileW(wpath, &findData)
         }
-
-        guard let handle, handle != INVALID_HANDLE_VALUE else {
-            let error = GetLastError()
-            throw Windows.`32`.Kernel.Directory.Error(_windowsError: error)
-        }
-
-        return Self(handle: handle, findData: findData)
     }
 
     /// Returns the next directory entry, or `nil` if iteration is complete.
@@ -146,8 +158,18 @@ extension Windows.`32`.Kernel.Directory.Iterator {
     /// Converts current findData to a Directory.Entry.
     @usableFromInline
     internal func entryFromFindData() -> Windows.`32`.Kernel.Directory.Entry {
-        // Extract the name from cFileName (null-terminated)
-        let nameChars = withUnsafeBytes(of: findData.cFileName) { buffer in
+        Self._entry(from: findData)
+    }
+
+    /// Converts a `WIN32_FIND_DATAW` to a Directory.Entry.
+    ///
+    /// Shared by ``next()`` and the ISO-parity
+    /// ``Windows/32/Kernel/Directory/Stream``.
+    internal static func _entry(from findData: WIN32_FIND_DATAW) -> Windows.`32`.Kernel.Directory.Entry {
+        // Extract the name from cFileName. Entry's rawName contract is
+        // null-terminated ("." is [0x2E, 0x0000]) — its isDotOrDotDot and
+        // name accessor both depend on the terminator, so append it.
+        var nameChars = withUnsafeBytes(of: findData.cFileName) { buffer in
             let ptr = buffer.baseAddress!.assumingMemoryBound(to: UInt16.self)
             let capacity = MemoryLayout.size(ofValue: findData.cFileName) / MemoryLayout<UInt16>.size
             var length = 0
@@ -156,6 +178,7 @@ extension Windows.`32`.Kernel.Directory.Iterator {
             }
             return Array(UnsafeBufferPointer(start: ptr, count: length))
         }
+        nameChars.append(0)
 
         // Determine type from attributes
         let type: Windows.`32`.Kernel.File.Stats.Kind?

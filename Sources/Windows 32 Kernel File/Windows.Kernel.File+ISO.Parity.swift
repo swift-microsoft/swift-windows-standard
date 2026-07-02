@@ -189,6 +189,68 @@ extension Windows.`32`.Kernel.File.Attributes {
     }
 }
 
+// MARK: - Move (Path.Borrowed, ISO shape)
+
+extension Windows.`32`.Kernel.File.Move {
+    /// Moves (renames) a file or directory.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Move.move(from:to:)`.
+    public static func move(
+        from oldPath: borrowing Path.Borrowed,
+        to newPath: borrowing Path.Borrowed
+    ) throws(Windows.`32`.Kernel.File.Move.Error) {
+        try unsafe oldPath.withUnsafePointer { oldPtr throws(Windows.`32`.Kernel.File.Move.Error) in
+            try unsafe newPath.withUnsafePointer { newPtr throws(Windows.`32`.Kernel.File.Move.Error) in
+                try move(from: oldPtr, to: newPtr)
+            }
+        }
+    }
+}
+
+// MARK: - Times (access/modification on descriptor, ISO shape)
+
+extension Windows.`32`.Kernel.File.Times {
+    /// Sets access and modification times on an open descriptor.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Times.set(access:modification:on:)`
+    /// (futimens shape) via `SetFileTime` on the handle.
+    public static func set(
+        access accessTime: Windows.`32`.Kernel.Time,
+        modification modificationTime: Windows.`32`.Kernel.Time,
+        on descriptor: borrowing Windows.`32`.Kernel.Descriptor
+    ) throws(Windows.`32`.Kernel.File.Times.Error) {
+        var access = FILETIME(_from: accessTime)
+        var write = FILETIME(_from: modificationTime)
+        let handle = UnsafeMutableRawPointer(bitPattern: descriptor._rawValue)
+        guard SetFileTime(handle, nil, &access, &write) else {
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
+        }
+    }
+}
+
+// MARK: - Seek (whence label, ISO shape)
+
+extension Windows.`32`.Kernel.File.Seek {
+    /// The reference point for a seek operation (ISO name).
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Seek.Whence`; `Origin`'s cases
+    /// (`.start`, `.current`, `.end`) coincide with the ISO constants,
+    /// so the alias carries call sites written against either name.
+    public typealias Whence = Origin
+
+    /// Seeks with the ISO label form.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Seek.seek(_:offset:whence:)`.
+    @discardableResult
+    public static func seek(
+        _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
+        offset: Int64,
+        whence: Whence
+    ) throws(Windows.`32`.Kernel.File.Seek.Error) -> Int64 {
+        try seek(descriptor, offset: offset, origin: whence)
+    }
+}
+
 // MARK: - Symbolic links (ISO labels)
 
 extension Windows.`32`.Kernel.Link.Symbolic {

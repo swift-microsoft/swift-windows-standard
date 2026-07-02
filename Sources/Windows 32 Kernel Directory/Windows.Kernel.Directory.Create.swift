@@ -30,6 +30,20 @@ extension Windows.`32`.Kernel.Directory.Create {
         }
     }
 
+    /// Creates a directory at the specified path (ISO shape).
+    ///
+    /// Mirrors `ISO_9945.Kernel.Directory.Create.create(_:permissions:)`
+    /// (unlabeled `Path.Borrowed`). Permissions are accepted for signature
+    /// parity; Windows expresses none of the mode bits at creation.
+    public static func create(
+        _ path: borrowing Path.Borrowed,
+        permissions: Windows.`32`.Kernel.File.Permissions = .standardDirectory
+    ) throws(Windows.`32`.Kernel.Directory.Create.Error) {
+        try unsafe path.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Directory.Create.Error) in
+            try create(unsafePath: ptr, permissions: permissions)
+        }
+    }
+
     /// Creates a directory at the specified path using an unsafe wide string.
     ///
     /// - Parameters:

@@ -1,6 +1,6 @@
 # .github/metadata.yaml
 # Triaged by AI-assisted bulk pass (2026-04-29).
-description: "Swift implementation of the Microsoft Windows platform interface."
+description: "Win32 kernel primitives for Swift: file I/O with cloning, direct I/O, and control operations; IO completion ports; process and thread lifecycle; sockets; console/terminal; directory and environment; clock/time; memory mapping; and dynamic-library loading."
 topics:
   - standards
   - windows

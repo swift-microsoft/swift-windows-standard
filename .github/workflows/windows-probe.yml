@@ -28,5 +28,5 @@ jobs:
       - name: Serial test run
         run: |
           swift --version
-          swift test -c debug --no-parallel --filter "nonexistent"
+          swift test -c debug --no-parallel --filter "crashprobe"
           echo "exit: $LASTEXITCODE"

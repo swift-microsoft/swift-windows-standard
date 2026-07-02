@@ -256,4 +256,66 @@ extension Windows.Loader.Test.EdgeCase {
     }
 }
 
+
+// MARK: - TEMPORARY crash probe
+//
+// The `open nonexistent library fails` test kills the process with no
+// output (probe runs 28560007585 / 28560455342). This test replicates
+// captureLastErrorMessage stepwise with flushed prints to locate the
+// crashing statement. DELETE once the crash is fixed.
+
+import String_Primitives
+
+extension Windows.Loader.Test.Unit {
+    @Test
+    func `crashprobe stepwise error capture`() {
+        func step(_ msg: Swift.String) {
+            print(msg)
+            fflush(stdout)
+        }
+        step("s1: LoadLibraryW on nonexistent path")
+        let h = "nonexistent_library_12345.dll".withCString(encodedAs: UTF16.self) { LoadLibraryW($0) }
+        step("s2: handle = \(Swift.String(describing: h))")
+        let code = GetLastError()
+        step("s3: lastError = \(code)")
+
+        var buffer: LPWSTR?
+        let length = withUnsafeMutablePointer(to: &buffer) { slot in
+            unsafe FormatMessageW(
+                DWORD(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS),
+                nil,
+                code,
+                0,
+                unsafe unsafeBitCast(slot, to: LPWSTR.self),
+                0,
+                nil
+            )
+        }
+        step("s4: FormatMessageW length = \(length), buffer = \(Swift.String(describing: buffer))")
+
+        guard length > 0, let buffer else {
+            step("s4a: empty message path")
+            return
+        }
+
+        var count = Int(length)
+        while count > 0, unsafe (buffer[count - 1] == 0x000D || buffer[count - 1] == 0x000A) {
+            count -= 1
+        }
+        step("s5: trimmed count = \(count)")
+
+        let view = unsafe String_Primitives.String.Borrowed(UnsafePointer(buffer), count: count)
+        step("s6: Borrowed constructed")
+
+        let message = unsafe Loader.Message(copying: view)
+        step("s7: Message constructed")
+
+        let error = Windows.Loader.Error.open(message)
+        step("s8: Error constructed: \(error)")
+
+        unsafe LocalFree(buffer)
+        step("s9: LocalFree done")
+    }
+}
+
 #endif

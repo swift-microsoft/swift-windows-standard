@@ -141,6 +141,7 @@ let package = Package(
                 .product(name: "Dimension Primitives", package: "swift-dimension-primitives"),
                 .product(name: "Tagged Primitives", package: "swift-tagged-primitives"),
                 .product(name: "Cardinal Primitives", package: "swift-cardinal-primitives"),
+                .product(name: "Memory Allocation Primitives", package: "swift-memory-allocation-primitives"),
             ]
         ),
 

@@ -9,6 +9,10 @@
 //
 // ===----------------------------------------------------------------------===//
 
+#if os(Windows)
+internal import WinSDK
+#endif
+
 extension Windows.`32`.Kernel.Process {
     /// Process identifier.
     ///
@@ -29,3 +33,17 @@ extension Windows.`32`.Kernel.Process {
         }
     }
 }
+
+// MARK: - Current Process
+
+#if os(Windows)
+extension Windows.`32`.Kernel.Process.ID {
+    /// The current process.
+    ///
+    /// Mirrors `ISO_9945.Kernel.Process.ID.current` (`getpid`) via
+    /// `GetCurrentProcessId`.
+    public static var current: Self {
+        Self(Int32(bitPattern: GetCurrentProcessId()))
+    }
+}
+#endif

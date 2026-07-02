@@ -27,6 +27,18 @@ extension Windows.`32`.Kernel.Directory.Remove {
         }
     }
 
+    /// Removes an empty directory (ISO shape).
+    ///
+    /// Mirrors `ISO_9945.Kernel.Directory.Remove.remove(_:)`
+    /// (unlabeled `Path.Borrowed`).
+    public static func remove(
+        _ path: borrowing Path.Borrowed
+    ) throws(Windows.`32`.Kernel.Directory.Remove.Error) {
+        try unsafe path.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Directory.Remove.Error) in
+            try remove(unsafePath: ptr)
+        }
+    }
+
     /// Removes an empty directory using an unsafe wide string.
     ///
     /// - Parameter unsafePath: The path as a null-terminated wide string.

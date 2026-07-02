@@ -251,6 +251,72 @@ extension Windows.`32`.Kernel.File.Seek {
     }
 }
 
+// MARK: - Hard links (ISO labels)
+
+extension Windows.`32`.Kernel.Link {
+    /// Creates a hard link.
+    ///
+    /// Mirrors `ISO_9945.Kernel.Link.create(at:to:)`.
+    public static func create(
+        at linkPath: borrowing Path.Borrowed,
+        to existingPath: borrowing Path.Borrowed
+    ) throws(Windows.`32`.Kernel.Link.Error) {
+        try unsafe existingPath.withUnsafePointer { sourcePtr throws(Windows.`32`.Kernel.Link.Error) in
+            try unsafe linkPath.withUnsafePointer { linkPtr throws(Windows.`32`.Kernel.Link.Error) in
+                try create(source: sourcePtr, linkPath: linkPtr)
+            }
+        }
+    }
+}
+
+// MARK: - Attributes (permissions on descriptor, ISO shape)
+
+extension Windows.`32`.Kernel.File.Attributes {
+    /// Applies POSIX-style permissions to an open descriptor.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Attributes.set(_:on:)` (fchmod
+    /// shape). As with the path form, the only expressible dimension on
+    /// Windows is the readonly attribute (owner-write absent → readonly),
+    /// applied via `SetFileInformationByHandle(FileBasicInfo)`.
+    public static func set(
+        _ permissions: Windows.`32`.Kernel.File.Permissions,
+        on descriptor: borrowing Windows.`32`.Kernel.Descriptor
+    ) throws(Windows.`32`.Kernel.File.Attributes.Error) {
+        let handle = UnsafeMutableRawPointer(bitPattern: descriptor._rawValue)
+        var info = FILE_BASIC_INFO()
+        guard GetFileInformationByHandleEx(
+            handle,
+            FileBasicInfo,
+            &info,
+            DWORD(MemoryLayout<FILE_BASIC_INFO>.size)
+        ) else {
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
+        }
+        let current = info.FileAttributes
+        var updated = current
+        if (permissions & .ownerWrite) == .none {
+            updated |= DWORD(FILE_ATTRIBUTE_READONLY)
+        } else {
+            updated &= ~DWORD(FILE_ATTRIBUTE_READONLY)
+        }
+        guard updated != current else { return }
+        info.FileAttributes = updated
+        // Zero timestamps mean "leave unchanged" for SetFileInformationByHandle.
+        info.CreationTime.QuadPart = 0
+        info.LastAccessTime.QuadPart = 0
+        info.LastWriteTime.QuadPart = 0
+        info.ChangeTime.QuadPart = 0
+        guard SetFileInformationByHandle(
+            handle,
+            FileBasicInfo,
+            &info,
+            DWORD(MemoryLayout<FILE_BASIC_INFO>.size)
+        ) else {
+            throw .platform(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
+        }
+    }
+}
+
 // MARK: - Symbolic links (ISO labels)
 
 extension Windows.`32`.Kernel.Link.Symbolic {

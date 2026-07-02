@@ -340,6 +340,7 @@ let package = Package(
             dependencies: [
                 "Windows 32 Kernel",
                 "Windows 32 Kernel Test Support",
+                "Windows 32 Kernel Memory Map",
                 .product(name: "Standard Library Extensions", package: "swift-standard-library-extensions"),
             ]
         ),

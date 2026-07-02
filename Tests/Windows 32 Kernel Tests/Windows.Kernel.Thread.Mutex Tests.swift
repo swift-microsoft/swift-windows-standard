@@ -151,7 +151,7 @@ extension Windows.`32`.Kernel.Thread.Mutex.Test.EdgeCase {
 
     @Test
     func `withLock with throwing closure propagates error`() {
-        struct TestError: Error {}
+        struct TestError: Swift.Error {}
         let mutex = Windows.`32`.Kernel.Thread.Mutex()
 
         #expect(throws: TestError.self) {

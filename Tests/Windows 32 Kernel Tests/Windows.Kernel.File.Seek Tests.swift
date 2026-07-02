@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.`32`.Kernel.Seek {
+extension Windows.`32`.Kernel.File.Seek {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,76 +28,76 @@ extension Windows.`32`.Kernel.Seek {
 
 // MARK: - Namespace Tests
 
-extension Windows.`32`.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.File.Seek.Test.Unit {
     @Test
     func `Seek namespace exists`() {
-        _ = Windows.`32`.Kernel.Seek.self
+        _ = Windows.`32`.Kernel.File.Seek.self
     }
 
     @Test
     func `Seek.Error type alias exists`() {
-        _ = Windows.`32`.Kernel.Seek.Error.self
+        _ = Windows.`32`.Kernel.File.Seek.Error.self
     }
 
     @Test
     func `Seek.Origin type alias exists`() {
-        _ = Windows.`32`.Kernel.Seek.Origin.self
+        _ = Windows.`32`.Kernel.File.Seek.Origin.self
     }
 }
 
 // MARK: - Origin Tests
 
-extension Windows.`32`.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.File.Seek.Test.Unit {
     @Test
     func `Origin.start exists`() {
-        let origin = Kernel.Seek.Origin.start
+        let origin = Kernel.File.Seek.Origin.start
         #expect(origin == .start)
     }
 
     @Test
     func `Origin.current exists`() {
-        let origin = Kernel.Seek.Origin.current
+        let origin = Kernel.File.Seek.Origin.current
         #expect(origin == .current)
     }
 
     @Test
     func `Origin.end exists`() {
-        let origin = Kernel.Seek.Origin.end
+        let origin = Kernel.File.Seek.Origin.end
         #expect(origin == .end)
     }
 }
 
 // MARK: - Windows Conversion Tests
 
-extension Windows.`32`.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.File.Seek.Test.Unit {
     @Test
     func `Origin.start converts to FILE_BEGIN`() {
-        let origin = Kernel.Seek.Origin.start
+        let origin = Kernel.File.Seek.Origin.start
         #expect(origin.windowsMoveMethod == DWORD(FILE_BEGIN))
     }
 
     @Test
     func `Origin.current converts to FILE_CURRENT`() {
-        let origin = Kernel.Seek.Origin.current
+        let origin = Kernel.File.Seek.Origin.current
         #expect(origin.windowsMoveMethod == DWORD(FILE_CURRENT))
     }
 
     @Test
     func `Origin.end converts to FILE_END`() {
-        let origin = Kernel.Seek.Origin.end
+        let origin = Kernel.File.Seek.Origin.end
         #expect(origin.windowsMoveMethod == DWORD(FILE_END))
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.`32`.Kernel.Seek.Test.Unit {
+extension Windows.`32`.Kernel.File.Seek.Test.Unit {
     @Test
     func `seek with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
-        #expect(throws: Kernel.Seek.Error.self) {
-            _ = try Windows.`32`.Kernel.Seek.seek(invalid, offset: 0, origin: .start)
+        #expect(throws: Kernel.File.Seek.Error.self) {
+            _ = try Windows.`32`.Kernel.File.Seek.seek(invalid, offset: 0, origin: .start)
         }
     }
 
@@ -105,30 +105,30 @@ extension Windows.`32`.Kernel.Seek.Test.Unit {
     func `tell with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
-        #expect(throws: Kernel.Seek.Error.self) {
-            _ = try Windows.`32`.Kernel.Seek.tell(invalid)
+        #expect(throws: Kernel.File.Seek.Error.self) {
+            _ = try Windows.`32`.Kernel.File.Seek.tell(invalid)
         }
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.`32`.Kernel.Seek.Test.EdgeCase {
+extension Windows.`32`.Kernel.File.Seek.Test.EdgeCase {
     @Test
     func `Error.invalidDescriptor exists`() {
-        let error = Kernel.Seek.Error.invalidDescriptor
+        let error = Kernel.File.Seek.Error.invalidDescriptor
         #expect(error == .invalidDescriptor)
     }
 
     @Test
     func `Error.negativeOffset exists`() {
-        let error = Kernel.Seek.Error.negativeOffset
+        let error = Kernel.File.Seek.Error.negativeOffset
         #expect(error == .negativeOffset)
     }
 
     @Test
     func `Error.notSeekable exists`() {
-        let error = Kernel.Seek.Error.notSeekable
+        let error = Kernel.File.Seek.Error.notSeekable
         #expect(error == .notSeekable)
     }
 }

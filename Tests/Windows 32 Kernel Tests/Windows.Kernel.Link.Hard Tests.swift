@@ -108,7 +108,7 @@ extension Windows.`32`.Kernel.Link.Test.EdgeCase {
                 try link.withUnsafeBufferPointer { linkPtr in
                     let wsource = UnsafeRawPointer(sourcePtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.`32`.Kernel.Link.link(source: wsource, link: wlink)
+                    try Windows.`32`.Kernel.Link.create(source: wsource, linkPath: wlink)
                 }
             }
         }

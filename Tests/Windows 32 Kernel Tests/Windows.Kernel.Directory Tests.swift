@@ -47,19 +47,10 @@ extension Windows.`32`.Kernel.Directory.Test.Unit {
 
 extension Windows.`32`.Kernel.Directory.Test.Unit {
     @Test
-    func `Iterator has handle property`() {
-        // Type check only - can't create iterator without real directory
-        _ = \Windows.`32`.Kernel.Directory.Iterator.handle
-    }
-
-    @Test
-    func `Iterator has findData property`() {
-        _ = \Windows.`32`.Kernel.Directory.Iterator.findData
-    }
-
-    @Test
-    func `Iterator has firstEntry property`() {
-        _ = \Windows.`32`.Kernel.Directory.Iterator.firstEntry
+    func `Iterator type exists`() {
+        // Type check only — Iterator is ~Copyable (key paths are
+        // unsupported) and cannot be created without a real directory.
+        _ = Windows.`32`.Kernel.Directory.Iterator.self
     }
 }
 
@@ -103,22 +94,23 @@ extension Windows.`32`.Kernel.Directory.Test.EdgeCase {
     @Test
     func `Entry type has name, inode, type`() {
         // Check Kernel.Directory.Entry exists with expected properties
-        let nameChars: [UInt16] = [0x74, 0x65, 0x73, 0x74]  // "test"
+        let nameChars: [UInt16] = [0x74, 0x65, 0x73, 0x74, 0x0000]  // "test" (null-terminated)
         let entry = Kernel.Directory.Entry(rawName: nameChars, inode: nil, type: .regular)
         #expect(entry.type == .regular)
     }
 
     @Test
     func `Entry.isDotOrDotDot detects dot entries`() {
-        let dotName: [UInt16] = [0x2E]  // "."
+        // rawName is null-terminated (mirrors ISO_9945.Kernel.Directory.Entry)
+        let dotName: [UInt16] = [0x2E, 0x0000]  // "."
         let dotEntry = Kernel.Directory.Entry(rawName: dotName, inode: nil, type: .directory)
         #expect(dotEntry.isDotOrDotDot)
 
-        let dotDotName: [UInt16] = [0x2E, 0x2E]  // ".."
+        let dotDotName: [UInt16] = [0x2E, 0x2E, 0x0000]  // ".."
         let dotDotEntry = Kernel.Directory.Entry(rawName: dotDotName, inode: nil, type: .directory)
         #expect(dotDotEntry.isDotOrDotDot)
 
-        let normalName: [UInt16] = [0x74, 0x65, 0x73, 0x74]  // "test"
+        let normalName: [UInt16] = [0x74, 0x65, 0x73, 0x74, 0x0000]  // "test"
         let normalEntry = Kernel.Directory.Entry(rawName: normalName, inode: nil, type: .regular)
         #expect(!normalEntry.isDotOrDotDot)
     }

@@ -56,22 +56,22 @@ extension Windows.`32`.Kernel.File.Open.Test.Unit {
     @Test
     func `Mode.read exists`() {
         let mode = Kernel.File.Open.Mode.read
-        #expect(mode.contains(.read))
-        #expect(!mode.contains(.write))
+        #expect(mode.read)
+        #expect(!mode.write)
     }
 
     @Test
     func `Mode.write exists`() {
         let mode = Kernel.File.Open.Mode.write
-        #expect(mode.contains(.write))
-        #expect(!mode.contains(.read))
+        #expect(mode.write)
+        #expect(!mode.read)
     }
 
     @Test
     func `Mode.readWrite exists`() {
         let mode = Kernel.File.Open.Mode.readWrite
-        #expect(mode.contains(.read))
-        #expect(mode.contains(.write))
+        #expect(mode.read)
+        #expect(mode.write)
     }
 }
 
@@ -195,10 +195,9 @@ extension Windows.`32`.Kernel.File.Open.Test.Unit {
 extension Windows.`32`.Kernel.File.Open.Test.EdgeCase {
     @Test
     func `Mode can be combined`() {
-        var mode = Kernel.File.Open.Mode.read
-        mode.insert(.write)
-        #expect(mode.contains(.read))
-        #expect(mode.contains(.write))
+        let mode = Kernel.File.Open.Mode(read: true, write: true)
+        #expect(mode.read)
+        #expect(mode.write)
     }
 
     @Test

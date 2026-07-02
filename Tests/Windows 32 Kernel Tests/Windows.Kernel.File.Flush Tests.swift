@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.`32`.Kernel.Sync {
+extension Windows.`32`.Kernel.File.Flush {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,22 +28,22 @@ extension Windows.`32`.Kernel.Sync {
 
 // MARK: - Namespace Tests
 
-extension Windows.`32`.Kernel.Sync.Test.Unit {
+extension Windows.`32`.Kernel.File.Flush.Test.Unit {
     @Test
     func `Sync namespace exists`() {
-        _ = Windows.`32`.Kernel.Sync.self
+        _ = Windows.`32`.Kernel.File.Flush.self
     }
 }
 
 // MARK: - Error Tests
 
-extension Windows.`32`.Kernel.Sync.Test.Unit {
+extension Windows.`32`.Kernel.File.Flush.Test.Unit {
     @Test
     func `sync with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
-        #expect(throws: Kernel.Sync.Error.self) {
-            try Windows.`32`.Kernel.Sync.sync(invalid)
+        #expect(throws: Kernel.File.Flush.Error.self) {
+            try Windows.`32`.Kernel.File.Flush.flush(invalid)
         }
     }
 
@@ -51,21 +51,21 @@ extension Windows.`32`.Kernel.Sync.Test.Unit {
     func `datasync with invalid descriptor throws`() {
         let invalid = Kernel.Descriptor.invalid
 
-        #expect(throws: Kernel.Sync.Error.self) {
-            try Windows.`32`.Kernel.Sync.datasync(invalid)
+        #expect(throws: Kernel.File.Flush.Error.self) {
+            try Windows.`32`.Kernel.File.Flush.flushData(invalid)
         }
     }
 }
 
 // MARK: - Edge Cases
 
-extension Windows.`32`.Kernel.Sync.Test.EdgeCase {
+extension Windows.`32`.Kernel.File.Flush.Test.EdgeCase {
     @Test
     func `datasync is alias for sync on Windows`() {
         // On Windows, datasync and sync are the same operation
         // This test just verifies both functions exist
-        _ = Windows.`32`.Kernel.Sync.sync
-        _ = Windows.`32`.Kernel.Sync.datasync
+        _ = Windows.`32`.Kernel.File.Flush.sync
+        _ = Windows.`32`.Kernel.File.Flush.datasync
     }
 }
 

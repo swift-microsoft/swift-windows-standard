@@ -80,7 +80,7 @@ extension Windows.`32`.Kernel.IO.Write.Test.Unit {
         let handle = utf16Path.withUnsafeMutableBufferPointer { pathPtr in
             CreateFileW(
                 pathPtr.baseAddress,
-                DWORD(GENERIC_READ | GENERIC_WRITE),
+                DWORD(GENERIC_READ) | DWORD(GENERIC_WRITE),
                 0,
                 nil,
                 DWORD(CREATE_ALWAYS),

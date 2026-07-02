@@ -14,6 +14,7 @@ import WinSDK
 import Testing
 
 @testable import Windows_32_Kernel
+@testable import Windows_32_Kernel_Memory_Map
 import Error_Primitives
 import Memory_Primitives
 
@@ -40,8 +41,8 @@ extension Memory.Map.Test.Unit {
     }
 
     @Test
-    func `Memory.Map.Flags type exists`() {
-        _ = Memory.Map.Flags.self
+    func `Memory.Map.Options type exists`() {
+        _ = Memory.Map.Options.self
     }
 }
 
@@ -150,8 +151,7 @@ extension Memory.Map.Test.Unit {
 extension Memory.Map.Test.EdgeCase {
     @Test
     func `Protection can be combined`() {
-        var prot = Memory.Map.Protection.read
-        prot.insert(.write)
+        let prot = Memory.Map.Protection.read | .write
         #expect(prot.contains(.read))
         #expect(prot.contains(.write))
     }

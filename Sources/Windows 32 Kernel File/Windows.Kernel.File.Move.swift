@@ -129,7 +129,11 @@ extension Windows.`32`.Kernel.File.Move.Error {
         guard let win32Code = code.win32 else {
             return .platform(Error_Primitives.Error(code: code))
         }
+        return current(from: win32Code)
+    }
 
+    /// Maps a Win32 error code to the semantic error (testing seam).
+    internal static func current(from win32Code: UInt32) -> Self {
         switch win32Code {
         case Error_Primitives.Error.Code.File.notFound,
              Error_Primitives.Error.Code.File.pathNotFound:
@@ -142,7 +146,7 @@ extension Windows.`32`.Kernel.File.Move.Error {
         case Error_Primitives.Error.Code.Access.sharingViolation:
             return .busy
         default:
-            return .platform(Error_Primitives.Error(code: code))
+            return .platform(Error_Primitives.Error(code: .win32(win32Code)))
         }
     }
 }

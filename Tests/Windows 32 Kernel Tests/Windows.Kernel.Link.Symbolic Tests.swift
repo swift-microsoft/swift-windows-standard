@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.`32`.Kernel.Symlink {
+extension Windows.`32`.Kernel.Link.Symbolic {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,19 +31,19 @@ extension Windows.`32`.Kernel.Symlink {
 
 // MARK: - Namespace Tests
 
-extension Windows.`32`.Kernel.Symlink.Test.Unit {
+extension Windows.`32`.Kernel.Link.Symbolic.Test.Unit {
     @Test
     func `Symlink namespace exists`() {
-        _ = Windows.`32`.Kernel.Symlink.self
+        _ = Windows.`32`.Kernel.Link.Symbolic.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.`32`.Kernel.Symlink.Test.Unit {
+extension Windows.`32`.Kernel.Link.Symbolic.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
-        let error = Kernel.Symlink.Error.current(from: Error_Primitives.Error.Code.File.notFound)
+        let error = Kernel.Link.Symbolic.Error.current(from: Error_Primitives.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -53,7 +53,7 @@ extension Windows.`32`.Kernel.Symlink.Test.Unit {
 
     @Test
     func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Symlink.Error.current(from: Error_Primitives.Error.Code.Access.denied)
+        let error = Kernel.Link.Symbolic.Error.current(from: Error_Primitives.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
         } else {
@@ -63,7 +63,7 @@ extension Windows.`32`.Kernel.Symlink.Test.Unit {
 
     @Test
     func `Error.exists maps from FILE_EXISTS`() {
-        let error = Kernel.Symlink.Error.current(from: Error_Primitives.Error.Code.File.exists)
+        let error = Kernel.Link.Symbolic.Error.current(from: Error_Primitives.Error.Code.File.exists)
         if case .exists = error {
             // Expected
         } else {
@@ -73,7 +73,7 @@ extension Windows.`32`.Kernel.Symlink.Test.Unit {
 
     @Test
     func `Error.noSpace maps from DISK_FULL`() {
-        let error = Kernel.Symlink.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
+        let error = Kernel.Link.Symbolic.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
         if case .noSpace = error {
             // Expected
         } else {
@@ -83,7 +83,7 @@ extension Windows.`32`.Kernel.Symlink.Test.Unit {
 
     @Test
     func `Error.bufferTooSmall exists`() {
-        let error = Kernel.Symlink.Error.bufferTooSmall
+        let error = Kernel.Link.Symbolic.Error.bufferTooSmall
         if case .bufferTooSmall = error {
             // Expected
         } else {
@@ -94,7 +94,7 @@ extension Windows.`32`.Kernel.Symlink.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.`32`.Kernel.Symlink.Test.EdgeCase {
+extension Windows.`32`.Kernel.Link.Symbolic.Test.EdgeCase {
     @Test
     func `symlink may require privileges`() {
         // Symlinks on Windows typically require:
@@ -109,12 +109,12 @@ extension Windows.`32`.Kernel.Symlink.Test.EdgeCase {
         var link = Array(linkPath.utf16) + [0]
 
         // Should throw (either permission or notFound)
-        #expect(throws: Kernel.Symlink.Error.self) {
+        #expect(throws: Kernel.Link.Symbolic.Error.self) {
             try target.withUnsafeBufferPointer { targetPtr in
                 try link.withUnsafeBufferPointer { linkPtr in
                     let wtarget = UnsafeRawPointer(targetPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.`32`.Kernel.Symlink.symlink(target: wtarget, link: wlink)
+                    try Windows.`32`.Kernel.Link.Symbolic.symlink(target: wtarget, link: wlink)
                 }
             }
         }

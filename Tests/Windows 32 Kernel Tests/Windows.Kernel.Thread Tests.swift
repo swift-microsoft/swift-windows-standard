@@ -88,17 +88,18 @@ extension Windows.`32`.Kernel.Thread.Test.Unit {
 extension Windows.`32`.Kernel.Thread.Test.Unit {
     @Test
     func `create and join thread`() throws {
-        var executed = false
+        final class Flag: @unchecked Sendable { var value = false }
+        let flag = Flag()
 
         let handle = try Windows.`32`.Kernel.Thread.create {
-            executed = true
+            flag.value = true
         }
 
         let joined = Windows.`32`.Kernel.Thread.join(handle)
         Windows.`32`.Kernel.Thread.close(handle)
 
         #expect(joined)
-        // Note: executed may be false due to race, but thread should complete
+        // Note: flag.value may be false due to race, but thread should complete
     }
 
     @Test

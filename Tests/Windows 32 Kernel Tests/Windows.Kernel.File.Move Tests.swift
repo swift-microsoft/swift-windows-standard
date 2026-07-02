@@ -17,7 +17,7 @@ import Testing
 import Error_Primitives
 import Path_Primitives
 
-extension Windows.`32`.Kernel.Rename {
+extension Windows.`32`.Kernel.File.Move {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -28,19 +28,19 @@ extension Windows.`32`.Kernel.Rename {
 
 // MARK: - Namespace Tests
 
-extension Windows.`32`.Kernel.Rename.Test.Unit {
+extension Windows.`32`.Kernel.File.Move.Test.Unit {
     @Test
     func `Rename namespace exists`() {
-        _ = Windows.`32`.Kernel.Rename.self
+        _ = Windows.`32`.Kernel.File.Move.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.`32`.Kernel.Rename.Test.Unit {
+extension Windows.`32`.Kernel.File.Move.Test.Unit {
     @Test
     func `Error.notFound maps from FILE_NOT_FOUND`() {
-        let error = Kernel.Rename.Error.current(from: Error_Primitives.Error.Code.File.notFound)
+        let error = Kernel.File.Move.Error.current(from: Error_Primitives.Error.Code.File.notFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -50,7 +50,7 @@ extension Windows.`32`.Kernel.Rename.Test.Unit {
 
     @Test
     func `Error.notFound maps from PATH_NOT_FOUND`() {
-        let error = Kernel.Rename.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
+        let error = Kernel.File.Move.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -60,7 +60,7 @@ extension Windows.`32`.Kernel.Rename.Test.Unit {
 
     @Test
     func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Rename.Error.current(from: Error_Primitives.Error.Code.Access.denied)
+        let error = Kernel.File.Move.Error.current(from: Error_Primitives.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
         } else {
@@ -70,7 +70,7 @@ extension Windows.`32`.Kernel.Rename.Test.Unit {
 
     @Test
     func `Error.exists maps from FILE_EXISTS`() {
-        let error = Kernel.Rename.Error.current(from: Error_Primitives.Error.Code.File.exists)
+        let error = Kernel.File.Move.Error.current(from: Error_Primitives.Error.Code.File.exists)
         if case .exists = error {
             // Expected
         } else {
@@ -80,7 +80,7 @@ extension Windows.`32`.Kernel.Rename.Test.Unit {
 
     @Test
     func `Error.busy maps from SHARING_VIOLATION`() {
-        let error = Kernel.Rename.Error.current(from: Error_Primitives.Error.Code.Access.sharingViolation)
+        let error = Kernel.File.Move.Error.current(from: Error_Primitives.Error.Code.Access.sharingViolation)
         if case .busy = error {
             // Expected
         } else {
@@ -91,7 +91,7 @@ extension Windows.`32`.Kernel.Rename.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.`32`.Kernel.Rename.Test.EdgeCase {
+extension Windows.`32`.Kernel.File.Move.Test.EdgeCase {
     @Test
     func `rename nonexistent file throws notFound`() {
         let oldPath = "C:\\nonexistent_rename_\(GetCurrentProcessId()).tmp"
@@ -100,12 +100,12 @@ extension Windows.`32`.Kernel.Rename.Test.EdgeCase {
         var old = Array(oldPath.utf16) + [0]
         var new = Array(newPath.utf16) + [0]
 
-        #expect(throws: Kernel.Rename.Error.self) {
+        #expect(throws: Kernel.File.Move.Error.self) {
             try old.withUnsafeBufferPointer { oldPtr in
                 try new.withUnsafeBufferPointer { newPtr in
                     let wold = UnsafeRawPointer(oldPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wnew = UnsafeRawPointer(newPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.`32`.Kernel.Rename.rename(from: wold, to: wnew)
+                    try Windows.`32`.Kernel.File.Move.rename(from: wold, to: wnew)
                 }
             }
         }

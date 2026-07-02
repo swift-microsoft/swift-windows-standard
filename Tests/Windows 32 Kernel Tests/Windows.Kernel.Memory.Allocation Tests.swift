@@ -60,7 +60,7 @@ extension Memory.Allocation.Test.Unit {
     @Test
     func `system granularity exists`() {
         let granularity = Memory.Allocation.system
-        #expect(granularity.rawValue > 0)
+        #expect(granularity.underlying >= .byte)
     }
 }
 
@@ -107,15 +107,9 @@ extension Memory.Allocation.Test.Unit {
 
 extension Memory.Allocation.Test.Unit {
     @Test
-    func `Error.invalidSize exists`() {
-        let error = Memory.Allocation.Error.invalidSize
-        #expect(error == .invalidSize)
-    }
-
-    @Test
-    func `Error.alignmentNotSupported exists`() {
-        let error = Memory.Allocation.Error.alignmentNotSupported
-        #expect(error == .alignmentNotSupported)
+    func `Error.exhausted exists`() {
+        let error = Memory.Allocation.Error.exhausted
+        #expect(error == .exhausted)
     }
 }
 

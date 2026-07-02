@@ -146,22 +146,28 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
 
 // MARK: - Protocol Tests
 
+extension Windows.`32`.Kernel.Socket {
+    /// `Socket.Protocol` cannot be named via member syntax (`.Protocol` is
+    /// metatype syntax even backticked); alias it from inside the scope.
+    fileprivate typealias Proto = `Protocol`
+}
+
 extension Windows.`32`.Kernel.Socket.Test.Unit {
     @Test
     func `Protocol.tcp exists`() {
-        let proto = Windows.`32`.Kernel.Socket.`Protocol`.tcp
+        let proto = Windows.`32`.Kernel.Socket.Proto.tcp
         #expect(proto.rawValue == IPPROTO_TCP.rawValue)
     }
 
     @Test
     func `Protocol.udp exists`() {
-        let proto = Windows.`32`.Kernel.Socket.`Protocol`.udp
+        let proto = Windows.`32`.Kernel.Socket.Proto.udp
         #expect(proto.rawValue == IPPROTO_UDP.rawValue)
     }
 
     @Test
     func `Protocol.default exists`() {
-        let proto = Windows.`32`.Kernel.Socket.`Protocol`.default
+        let proto = Windows.`32`.Kernel.Socket.Proto.default
         #expect(proto.rawValue == 0)
     }
 }
@@ -263,7 +269,7 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
     @Test
     func `OptionLevel.tcp exists`() {
         let level = Windows.`32`.Kernel.Socket.OptionLevel.tcp
-        #expect(level.rawValue == IPPROTO_TCP)
+        #expect(level.rawValue == IPPROTO_TCP.rawValue)
     }
 
     @Test
@@ -275,7 +281,7 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
     @Test
     func `OptionLevel.ipv6 exists`() {
         let level = Windows.`32`.Kernel.Socket.OptionLevel.ipv6
-        #expect(level.rawValue == IPPROTO_IPV6)
+        #expect(level.rawValue == IPPROTO_IPV6.rawValue)
     }
 }
 

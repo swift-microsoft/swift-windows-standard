@@ -20,7 +20,7 @@ import Clock_Primitives
 import Random_Primitives
 import System_Primitives
 
-extension Windows.`32`.Kernel.Mkdir {
+extension Windows.`32`.Kernel.Directory.Create {
     enum Test {
         @Suite struct Unit {}
         @Suite struct EdgeCase {}
@@ -31,19 +31,19 @@ extension Windows.`32`.Kernel.Mkdir {
 
 // MARK: - Namespace Tests
 
-extension Windows.`32`.Kernel.Mkdir.Test.Unit {
+extension Windows.`32`.Kernel.Directory.Create.Test.Unit {
     @Test
     func `Mkdir namespace exists`() {
-        _ = Windows.`32`.Kernel.Mkdir.self
+        _ = Windows.`32`.Kernel.Directory.Create.self
     }
 }
 
 // MARK: - Error Mapping Tests
 
-extension Windows.`32`.Kernel.Mkdir.Test.Unit {
+extension Windows.`32`.Kernel.Directory.Create.Test.Unit {
     @Test
     func `Error.notFound maps from PATH_NOT_FOUND`() {
-        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
+        let error = Kernel.Directory.Create.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
         if case .notFound = error {
             // Expected
         } else {
@@ -53,7 +53,7 @@ extension Windows.`32`.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.Access.denied)
+        let error = Kernel.Directory.Create.Error.current(from: Error_Primitives.Error.Code.Access.denied)
         if case .permission = error {
             // Expected
         } else {
@@ -63,7 +63,7 @@ extension Windows.`32`.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.exists maps from FILE_EXISTS`() {
-        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.exists)
+        let error = Kernel.Directory.Create.Error.current(from: Error_Primitives.Error.Code.File.exists)
         if case .exists = error {
             // Expected
         } else {
@@ -73,7 +73,7 @@ extension Windows.`32`.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.exists maps from ALREADY_EXISTS`() {
-        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.File.alreadyExists)
+        let error = Kernel.Directory.Create.Error.current(from: Error_Primitives.Error.Code.File.alreadyExists)
         if case .exists = error {
             // Expected
         } else {
@@ -83,7 +83,7 @@ extension Windows.`32`.Kernel.Mkdir.Test.Unit {
 
     @Test
     func `Error.noSpace maps from DISK_FULL`() {
-        let error = Kernel.Mkdir.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
+        let error = Kernel.Directory.Create.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
         if case .noSpace = error {
             // Expected
         } else {
@@ -94,7 +94,7 @@ extension Windows.`32`.Kernel.Mkdir.Test.Unit {
 
 // MARK: - Edge Cases
 
-extension Windows.`32`.Kernel.Mkdir.Test.EdgeCase {
+extension Windows.`32`.Kernel.Directory.Create.Test.EdgeCase {
     @Test
     func `Permissions.directoryDefault exists`() {
         let perms = Kernel.File.Permissions.directoryDefault

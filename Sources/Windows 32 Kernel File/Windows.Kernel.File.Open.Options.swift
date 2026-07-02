@@ -52,8 +52,7 @@ extension Windows.`32`.Kernel.File.Open.Options {
     /// - `OPEN_EXISTING` - Opens existing file, fails if not exists
     /// - `OPEN_ALWAYS` - Opens existing or creates new
     /// - `TRUNCATE_EXISTING` - Opens and truncates existing file
-    @usableFromInline
-    internal var windowsCreationDisposition: DWORD {
+    package var windowsCreationDisposition: DWORD {
         let hasCreate = contains(.create)
         let hasExclusive = contains(.exclusive)
         let hasTruncate = contains(.truncate)
@@ -82,8 +81,7 @@ extension Windows.`32`.Kernel.File.Open.Options {
     /// - `FILE_FLAG_NO_BUFFERING` for direct I/O
     /// - `FILE_FLAG_OVERLAPPED` for async I/O (when specified)
     /// - `FILE_FLAG_OPEN_REPARSE_POINT` for noFollow
-    @usableFromInline
-    internal var windowsFlagsAndAttributes: DWORD {
+    package var windowsFlagsAndAttributes: DWORD {
         var flags: DWORD = DWORD(FILE_ATTRIBUTE_NORMAL)
 
         if contains(.direct) {
@@ -130,8 +128,7 @@ extension Windows.`32`.Kernel.File.Open.Options {
 
 extension Windows.`32`.Kernel.File.Open.Options {
     /// Full Windows flags conversion including Windows-specific options.
-    @usableFromInline
-    internal var windowsFlagsAndAttributesFull: DWORD {
+    package var windowsFlagsAndAttributesFull: DWORD {
         var flags = windowsFlagsAndAttributes
 
         if contains(.overlapped) {

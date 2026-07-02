@@ -114,7 +114,7 @@ extension Windows.`32`.Kernel.Link.Symbolic.Test.EdgeCase {
                 try link.withUnsafeBufferPointer { linkPtr in
                     let wtarget = UnsafeRawPointer(targetPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.`32`.Kernel.Link.Symbolic.symlink(target: wtarget, link: wlink)
+                    try Windows.`32`.Kernel.Link.Symbolic.create(target: wtarget, linkPath: wlink)
                 }
             }
         }

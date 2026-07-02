@@ -103,7 +103,7 @@ extension Windows.`32`.Kernel.Directory.Remove.Test.EdgeCase {
         #expect(throws: Kernel.Directory.Remove.Error.self) {
             try utf16Path.withUnsafeBufferPointer { pathPtr in
                 let ptr = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                try Windows.`32`.Kernel.Directory.Remove.rmdir(unsafePath: ptr)
+                try Windows.`32`.Kernel.Directory.Remove.remove(unsafePath: ptr)
             }
         }
     }

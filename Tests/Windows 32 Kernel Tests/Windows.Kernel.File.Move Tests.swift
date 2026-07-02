@@ -105,7 +105,7 @@ extension Windows.`32`.Kernel.File.Move.Test.EdgeCase {
                 try new.withUnsafeBufferPointer { newPtr in
                     let wold = UnsafeRawPointer(oldPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
                     let wnew = UnsafeRawPointer(newPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.`32`.Kernel.File.Move.rename(from: wold, to: wnew)
+                    try Windows.`32`.Kernel.File.Move.move(from: wold, to: wnew)
                 }
             }
         }

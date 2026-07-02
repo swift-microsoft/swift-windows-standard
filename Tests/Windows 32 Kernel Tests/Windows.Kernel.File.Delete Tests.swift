@@ -90,7 +90,7 @@ extension Windows.`32`.Kernel.File.Delete.Test.EdgeCase {
         #expect(throws: Kernel.File.Delete.Error.self) {
             try path.withUnsafeBufferPointer { pathPtr in
                 let wpath = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                try Windows.`32`.Kernel.File.Delete.unlink(unsafePath: wpath)
+                try Windows.`32`.Kernel.File.Delete.delete(unsafePath: wpath)
             }
         }
     }

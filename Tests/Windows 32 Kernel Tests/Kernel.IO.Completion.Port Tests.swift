@@ -36,29 +36,25 @@ import Testing
         @Test
         func `create returns valid descriptor`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
-            #expect(port.rawValue != INVALID_HANDLE_VALUE)
+            #expect(port.isValid)
         }
 
         @Test
         func `create with concurrency parameter`() throws {
             // Create port with specific thread count
             let port = try Kernel.IO.Completion.Port.create(threads: 4)
-            defer { Kernel.IO.Completion.Port.close(port) }
 
-            #expect(port.rawValue != INVALID_HANDLE_VALUE)
+            #expect(port.isValid)
         }
 
         @Test
         func `create multiple ports are independent`() throws {
             let port1 = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port1) }
 
             let port2 = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port2) }
 
-            #expect(port1.rawValue != port2.rawValue)
+            #expect(port1._rawValue != port2._rawValue)
         }
 
         @Test
@@ -75,7 +71,6 @@ import Testing
         @Test
         func `post completion to port`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             // Post a completion packet
             try Kernel.IO.Completion.Port.post(
@@ -88,7 +83,6 @@ import Testing
         @Test
         func `post and dequeue single completion`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             let expected: DWORD = 100
             let expectedKey = Kernel.IO.Completion.Port.Key(456)
@@ -111,7 +105,6 @@ import Testing
         @Test
         func `post multiple completions and dequeue in order`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             // Post multiple completions
             for i: DWORD in 0..<5 {
@@ -133,7 +126,6 @@ import Testing
         @Test
         func `dequeue times out when no completions`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             // Try to dequeue with a short timeout (should timeout)
             #expect(throws: Kernel.IO.Completion.Port.Error.self) {
@@ -144,7 +136,6 @@ import Testing
         @Test
         func `dequeue timeout throws correct error`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             do {
                 _ = try Kernel.IO.Completion.Port.Dequeue.single(port, timeout: 10)
@@ -165,9 +156,8 @@ import Testing
         @Test
         func `batch dequeue returns zero on timeout`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
-            var entries = [OVERLAPPED_ENTRY](repeating: OVERLAPPED_ENTRY(), count: 10)
+            var entries = [Kernel.IO.Completion.Port.Entry](repeating: .init(), count: 10)
             let count = try entries.withUnsafeMutableBufferPointer { buffer in
                 try Kernel.IO.Completion.Port.Dequeue.batch(port, entries: buffer, timeout: 10)
             }
@@ -178,7 +168,6 @@ import Testing
         @Test
         func `batch dequeue retrieves multiple completions`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             let postCount = 5
 
@@ -192,7 +181,7 @@ import Testing
             }
 
             // Batch dequeue
-            var entries = [OVERLAPPED_ENTRY](repeating: OVERLAPPED_ENTRY(), count: 10)
+            var entries = [Kernel.IO.Completion.Port.Entry](repeating: .init(), count: 10)
             let count = try entries.withUnsafeMutableBufferPointer { buffer in
                 try Kernel.IO.Completion.Port.Dequeue.batch(port, entries: buffer, timeout: 1000)
             }
@@ -201,15 +190,14 @@ import Testing
 
             // Verify entries
             for i in 0..<count {
-                #expect(entries[i].dwNumberOfBytesTransferred == DWORD(i * 10))
-                #expect(entries[i].lpCompletionKey == ULONG_PTR(i))
+                #expect(entries[i].bytes.transferred == Kernel.File.Size(i * 10))
+                #expect(entries[i].key == Kernel.IO.Completion.Port.Key(ULONG_PTR(i)))
             }
         }
 
         @Test
         func `batch dequeue with smaller buffer than completions`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             // Post 10 completions
             for i in 0..<10 {
@@ -221,7 +209,7 @@ import Testing
             }
 
             // Batch dequeue with buffer of 3
-            var entries = [OVERLAPPED_ENTRY](repeating: OVERLAPPED_ENTRY(), count: 3)
+            var entries = [Kernel.IO.Completion.Port.Entry](repeating: .init(), count: 3)
             let count = try entries.withUnsafeMutableBufferPointer { buffer in
                 try Kernel.IO.Completion.Port.Dequeue.batch(port, entries: buffer, timeout: 1000)
             }
@@ -281,7 +269,6 @@ import Testing
         @Test
         func `post with zero bytes`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             try Kernel.IO.Completion.Port.post(port, bytes: 0)
 
@@ -292,7 +279,6 @@ import Testing
         @Test
         func `post with maximum key value`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             let maxKey = Kernel.IO.Completion.Port.Key(rawValue: ULONG_PTR.max)
             try Kernel.IO.Completion.Port.post(port, key: maxKey)

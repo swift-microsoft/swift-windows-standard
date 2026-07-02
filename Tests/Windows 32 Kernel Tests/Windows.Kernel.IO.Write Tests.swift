@@ -88,10 +88,10 @@ extension Windows.`32`.Kernel.IO.Write.Test.Unit {
                 nil
             )
         }
-        guard handle != INVALID_HANDLE_VALUE else { return }
-        defer { CloseHandle(handle) }
+        guard let handle, handle != INVALID_HANDLE_VALUE else { return }
 
-        let descriptor = Kernel.Descriptor.borrowing(handle: handle)
+        // The Descriptor owns the handle; its deinit closes it.
+        let descriptor = Kernel.Descriptor(_raw: UInt(bitPattern: handle))
 
         // Write with empty buffer
         let emptyData: [UInt8] = []

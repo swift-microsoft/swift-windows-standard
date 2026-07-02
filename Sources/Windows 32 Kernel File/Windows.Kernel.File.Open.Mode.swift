@@ -62,8 +62,7 @@ extension Windows.`32`.Kernel.File.Open.Mode {
     /// Converts the mode to Windows desired access flags.
     ///
     /// Maps the portable `Mode` flags to Win32 `GENERIC_READ` and `GENERIC_WRITE`.
-    @usableFromInline
-    internal var windowsDesiredAccess: DWORD {
+    package var windowsDesiredAccess: DWORD {
         var access: DWORD = 0
 
         if read {

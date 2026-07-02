@@ -113,7 +113,7 @@ extension Windows.`32`.Kernel.File.Seek {
 extension Windows.`32`.Kernel.File.Seek.Origin {
     /// Converts the origin to Windows move method.
     @usableFromInline
-    internal var windowsMoveMethod: DWORD {
+    package var windowsMoveMethod: DWORD {
         switch self {
         case .start:
             return DWORD(FILE_BEGIN)

@@ -49,8 +49,8 @@ import Testing
 
         @Test
         func `Item type exists with expected properties`() {
-            let ov = UnsafeMutablePointer<OVERLAPPED>.allocate(capacity: 1)
-            ov.initialize(to: OVERLAPPED())
+            let ov = UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>.allocate(capacity: 1)
+            ov.initialize(to: .init())
             defer {
                 ov.deinitialize(count: 1)
                 ov.deallocate()
@@ -85,8 +85,8 @@ import Testing
 
         @Test
         func `Item with platform error status`() {
-            let ov = UnsafeMutablePointer<OVERLAPPED>.allocate(capacity: 1)
-            ov.initialize(to: OVERLAPPED())
+            let ov = UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>.allocate(capacity: 1)
+            ov.initialize(to: .init())
             defer {
                 ov.deinitialize(count: 1)
                 ov.deallocate()
@@ -109,7 +109,6 @@ import Testing
         @Test
         func `single throws .timeout on timeout`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             do {
                 _ = try Kernel.IO.Completion.Port.Dequeue.single(port, timeout: 0)
@@ -122,16 +121,20 @@ import Testing
         @Test
         func `single returns .ok for posted completion with overlapped`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
-            let ov = UnsafeMutablePointer<OVERLAPPED>.allocate(capacity: 1)
-            ov.initialize(to: OVERLAPPED())
+            let ov = UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>.allocate(capacity: 1)
+            ov.initialize(to: .init())
             defer {
                 ov.deinitialize(count: 1)
                 ov.deallocate()
             }
 
-            try Kernel.IO.Completion.Port.post(port, bytes: 7, key: .init(rawValue: 1), overlapped: ov)
+            try unsafe Kernel.IO.Completion.Port.post(
+                port,
+                bytes: 7,
+                key: .init(rawValue: 1),
+                overlapped: UnsafeMutableRawPointer(ov).assumingMemoryBound(to: OVERLAPPED.self)
+            )
 
             let item = try Kernel.IO.Completion.Port.Dequeue.single(port, timeout: 1_000)
             #expect(item.bytes == 7)
@@ -143,7 +146,6 @@ import Testing
         @Test
         func `single returns .ok for posted completion without overlapped`() throws {
             let port = try Kernel.IO.Completion.Port.create()
-            defer { Kernel.IO.Completion.Port.close(port) }
 
             try Kernel.IO.Completion.Port.post(port, bytes: 42, key: .init(rawValue: 123))
 

@@ -61,11 +61,18 @@ extension Windows.`32`.Kernel.File.Flush.Test.Unit {
 
 extension Windows.`32`.Kernel.File.Flush.Test.EdgeCase {
     @Test
-    func `datasync is alias for sync on Windows`() {
-        // On Windows, datasync and sync are the same operation
-        // This test just verifies both functions exist
-        _ = Windows.`32`.Kernel.File.Flush.sync
-        _ = Windows.`32`.Kernel.File.Flush.datasync
+    func `flushData is alias for flush on Windows`() {
+        // On Windows, flushData and flush are the same operation
+        // (FlushFileBuffers has no data-only form); both throw on an
+        // invalid descriptor.
+        let invalid = Kernel.Descriptor.invalid
+        #expect(throws: Kernel.File.Flush.Error.self) {
+            try Windows.`32`.Kernel.File.Flush.flush(invalid)
+        }
+        let invalid2 = Kernel.Descriptor.invalid
+        #expect(throws: Kernel.File.Flush.Error.self) {
+            try Windows.`32`.Kernel.File.Flush.flushData(invalid2)
+        }
     }
 }
 

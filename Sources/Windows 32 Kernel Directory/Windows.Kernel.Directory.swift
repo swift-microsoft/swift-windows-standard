@@ -175,7 +175,7 @@ extension Windows.`32`.Kernel.Directory.Iterator {
 
 extension Windows.`32`.Kernel.Directory.Error {
     /// Creates an error from a Windows error code.
-    internal init(_windowsError error: DWORD) {
+    package init(_windowsError error: DWORD) {
         switch error {
         case Error_Primitives.Error.Code.File.notFound,
              Error_Primitives.Error.Code.File.pathNotFound:

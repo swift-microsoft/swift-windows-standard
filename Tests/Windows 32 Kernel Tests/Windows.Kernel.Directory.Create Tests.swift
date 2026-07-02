@@ -96,11 +96,11 @@ extension Windows.`32`.Kernel.Directory.Create.Test.Unit {
 
 extension Windows.`32`.Kernel.Directory.Create.Test.EdgeCase {
     @Test
-    func `Permissions.directoryDefault exists`() {
-        let perms = Kernel.File.Permissions.directoryDefault
-        #expect(perms.owner.read)
-        #expect(perms.owner.write)
-        #expect(perms.owner.execute)
+    func `Permissions.standardDirectory exists`() {
+        let perms = Kernel.File.Permissions.standardDirectory
+        #expect((perms & .ownerRead) == .ownerRead)
+        #expect((perms & .ownerWrite) == .ownerWrite)
+        #expect((perms & .ownerExecute) == .ownerExecute)
     }
 }
 

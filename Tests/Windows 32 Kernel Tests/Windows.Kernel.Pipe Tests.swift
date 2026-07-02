@@ -50,8 +50,10 @@ extension Windows.`32`.Kernel.Pipe.Test.Unit {
     func `pipe() returns valid Descriptors`() throws {
         let descriptors = try Windows.`32`.Kernel.Pipe.pipe()
 
-        #expect(descriptors.read.isValid)
-        #expect(descriptors.write.isValid)
+        let readIsValid = descriptors.read.isValid
+        #expect(readIsValid)
+        let writeIsValid = descriptors.write.isValid
+        #expect(writeIsValid)
     }
 }
 

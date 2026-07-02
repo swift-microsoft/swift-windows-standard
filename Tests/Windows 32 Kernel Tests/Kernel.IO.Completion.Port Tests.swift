@@ -37,7 +37,8 @@ import Testing
         func `create returns valid descriptor`() throws {
             let port = try Kernel.IO.Completion.Port.create()
 
-            #expect(port.isValid)
+            let portIsValid = port.isValid
+            #expect(portIsValid)
         }
 
         @Test
@@ -45,7 +46,8 @@ import Testing
             // Create port with specific thread count
             let port = try Kernel.IO.Completion.Port.create(threads: 4)
 
-            #expect(port.isValid)
+            let portIsValid = port.isValid
+            #expect(portIsValid)
         }
 
         @Test

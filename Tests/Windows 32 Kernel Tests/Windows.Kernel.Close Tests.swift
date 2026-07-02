@@ -75,7 +75,8 @@ extension Windows.`32`.Kernel.Close.Test.EdgeCase {
     @Test
     func `Kernel.Descriptor.invalid is detected`() {
         let invalid = Kernel.Descriptor.invalid
-        #expect(!invalid.isValid)
+        let invalidIsValid = invalid.isValid
+        #expect(!invalidIsValid)
     }
 }
 

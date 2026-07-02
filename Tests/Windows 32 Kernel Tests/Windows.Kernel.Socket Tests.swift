@@ -54,7 +54,8 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
 
         let sock = try Windows.`32`.Kernel.Socket.create(family: .inet, type: .stream, protocol: .tcp)
 
-        #expect(sock.isValid)
+        let sockIsValid = sock.isValid
+        #expect(sockIsValid)
     }
 
     @Test
@@ -64,7 +65,8 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
 
         let sock = try Windows.`32`.Kernel.Socket.create(family: .inet, type: .datagram, protocol: .udp)
 
-        #expect(sock.isValid)
+        let sockIsValid = sock.isValid
+        #expect(sockIsValid)
     }
 
     @Test
@@ -74,7 +76,8 @@ extension Windows.`32`.Kernel.Socket.Test.Unit {
 
         let sock = try Windows.`32`.Kernel.Socket.create(family: .inet6, type: .stream, protocol: .tcp)
 
-        #expect(sock.isValid)
+        let sockIsValid = sock.isValid
+        #expect(sockIsValid)
     }
 
     @Test
@@ -408,7 +411,8 @@ extension Windows.`32`.Kernel.Socket.Test.EdgeCase {
     @Test
     func `invalid socket descriptor`() {
         let invalid = Kernel.Socket.Descriptor.invalid
-        #expect(!invalid.isValid)
+        let invalidIsValid = invalid.isValid
+        #expect(!invalidIsValid)
         #expect(invalid._rawValue == UInt.max)
     }
 }

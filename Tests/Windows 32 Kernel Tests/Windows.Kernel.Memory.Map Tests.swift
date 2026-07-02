@@ -123,7 +123,7 @@ extension Memory.Map.Test.Unit {
     func `mapAnonymous with zero length throws`() {
         #expect(throws: Memory.Map.Error.self) {
             _ = try Memory.Map.mapAnonymous(
-                length: Kernel.File.Size(0),
+                length: Memory.Address.Count(UInt(0)),
                 protection: .readWrite
             )
         }
@@ -133,14 +133,14 @@ extension Memory.Map.Test.Unit {
     func `mapAnonymous with valid length succeeds`() throws {
         let pageSize = Memory.Allocation.systemPageSize()
         let addr = try Memory.Map.mapAnonymous(
-            length: Kernel.File.Size(Int64(pageSize)),
+            length: Memory.Address.Count(pageSize),
             protection: .readWrite
         )
 
         // Cleanup
         try Memory.Map.unmap(
             addr: addr,
-            length: Kernel.File.Size(Int64(pageSize)),
+            length: Memory.Address.Count(pageSize),
             isAnonymous: true
         )
     }
@@ -163,7 +163,7 @@ extension Memory.Map.Test.EdgeCase {
         do {
             _ = try Memory.Map.map(
                 fd: invalid,
-                length: Kernel.File.Size(0),
+                length: Memory.Address.Count(UInt(0)),
                 protection: .read,
                 flags: .shared
             )

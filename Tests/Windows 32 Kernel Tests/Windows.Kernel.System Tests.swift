@@ -68,7 +68,7 @@ extension System.Test.Unit {
     @Test
     func `pageSize is power of 2`() {
         let pageSize = System.pageSize
-        let value = pageSize.underlying
+        let value = pageSize.underlying.rawValue
         #expect(value > 0 && (value & (value - 1)) == 0)
     }
 }
@@ -96,7 +96,7 @@ extension System.Test.Unit {
         GetSystemInfo(&sysInfo)
 
         let count = System.processorCount
-        #expect(count.underlying == Int(sysInfo.dwNumberOfProcessors))
+        #expect(count.underlying.rawValue == UInt(sysInfo.dwNumberOfProcessors))
     }
 }
 

@@ -316,6 +316,36 @@ extension Windows.Loader.Test.Unit {
         unsafe LocalFree(buffer)
         step("s9: LocalFree done")
     }
+
+    @Test
+    func `crashprobe t real open via do catch`() {
+        func step(_ msg: Swift.String) {
+            print(msg)
+            fflush(nil)
+        }
+        step("t1: calling Library.open on nonexistent path")
+        do {
+            _ = try Windows.Loader.Library.open(path: "nonexistent_library_12345.dll")
+            step("t2: unexpectedly succeeded")
+        } catch {
+            step("t3: caught error")
+            step("t4: description = \(error)")
+        }
+        step("t5: done")
+    }
+
+    @Test
+    func `crashprobe u expect throws wrapper`() {
+        func step(_ msg: Swift.String) {
+            print(msg)
+            fflush(nil)
+        }
+        step("u1: entering #expect(throws:)")
+        #expect(throws: Windows.Loader.Error.self) {
+            _ = try Windows.Loader.Library.open(path: "nonexistent_library_12345.dll")
+        }
+        step("u2: after #expect(throws:)")
+    }
 }
 
 #endif

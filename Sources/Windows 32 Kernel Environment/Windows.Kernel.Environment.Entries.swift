@@ -90,8 +90,26 @@ extension Windows.`32`.Kernel.Environment.Entries {
         /// The raw UTF-16 string (NAME=VALUE format).
         public let raw: [UInt16]
 
+        /// Null-terminated UTF-16 name (code units before the first `=`).
+        /// Stored so ``name`` can vend a borrowed view into stable storage.
+        @usableFromInline
+        internal let _name: [UInt16]
+
+        /// Null-terminated UTF-16 value (code units after the first `=`;
+        /// just the terminator if none). Stored so ``value`` can vend a
+        /// borrowed view into stable storage.
+        @usableFromInline
+        internal let _value: [UInt16]
+
         init(raw: [UInt16]) {
             self.raw = raw
+            let bound = raw.firstIndex(of: 0x003D) ?? raw.endIndex  // '='
+            var name = Array(raw[..<bound])
+            name.append(0)
+            self._name = name
+            var value = bound < raw.endIndex ? Array(raw[raw.index(after: bound)...]) : []
+            value.append(0)
+            self._value = value
         }
 
         /// The entry as a Swift String.

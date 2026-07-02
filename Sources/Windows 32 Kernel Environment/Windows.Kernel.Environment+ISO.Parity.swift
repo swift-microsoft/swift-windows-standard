@@ -110,25 +110,35 @@ extension Windows.`32`.Kernel.Environment {
 
 // MARK: - Entry name/value (ISO parity)
 
+// Borrowed views rather than owned strings: mirrors the ISO 9945 Entry
+// shape, and an owned `String_Primitives.String` return would make
+// `Swift.String(entry.name)` ambiguous downstream (both swift-strings
+// and swift-kernel's Kernel File declare owned-String bridge inits;
+// only swift-strings declares the Borrowed one). Same lifetime pattern
+// as `Directory.Entry.name`.
+
 extension Windows.`32`.Kernel.Environment.Entries.Entry {
-    /// The variable name as an owned string (UTF-16 code units before
+    /// The variable name as a borrowed view (UTF-16 code units before
     /// the first `=`). Mirrors `ISO_9945.Kernel.Environment.Entry.name`.
-    public var name: String_Primitives.String {
-        let bound = raw.firstIndex(of: 0x003D) ?? raw.endIndex  // '='
-        let units = Array(raw[..<bound])
-        return String_Primitives.String(units.span)
+    public var name: String_Primitives.String.Borrowed {
+        @_lifetime(borrow self)
+        borrowing get {
+            let ptr = unsafe _name.withUnsafeBufferPointer { $0.baseAddress! }
+            let view = unsafe String_Primitives.String.Borrowed(ptr, count: _name.count - 1)
+            return unsafe _overrideLifetime(view, borrowing: self)
+        }
     }
 
-    /// The variable value as an owned string (UTF-16 code units after
+    /// The variable value as a borrowed view (UTF-16 code units after
     /// the first `=`; empty if none). Mirrors
     /// `ISO_9945.Kernel.Environment.Entry.value`.
-    public var value: String_Primitives.String {
-        guard let bound = raw.firstIndex(of: 0x003D), bound < raw.endIndex else {  // '='
-            let empty: [UInt16] = []
-            return String_Primitives.String(empty.span)
+    public var value: String_Primitives.String.Borrowed {
+        @_lifetime(borrow self)
+        borrowing get {
+            let ptr = unsafe _value.withUnsafeBufferPointer { $0.baseAddress! }
+            let view = unsafe String_Primitives.String.Borrowed(ptr, count: _value.count - 1)
+            return unsafe _overrideLifetime(view, borrowing: self)
         }
-        let units = Array(raw[raw.index(after: bound)...])
-        return String_Primitives.String(units.span)
     }
 }
 

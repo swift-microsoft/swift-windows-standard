@@ -39,6 +39,9 @@ extension Windows.`32`.Kernel.Environment {
     public struct Entries: ~Copyable {
         private let block: LPWCH
 
+        /// Iteration cursor for the self-iterating ISO-parity form.
+        private var current: LPWCH
+
         /// Creates an iterator over all environment variables.
         ///
         /// Returns `nil` if the environment block cannot be retrieved.
@@ -47,6 +50,7 @@ extension Windows.`32`.Kernel.Environment {
                 return nil
             }
             self.block = block
+            self.current = block
         }
 
         deinit {
@@ -55,6 +59,25 @@ extension Windows.`32`.Kernel.Environment {
 
         public func makeIterator() -> Iterator {
             Iterator(current: block)
+        }
+
+        /// Advances to the next environment variable (ISO-parity form:
+        /// mirrors `ISO_9945.Kernel.Environment.Entries.next()`).
+        ///
+        /// Skips Windows-internal pseudo-variables (entries whose name
+        /// begins with `=`, e.g. `=C:=C:\...`) so L3 consumers see only
+        /// real variables.
+        public mutating func next() -> Entry? {
+            var iterator = Iterator(current: current)
+            while let entry = iterator.next() {
+                current = iterator.position
+                if entry.raw.first == 0x003D {  // '='
+                    continue
+                }
+                return entry
+            }
+            current = iterator.position
+            return nil
         }
     }
 }
@@ -98,6 +121,10 @@ extension Windows.`32`.Kernel.Environment.Entries {
     /// Iterator over environment variable entries.
     public struct Iterator: IteratorProtocol {
         private var current: LPWCH
+
+        /// The current block position (consumed by `Entries.next()` to
+        /// keep its own cursor in step).
+        internal var position: LPWCH { current }
 
         init(current: LPWCH) {
             self.current = current

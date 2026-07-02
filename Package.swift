@@ -180,6 +180,7 @@ let package = Package(
                 "Windows 32 Kernel Core",
                 .product(name: "Sequence Primitives", package: "swift-sequence-primitives"),
                 .product(name: "Error Primitives", package: "swift-error-primitives"),
+                .product(name: "String Primitives", package: "swift-string-primitives"),
             ]
         ),
 

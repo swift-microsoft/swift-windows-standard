@@ -25,13 +25,11 @@ extension Windows_32_Core.Windows.`32`.Kernel.Descriptor {
     ///
     /// - Parameter handle: The raw Windows HANDLE.
     /// - Returns: A `Windows.`32`.Kernel.Descriptor` wrapping the handle.
-    @inlinable
     public static func borrowing(handle: HANDLE) -> Self {
         Self(_rawValue: UInt(bitPattern: handle))
     }
 
     /// The raw Windows HANDLE value.
-    @inlinable
     public var handle: HANDLE {
         HANDLE(bitPattern: _rawValue)!
     }

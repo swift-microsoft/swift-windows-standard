@@ -271,7 +271,7 @@ extension Windows.Loader.Test.Unit {
     func `crashprobe stepwise error capture`() {
         func step(_ msg: Swift.String) {
             print(msg)
-            fflush(stdout)
+            fflush(nil)
         }
         step("s1: LoadLibraryW on nonexistent path")
         let h = "nonexistent_library_12345.dll".withCString(encodedAs: UTF16.self) { LoadLibraryW($0) }

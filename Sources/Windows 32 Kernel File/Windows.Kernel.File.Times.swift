@@ -375,21 +375,6 @@ extension Windows.`32`.Kernel.File {
         try setBasicInfo(descriptor._rawValue, info)
     }
 
-    /// Copies basic file info (timestamps and attributes) from one handle to another.
-    ///
-    /// This is useful for preserving metadata when copying or replacing files.
-    ///
-    /// - Parameters:
-    ///   - source: The source file descriptor.
-    ///   - destination: The destination file descriptor.
-    /// - Throws: Error on failure.
-    public static func copyBasicInfo(
-        from source: borrowing Windows.`32`.Kernel.Descriptor,
-        to destination: borrowing Windows.`32`.Kernel.Descriptor
-    ) throws {
-        let info = try getBasicInfo(source)
-        try setBasicInfo(destination, info)
-    }
 }
 
 // MARK: - Touch Operation

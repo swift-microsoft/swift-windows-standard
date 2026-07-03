@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import WinSDK
+internal import WinSDK
 
 // MARK: - Windows RemoveDirectoryW syscall
 

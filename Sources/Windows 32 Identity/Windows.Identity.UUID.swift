@@ -2,7 +2,7 @@
 // Native UUID parsing using Windows RPC library
 
 #if os(Windows)
-import WinSDK
+internal import WinSDK
 public import Windows_32_Core
 
 extension Windows_32_Core.Windows {

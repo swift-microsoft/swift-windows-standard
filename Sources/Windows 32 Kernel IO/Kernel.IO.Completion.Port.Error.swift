@@ -11,7 +11,7 @@
 
 #if os(Windows)
     public import Error_Primitives
-    public import WinSDK
+    internal import WinSDK
 
     extension Windows.`32`.Kernel.IO.Completion.Port {
         /// Errors from I/O completion port operations.

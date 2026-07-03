@@ -16,7 +16,7 @@
 // `FindFirstFileW`/`FindNextFileW`/`FindClose`.
 
 #if os(Windows)
-public import WinSDK
+internal import WinSDK
 
 extension Windows.`32`.Kernel.Directory {
     /// A directory stream for iteration.

@@ -11,7 +11,7 @@
 
 #if os(Windows)
 @_spi(Syscall) import Windows_32_Kernel_Core
-public import WinSDK
+internal import WinSDK
 
 // MARK: - Windows DuplicateHandle syscall (raw @_spi(Syscall))
 

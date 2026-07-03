@@ -11,7 +11,7 @@
 
 #if os(Windows)
 public import Error_Primitives
-public import WinSDK
+internal import WinSDK
 
 // MARK: - Socket Listen
 

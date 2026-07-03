@@ -20,7 +20,7 @@
 // takes `Swift.String` directly and widens to UTF-16 at this boundary.
 
 #if os(Windows)
-public import WinSDK
+internal import WinSDK
 public import String_Primitives
 
 extension Windows.`32`.Kernel.Environment {

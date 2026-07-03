@@ -11,7 +11,7 @@
 
 #if os(Windows)
 public import Loader_Primitives
-public import WinSDK
+internal import WinSDK
 
 // MARK: - Windows Symbol Lookup
 

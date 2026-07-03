@@ -20,7 +20,7 @@
 
 #if os(Windows)
 public import Terminal_Primitives
-public import WinSDK
+internal import WinSDK
 
 extension Windows.`32`.Kernel.IO.Write {
     /// Writes bytes to a terminal stream.

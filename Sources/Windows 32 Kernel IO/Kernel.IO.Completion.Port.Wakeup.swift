@@ -44,7 +44,7 @@
 // without depending on the absent `Kernel.Event` surface.
 
 #if os(Windows)
-public import WinSDK
+internal import WinSDK
 
 extension Windows.`32`.Kernel.IO.Completion.Port {
     /// Creates a Sendable signal closure for cross-thread IOCP interruption.

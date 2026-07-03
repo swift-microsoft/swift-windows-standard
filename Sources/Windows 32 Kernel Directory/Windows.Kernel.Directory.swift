@@ -205,8 +205,13 @@ extension Windows.`32`.Kernel.Directory.Error {
             self = .notFound
         case Error_Primitives.Error.Code.Access.denied:
             self = .permission
-        case Error_Primitives.Error.Code.Directory.notEmpty:
-            self = .notDirectory  // Path is not a directory
+        case Error_Primitives.Error.Code.Directory.invalidName:
+            // ERROR_DIRECTORY (267): "The directory name is invalid" —
+            // the path exists but is not a directory (ENOTDIR analog).
+            // The previous ERROR_DIR_NOT_EMPTY mapping was wrong: 145
+            // means a REMOVE failed on a non-empty directory, which is
+            // not this enum's vocabulary.
+            self = .notDirectory
         default:
             self = .platform(Error_Primitives.Error(code: .win32(error)))
         }

@@ -75,7 +75,14 @@ extension Windows.`32`.Kernel.File.Open {
         options: Windows.`32`.Kernel.File.Open.Options,
         permissions: Windows.`32`.Kernel.File.Permissions = .standard
     ) throws(Windows.`32`.Kernel.File.Open.Error) -> Windows.`32`.Kernel.Descriptor {
-        let desiredAccess = mode.windowsDesiredAccess
+        var desiredAccess = mode.windowsDesiredAccess
+        // POSIX O_APPEND semantics: request FILE_APPEND_DATA without
+        // FILE_WRITE_DATA so every WriteFile appends atomically at EOF,
+        // regardless of the current file pointer.
+        if options.contains(.append) && mode.write {
+            desiredAccess &= ~DWORD(GENERIC_WRITE)
+            desiredAccess |= DWORD(FILE_APPEND_DATA) | DWORD(FILE_WRITE_ATTRIBUTES) | DWORD(SYNCHRONIZE)
+        }
         let shareMode: DWORD = DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE)
         let creationDisposition = options.windowsCreationDisposition
         var flagsAndAttributes = options.windowsFlagsAndAttributesFull

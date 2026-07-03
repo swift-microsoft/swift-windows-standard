@@ -115,7 +115,7 @@ extension Windows.`32`.Kernel.File.Copy.Error: CustomStringConvertible {
         case .times(let e): return "times: \(e)"
         case .mkdir(let e): return "mkdir: \(e)"
         case .rmdir(let e): return "rmdir: \(e)"
-        case .operation(let s): return "operation: \(s)"
+        case .operation(let s): return "operation failed: \(s)"
         }
     }
 }

@@ -100,6 +100,10 @@ extension Error_Primitives.Error.Code {
     public enum Directory {
         /// The directory is not empty.
         public static let notEmpty: UInt32 = UInt32(ERROR_DIR_NOT_EMPTY)
+
+        /// The directory name is invalid — the path is not a directory
+        /// (`ERROR_DIRECTORY`, 267).
+        public static let invalidName: UInt32 = UInt32(ERROR_DIRECTORY)
     }
 
     /// General errors.

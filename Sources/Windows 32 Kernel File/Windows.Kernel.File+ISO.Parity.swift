@@ -194,14 +194,16 @@ extension Windows.`32`.Kernel.File.Attributes {
 extension Windows.`32`.Kernel.File.Move {
     /// Moves (renames) a file or directory.
     ///
-    /// Mirrors `ISO_9945.Kernel.File.Move.move(from:to:)`.
+    /// Mirrors `ISO_9945.Kernel.File.Move.move(from:to:)` — rename(2)
+    /// semantics, which REPLACE an existing destination atomically;
+    /// MoveFileExW needs MOVEFILE_REPLACE_EXISTING to match.
     public static func move(
         from oldPath: borrowing Path.Borrowed,
         to newPath: borrowing Path.Borrowed
     ) throws(Windows.`32`.Kernel.File.Move.Error) {
         try unsafe oldPath.withUnsafePointer { oldPtr throws(Windows.`32`.Kernel.File.Move.Error) in
             try unsafe newPath.withUnsafePointer { newPtr throws(Windows.`32`.Kernel.File.Move.Error) in
-                try move(from: oldPtr, to: newPtr)
+                try move(from: oldPtr, to: newPtr, replaceExisting: true)
             }
         }
     }
@@ -329,7 +331,16 @@ extension Windows.`32`.Kernel.Link.Symbolic {
     ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) {
         try unsafe target.withUnsafePointer { targetPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
             try unsafe linkPath.withUnsafePointer { linkPtr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
-                try create(target: targetPtr, linkPath: linkPtr)
+                // symlink(2) has no file/directory distinction, but
+                // CreateSymbolicLinkW requires SYMBOLIC_LINK_FLAG_DIRECTORY
+                // for directory targets or the link never resolves. Probe
+                // the target; unresolvable (e.g. relative or dangling)
+                // targets default to a file link, matching mklink.
+                let wTarget = UnsafeRawPointer(targetPtr).assumingMemoryBound(to: WCHAR.self)
+                let attributes = GetFileAttributesW(wTarget)
+                let isDirectory = attributes != INVALID_FILE_ATTRIBUTES
+                    && (attributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0
+                try create(target: targetPtr, linkPath: linkPtr, isDirectory: isDirectory)
             }
         }
     }
@@ -352,7 +363,17 @@ extension Windows.`32`.Kernel.Link.Symbolic {
         let length = try unsafe path.withUnsafePointer { ptr throws(Windows.`32`.Kernel.Link.Symbolic.Error) in
             try unsafe readTarget(unsafePath: ptr, into: buf)
         }
-        let view = unsafe String_Primitives.String.Borrowed(UnsafePointer(raw), count: length)
+        // GetFinalPathNameByHandleW returns the \\?\-prefixed NT form;
+        // strip the prefix so consumers see an ordinary drive path.
+        var start = raw
+        var count = length
+        if length >= 4,
+            unsafe raw[0] == 0x5C, unsafe raw[1] == 0x5C,  // backslashes
+            unsafe raw[2] == 0x3F, unsafe raw[3] == 0x5C {  // "?" backslash
+            start = unsafe raw.advanced(by: 4)
+            count = length - 4
+        }
+        let view = unsafe String_Primitives.String.Borrowed(UnsafePointer(start), count: count)
         return unsafe String_Primitives.String(copying: view)
     }
 }

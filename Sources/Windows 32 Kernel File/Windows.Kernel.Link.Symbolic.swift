@@ -95,14 +95,17 @@ extension Windows.`32`.Kernel.Link.Symbolic {
     ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) -> Int {
         let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
 
-        // Open the symlink with FILE_FLAG_OPEN_REPARSE_POINT
+        // Open FOLLOWING the symlink (no FILE_FLAG_OPEN_REPARSE_POINT):
+        // GetFinalPathNameByHandleW reports the path of what the handle
+        // refers to, so an unfollowed reparse-point handle would yield
+        // the link itself rather than its target.
         let handle = CreateFileW(
             wpath,
-            0,  // No access needed, just reading reparse data
+            0,  // No access needed, just resolving the path
             DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE),
             nil,
             DWORD(OPEN_EXISTING),
-            DWORD(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT),
+            DWORD(FILE_FLAG_BACKUP_SEMANTICS),
             nil
         )
 

@@ -27,7 +27,7 @@ extension Windows.`32`.Kernel.Process {
     ///
     /// - Returns: A pseudo-handle to the current process.
     @inlinable
-    public static func getCurrentHandle() -> HANDLE {
+    package static func getCurrentHandle() -> HANDLE {
         GetCurrentProcess()
     }
 
@@ -37,7 +37,7 @@ extension Windows.`32`.Kernel.Process {
     ///   - handle: Handle to the process to terminate.
     ///   - exitCode: The exit code for the process.
     /// - Returns: True if successful.
-    public static func terminate(handle: HANDLE, exitCode: UInt32) -> Bool {
+    package static func terminate(handle: HANDLE, exitCode: UInt32) -> Bool {
         TerminateProcess(handle, exitCode)
     }
 
@@ -45,7 +45,7 @@ extension Windows.`32`.Kernel.Process {
     ///
     /// - Parameter handle: Handle to the process.
     /// - Returns: The exit code, or nil if still running.
-    public static func getExitCode(handle: HANDLE) -> UInt32? {
+    package static func getExitCode(handle: HANDLE) -> UInt32? {
         var exitCode: DWORD = 0
         guard GetExitCodeProcess(handle, &exitCode) else {
             return nil
@@ -63,7 +63,7 @@ extension Windows.`32`.Kernel.Process {
     ///   - handle: Handle to the process.
     ///   - timeout: Maximum wait time in milliseconds, or INFINITE.
     /// - Returns: The wait result.
-    public static func wait(handle: HANDLE, timeout: DWORD = DWORD(INFINITE)) -> DWORD {
+    package static func wait(handle: HANDLE, timeout: DWORD = DWORD(INFINITE)) -> DWORD {
         WaitForSingleObject(handle, timeout)
     }
 }
@@ -74,9 +74,9 @@ extension Windows.`32`.Kernel.Process {
     /// Information about a created process.
     public struct Info {
         /// Handle to the new process.
-        public let processHandle: HANDLE
+        package let processHandle: HANDLE
         /// Handle to the primary thread.
-        public let threadHandle: HANDLE
+        package let threadHandle: HANDLE
         /// Process ID.
         public let processId: UInt32
         /// Thread ID of the primary thread.

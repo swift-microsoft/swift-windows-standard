@@ -66,25 +66,25 @@ extension Windows.Loader {
     /// Common Win32 error codes for loader operations.
     public enum ErrorCode {
         /// The specified module could not be found.
-        public static let moduleNotFound: DWORD = DWORD(ERROR_MOD_NOT_FOUND)
+        package static let moduleNotFound: DWORD = DWORD(ERROR_MOD_NOT_FOUND)
 
         /// The specified procedure could not be found.
-        public static let procNotFound: DWORD = DWORD(ERROR_PROC_NOT_FOUND)
+        package static let procNotFound: DWORD = DWORD(ERROR_PROC_NOT_FOUND)
 
         /// %1 is not a valid Win32 application.
-        public static let badExeFormat: DWORD = DWORD(ERROR_BAD_EXE_FORMAT)
+        package static let badExeFormat: DWORD = DWORD(ERROR_BAD_EXE_FORMAT)
 
         /// The specified path is invalid.
-        public static let badPathname: DWORD = DWORD(ERROR_BAD_PATHNAME)
+        package static let badPathname: DWORD = DWORD(ERROR_BAD_PATHNAME)
 
         /// Access is denied.
-        public static let accessDenied: DWORD = DWORD(ERROR_ACCESS_DENIED)
+        package static let accessDenied: DWORD = DWORD(ERROR_ACCESS_DENIED)
 
         /// The system cannot find the file specified.
-        public static let fileNotFound: DWORD = DWORD(ERROR_FILE_NOT_FOUND)
+        package static let fileNotFound: DWORD = DWORD(ERROR_FILE_NOT_FOUND)
 
         /// The system cannot find the path specified.
-        public static let pathNotFound: DWORD = DWORD(ERROR_PATH_NOT_FOUND)
+        package static let pathNotFound: DWORD = DWORD(ERROR_PATH_NOT_FOUND)
     }
 }
 

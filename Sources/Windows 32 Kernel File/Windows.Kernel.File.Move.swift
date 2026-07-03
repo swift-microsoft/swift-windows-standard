@@ -18,7 +18,7 @@ public import WinSDK
 
 extension Windows.`32`.Kernel.File.Move {
     /// Options for move operations.
-    public struct Options: OptionSet, Sendable {
+    package struct Options: OptionSet, Sendable {
         public let rawValue: DWORD
 
         public init(rawValue: DWORD) {

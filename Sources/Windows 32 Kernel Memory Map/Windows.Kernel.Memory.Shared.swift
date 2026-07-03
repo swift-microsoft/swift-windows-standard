@@ -81,7 +81,7 @@ extension Memory.Shared {
     ///
     /// - Parameter handle: The file mapping handle.
     @inlinable
-    public static func close(_ handle: HANDLE) {
+    package static func close(_ handle: HANDLE) {
         _ = CloseHandle(handle)
     }
 }

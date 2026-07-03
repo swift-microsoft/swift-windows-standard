@@ -56,7 +56,7 @@ extension Windows.Loader.Library {
     /// - Returns: Handle to the loaded library.
     /// - Throws: `Loader.Error.open` on failure.
     @unsafe
-    public static func open(path: String, flags: DWORD) throws(Loader.Error) -> Loader.Library.Handle {
+    package static func open(path: String, flags: DWORD) throws(Loader.Error) -> Loader.Library.Handle {
         let handle = path.withCString(encodedAs: UTF16.self) { pathPtr in
             LoadLibraryExW(pathPtr, nil, flags)
         }

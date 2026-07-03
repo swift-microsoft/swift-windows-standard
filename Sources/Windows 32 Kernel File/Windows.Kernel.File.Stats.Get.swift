@@ -214,7 +214,7 @@ extension Windows.`32`.Kernel.File {
 
 extension Windows.`32`.Kernel.File {
     /// Windows file type.
-    public enum FileType: DWORD, Sendable {
+    package enum FileType: DWORD, Sendable {
         /// Unknown type.
         case unknown = 0x0000 // FILE_TYPE_UNKNOWN
 

@@ -24,21 +24,21 @@ extension Windows.`32`.Kernel {
 extension Windows.`32`.Kernel.Console {
     /// Returns the standard input handle.
     @inlinable
-    public static func standardInput() -> HANDLE? {
+    package static func standardInput() -> HANDLE? {
         let handle = GetStdHandle(DWORD(STD_INPUT_HANDLE))
         return handle == INVALID_HANDLE_VALUE ? nil : handle
     }
 
     /// Returns the standard output handle.
     @inlinable
-    public static func standardOutput() -> HANDLE? {
+    package static func standardOutput() -> HANDLE? {
         let handle = GetStdHandle(DWORD(STD_OUTPUT_HANDLE))
         return handle == INVALID_HANDLE_VALUE ? nil : handle
     }
 
     /// Returns the standard error handle.
     @inlinable
-    public static func standardError() -> HANDLE? {
+    package static func standardError() -> HANDLE? {
         let handle = GetStdHandle(DWORD(STD_ERROR_HANDLE))
         return handle == INVALID_HANDLE_VALUE ? nil : handle
     }
@@ -48,7 +48,7 @@ extension Windows.`32`.Kernel.Console {
     /// - Parameter handle: The handle to check.
     /// - Returns: `true` if the handle is a console, `false` otherwise.
     @inlinable
-    public static func isConsole(_ handle: HANDLE) -> Bool {
+    package static func isConsole(_ handle: HANDLE) -> Bool {
         var mode: DWORD = 0
         return GetConsoleMode(handle, &mode)
     }
@@ -128,7 +128,7 @@ extension Windows.`32`.Kernel.Console {
     /// - Parameter handle: The console input handle.
     /// - Returns: The current input mode, or `nil` if the handle is not a console.
     @inlinable
-    public static func getInputMode(_ handle: HANDLE) -> InputMode? {
+    package static func getInputMode(_ handle: HANDLE) -> InputMode? {
         var mode: DWORD = 0
         guard GetConsoleMode(handle, &mode) else { return nil }
         return InputMode(rawValue: UInt32(mode))
@@ -142,7 +142,7 @@ extension Windows.`32`.Kernel.Console {
     /// - Returns: `true` on success, `false` on failure.
     @inlinable
     @discardableResult
-    public static func setInputMode(_ handle: HANDLE, mode: InputMode) -> Bool {
+    package static func setInputMode(_ handle: HANDLE, mode: InputMode) -> Bool {
         SetConsoleMode(handle, DWORD(mode.rawValue))
     }
 
@@ -151,7 +151,7 @@ extension Windows.`32`.Kernel.Console {
     /// - Parameter handle: The console output handle.
     /// - Returns: The current output mode, or `nil` if the handle is not a console.
     @inlinable
-    public static func getOutputMode(_ handle: HANDLE) -> OutputMode? {
+    package static func getOutputMode(_ handle: HANDLE) -> OutputMode? {
         var mode: DWORD = 0
         guard GetConsoleMode(handle, &mode) else { return nil }
         return OutputMode(rawValue: UInt32(mode))
@@ -165,7 +165,7 @@ extension Windows.`32`.Kernel.Console {
     /// - Returns: `true` on success, `false` on failure.
     @inlinable
     @discardableResult
-    public static func setOutputMode(_ handle: HANDLE, mode: OutputMode) -> Bool {
+    package static func setOutputMode(_ handle: HANDLE, mode: OutputMode) -> Bool {
         SetConsoleMode(handle, DWORD(mode.rawValue))
     }
 }
@@ -216,7 +216,7 @@ extension Windows.`32`.Kernel.Console {
     ///   - string: The string to write.
     /// - Returns: Number of characters written, or `nil` on failure.
     @inlinable
-    public static func write(_ handle: HANDLE, string: String) -> Int? {
+    package static func write(_ handle: HANDLE, string: String) -> Int? {
         var utf16 = Array(string.utf16)
         return utf16.withUnsafeBufferPointer { buffer in
             let wcharBuffer = UnsafeBufferPointer<WCHAR>(
@@ -240,7 +240,7 @@ extension Windows.`32`.Kernel.Console {
         public let cursorPosition: (x: Int, y: Int)
 
         /// Current text attributes.
-        public let attributes: WORD
+        package let attributes: WORD
 
         /// Visible window rectangle.
         public let window: (left: Int, top: Int, right: Int, bottom: Int)
@@ -266,7 +266,7 @@ extension Windows.`32`.Kernel.Console {
     ///
     /// - Parameter handle: The console output handle.
     /// - Returns: Screen buffer info, or `nil` on failure.
-    public static func getScreenBufferInfo(_ handle: HANDLE) -> ScreenBufferInfo? {
+    package static func getScreenBufferInfo(_ handle: HANDLE) -> ScreenBufferInfo? {
         var info = CONSOLE_SCREEN_BUFFER_INFO()
         guard GetConsoleScreenBufferInfo(handle, &info) else { return nil }
         return ScreenBufferInfo(info)
@@ -281,7 +281,7 @@ extension Windows.`32`.Kernel.Console {
     /// - Returns: `true` on success, `false` on failure.
     @inlinable
     @discardableResult
-    public static func setCursorPosition(_ handle: HANDLE, x: Int, y: Int) -> Bool {
+    package static func setCursorPosition(_ handle: HANDLE, x: Int, y: Int) -> Bool {
         let coord = COORD(X: SHORT(x), Y: SHORT(y))
         return SetConsoleCursorPosition(handle, coord)
     }

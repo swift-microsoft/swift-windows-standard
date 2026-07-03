@@ -191,7 +191,7 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter time: The wall-clock instant to convert.
     /// - Returns: The equivalent FILETIME.
-    public static func fileTimeFromUnix(_ time: Windows.`32`.Kernel.Time) -> FILETIME {
+    package static func fileTimeFromUnix(_ time: Windows.`32`.Kernel.Time) -> FILETIME {
         // Difference between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
         let epochDifference: UInt64 = 116_444_736_000_000_000
 
@@ -211,7 +211,7 @@ extension Windows.`32`.Kernel.File {
     ///
     /// - Parameter fileTime: The Windows FILETIME.
     /// - Returns: Seconds since Unix epoch (1970-01-01).
-    public static func unixFromFileTime(_ fileTime: FILETIME) -> Int64 {
+    package static func unixFromFileTime(_ fileTime: FILETIME) -> Int64 {
         // Difference between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
         let epochDifference: UInt64 = 116_444_736_000_000_000
 
@@ -224,7 +224,7 @@ extension Windows.`32`.Kernel.File {
     /// Gets the current time as a FILETIME.
     ///
     /// - Returns: The current system time as FILETIME.
-    public static func currentFileTime() -> FILETIME {
+    package static func currentFileTime() -> FILETIME {
         var fileTime = FILETIME()
         GetSystemTimeAsFileTime(&fileTime)
         return fileTime
@@ -240,19 +240,19 @@ extension Windows.`32`.Kernel.File {
     /// `GetFileInformationByHandleEx` and `SetFileInformationByHandle`.
     public struct BasicInfo: Sendable {
         /// Creation time.
-        public var creationTime: LARGE_INTEGER
+        package var creationTime: LARGE_INTEGER
 
         /// Last access time.
-        public var lastAccessTime: LARGE_INTEGER
+        package var lastAccessTime: LARGE_INTEGER
 
         /// Last write time.
-        public var lastWriteTime: LARGE_INTEGER
+        package var lastWriteTime: LARGE_INTEGER
 
         /// Change time (metadata change time).
-        public var changeTime: LARGE_INTEGER
+        package var changeTime: LARGE_INTEGER
 
         /// File attributes.
-        public var fileAttributes: DWORD
+        package var fileAttributes: DWORD
 
         public init() {
             self.creationTime = LARGE_INTEGER()

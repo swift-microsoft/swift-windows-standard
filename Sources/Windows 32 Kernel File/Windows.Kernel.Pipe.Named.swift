@@ -25,7 +25,7 @@ extension Windows.`32`.Kernel.Pipe {
 
 extension Windows.`32`.Kernel.Pipe.Named {
     /// Named pipe open mode flags.
-    public struct OpenMode: OptionSet, Sendable {
+    package struct OpenMode: OptionSet, Sendable {
         public let rawValue: DWORD
 
         public init(rawValue: DWORD) {
@@ -52,7 +52,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     }
 
     /// Named pipe type/mode flags.
-    public struct PipeMode: OptionSet, Sendable {
+    package struct PipeMode: OptionSet, Sendable {
         public let rawValue: DWORD
 
         public init(rawValue: DWORD) {
@@ -316,7 +316,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     ///
     /// - Parameter pipe: The pipe handle.
     /// - Returns: Tuple of (currentInstances, maxInstances), or `nil` on failure.
-    public static func getInfo(_ pipe: borrowing Windows.`32`.Kernel.Descriptor) -> (current: DWORD, max: DWORD)? {
+    package static func getInfo(_ pipe: borrowing Windows.`32`.Kernel.Descriptor) -> (current: DWORD, max: DWORD)? {
         getInfo(pipe._rawValue)
     }
 

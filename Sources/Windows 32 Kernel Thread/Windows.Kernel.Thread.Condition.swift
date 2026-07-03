@@ -95,7 +95,7 @@ extension Windows.`32`.Kernel.Thread.Condition {
     ///   - mutex: The mutex to release while waiting.
     ///   - milliseconds: Maximum time to wait in milliseconds.
     /// - Returns: `true` if signaled, `false` if timed out.
-    public func wait(mutex: Windows.`32`.Kernel.Thread.Mutex, milliseconds: DWORD) -> Bool {
+    package func wait(mutex: Windows.`32`.Kernel.Thread.Mutex, milliseconds: DWORD) -> Bool {
         mutex.withUnsafeMutablePointer { mutexPtr in
             SleepConditionVariableSRW(&cond, mutexPtr, milliseconds, 0)
         }

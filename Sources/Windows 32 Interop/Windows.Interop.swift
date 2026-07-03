@@ -27,13 +27,13 @@ extension Windows_32_Core.Windows.Interop {
     ///
     /// On Windows, DWORD is a typealias for UInt32, so this is an identity conversion.
     @inline(always)
-    public static func dword(_ value: UInt32) -> DWORD { value }
+    package static func dword(_ value: UInt32) -> DWORD { value }
 
     /// Converts an Int32 value to DWORD using bit-preserving conversion.
     ///
     /// This handles Windows API constants that may be typed as signed integers.
     @inline(always)
-    public static func dword(_ value: Int32) -> DWORD { DWORD(bitPattern: value) }
+    package static func dword(_ value: Int32) -> DWORD { DWORD(bitPattern: value) }
 }
 
 // MARK: - Mask Helpers for Bitwise Operations
@@ -41,11 +41,11 @@ extension Windows_32_Core.Windows.Interop {
 extension Windows_32_Core.Windows.Interop {
     /// Converts a UInt32 value to DWORD for mask operations.
     @inline(always)
-    public static func mask(_ value: UInt32) -> DWORD { value }
+    package static func mask(_ value: UInt32) -> DWORD { value }
 
     /// Converts an Int32 value to DWORD for mask operations using bit-preserving conversion.
     @inline(always)
-    public static func mask(_ value: Int32) -> DWORD { DWORD(bitPattern: value) }
+    package static func mask(_ value: Int32) -> DWORD { DWORD(bitPattern: value) }
 }
 
 // MARK: - Boolean Adapters

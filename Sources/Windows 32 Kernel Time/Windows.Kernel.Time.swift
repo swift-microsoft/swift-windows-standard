@@ -20,7 +20,7 @@ extension Windows.`32`.Kernel.Time {
     /// FILETIME is 100-nanosecond intervals since January 1, 1601 (UTC).
     ///
     /// - Returns: The current system time as FILETIME.
-    public static func systemTime() -> FILETIME {
+    package static func systemTime() -> FILETIME {
         var fileTime = FILETIME()
         GetSystemTimeAsFileTime(&fileTime)
         return fileTime

@@ -21,9 +21,11 @@ extension Windows.`32`.Kernel.File {
     /// `swift-iso-9945`'s `Kernel.File.Chown` doc names this type as the
     /// Windows counterpart. Windows has no uid/gid: ownership is
     /// ACL/SID-based, and the uid/gid the Windows `Stats` surface exposes
-    /// are synthesized. All operations here are accepted no-ops so
-    /// cross-platform preserve/apply flows (which have nothing to carry
-    /// over on Windows) succeed rather than fail.
+    /// are synthesized as (0, 0). Each operation is a *conditional* no-op:
+    /// it succeeds only when the requested owner equals that synthesized
+    /// (0, 0), so cross-platform preserve/apply flows (which round-trip the
+    /// synthesized ownership) still succeed; a request for any other owner
+    /// throws `.permission(.notPermitted)` rather than silently lying.
     public enum Chown {}
 }
 
@@ -32,10 +34,12 @@ extension Windows.`32`.Kernel.File {
 extension Windows.`32`.Kernel.File.Chown {
     /// Errors that can occur during chown operations.
     ///
-    /// Mirrors `ISO_9945.Kernel.File.Chown.Error`. Never thrown by the
-    /// Windows no-op operations; the shape exists so cross-platform error
-    /// mapping (`.path`/`.permission`/`.io`/`.platform`) compiles
-    /// identically on both legs.
+    /// Mirrors `ISO_9945.Kernel.File.Chown.Error`. Thrown as
+    /// `.permission(.notPermitted)` when a request asks for an owner other
+    /// than the synthesized Windows ownership (0, 0); the full shape exists
+    /// so cross-platform error mapping
+    /// (`.path`/`.permission`/`.io`/`.platform`) compiles identically on
+    /// both legs.
     public enum Error: Swift.Error, Sendable, Equatable {
         /// The path does not exist.
         case path(Path)
@@ -75,35 +79,50 @@ extension Windows.`32`.Kernel.File.Chown {
 extension Windows.`32`.Kernel.File.Chown {
     /// Changes ownership of the file at `path` (follows symlinks).
     ///
-    /// Mirrors `ISO_9945.Kernel.File.Chown.chown(path:uid:gid:)`.
-    /// Accepted no-op on Windows (no uid/gid to set).
+    /// Mirrors `ISO_9945.Kernel.File.Chown.chown(path:uid:gid:)`. Windows has
+    /// no uid/gid to set: succeeds only when `uid` and `gid` match the
+    /// ownership `Stats` synthesizes (0, 0); any other request throws
+    /// `.permission(.notPermitted)` rather than silently succeeding.
     public static func chown(
         path: borrowing Path.Borrowed,
         uid: Windows.`32`.Kernel.User.ID,
         gid: Windows.`32`.Kernel.Group.ID
     ) throws(Error) {
+        guard uid.rawValue == 0 && gid.rawValue == 0 else {
+            throw .permission(.notPermitted)
+        }
     }
 
     /// Changes ownership of the file at `path` without following symlinks.
     ///
-    /// Mirrors `ISO_9945.Kernel.File.Chown.lchown(path:uid:gid:)`.
-    /// Accepted no-op on Windows (no uid/gid to set).
+    /// Mirrors `ISO_9945.Kernel.File.Chown.lchown(path:uid:gid:)`. Windows has
+    /// no uid/gid to set: succeeds only when `uid` and `gid` match the
+    /// ownership `Stats` synthesizes (0, 0); any other request throws
+    /// `.permission(.notPermitted)` rather than silently succeeding.
     public static func lchown(
         path: borrowing Path.Borrowed,
         uid: Windows.`32`.Kernel.User.ID,
         gid: Windows.`32`.Kernel.Group.ID
     ) throws(Error) {
+        guard uid.rawValue == 0 && gid.rawValue == 0 else {
+            throw .permission(.notPermitted)
+        }
     }
 
     /// Changes ownership of an open descriptor.
     ///
-    /// Mirrors `ISO_9945.Kernel.File.Chown.fchown(_:uid:gid:)`.
-    /// Accepted no-op on Windows (no uid/gid to set).
+    /// Mirrors `ISO_9945.Kernel.File.Chown.fchown(_:uid:gid:)`. Windows has
+    /// no uid/gid to set: succeeds only when `uid` and `gid` match the
+    /// ownership `Stats` synthesizes (0, 0); any other request throws
+    /// `.permission(.notPermitted)` rather than silently succeeding.
     public static func fchown(
         _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
         uid: Windows.`32`.Kernel.User.ID,
         gid: Windows.`32`.Kernel.Group.ID
     ) throws(Error) {
+        guard uid.rawValue == 0 && gid.rawValue == 0 else {
+            throw .permission(.notPermitted)
+        }
     }
 }
 

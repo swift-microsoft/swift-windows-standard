@@ -56,29 +56,31 @@ extension Windows.`32`.Kernel.Environment {
         deinit {
             FreeEnvironmentStringsW(block)
         }
+    }
+}
 
-        public func makeIterator() -> Iterator {
-            Iterator(current: block)
-        }
+extension Windows.`32`.Kernel.Environment.Entries {
+    public func makeIterator() -> Iterator {
+        Iterator(current: block)
+    }
 
-        /// Advances to the next environment variable (ISO-parity form:
-        /// mirrors `ISO_9945.Kernel.Environment.Entries.next()`).
-        ///
-        /// Skips Windows-internal pseudo-variables (entries whose name
-        /// begins with `=`, e.g. `=C:=C:\...`) so L3 consumers see only
-        /// real variables.
-        public mutating func next() -> Entry? {
-            var iterator = Iterator(current: current)
-            while let entry = iterator.next() {
-                current = iterator.position
-                if entry.raw.first == 0x003D {  // '='
-                    continue
-                }
-                return entry
-            }
+    /// Advances to the next environment variable (ISO-parity form:
+    /// mirrors `ISO_9945.Kernel.Environment.Entries.next()`).
+    ///
+    /// Skips Windows-internal pseudo-variables (entries whose name
+    /// begins with `=`, e.g. `=C:=C:\...`) so L3 consumers see only
+    /// real variables.
+    public mutating func next() -> Entry? {
+        var iterator = Iterator(current: current)
+        while let entry = iterator.next() {
             current = iterator.position
-            return nil
+            if entry.raw.first == 0x003D {  // '='
+                continue
+            }
+            return entry
         }
+        current = iterator.position
+        return nil
     }
 }
 
@@ -111,25 +113,27 @@ extension Windows.`32`.Kernel.Environment.Entries {
             value.append(0)
             self._value = value
         }
+    }
+}
 
-        /// The entry as a Swift String.
-        public var string: String? {
-            String(decoding: raw, as: UTF16.self)
-        }
+extension Windows.`32`.Kernel.Environment.Entries.Entry {
+    /// The entry as a Swift String.
+    public var string: String? {
+        String(decoding: raw, as: UTF16.self)
+    }
 
-        /// Parses the entry into name and value.
-        ///
-        /// - Returns: Tuple of (name, value), or `nil` if parsing fails.
-        public var parsed: (name: String, value: String)? {
-            guard let str = string,
-                  let eqIndex = str.firstIndex(of: "="),
-                  eqIndex != str.startIndex else {
-                return nil
-            }
-            let name = String(str[..<eqIndex])
-            let value = String(str[str.index(after: eqIndex)...])
-            return (name, value)
+    /// Parses the entry into name and value.
+    ///
+    /// - Returns: Tuple of (name, value), or `nil` if parsing fails.
+    public var parsed: (name: String, value: String)? {
+        guard let str = string,
+              let eqIndex = str.firstIndex(of: "="),
+              eqIndex != str.startIndex else {
+            return nil
         }
+        let name = String(str[..<eqIndex])
+        let value = String(str[str.index(after: eqIndex)...])
+        return (name, value)
     }
 }
 
@@ -140,43 +144,45 @@ extension Windows.`32`.Kernel.Environment.Entries {
     public struct Iterator: IteratorProtocol {
         private var current: LPWCH
 
-        /// The current block position (consumed by `Entries.next()` to
-        /// keep its own cursor in step).
-        internal var position: LPWCH { current }
-
         init(current: LPWCH) {
             self.current = current
         }
+    }
+}
 
-        public mutating func next() -> Entry? {
-            // Check for end of block (double null)
-            guard current.pointee != 0 else {
-                return nil
-            }
+extension Windows.`32`.Kernel.Environment.Entries.Iterator {
+    /// The current block position (consumed by `Entries.next()` to
+    /// keep its own cursor in step).
+    internal var position: LPWCH { current }
 
-            // Find the end of this entry
-            var end = current
-            while end.pointee != 0 {
-                end = end.advanced(by: 1)
-            }
-
-            // Calculate length and copy
-            let length = current.distance(to: end)
-            guard length > 0 else {
-                return nil
-            }
-
-            // Copy the string
-            var chars = [UInt16](repeating: 0, count: length)
-            for i in 0..<length {
-                chars[i] = current.advanced(by: i).pointee
-            }
-
-            // Move past the null terminator to the next entry
-            current = end.advanced(by: 1)
-
-            return Entry(raw: chars)
+    public mutating func next() -> Windows.`32`.Kernel.Environment.Entries.Entry? {
+        // Check for end of block (double null)
+        guard current.pointee != 0 else {
+            return nil
         }
+
+        // Find the end of this entry
+        var end = current
+        while end.pointee != 0 {
+            end = end.advanced(by: 1)
+        }
+
+        // Calculate length and copy
+        let length = current.distance(to: end)
+        guard length > 0 else {
+            return nil
+        }
+
+        // Copy the string
+        var chars = [UInt16](repeating: 0, count: length)
+        for i in 0..<length {
+            chars[i] = current.advanced(by: i).pointee
+        }
+
+        // Move past the null terminator to the next entry
+        current = end.advanced(by: 1)
+
+        return Windows.`32`.Kernel.Environment.Entries.Entry(raw: chars)
     }
 }
 

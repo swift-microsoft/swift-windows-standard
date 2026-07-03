@@ -64,28 +64,30 @@ internal func captureLastErrorMessage() -> Loader.Message {
 
 extension Windows.Loader {
     /// Common Win32 error codes for loader operations.
-    public enum ErrorCode {
-        /// The specified module could not be found.
-        package static let moduleNotFound: DWORD = DWORD(ERROR_MOD_NOT_FOUND)
+    public enum ErrorCode {}
+}
 
-        /// The specified procedure could not be found.
-        package static let procNotFound: DWORD = DWORD(ERROR_PROC_NOT_FOUND)
+extension Windows.Loader.ErrorCode {
+    /// The specified module could not be found.
+    package static let moduleNotFound: DWORD = DWORD(ERROR_MOD_NOT_FOUND)
 
-        /// %1 is not a valid Win32 application.
-        package static let badExeFormat: DWORD = DWORD(ERROR_BAD_EXE_FORMAT)
+    /// The specified procedure could not be found.
+    package static let procNotFound: DWORD = DWORD(ERROR_PROC_NOT_FOUND)
 
-        /// The specified path is invalid.
-        package static let badPathname: DWORD = DWORD(ERROR_BAD_PATHNAME)
+    /// %1 is not a valid Win32 application.
+    package static let badExeFormat: DWORD = DWORD(ERROR_BAD_EXE_FORMAT)
 
-        /// Access is denied.
-        package static let accessDenied: DWORD = DWORD(ERROR_ACCESS_DENIED)
+    /// The specified path is invalid.
+    package static let badPathname: DWORD = DWORD(ERROR_BAD_PATHNAME)
 
-        /// The system cannot find the file specified.
-        package static let fileNotFound: DWORD = DWORD(ERROR_FILE_NOT_FOUND)
+    /// Access is denied.
+    package static let accessDenied: DWORD = DWORD(ERROR_ACCESS_DENIED)
 
-        /// The system cannot find the path specified.
-        package static let pathNotFound: DWORD = DWORD(ERROR_PATH_NOT_FOUND)
-    }
+    /// The system cannot find the file specified.
+    package static let fileNotFound: DWORD = DWORD(ERROR_FILE_NOT_FOUND)
+
+    /// The system cannot find the path specified.
+    package static let pathNotFound: DWORD = DWORD(ERROR_PATH_NOT_FOUND)
 }
 
 #endif

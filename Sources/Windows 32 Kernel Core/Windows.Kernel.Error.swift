@@ -40,83 +40,97 @@ extension Error_Primitives.Error {
 // ("ambiguous type name 'Code' in 'Error'").
 extension Error_Primitives.Error.Code {
     /// File/path errors.
-    public enum File {
-        /// The system cannot find the file specified.
-        public static let notFound: UInt32 = UInt32(ERROR_FILE_NOT_FOUND)
-
-        /// The system cannot find the path specified.
-        public static let pathNotFound: UInt32 = UInt32(ERROR_PATH_NOT_FOUND)
-
-        /// The file exists.
-        public static let exists: UInt32 = UInt32(ERROR_FILE_EXISTS)
-
-        /// Cannot create a file when that file already exists.
-        public static let alreadyExists: UInt32 = UInt32(ERROR_ALREADY_EXISTS)
-    }
+    public enum File {}
 
     /// Access/permission errors.
-    public enum Access {
-        /// Access is denied.
-        public static let denied: UInt32 = UInt32(ERROR_ACCESS_DENIED)
-
-        /// The process cannot access the file because it is being used by another process.
-        public static let sharingViolation: UInt32 = UInt32(ERROR_SHARING_VIOLATION)
-
-        /// The process cannot access the file because another process has locked a portion of the file.
-        public static let lockViolation: UInt32 = UInt32(ERROR_LOCK_VIOLATION)
-    }
+    public enum Access {}
 
     /// Handle errors.
-    public enum Handle {
-        /// The handle is invalid.
-        public static let invalid: UInt32 = UInt32(ERROR_INVALID_HANDLE)
-    }
+    public enum Handle {}
 
     /// Storage errors.
-    public enum Storage {
-        /// There is not enough space on the disk.
-        public static let diskFull: UInt32 = UInt32(ERROR_DISK_FULL)
-
-        /// The disk is full.
-        public static let handleDiskFull: UInt32 = UInt32(ERROR_HANDLE_DISK_FULL)
-    }
+    public enum Storage {}
 
     /// I/O errors.
-    public enum IO {
-        /// The I/O operation has been aborted because of either a thread exit or an application request.
-        public static let pending: UInt32 = UInt32(ERROR_IO_PENDING)
-
-        /// Reached the end of the file.
-        public static let handleEOF: UInt32 = UInt32(ERROR_HANDLE_EOF)
-
-        /// The pipe has been ended.
-        public static let brokenPipe: UInt32 = UInt32(ERROR_BROKEN_PIPE)
-
-        /// No more data is available.
-        public static let noData: UInt32 = UInt32(ERROR_NO_DATA)
-    }
+    public enum IO {}
 
     /// Directory errors.
-    public enum Directory {
-        /// The directory is not empty.
-        public static let notEmpty: UInt32 = UInt32(ERROR_DIR_NOT_EMPTY)
-
-        /// The directory name is invalid — the path is not a directory
-        /// (`ERROR_DIRECTORY`, 267).
-        public static let invalidName: UInt32 = UInt32(ERROR_DIRECTORY)
-    }
+    public enum Directory {}
 
     /// General errors.
-    public enum General {
-        /// The parameter is incorrect.
-        public static let invalidParameter: UInt32 = UInt32(ERROR_INVALID_PARAMETER)
+    public enum General {}
+}
 
-        /// Not enough memory resources are available to process this command.
-        public static let notEnoughMemory: UInt32 = UInt32(ERROR_NOT_ENOUGH_MEMORY)
+extension Error_Primitives.Error.Code.File {
+    /// The system cannot find the file specified.
+    public static let notFound: UInt32 = UInt32(ERROR_FILE_NOT_FOUND)
 
-        /// The operation completed successfully.
-        public static let success: UInt32 = UInt32(ERROR_SUCCESS)
-    }
+    /// The system cannot find the path specified.
+    public static let pathNotFound: UInt32 = UInt32(ERROR_PATH_NOT_FOUND)
+
+    /// The file exists.
+    public static let exists: UInt32 = UInt32(ERROR_FILE_EXISTS)
+
+    /// Cannot create a file when that file already exists.
+    public static let alreadyExists: UInt32 = UInt32(ERROR_ALREADY_EXISTS)
+}
+
+extension Error_Primitives.Error.Code.Access {
+    /// Access is denied.
+    public static let denied: UInt32 = UInt32(ERROR_ACCESS_DENIED)
+
+    /// The process cannot access the file because it is being used by another process.
+    public static let sharingViolation: UInt32 = UInt32(ERROR_SHARING_VIOLATION)
+
+    /// The process cannot access the file because another process has locked a portion of the file.
+    public static let lockViolation: UInt32 = UInt32(ERROR_LOCK_VIOLATION)
+}
+
+extension Error_Primitives.Error.Code.Handle {
+    /// The handle is invalid.
+    public static let invalid: UInt32 = UInt32(ERROR_INVALID_HANDLE)
+}
+
+extension Error_Primitives.Error.Code.Storage {
+    /// There is not enough space on the disk.
+    public static let diskFull: UInt32 = UInt32(ERROR_DISK_FULL)
+
+    /// The disk is full.
+    public static let handleDiskFull: UInt32 = UInt32(ERROR_HANDLE_DISK_FULL)
+}
+
+extension Error_Primitives.Error.Code.IO {
+    /// The I/O operation has been aborted because of either a thread exit or an application request.
+    public static let pending: UInt32 = UInt32(ERROR_IO_PENDING)
+
+    /// Reached the end of the file.
+    public static let handleEOF: UInt32 = UInt32(ERROR_HANDLE_EOF)
+
+    /// The pipe has been ended.
+    public static let brokenPipe: UInt32 = UInt32(ERROR_BROKEN_PIPE)
+
+    /// No more data is available.
+    public static let noData: UInt32 = UInt32(ERROR_NO_DATA)
+}
+
+extension Error_Primitives.Error.Code.Directory {
+    /// The directory is not empty.
+    public static let notEmpty: UInt32 = UInt32(ERROR_DIR_NOT_EMPTY)
+
+    /// The directory name is invalid — the path is not a directory
+    /// (`ERROR_DIRECTORY`, 267).
+    public static let invalidName: UInt32 = UInt32(ERROR_DIRECTORY)
+}
+
+extension Error_Primitives.Error.Code.General {
+    /// The parameter is incorrect.
+    public static let invalidParameter: UInt32 = UInt32(ERROR_INVALID_PARAMETER)
+
+    /// Not enough memory resources are available to process this command.
+    public static let notEnoughMemory: UInt32 = UInt32(ERROR_NOT_ENOUGH_MEMORY)
+
+    /// The operation completed successfully.
+    public static let success: UInt32 = UInt32(ERROR_SUCCESS)
 }
 
 #endif

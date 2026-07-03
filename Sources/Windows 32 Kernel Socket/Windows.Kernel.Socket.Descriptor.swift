@@ -34,17 +34,19 @@ extension Windows.`32`.Kernel.Socket {
             _ = unsafe closesocket(SOCKET(_raw))
             #endif
         }
+    }
+}
 
-        /// Invalid socket descriptor sentinel (`UInt64.max`, mirroring `INVALID_SOCKET`).
-        public static var invalid: Descriptor {
-            Descriptor(_raw: UInt64.max)
-        }
+extension Windows.`32`.Kernel.Socket.Descriptor {
+    /// Invalid socket descriptor sentinel (`UInt64.max`, mirroring `INVALID_SOCKET`).
+    public static var invalid: Descriptor {
+        Descriptor(_raw: UInt64.max)
+    }
 
-        /// Whether the socket descriptor is valid (not the sentinel).
-        @inlinable
-        public var isValid: Bool {
-            _raw != UInt64.max
-        }
+    /// Whether the socket descriptor is valid (not the sentinel).
+    @inlinable
+    public var isValid: Bool {
+        _raw != UInt64.max
     }
 }
 

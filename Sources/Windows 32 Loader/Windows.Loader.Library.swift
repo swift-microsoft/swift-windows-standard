@@ -125,33 +125,35 @@ extension Windows.Loader.Library {
         public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
-
-        /// If this value is used, and the executable module is a DLL, the
-        /// system does not call DllMain for process and thread initialization
-        /// and termination.
-        public static let dontResolveDllReferences = Flags(rawValue: UInt32(DONT_RESOLVE_DLL_REFERENCES))
-
-        /// The system does not check AppLocker rules or apply Software
-        /// Restriction Policies for the DLL.
-        public static let loadIgnoreCodeAuthzLevel = Flags(rawValue: UInt32(LOAD_IGNORE_CODE_AUTHZ_LEVEL))
-
-        /// If this value is used, the system maps the file into the calling
-        /// process's virtual address space as if it were a data file.
-        public static let loadLibraryAsDatafile = Flags(rawValue: UInt32(LOAD_LIBRARY_AS_DATAFILE))
-
-        /// Similar to LOAD_LIBRARY_AS_DATAFILE, except that the DLL file is
-        /// opened with exclusive write access for the calling process.
-        public static let loadLibraryAsDatafileExclusive = Flags(rawValue: UInt32(LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE))
-
-        /// If this value is used, the system maps the file into the process's
-        /// virtual address space as an image file.
-        public static let loadLibraryAsImageResource = Flags(rawValue: UInt32(LOAD_LIBRARY_AS_IMAGE_RESOURCE))
-
-        /// If this value is used, the directory that contains the DLL is
-        /// temporarily added to the beginning of the list of directories
-        /// that are searched for the DLL's dependencies.
-        public static let loadWithAlteredSearchPath = Flags(rawValue: UInt32(LOAD_WITH_ALTERED_SEARCH_PATH))
     }
+}
+
+extension Windows.Loader.Library.Flags {
+    /// If this value is used, and the executable module is a DLL, the
+    /// system does not call DllMain for process and thread initialization
+    /// and termination.
+    public static let dontResolveDllReferences = Flags(rawValue: UInt32(DONT_RESOLVE_DLL_REFERENCES))
+
+    /// The system does not check AppLocker rules or apply Software
+    /// Restriction Policies for the DLL.
+    public static let loadIgnoreCodeAuthzLevel = Flags(rawValue: UInt32(LOAD_IGNORE_CODE_AUTHZ_LEVEL))
+
+    /// If this value is used, the system maps the file into the calling
+    /// process's virtual address space as if it were a data file.
+    public static let loadLibraryAsDatafile = Flags(rawValue: UInt32(LOAD_LIBRARY_AS_DATAFILE))
+
+    /// Similar to LOAD_LIBRARY_AS_DATAFILE, except that the DLL file is
+    /// opened with exclusive write access for the calling process.
+    public static let loadLibraryAsDatafileExclusive = Flags(rawValue: UInt32(LOAD_LIBRARY_AS_DATAFILE_EXCLUSIVE))
+
+    /// If this value is used, the system maps the file into the process's
+    /// virtual address space as an image file.
+    public static let loadLibraryAsImageResource = Flags(rawValue: UInt32(LOAD_LIBRARY_AS_IMAGE_RESOURCE))
+
+    /// If this value is used, the directory that contains the DLL is
+    /// temporarily added to the beginning of the list of directories
+    /// that are searched for the DLL's dependencies.
+    public static let loadWithAlteredSearchPath = Flags(rawValue: UInt32(LOAD_WITH_ALTERED_SEARCH_PATH))
 }
 
 #endif

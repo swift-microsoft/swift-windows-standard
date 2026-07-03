@@ -30,18 +30,20 @@ extension Windows.`32`.Kernel.Socket {
         public init(_ value: Int32) {
             self.rawValue = value
         }
-
-        // MARK: - Common Values
-
-        /// Default backlog (128).
-        public static let `default` = Backlog(128)
-
-        /// Small backlog (16), suitable for low-traffic services.
-        public static let small = Backlog(16)
-
-        /// Large backlog (4096), for high-traffic servers.
-        public static let large = Backlog(4096)
     }
+}
+
+extension Windows.`32`.Kernel.Socket.Backlog {
+    // MARK: - Common Values
+
+    /// Default backlog (128).
+    public static let `default` = Backlog(128)
+
+    /// Small backlog (16), suitable for low-traffic services.
+    public static let small = Backlog(16)
+
+    /// Large backlog (4096), for high-traffic servers.
+    public static let large = Backlog(4096)
 }
 
 // MARK: - ExpressibleByIntegerLiteral

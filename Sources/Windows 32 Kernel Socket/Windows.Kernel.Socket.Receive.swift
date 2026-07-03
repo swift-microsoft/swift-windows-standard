@@ -23,20 +23,24 @@ extension Windows.`32`.Kernel.Socket {
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
-
-        /// Peek at incoming data without removing it from the queue.
-        public static let peek = ReceiveFlags(rawValue: MSG_PEEK)
-
-        /// Receive out-of-band data.
-        public static let outOfBand = ReceiveFlags(rawValue: MSG_OOB)
-
-        /// Block until the full amount is received.
-        public static let waitAll = ReceiveFlags(rawValue: MSG_WAITALL)
-
-        /// No flags.
-        public static let none = ReceiveFlags(rawValue: 0)
     }
+}
 
+extension Windows.`32`.Kernel.Socket.ReceiveFlags {
+    /// Peek at incoming data without removing it from the queue.
+    public static let peek = ReceiveFlags(rawValue: MSG_PEEK)
+
+    /// Receive out-of-band data.
+    public static let outOfBand = ReceiveFlags(rawValue: MSG_OOB)
+
+    /// Block until the full amount is received.
+    public static let waitAll = ReceiveFlags(rawValue: MSG_WAITALL)
+
+    /// No flags.
+    public static let none = ReceiveFlags(rawValue: 0)
+}
+
+extension Windows.`32`.Kernel.Socket {
     /// Receives data from a connected socket.
     ///
     /// - Parameters:

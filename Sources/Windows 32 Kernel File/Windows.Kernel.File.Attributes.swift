@@ -25,49 +25,51 @@ extension Windows.`32`.Kernel.File {
         public init(rawValue: DWORD) {
             self.rawValue = rawValue
         }
-
-        /// File is read-only.
-        public static let readOnly = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_READONLY))
-
-        /// File is hidden.
-        public static let hidden = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_HIDDEN))
-
-        /// File is a system file.
-        public static let system = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_SYSTEM))
-
-        /// File is a directory.
-        public static let directory = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_DIRECTORY))
-
-        /// File is marked for archiving.
-        public static let archive = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_ARCHIVE))
-
-        /// File is a device (reserved for system use).
-        public static let device = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_DEVICE))
-
-        /// File has no other attributes set.
-        public static let normal = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_NORMAL))
-
-        /// File is temporary.
-        public static let temporary = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_TEMPORARY))
-
-        /// File is a sparse file.
-        public static let sparseFile = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_SPARSE_FILE))
-
-        /// File is a reparse point (symlink, junction, etc.).
-        public static let reparsePoint = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_REPARSE_POINT))
-
-        /// File is compressed.
-        public static let compressed = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_COMPRESSED))
-
-        /// File data is not immediately available (offline).
-        public static let offline = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_OFFLINE))
-
-        /// File is not indexed by content indexing service.
-        public static let notContentIndexed = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_NOT_CONTENT_INDEXED))
-
-        /// File is encrypted.
-        public static let encrypted = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_ENCRYPTED))
     }
+}
+
+extension Windows.`32`.Kernel.File.Attributes {
+    /// File is read-only.
+    public static let readOnly = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_READONLY))
+
+    /// File is hidden.
+    public static let hidden = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_HIDDEN))
+
+    /// File is a system file.
+    public static let system = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_SYSTEM))
+
+    /// File is a directory.
+    public static let directory = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_DIRECTORY))
+
+    /// File is marked for archiving.
+    public static let archive = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_ARCHIVE))
+
+    /// File is a device (reserved for system use).
+    public static let device = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_DEVICE))
+
+    /// File has no other attributes set.
+    public static let normal = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_NORMAL))
+
+    /// File is temporary.
+    public static let temporary = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_TEMPORARY))
+
+    /// File is a sparse file.
+    public static let sparseFile = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_SPARSE_FILE))
+
+    /// File is a reparse point (symlink, junction, etc.).
+    public static let reparsePoint = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_REPARSE_POINT))
+
+    /// File is compressed.
+    public static let compressed = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_COMPRESSED))
+
+    /// File data is not immediately available (offline).
+    public static let offline = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_OFFLINE))
+
+    /// File is not indexed by content indexing service.
+    public static let notContentIndexed = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_NOT_CONTENT_INDEXED))
+
+    /// File is encrypted.
+    public static let encrypted = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_ENCRYPTED))
 }
 
 // MARK: - Set Attributes
@@ -193,25 +195,27 @@ extension Windows.`32`.Kernel.File.Attributes {
 
         /// Platform-specific error.
         case platform(Error_Primitives.Error)
+    }
+}
 
-        // Path-related errors
-        public enum Path: Swift.Error, Sendable, Equatable {
-            case notFound
-            case tooLong
-            case loop
-        }
+extension Windows.`32`.Kernel.File.Attributes.Error {
+    // Path-related errors
+    public enum Path: Swift.Error, Sendable, Equatable {
+        case notFound
+        case tooLong
+        case loop
+    }
 
-        // Permission-related errors
-        public enum Permission: Swift.Error, Sendable, Equatable {
-            case denied
-            case notPermitted
-            case readOnlyFilesystem
-        }
+    // Permission-related errors
+    public enum Permission: Swift.Error, Sendable, Equatable {
+        case denied
+        case notPermitted
+        case readOnlyFilesystem
+    }
 
-        // I/O errors
-        public enum IO: Swift.Error, Sendable, Equatable {
-            case hardware
-        }
+    // I/O errors
+    public enum IO: Swift.Error, Sendable, Equatable {
+        case hardware
     }
 }
 

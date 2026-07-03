@@ -81,14 +81,18 @@ extension Windows.`32`.Kernel.Process {
         public let processId: UInt32
         /// Thread ID of the primary thread.
         public let threadId: UInt32
-
-        /// Closes the process and thread handles.
-        public func close() {
-            _ = CloseHandle(processHandle)
-            _ = CloseHandle(threadHandle)
-        }
     }
+}
 
+extension Windows.`32`.Kernel.Process.Info {
+    /// Closes the process and thread handles.
+    public func close() {
+        _ = CloseHandle(processHandle)
+        _ = CloseHandle(threadHandle)
+    }
+}
+
+extension Windows.`32`.Kernel.Process {
     /// Creates a new process.
     ///
     /// This is the Windows equivalent of fork+exec. Windows does not have fork().

@@ -91,28 +91,32 @@
             init(_ handle: UInt) {
                 self.handle = handle
             }
+        }
+    }
 
-            /// Cancels all pending I/O (fire-and-forget).
-            ///
-            /// Delegates to the raw `Cancel.all(_:)` SPI. Returns silently if
-            /// no operations are pending.
-            public func callAsFunction() {
-                _ = Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle)
-            }
-
-            /// Returns whether cancellation succeeded.
-            ///
-            /// Delegates to the raw `Cancel.all(_:)` SPI.
-            ///
-            /// - Returns: `true` if cancelled, `false` if no pending operations.
-            public var status: Bool {
-                if Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle) {
-                    return true
-                }
-                return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
-            }
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel.All {
+        /// Cancels all pending I/O (fire-and-forget).
+        ///
+        /// Delegates to the raw `Cancel.all(_:)` SPI. Returns silently if
+        /// no operations are pending.
+        public func callAsFunction() {
+            _ = Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle)
         }
 
+        /// Returns whether cancellation succeeded.
+        ///
+        /// Delegates to the raw `Cancel.all(_:)` SPI.
+        ///
+        /// - Returns: `true` if cancelled, `false` if no pending operations.
+        public var status: Bool {
+            if Windows.`32`.Kernel.IO.Completion.Port.Cancel.all(handle) {
+                return true
+            }
+            return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
+        }
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Cancels all pending I/O on a handle.
         ///
         /// Typed L2 form. Returns an accessor whose
@@ -145,35 +149,39 @@
                 self.handle = handle
                 self.overlappedPtr = unsafe overlapped
             }
+        }
+    }
 
-            /// Cancels the specific pending I/O (fire-and-forget).
-            ///
-            /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI.
-            /// Returns silently if the operation already completed.
-            public func callAsFunction() {
-                let ptr = unsafe overlappedPtr
-                _ = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
-                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
-                }
-            }
-
-            /// Returns whether cancellation succeeded.
-            ///
-            /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI.
-            ///
-            /// - Returns: `true` if cancelled, `false` if already completed.
-            public var status: Bool {
-                let ptr = unsafe overlappedPtr
-                let result = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
-                    Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
-                }
-                if result {
-                    return true
-                }
-                return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel.Pending {
+        /// Cancels the specific pending I/O (fire-and-forget).
+        ///
+        /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI.
+        /// Returns silently if the operation already completed.
+        public func callAsFunction() {
+            let ptr = unsafe overlappedPtr
+            _ = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
+                Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
             }
         }
 
+        /// Returns whether cancellation succeeded.
+        ///
+        /// Delegates to the raw `Cancel.pending(_:overlapped:)` SPI.
+        ///
+        /// - Returns: `true` if cancelled, `false` if already completed.
+        public var status: Bool {
+            let ptr = unsafe overlappedPtr
+            let result = unsafe withUnsafeMutablePointer(to: &ptr.pointee.raw) { rawPtr in
+                Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
+            }
+            if result {
+                return true
+            }
+            return GetLastError() != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
+        }
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Cancels a specific pending I/O operation.
         ///
         /// Typed L2 form. Returns an accessor whose

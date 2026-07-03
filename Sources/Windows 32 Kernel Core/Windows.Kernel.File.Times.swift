@@ -36,25 +36,27 @@ extension Windows.`32`.Kernel.File.Times {
 
         /// Platform-specific error.
         case platform(Error_Primitives.Error)
+    }
+}
 
-        // Path-related errors
-        public enum Path: Swift.Error, Sendable, Equatable {
-            case notFound
-            case tooLong
-            case loop
-        }
+extension Windows.`32`.Kernel.File.Times.Error {
+    // Path-related errors
+    public enum Path: Swift.Error, Sendable, Equatable {
+        case notFound
+        case tooLong
+        case loop
+    }
 
-        // Permission-related errors
-        public enum Permission: Swift.Error, Sendable, Equatable {
-            case denied
-            case notPermitted
-            case readOnlyFilesystem
-        }
+    // Permission-related errors
+    public enum Permission: Swift.Error, Sendable, Equatable {
+        case denied
+        case notPermitted
+        case readOnlyFilesystem
+    }
 
-        // I/O errors
-        public enum IO: Swift.Error, Sendable, Equatable {
-            case hardware
-        }
+    // I/O errors
+    public enum IO: Swift.Error, Sendable, Equatable {
+        case hardware
     }
 }
 

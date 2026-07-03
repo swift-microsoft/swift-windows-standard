@@ -25,12 +25,14 @@
             init(entry: Windows.`32`.Kernel.IO.Completion.Port.Entry) {
                 self.entry = entry
             }
+        }
+    }
 
-            /// Number of bytes transferred in the completed operation.
-            @inlinable
-            public var transferred: Windows.`32`.Kernel.File.Size {
-                Windows.`32`.Kernel.File.Size(Int64(entry.raw.dwNumberOfBytesTransferred))
-            }
+    extension Windows.`32`.Kernel.IO.Completion.Port.Entry.Bytes {
+        /// Number of bytes transferred in the completed operation.
+        @inlinable
+        public var transferred: Windows.`32`.Kernel.File.Size {
+            Windows.`32`.Kernel.File.Size(Int64(entry.raw.dwNumberOfBytesTransferred))
         }
     }
 

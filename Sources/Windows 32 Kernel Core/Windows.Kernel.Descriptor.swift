@@ -29,12 +29,6 @@ extension Windows.`32`.Kernel {
     /// code should use the unified API in swift-kernel, where
     /// `Kernel.Descriptor` resolves to this type on Windows.
     public struct Descriptor: ~Copyable, Sendable {
-        /// The raw-representation type (`HANDLE` bit pattern).
-        ///
-        /// The POSIX counterpart is `Int32`; consumers that surface the
-        /// platform handle spell it `Kernel.Descriptor.RawValue`.
-        public typealias RawValue = UInt
-
         @usableFromInline
         package var _raw: UInt
 
@@ -49,17 +43,25 @@ extension Windows.`32`.Kernel {
             _ = unsafe CloseHandle(UnsafeMutableRawPointer(bitPattern: _raw)!)
             #endif
         }
+    }
+}
 
-        /// Invalid handle sentinel (`INVALID_HANDLE_VALUE`, all bits set).
-        public static var invalid: Descriptor {
-            Descriptor(_raw: ~0)
-        }
+extension Windows.`32`.Kernel.Descriptor {
+    /// The raw-representation type (`HANDLE` bit pattern).
+    ///
+    /// The POSIX counterpart is `Int32`; consumers that surface the
+    /// platform handle spell it `Kernel.Descriptor.RawValue`.
+    public typealias RawValue = UInt
 
-        /// Whether the handle is valid (not the sentinel).
-        @inlinable
-        public var isValid: Bool {
-            _raw != ~0
-        }
+    /// Invalid handle sentinel (`INVALID_HANDLE_VALUE`, all bits set).
+    public static var invalid: Descriptor {
+        Descriptor(_raw: ~0)
+    }
+
+    /// Whether the handle is valid (not the sentinel).
+    @inlinable
+    public var isValid: Bool {
+        _raw != ~0
     }
 }
 

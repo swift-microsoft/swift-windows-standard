@@ -37,33 +37,36 @@ extension Windows.`32`.Kernel.Directory {
             self.type = type
         }
 
-        /// Returns true if this entry is "." or "..".
-        ///
-        /// `rawName` is null-terminated, so "." is `[0x002E, 0x0000]`
-        /// and ".." is `[0x002E, 0x002E, 0x0000]`.
-        public var isDotOrDotDot: Bool {
-            rawName == [0x002E, 0x0000] || rawName == [0x002E, 0x002E, 0x0000]
-        }
-
-        #if os(Windows)
-        /// The entry name as a `Path.Borrowed`. Zero allocation.
-        ///
-        /// `rawName` is null-terminated. This property borrows the array's
-        /// heap buffer directly — the view cannot outlive `self`. Consumers
-        /// reach content via `name.span` (Swift.Span<Path.Char>) or
-        /// `name.pointer` (UnsafePointer<Path.Char>).
-        ///
-        /// Windows-only: relies on `Path.Char == UInt16`, which holds only
-        /// on Windows; on other platforms the raw UTF-16 units remain
-        /// accessible via ``rawName``.
-        public var name: Path.Borrowed {
-            @_lifetime(borrow self)
-            borrowing get {
-                let ptr = unsafe rawName.withUnsafeBufferPointer { $0.baseAddress! }
-                let view = unsafe Path.Borrowed(ptr, count: rawName.count - 1)
-                return unsafe _overrideLifetime(view, borrowing: self)
-            }
-        }
-        #endif
     }
+}
+
+extension Windows.`32`.Kernel.Directory.Entry {
+    /// Returns true if this entry is "." or "..".
+    ///
+    /// `rawName` is null-terminated, so "." is `[0x002E, 0x0000]`
+    /// and ".." is `[0x002E, 0x002E, 0x0000]`.
+    public var isDotOrDotDot: Bool {
+        rawName == [0x002E, 0x0000] || rawName == [0x002E, 0x002E, 0x0000]
+    }
+
+    #if os(Windows)
+    /// The entry name as a `Path.Borrowed`. Zero allocation.
+    ///
+    /// `rawName` is null-terminated. This property borrows the array's
+    /// heap buffer directly — the view cannot outlive `self`. Consumers
+    /// reach content via `name.span` (Swift.Span<Path.Char>) or
+    /// `name.pointer` (UnsafePointer<Path.Char>).
+    ///
+    /// Windows-only: relies on `Path.Char == UInt16`, which holds only
+    /// on Windows; on other platforms the raw UTF-16 units remain
+    /// accessible via ``rawName``.
+    public var name: Path.Borrowed {
+        @_lifetime(borrow self)
+        borrowing get {
+            let ptr = unsafe rawName.withUnsafeBufferPointer { $0.baseAddress! }
+            let view = unsafe Path.Borrowed(ptr, count: rawName.count - 1)
+            return unsafe _overrideLifetime(view, borrowing: self)
+        }
+    }
+    #endif
 }

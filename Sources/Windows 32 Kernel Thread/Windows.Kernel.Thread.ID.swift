@@ -31,9 +31,11 @@ extension Windows.`32`.Kernel.Thread {
         public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
-
-        public var description: String { "tid(\(rawValue))" }
     }
+}
+
+extension Windows.`32`.Kernel.Thread.ID {
+    public var description: String { "tid(\(rawValue))" }
 }
 
 extension Windows.`32`.Kernel.Thread.ID {

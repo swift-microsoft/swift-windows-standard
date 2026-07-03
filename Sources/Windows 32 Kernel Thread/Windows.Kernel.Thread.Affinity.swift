@@ -60,26 +60,28 @@ extension Windows.`32`.Kernel.Thread {
         public init(kind: Kind) {
             self.kind = kind
         }
+    }
+}
 
-        /// No affinity constraint - OS scheduler decides placement.
-        public static let any = Self(kind: .any)
+extension Windows.`32`.Kernel.Thread.Affinity {
+    /// No affinity constraint - OS scheduler decides placement.
+    public static let any = Self(kind: .any)
 
-        /// Pin to specific logical CPU cores.
-        ///
-        /// - Parameter cores: Set of logical CPU IDs (0-based).
-        public static func cores(_ cores: some Swift.Sequence<Int>) -> Self {
-            Self(kind: .cores(Set(cores)))
-        }
+    /// Pin to specific logical CPU cores.
+    ///
+    /// - Parameter cores: Set of logical CPU IDs (0-based).
+    public static func cores(_ cores: some Swift.Sequence<Int>) -> Self {
+        Self(kind: .cores(Set(cores)))
+    }
 
-        /// Pin to a NUMA node's CPUs.
-        ///
-        /// The node ID is resolved to specific CPUs via `System.topology()`
-        /// at the point of application.
-        ///
-        /// - Parameter id: NUMA node identifier.
-        public static func numaNode(_ id: Int) -> Self {
-            Self(kind: .numaNode(id))
-        }
+    /// Pin to a NUMA node's CPUs.
+    ///
+    /// The node ID is resolved to specific CPUs via `System.topology()`
+    /// at the point of application.
+    ///
+    /// - Parameter id: NUMA node identifier.
+    public static func numaNode(_ id: Int) -> Self {
+        Self(kind: .numaNode(id))
     }
 }
 

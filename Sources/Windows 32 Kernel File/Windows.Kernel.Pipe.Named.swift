@@ -31,24 +31,6 @@ extension Windows.`32`.Kernel.Pipe.Named {
         public init(rawValue: DWORD) {
             self.rawValue = rawValue
         }
-
-        /// Pipe is bidirectional (server and client can read/write).
-        public static let accessDuplex = OpenMode(rawValue: DWORD(PIPE_ACCESS_DUPLEX))
-
-        /// Pipe is inbound (client writes, server reads).
-        public static let accessInbound = OpenMode(rawValue: DWORD(PIPE_ACCESS_INBOUND))
-
-        /// Pipe is outbound (server writes, client reads).
-        public static let accessOutbound = OpenMode(rawValue: DWORD(PIPE_ACCESS_OUTBOUND))
-
-        /// Enable overlapped (async) I/O.
-        public static let overlapped = OpenMode(rawValue: DWORD(FILE_FLAG_OVERLAPPED))
-
-        /// Enable write-through mode.
-        public static let writeThrough = OpenMode(rawValue: DWORD(FILE_FLAG_WRITE_THROUGH))
-
-        /// First instance of the pipe (fail if already exists).
-        public static let firstPipeInstance = OpenMode(rawValue: DWORD(FILE_FLAG_FIRST_PIPE_INSTANCE))
     }
 
     /// Named pipe type/mode flags.
@@ -58,37 +40,59 @@ extension Windows.`32`.Kernel.Pipe.Named {
         public init(rawValue: DWORD) {
             self.rawValue = rawValue
         }
-
-        /// Data is written as a stream of bytes.
-        public static let typeByte = PipeMode(rawValue: DWORD(PIPE_TYPE_BYTE))
-
-        /// Data is written as a stream of messages.
-        public static let typeMessage = PipeMode(rawValue: DWORD(PIPE_TYPE_MESSAGE))
-
-        /// Data is read as a stream of bytes.
-        public static let readModeByte = PipeMode(rawValue: DWORD(PIPE_READMODE_BYTE))
-
-        /// Data is read as a stream of messages.
-        public static let readModeMessage = PipeMode(rawValue: DWORD(PIPE_READMODE_MESSAGE))
-
-        /// Blocking mode (reads block until data available).
-        public static let wait = PipeMode(rawValue: DWORD(PIPE_WAIT))
-
-        /// Non-blocking mode.
-        public static let noWait = PipeMode(rawValue: DWORD(PIPE_NOWAIT))
-
-        /// Accept remote clients.
-        public static let acceptRemoteClients = PipeMode(rawValue: DWORD(PIPE_ACCEPT_REMOTE_CLIENTS))
-
-        /// Reject remote clients (local only).
-        public static let rejectRemoteClients = PipeMode(rawValue: DWORD(PIPE_REJECT_REMOTE_CLIENTS))
-
-        /// Default byte pipe mode.
-        public static let defaultByte: PipeMode = [.typeByte, .readModeByte, .wait]
-
-        /// Default message pipe mode.
-        public static let defaultMessage: PipeMode = [.typeMessage, .readModeMessage, .wait]
     }
+}
+
+extension Windows.`32`.Kernel.Pipe.Named.OpenMode {
+    /// Pipe is bidirectional (server and client can read/write).
+    public static let accessDuplex = OpenMode(rawValue: DWORD(PIPE_ACCESS_DUPLEX))
+
+    /// Pipe is inbound (client writes, server reads).
+    public static let accessInbound = OpenMode(rawValue: DWORD(PIPE_ACCESS_INBOUND))
+
+    /// Pipe is outbound (server writes, client reads).
+    public static let accessOutbound = OpenMode(rawValue: DWORD(PIPE_ACCESS_OUTBOUND))
+
+    /// Enable overlapped (async) I/O.
+    public static let overlapped = OpenMode(rawValue: DWORD(FILE_FLAG_OVERLAPPED))
+
+    /// Enable write-through mode.
+    public static let writeThrough = OpenMode(rawValue: DWORD(FILE_FLAG_WRITE_THROUGH))
+
+    /// First instance of the pipe (fail if already exists).
+    public static let firstPipeInstance = OpenMode(rawValue: DWORD(FILE_FLAG_FIRST_PIPE_INSTANCE))
+}
+
+extension Windows.`32`.Kernel.Pipe.Named.PipeMode {
+    /// Data is written as a stream of bytes.
+    public static let typeByte = PipeMode(rawValue: DWORD(PIPE_TYPE_BYTE))
+
+    /// Data is written as a stream of messages.
+    public static let typeMessage = PipeMode(rawValue: DWORD(PIPE_TYPE_MESSAGE))
+
+    /// Data is read as a stream of bytes.
+    public static let readModeByte = PipeMode(rawValue: DWORD(PIPE_READMODE_BYTE))
+
+    /// Data is read as a stream of messages.
+    public static let readModeMessage = PipeMode(rawValue: DWORD(PIPE_READMODE_MESSAGE))
+
+    /// Blocking mode (reads block until data available).
+    public static let wait = PipeMode(rawValue: DWORD(PIPE_WAIT))
+
+    /// Non-blocking mode.
+    public static let noWait = PipeMode(rawValue: DWORD(PIPE_NOWAIT))
+
+    /// Accept remote clients.
+    public static let acceptRemoteClients = PipeMode(rawValue: DWORD(PIPE_ACCEPT_REMOTE_CLIENTS))
+
+    /// Reject remote clients (local only).
+    public static let rejectRemoteClients = PipeMode(rawValue: DWORD(PIPE_REJECT_REMOTE_CLIENTS))
+
+    /// Default byte pipe mode.
+    public static let defaultByte: PipeMode = [.typeByte, .readModeByte, .wait]
+
+    /// Default message pipe mode.
+    public static let defaultMessage: PipeMode = [.typeMessage, .readModeMessage, .wait]
 }
 
 // MARK: - Server Operations

@@ -24,20 +24,22 @@ extension Windows.`32`.Kernel.File.Move {
         public init(rawValue: DWORD) {
             self.rawValue = rawValue
         }
-
-        /// Replace existing file at destination.
-        public static let replaceExisting = Options(rawValue: DWORD(MOVEFILE_REPLACE_EXISTING))
-
-        /// Flush buffers to disk before returning (write-through semantics).
-        /// Provides durability guarantee that the rename is persisted.
-        public static let writeThrough = Options(rawValue: DWORD(MOVEFILE_WRITE_THROUGH))
-
-        /// Allow move across volumes (copy + delete).
-        public static let copyAllowed = Options(rawValue: DWORD(MOVEFILE_COPY_ALLOWED))
-
-        /// Delay move until reboot (requires privileges).
-        public static let delayUntilReboot = Options(rawValue: DWORD(MOVEFILE_DELAY_UNTIL_REBOOT))
     }
+}
+
+extension Windows.`32`.Kernel.File.Move.Options {
+    /// Replace existing file at destination.
+    public static let replaceExisting = Options(rawValue: DWORD(MOVEFILE_REPLACE_EXISTING))
+
+    /// Flush buffers to disk before returning (write-through semantics).
+    /// Provides durability guarantee that the rename is persisted.
+    public static let writeThrough = Options(rawValue: DWORD(MOVEFILE_WRITE_THROUGH))
+
+    /// Allow move across volumes (copy + delete).
+    public static let copyAllowed = Options(rawValue: DWORD(MOVEFILE_COPY_ALLOWED))
+
+    /// Delay move until reboot (requires privileges).
+    public static let delayUntilReboot = Options(rawValue: DWORD(MOVEFILE_DELAY_UNTIL_REBOOT))
 }
 
 // MARK: - Move Operations

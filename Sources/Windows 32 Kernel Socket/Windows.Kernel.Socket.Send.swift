@@ -23,17 +23,21 @@ extension Windows.`32`.Kernel.Socket {
         public init(rawValue: Int32) {
             self.rawValue = rawValue
         }
-
-        /// Send out-of-band data.
-        public static let outOfBand = SendFlags(rawValue: MSG_OOB)
-
-        /// Bypass routing, send directly to interface.
-        public static let dontRoute = SendFlags(rawValue: MSG_DONTROUTE)
-
-        /// No flags.
-        public static let none = SendFlags(rawValue: 0)
     }
+}
 
+extension Windows.`32`.Kernel.Socket.SendFlags {
+    /// Send out-of-band data.
+    public static let outOfBand = SendFlags(rawValue: MSG_OOB)
+
+    /// Bypass routing, send directly to interface.
+    public static let dontRoute = SendFlags(rawValue: MSG_DONTROUTE)
+
+    /// No flags.
+    public static let none = SendFlags(rawValue: 0)
+}
+
+extension Windows.`32`.Kernel.Socket {
     /// Sends data on a connected socket.
     ///
     /// - Parameters:

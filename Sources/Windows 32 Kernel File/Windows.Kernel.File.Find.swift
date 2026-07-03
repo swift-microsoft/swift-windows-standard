@@ -66,16 +66,18 @@ extension Windows.`32`.Kernel.File.Find {
             self.name = name
             self.attributes = attributes
         }
+    }
+}
 
-        /// Whether the entry is a directory.
-        public var isDirectory: Bool {
-            (attributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0
-        }
+extension Windows.`32`.Kernel.File.Find.Entry {
+    /// Whether the entry is a directory.
+    public var isDirectory: Bool {
+        (attributes & DWORD(FILE_ATTRIBUTE_DIRECTORY)) != 0
+    }
 
-        /// Whether the entry is a reparse point (symlink, junction, etc.).
-        public var isReparsePoint: Bool {
-            (attributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0
-        }
+    /// Whether the entry is a reparse point (symlink, junction, etc.).
+    public var isReparsePoint: Bool {
+        (attributes & DWORD(FILE_ATTRIBUTE_REPARSE_POINT)) != 0
     }
 }
 

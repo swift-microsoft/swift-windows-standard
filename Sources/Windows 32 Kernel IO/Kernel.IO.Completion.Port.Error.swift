@@ -135,58 +135,68 @@
 
     extension Windows.`32`.Kernel.IO.Completion.Port.Error {
         /// Windows error code constants.
-        public enum Code {
-            /// I/O-related error codes.
-            public enum IO {
-                /// The I/O operation has been started but not yet completed.
-                ///
-                /// This is the normal return code for an asynchronous operation
-                /// that was successfully queued. A completion packet will be
-                /// posted to the port when the operation finishes.
-                ///
-                /// - Win32: `ERROR_IO_PENDING`
-                public static let pending: UInt32 = UInt32(ERROR_IO_PENDING)
-            }
+        public enum Code {}
+    }
 
-            /// Operation-related error codes.
-            public enum Operation {
-                /// The I/O operation was aborted due to cancellation.
-                ///
-                /// Returned when an overlapped operation is cancelled via
-                /// `CancelIo` or `CancelIoEx`.
-                ///
-                /// - Win32: `ERROR_OPERATION_ABORTED`
-                public static let aborted: UInt32 = UInt32(ERROR_OPERATION_ABORTED)
-            }
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error.Code {
+        /// I/O-related error codes.
+        public enum IO {}
 
-            /// Lookup-related error codes.
-            public enum Lookup {
-                /// The specified operation was not found.
-                ///
-                /// Returned when attempting to cancel an operation that doesn't exist.
-                ///
-                /// - Win32: `ERROR_NOT_FOUND`
-                public static let notFound: UInt32 = UInt32(ERROR_NOT_FOUND)
-            }
+        /// Operation-related error codes.
+        public enum Operation {}
 
-            /// Wait-related error codes.
-            public enum Wait {
-                /// The wait operation timed out.
-                ///
-                /// Returned by `GetQueuedCompletionStatus[Ex]` when the timeout
-                /// expires without receiving a completion packet.
-                ///
-                /// - Win32: `WAIT_TIMEOUT`
-                public static let timeout: UInt32 = UInt32(bitPattern: WAIT_TIMEOUT)
+        /// Lookup-related error codes.
+        public enum Lookup {}
 
-                /// Infinite timeout value.
-                ///
-                /// Pass to timeout parameters to wait indefinitely.
-                ///
-                /// - Win32: `INFINITE`
-                public static let infinite: UInt32 = INFINITE
-            }
-        }
+        /// Wait-related error codes.
+        public enum Wait {}
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error.Code.IO {
+        /// The I/O operation has been started but not yet completed.
+        ///
+        /// This is the normal return code for an asynchronous operation
+        /// that was successfully queued. A completion packet will be
+        /// posted to the port when the operation finishes.
+        ///
+        /// - Win32: `ERROR_IO_PENDING`
+        public static let pending: UInt32 = UInt32(ERROR_IO_PENDING)
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Operation {
+        /// The I/O operation was aborted due to cancellation.
+        ///
+        /// Returned when an overlapped operation is cancelled via
+        /// `CancelIo` or `CancelIoEx`.
+        ///
+        /// - Win32: `ERROR_OPERATION_ABORTED`
+        public static let aborted: UInt32 = UInt32(ERROR_OPERATION_ABORTED)
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup {
+        /// The specified operation was not found.
+        ///
+        /// Returned when attempting to cancel an operation that doesn't exist.
+        ///
+        /// - Win32: `ERROR_NOT_FOUND`
+        public static let notFound: UInt32 = UInt32(ERROR_NOT_FOUND)
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Wait {
+        /// The wait operation timed out.
+        ///
+        /// Returned by `GetQueuedCompletionStatus[Ex]` when the timeout
+        /// expires without receiving a completion packet.
+        ///
+        /// - Win32: `WAIT_TIMEOUT`
+        public static let timeout: UInt32 = UInt32(bitPattern: WAIT_TIMEOUT)
+
+        /// Infinite timeout value.
+        ///
+        /// Pass to timeout parameters to wait indefinitely.
+        ///
+        /// - Win32: `INFINITE`
+        public static let infinite: UInt32 = INFINITE
     }
 
 #endif

@@ -269,16 +269,18 @@ extension Windows.`32`.Kernel.File {
             self.changeTime = info.ChangeTime
             self.fileAttributes = info.FileAttributes
         }
+    }
+}
 
-        func toFileBasicInfo() -> FILE_BASIC_INFO {
-            FILE_BASIC_INFO(
-                CreationTime: creationTime,
-                LastAccessTime: lastAccessTime,
-                LastWriteTime: lastWriteTime,
-                ChangeTime: changeTime,
-                FileAttributes: fileAttributes
-            )
-        }
+extension Windows.`32`.Kernel.File.BasicInfo {
+    func toFileBasicInfo() -> FILE_BASIC_INFO {
+        FILE_BASIC_INFO(
+            CreationTime: creationTime,
+            LastAccessTime: lastAccessTime,
+            LastWriteTime: lastWriteTime,
+            ChangeTime: changeTime,
+            FileAttributes: fileAttributes
+        )
     }
 }
 

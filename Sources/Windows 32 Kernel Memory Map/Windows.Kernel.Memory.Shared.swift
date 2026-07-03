@@ -142,26 +142,28 @@ extension Memory.Shared {
         public init(rawValue: UInt32) {
             self.rawValue = rawValue
         }
-
-        /// Read access.
-        public static let read = Access(rawValue: UInt32(FILE_MAP_READ))
-
-        /// Write access.
-        public static let write = Access(rawValue: UInt32(FILE_MAP_WRITE))
-
-        /// Read and write access.
-        public static let readWrite: Access = [.read, .write]
-
-        /// All access (read, write, copy).
-        // FILE_MAP_ALL_ACCESS is a compound macro not importable by Swift; value = SECTION_ALL_ACCESS = 0xF001F
-        public static let all = Access(rawValue: 0xF001F)
-
-        /// Copy-on-write access.
-        public static let copy = Access(rawValue: UInt32(FILE_MAP_COPY))
-
-        /// Execute access (requires PAGE_EXECUTE_* protection).
-        public static let execute = Access(rawValue: UInt32(FILE_MAP_EXECUTE))
     }
+}
+
+extension Memory.Shared.Access {
+    /// Read access.
+    public static let read = Access(rawValue: UInt32(FILE_MAP_READ))
+
+    /// Write access.
+    public static let write = Access(rawValue: UInt32(FILE_MAP_WRITE))
+
+    /// Read and write access.
+    public static let readWrite: Access = [.read, .write]
+
+    /// All access (read, write, copy).
+    // FILE_MAP_ALL_ACCESS is a compound macro not importable by Swift; value = SECTION_ALL_ACCESS = 0xF001F
+    public static let all = Access(rawValue: 0xF001F)
+
+    /// Copy-on-write access.
+    public static let copy = Access(rawValue: UInt32(FILE_MAP_COPY))
+
+    /// Execute access (requires PAGE_EXECUTE_* protection).
+    public static let execute = Access(rawValue: UInt32(FILE_MAP_EXECUTE))
 }
 
 #endif

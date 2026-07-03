@@ -64,16 +64,18 @@ extension Windows.`32`.Kernel.Thread {
         deinit {
             _ = TlsFree(index)
         }
+    }
+}
 
-        /// The calling thread's slot value. `nil` if the thread has not
-        /// set a value, or if the slot was just allocated.
-        public var value: UnsafeMutableRawPointer? {
-            get {
-                TlsGetValue(index)
-            }
-            set {
-                _ = TlsSetValue(index, newValue)
-            }
+extension Windows.`32`.Kernel.Thread.Index {
+    /// The calling thread's slot value. `nil` if the thread has not
+    /// set a value, or if the slot was just allocated.
+    public var value: UnsafeMutableRawPointer? {
+        get {
+            TlsGetValue(index)
+        }
+        set {
+            _ = TlsSetValue(index, newValue)
         }
     }
 }

@@ -126,21 +126,29 @@ extension Windows.`32`.Kernel.File.Open {
 extension Windows.`32`.Kernel.File.Times {
     /// Sets access and modification times for a path.
     ///
-    /// Mirrors `ISO_9945.Kernel.File.Times.set(access:modification:at:)`.
+    /// Mirrors `ISO_9945.Kernel.File.Times.set(access:modification:at:followSymlinks:)`.
+    ///
+    /// - Parameter followSymlinks: If false, operates on the symlink itself
+    ///   (default: true).
     public static func set(
         access accessTime: Windows.`32`.Kernel.Time,
         modification modificationTime: Windows.`32`.Kernel.Time,
-        at path: borrowing Path.Borrowed
+        at path: borrowing Path.Borrowed,
+        followSymlinks: Bool = true
     ) throws(Windows.`32`.Kernel.File.Times.Error) {
         try unsafe path.withUnsafePointer { ptr throws(Windows.`32`.Kernel.File.Times.Error) in
             let wpath = UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self)
+            var flags = DWORD(FILE_FLAG_BACKUP_SEMANTICS)
+            if !followSymlinks {
+                flags |= DWORD(FILE_FLAG_OPEN_REPARSE_POINT)
+            }
             let handle = CreateFileW(
                 wpath,
                 DWORD(FILE_WRITE_ATTRIBUTES),
                 DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE),
                 nil,
                 DWORD(OPEN_EXISTING),
-                DWORD(FILE_FLAG_BACKUP_SEMANTICS),
+                flags,
                 nil
             )
             guard let handle, handle != INVALID_HANDLE_VALUE else {

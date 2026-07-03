@@ -88,7 +88,7 @@ extension Windows.`32`.Kernel.File.Chown {
         uid: Windows.`32`.Kernel.User.ID,
         gid: Windows.`32`.Kernel.Group.ID
     ) throws(Error) {
-        guard uid.rawValue == 0 && gid.rawValue == 0 else {
+        guard uid == .root && gid == .root else {
             throw .permission(.notPermitted)
         }
     }
@@ -104,7 +104,7 @@ extension Windows.`32`.Kernel.File.Chown {
         uid: Windows.`32`.Kernel.User.ID,
         gid: Windows.`32`.Kernel.Group.ID
     ) throws(Error) {
-        guard uid.rawValue == 0 && gid.rawValue == 0 else {
+        guard uid == .root && gid == .root else {
             throw .permission(.notPermitted)
         }
     }
@@ -120,7 +120,7 @@ extension Windows.`32`.Kernel.File.Chown {
         uid: Windows.`32`.Kernel.User.ID,
         gid: Windows.`32`.Kernel.Group.ID
     ) throws(Error) {
-        guard uid.rawValue == 0 && gid.rawValue == 0 else {
+        guard uid == .root && gid == .root else {
             throw .permission(.notPermitted)
         }
     }

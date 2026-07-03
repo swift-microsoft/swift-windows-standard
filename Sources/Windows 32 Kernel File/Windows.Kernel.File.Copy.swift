@@ -65,6 +65,43 @@ extension Windows.`32`.Kernel.File.Copy {
     }
 }
 
+// MARK: - Semantic Accessors
+
+extension Windows.`32`.Kernel.File.Copy.Error {
+    /// Returns `true` if the error indicates the source was not found.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Copy.Error.isSourceNotFound`.
+    public var isSourceNotFound: Bool {
+        if case .sourceNotFound = self { return true }
+        return false
+    }
+
+    /// Returns `true` if the error indicates the destination already exists.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Copy.Error.isDestinationExists`.
+    public var isDestinationExists: Bool {
+        if case .destinationExists = self { return true }
+        return false
+    }
+
+    /// Returns `true` if the error indicates a directory was encountered.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Copy.Error.isDirectory` (the property
+    /// coexists with the same-named case, as in the ISO original).
+    public var isDirectory: Bool {
+        if case .isDirectory = self { return true }
+        return false
+    }
+
+    /// Returns `true` if the error indicates permission was denied.
+    ///
+    /// Mirrors `ISO_9945.Kernel.File.Copy.Error.isPermissionDenied`.
+    public var isPermissionDenied: Bool {
+        if case .permissionDenied = self { return true }
+        return false
+    }
+}
+
 extension Windows.`32`.Kernel.File.Copy.Error: CustomStringConvertible {
     public var description: Swift.String {
         switch self {

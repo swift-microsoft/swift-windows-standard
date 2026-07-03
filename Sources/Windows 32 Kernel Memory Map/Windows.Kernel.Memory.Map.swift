@@ -72,11 +72,17 @@ extension Memory.Map {
             SIZE_T(length.underlying.rawValue)
         )
 
+        // Capture MapViewOfFile's failure error BEFORE CloseHandle runs —
+        // CloseHandle overwrites the thread-local last-error, so reading it
+        // after the close (as the previous code did) reported the close's
+        // error, not the map's.
+        let mapError = Error_Primitives.Error.captureLastError()
+
         // Close the mapping handle - the view keeps it alive
         _ = CloseHandle(mappingHandle)
 
         guard let baseAddress else {
-            throw .map(Error_Primitives.Error.captureLastError())
+            throw .map(mapError)
         }
 
         return unsafe Memory.Address(baseAddress)

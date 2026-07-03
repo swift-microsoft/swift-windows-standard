@@ -68,9 +68,14 @@ extension Windows.`32`.Kernel.Thread {
         )
 
         guard let handle else {
+            // Capture CreateThread's error BEFORE deinitialize/deallocate —
+            // those can clobber the thread-local last-error, so reading it
+            // afterward (as the previous code did) risked reporting an
+            // unrelated error instead of the thread-creation failure.
+            let lastError = Error_Primitives.Error.captureLastError()
             context.deinitialize(count: 1)
             context.deallocate()
-            throw .create(Error_Primitives.Error(code: Error_Primitives.Error.captureLastError()))
+            throw .create(Error_Primitives.Error(code: lastError))
         }
 
         return Windows.`32`.Kernel.Thread.Handle(_handle: handle)

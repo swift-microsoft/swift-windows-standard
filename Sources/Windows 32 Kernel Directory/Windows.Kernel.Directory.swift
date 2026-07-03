@@ -152,6 +152,11 @@ extension Windows.`32`.Kernel.Directory.Iterator {
     public consuming func close() {
         if handle != INVALID_HANDLE_VALUE {
             _ = FindClose(handle)
+            // Disarm the deinit: it also `FindClose`s when the handle is not
+            // the sentinel, so nil it here to avoid a double close (a Win32
+            // handle-recycling hazard) when the consumed value is destroyed
+            // at return — mirrors `Directory.Stream.close()`'s `handle = nil`.
+            handle = INVALID_HANDLE_VALUE
         }
     }
 

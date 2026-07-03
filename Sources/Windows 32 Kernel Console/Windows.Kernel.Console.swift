@@ -78,54 +78,54 @@ extension Windows.`32`.Kernel.Console {
 
 extension Windows.`32`.Kernel.Console.InputMode {
     /// Enable line input (read returns when Enter is pressed).
-    public static let enableLineInput = InputMode(rawValue: UInt32(ENABLE_LINE_INPUT))
+    public static let enableLineInput = Self(rawValue: UInt32(ENABLE_LINE_INPUT))
 
     /// Echo input characters.
-    public static let enableEchoInput = InputMode(rawValue: UInt32(ENABLE_ECHO_INPUT))
+    public static let enableEchoInput = Self(rawValue: UInt32(ENABLE_ECHO_INPUT))
 
     /// Enable Ctrl+C processing.
-    public static let enableProcessedInput = InputMode(rawValue: UInt32(ENABLE_PROCESSED_INPUT))
+    public static let enableProcessedInput = Self(rawValue: UInt32(ENABLE_PROCESSED_INPUT))
 
     /// Enable window and mouse events.
-    public static let enableWindowInput = InputMode(rawValue: UInt32(ENABLE_WINDOW_INPUT))
+    public static let enableWindowInput = Self(rawValue: UInt32(ENABLE_WINDOW_INPUT))
 
     /// Enable mouse events.
-    public static let enableMouseInput = InputMode(rawValue: UInt32(ENABLE_MOUSE_INPUT))
+    public static let enableMouseInput = Self(rawValue: UInt32(ENABLE_MOUSE_INPUT))
 
     /// Enable insert mode.
-    public static let enableInsertMode = InputMode(rawValue: UInt32(ENABLE_INSERT_MODE))
+    public static let enableInsertMode = Self(rawValue: UInt32(ENABLE_INSERT_MODE))
 
     /// Enable quick edit mode (mouse selection).
-    public static let enableQuickEditMode = InputMode(rawValue: UInt32(ENABLE_QUICK_EDIT_MODE))
+    public static let enableQuickEditMode = Self(rawValue: UInt32(ENABLE_QUICK_EDIT_MODE))
 
     /// Enable virtual terminal input sequences.
-    public static let enableVirtualTerminalInput = InputMode(rawValue: UInt32(ENABLE_VIRTUAL_TERMINAL_INPUT))
+    public static let enableVirtualTerminalInput = Self(rawValue: UInt32(ENABLE_VIRTUAL_TERMINAL_INPUT))
 
     /// Default console input mode.
-    public static let `default`: InputMode = [.enableLineInput, .enableEchoInput, .enableProcessedInput]
+    public static let `default`: Self = [.enableLineInput, .enableEchoInput, .enableProcessedInput]
 
     /// Raw mode (no line buffering, no echo).
-    public static let raw: InputMode = []
+    public static let raw: Self = []
 }
 
 extension Windows.`32`.Kernel.Console.OutputMode {
     /// Process control characters (\n, \t, etc.).
-    public static let enableProcessedOutput = OutputMode(rawValue: UInt32(ENABLE_PROCESSED_OUTPUT))
+    public static let enableProcessedOutput = Self(rawValue: UInt32(ENABLE_PROCESSED_OUTPUT))
 
     /// Wrap at end of line.
-    public static let enableWrapAtEolOutput = OutputMode(rawValue: UInt32(ENABLE_WRAP_AT_EOL_OUTPUT))
+    public static let enableWrapAtEolOutput = Self(rawValue: UInt32(ENABLE_WRAP_AT_EOL_OUTPUT))
 
     /// Enable virtual terminal processing (ANSI escape sequences).
-    public static let enableVirtualTerminalProcessing = OutputMode(rawValue: UInt32(ENABLE_VIRTUAL_TERMINAL_PROCESSING))
+    public static let enableVirtualTerminalProcessing = Self(rawValue: UInt32(ENABLE_VIRTUAL_TERMINAL_PROCESSING))
 
     /// Disable newline auto-return.
-    public static let disableNewlineAutoReturn = OutputMode(rawValue: UInt32(DISABLE_NEWLINE_AUTO_RETURN))
+    public static let disableNewlineAutoReturn = Self(rawValue: UInt32(DISABLE_NEWLINE_AUTO_RETURN))
 
     /// Default console output mode.
-    public static let `default`: OutputMode = [.enableProcessedOutput, .enableWrapAtEolOutput]
+    public static let `default`: Self = [.enableProcessedOutput, .enableWrapAtEolOutput]
 
     /// ANSI mode (enables VT processing).
-    public static let ansi: OutputMode = [.enableProcessedOutput, .enableWrapAtEolOutput, .enableVirtualTerminalProcessing]
+    public static let ansi: Self = [.enableProcessedOutput, .enableWrapAtEolOutput, .enableVirtualTerminalProcessing]
 }
 
 extension Windows.`32`.Kernel.Console {

@@ -28,13 +28,13 @@ extension Windows.`32`.Kernel.Socket {
 
 extension Windows.`32`.Kernel.Socket.SendFlags {
     /// Send out-of-band data.
-    public static let outOfBand = SendFlags(rawValue: MSG_OOB)
+    public static let outOfBand = Self(rawValue: MSG_OOB)
 
     /// Bypass routing, send directly to interface.
-    public static let dontRoute = SendFlags(rawValue: MSG_DONTROUTE)
+    public static let dontRoute = Self(rawValue: MSG_DONTROUTE)
 
     /// No flags.
-    public static let none = SendFlags(rawValue: 0)
+    public static let none = Self(rawValue: 0)
 }
 
 extension Windows.`32`.Kernel.Socket {

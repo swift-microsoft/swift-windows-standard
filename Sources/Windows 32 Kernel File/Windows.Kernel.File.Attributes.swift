@@ -30,46 +30,46 @@ extension Windows.`32`.Kernel.File {
 
 extension Windows.`32`.Kernel.File.Attributes {
     /// File is read-only.
-    public static let readOnly = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_READONLY))
+    public static let readOnly = Self(rawValue: DWORD(FILE_ATTRIBUTE_READONLY))
 
     /// File is hidden.
-    public static let hidden = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_HIDDEN))
+    public static let hidden = Self(rawValue: DWORD(FILE_ATTRIBUTE_HIDDEN))
 
     /// File is a system file.
-    public static let system = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_SYSTEM))
+    public static let system = Self(rawValue: DWORD(FILE_ATTRIBUTE_SYSTEM))
 
     /// File is a directory.
-    public static let directory = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_DIRECTORY))
+    public static let directory = Self(rawValue: DWORD(FILE_ATTRIBUTE_DIRECTORY))
 
     /// File is marked for archiving.
-    public static let archive = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_ARCHIVE))
+    public static let archive = Self(rawValue: DWORD(FILE_ATTRIBUTE_ARCHIVE))
 
     /// File is a device (reserved for system use).
-    public static let device = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_DEVICE))
+    public static let device = Self(rawValue: DWORD(FILE_ATTRIBUTE_DEVICE))
 
     /// File has no other attributes set.
-    public static let normal = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_NORMAL))
+    public static let normal = Self(rawValue: DWORD(FILE_ATTRIBUTE_NORMAL))
 
     /// File is temporary.
-    public static let temporary = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_TEMPORARY))
+    public static let temporary = Self(rawValue: DWORD(FILE_ATTRIBUTE_TEMPORARY))
 
     /// File is a sparse file.
-    public static let sparseFile = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_SPARSE_FILE))
+    public static let sparseFile = Self(rawValue: DWORD(FILE_ATTRIBUTE_SPARSE_FILE))
 
     /// File is a reparse point (symlink, junction, etc.).
-    public static let reparsePoint = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_REPARSE_POINT))
+    public static let reparsePoint = Self(rawValue: DWORD(FILE_ATTRIBUTE_REPARSE_POINT))
 
     /// File is compressed.
-    public static let compressed = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_COMPRESSED))
+    public static let compressed = Self(rawValue: DWORD(FILE_ATTRIBUTE_COMPRESSED))
 
     /// File data is not immediately available (offline).
-    public static let offline = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_OFFLINE))
+    public static let offline = Self(rawValue: DWORD(FILE_ATTRIBUTE_OFFLINE))
 
     /// File is not indexed by content indexing service.
-    public static let notContentIndexed = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_NOT_CONTENT_INDEXED))
+    public static let notContentIndexed = Self(rawValue: DWORD(FILE_ATTRIBUTE_NOT_CONTENT_INDEXED))
 
     /// File is encrypted.
-    public static let encrypted = Attributes(rawValue: DWORD(FILE_ATTRIBUTE_ENCRYPTED))
+    public static let encrypted = Self(rawValue: DWORD(FILE_ATTRIBUTE_ENCRYPTED))
 }
 
 // MARK: - Set Attributes

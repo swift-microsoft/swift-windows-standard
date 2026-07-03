@@ -54,8 +54,8 @@ extension Windows.`32`.Kernel.Descriptor {
     public typealias RawValue = UInt
 
     /// Invalid handle sentinel (`INVALID_HANDLE_VALUE`, all bits set).
-    public static var invalid: Descriptor {
-        Descriptor(_raw: ~0)
+    public static var invalid: Self {
+        Self(_raw: ~0)
     }
 
     /// Whether the handle is valid (not the sentinel).

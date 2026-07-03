@@ -79,38 +79,38 @@ extension Windows.`32`.Kernel.Socket {
 
 extension Windows.`32`.Kernel.Socket.Family {
     /// IPv4 address family.
-    public static let inet = Family(rawValue: AF_INET)
+    public static let inet = Self(rawValue: AF_INET)
 
     /// IPv6 address family.
-    public static let inet6 = Family(rawValue: AF_INET6)
+    public static let inet6 = Self(rawValue: AF_INET6)
 
     /// Unix domain sockets (AF_UNIX).
-    public static let unix = Family(rawValue: AF_UNIX)
+    public static let unix = Self(rawValue: AF_UNIX)
 
     /// Unspecified address family.
-    public static let unspec = Family(rawValue: AF_UNSPEC)
+    public static let unspec = Self(rawValue: AF_UNSPEC)
 }
 
 extension Windows.`32`.Kernel.Socket.SocketType {
     /// Stream socket (TCP).
-    public static let stream = SocketType(rawValue: SOCK_STREAM)
+    public static let stream = Self(rawValue: SOCK_STREAM)
 
     /// Datagram socket (UDP).
-    public static let datagram = SocketType(rawValue: SOCK_DGRAM)
+    public static let datagram = Self(rawValue: SOCK_DGRAM)
 
     /// Raw socket.
-    public static let raw = SocketType(rawValue: SOCK_RAW)
+    public static let raw = Self(rawValue: SOCK_RAW)
 }
 
 extension Windows.`32`.Kernel.Socket.`Protocol` {
     /// TCP protocol.
-    public static let tcp = `Protocol`(rawValue: IPPROTO_TCP.rawValue)
+    public static let tcp = Self(rawValue: IPPROTO_TCP.rawValue)
 
     /// UDP protocol.
-    public static let udp = `Protocol`(rawValue: IPPROTO_UDP.rawValue)
+    public static let udp = Self(rawValue: IPPROTO_UDP.rawValue)
 
     /// Default protocol (let system choose).
-    public static let `default` = `Protocol`(rawValue: 0)
+    public static let `default` = Self(rawValue: 0)
 }
 
 extension Windows.`32`.Kernel.Socket {

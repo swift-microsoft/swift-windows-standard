@@ -39,8 +39,8 @@ extension Windows.`32`.Kernel.Socket {
 
 extension Windows.`32`.Kernel.Socket.Descriptor {
     /// Invalid socket descriptor sentinel (`UInt64.max`, mirroring `INVALID_SOCKET`).
-    public static var invalid: Descriptor {
-        Descriptor(_raw: UInt64.max)
+    public static var invalid: Self {
+        Self(_raw: UInt64.max)
     }
 
     /// Whether the socket descriptor is valid (not the sentinel).

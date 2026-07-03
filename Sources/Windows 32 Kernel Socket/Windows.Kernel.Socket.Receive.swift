@@ -28,16 +28,16 @@ extension Windows.`32`.Kernel.Socket {
 
 extension Windows.`32`.Kernel.Socket.ReceiveFlags {
     /// Peek at incoming data without removing it from the queue.
-    public static let peek = ReceiveFlags(rawValue: MSG_PEEK)
+    public static let peek = Self(rawValue: MSG_PEEK)
 
     /// Receive out-of-band data.
-    public static let outOfBand = ReceiveFlags(rawValue: MSG_OOB)
+    public static let outOfBand = Self(rawValue: MSG_OOB)
 
     /// Block until the full amount is received.
-    public static let waitAll = ReceiveFlags(rawValue: MSG_WAITALL)
+    public static let waitAll = Self(rawValue: MSG_WAITALL)
 
     /// No flags.
-    public static let none = ReceiveFlags(rawValue: 0)
+    public static let none = Self(rawValue: 0)
 }
 
 extension Windows.`32`.Kernel.Socket {

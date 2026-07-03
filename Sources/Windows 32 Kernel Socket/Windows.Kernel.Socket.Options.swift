@@ -37,63 +37,63 @@ extension Windows.`32`.Kernel.Socket {
 
 extension Windows.`32`.Kernel.Socket.OptionLevel {
     /// Socket-level options.
-    public static let socket = OptionLevel(rawValue: SOL_SOCKET)
+    public static let socket = Self(rawValue: SOL_SOCKET)
 
     /// TCP-level options.
-    public static let tcp = OptionLevel(rawValue: IPPROTO_TCP.rawValue)
+    public static let tcp = Self(rawValue: IPPROTO_TCP.rawValue)
 
     /// IPv4-level options.
-    public static let ipv4 = OptionLevel(rawValue: IPPROTO_IP)
+    public static let ipv4 = Self(rawValue: IPPROTO_IP)
 
     /// IPv6-level options.
-    public static let ipv6 = OptionLevel(rawValue: IPPROTO_IPV6.rawValue)
+    public static let ipv6 = Self(rawValue: IPPROTO_IPV6.rawValue)
 }
 
 extension Windows.`32`.Kernel.Socket.OptionName {
     // MARK: - SOL_SOCKET Options
 
     /// Allow reuse of local addresses.
-    public static let reuseAddr = OptionName(rawValue: SO_REUSEADDR)
+    public static let reuseAddr = Self(rawValue: SO_REUSEADDR)
 
     /// Keep connections alive.
-    public static let keepAlive = OptionName(rawValue: SO_KEEPALIVE)
+    public static let keepAlive = Self(rawValue: SO_KEEPALIVE)
 
     /// Receive buffer size.
-    public static let receiveBuffer = OptionName(rawValue: SO_RCVBUF)
+    public static let receiveBuffer = Self(rawValue: SO_RCVBUF)
 
     /// Send buffer size.
-    public static let sendBuffer = OptionName(rawValue: SO_SNDBUF)
+    public static let sendBuffer = Self(rawValue: SO_SNDBUF)
 
     /// Receive timeout.
-    public static let receiveTimeout = OptionName(rawValue: SO_RCVTIMEO)
+    public static let receiveTimeout = Self(rawValue: SO_RCVTIMEO)
 
     /// Send timeout.
-    public static let sendTimeout = OptionName(rawValue: SO_SNDTIMEO)
+    public static let sendTimeout = Self(rawValue: SO_SNDTIMEO)
 
     /// Linger on close.
-    public static let linger = OptionName(rawValue: SO_LINGER)
+    public static let linger = Self(rawValue: SO_LINGER)
 
     /// Get socket error status.
-    public static let error = OptionName(rawValue: SO_ERROR)
+    public static let error = Self(rawValue: SO_ERROR)
 
     /// Get socket type.
-    public static let type = OptionName(rawValue: SO_TYPE)
+    public static let type = Self(rawValue: SO_TYPE)
 
     /// Enable broadcast.
-    public static let broadcast = OptionName(rawValue: SO_BROADCAST)
+    public static let broadcast = Self(rawValue: SO_BROADCAST)
 
     /// Enable out-of-band inline.
-    public static let oobInline = OptionName(rawValue: SO_OOBINLINE)
+    public static let oobInline = Self(rawValue: SO_OOBINLINE)
 
     // MARK: - IPPROTO_TCP Options
 
     /// Disable Nagle algorithm.
-    public static let tcpNoDelay = OptionName(rawValue: TCP_NODELAY)
+    public static let tcpNoDelay = Self(rawValue: TCP_NODELAY)
 
     // MARK: - IPPROTO_IPV6 Options
 
     /// Restrict to IPv6 only.
-    public static let ipv6Only = OptionName(rawValue: IPV6_V6ONLY)
+    public static let ipv6Only = Self(rawValue: IPV6_V6ONLY)
 }
 
 extension Windows.`32`.Kernel.Socket {

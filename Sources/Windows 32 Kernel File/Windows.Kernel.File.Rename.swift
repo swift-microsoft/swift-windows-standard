@@ -37,16 +37,16 @@ extension Windows.`32`.Kernel.File.Rename {
 
 extension Windows.`32`.Kernel.File.Rename.Error {
     /// Destination file already exists.
-    public static let destinationExists = Error(code: .win32(Error_Primitives.Error.Code.File.alreadyExists))
+    public static let destinationExists = Self(code: .win32(Error_Primitives.Error.Code.File.alreadyExists))
 
     /// Permission denied.
-    public static let permissionDenied = Error(code: .win32(Error_Primitives.Error.Code.Access.denied))
+    public static let permissionDenied = Self(code: .win32(Error_Primitives.Error.Code.Access.denied))
 
     /// File is in use by another process.
-    public static let sharingViolation = Error(code: .win32(Error_Primitives.Error.Code.Access.sharingViolation))
+    public static let sharingViolation = Self(code: .win32(Error_Primitives.Error.Code.Access.sharingViolation))
 
     /// The operation is not supported (e.g., struct layout unavailable).
-    public static let notSupported = Error(code: .win32(0x32)) // ERROR_NOT_SUPPORTED
+    public static let notSupported = Self(code: .win32(0x32)) // ERROR_NOT_SUPPORTED
 
     /// Creates an error from the current Win32 last error.
     @usableFromInline

@@ -36,7 +36,10 @@ extension Windows.`32`.Kernel.Close {
         descriptor._raw = ~0
 
         #if os(Windows)
-        guard unsafe CloseHandle(UnsafeMutableRawPointer(bitPattern: raw)!) else {
+        guard let pointer = UnsafeMutableRawPointer(bitPattern: raw) else {
+            throw .handle(.invalid)
+        }
+        guard unsafe CloseHandle(pointer) else {
             throw .platform(Error_Primitives.Error(code: .win32(GetLastError())))
         }
         #endif

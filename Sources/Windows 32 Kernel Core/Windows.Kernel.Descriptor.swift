@@ -40,7 +40,8 @@ extension Windows.`32`.Kernel {
         deinit {
             guard isValid else { return }
             #if os(Windows)
-            _ = unsafe CloseHandle(UnsafeMutableRawPointer(bitPattern: _raw)!)
+            guard let pointer = UnsafeMutableRawPointer(bitPattern: _raw) else { return }
+            _ = unsafe CloseHandle(pointer)
             #endif
         }
     }
@@ -58,10 +59,16 @@ extension Windows.`32`.Kernel.Descriptor {
         Self(_raw: ~0)
     }
 
-    /// Whether the handle is valid (not the sentinel).
+    /// Whether the handle is valid (not a failure sentinel).
+    ///
+    /// Rejects both `INVALID_HANDLE_VALUE` (all bits set — returned by
+    /// `CreateFileW` etc.) and `NULL` (`0` — the documented failure sentinel
+    /// for `CreateEventW`, `CreateThread`, `CreateFileMappingW`, `OpenProcess`,
+    /// …). Treating `0` as valid would let `deinit`/`Close.close` force-unwrap
+    /// `UnsafeMutableRawPointer(bitPattern: 0)`, which is `nil`, and trap.
     @inlinable
     public var isValid: Bool {
-        _raw != ~0
+        _raw != 0 && _raw != ~0
     }
 }
 

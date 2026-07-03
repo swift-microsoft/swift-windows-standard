@@ -66,11 +66,17 @@ extension Windows.`32`.Kernel.Link.Symbolic {
         }
     }
 
-    /// Reads the target of a symbolic link.
+    /// Reads the fully-resolved target of a symbolic link into `buffer`.
+    ///
+    /// Writes the normalized absolute path of what the link resolves to, via
+    /// `GetFinalPathNameByHandleW` (the raw `\\?\`-prefixed NT form). This
+    /// DIFFERS from POSIX `readlink` / ISO stored-link-text semantics, which
+    /// return the link text verbatim. A dangling link throws `.notFound`. The
+    /// stored-text `FSCTL_GET_REPARSE_POINT` rewrite is a tracked follow-up.
     ///
     /// - Parameters:
     ///   - path: The path of the symbolic link.
-    ///   - buffer: Buffer to receive the target path (UTF-16).
+    ///   - buffer: Buffer to receive the resolved path (UTF-16).
     /// - Returns: The number of characters written (excluding null terminator).
     /// - Throws: `Windows.`32`.Kernel.Link.Symbolic.Error` on failure.
     public static func readTarget(

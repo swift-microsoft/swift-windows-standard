@@ -353,9 +353,14 @@ extension Windows.`32`.Kernel.Link.Symbolic {
         }
     }
 
-    /// Reads the target of a symbolic link.
+    /// Reads the fully-resolved target of a symbolic link.
     ///
-    /// Mirrors `ISO_9945.Kernel.Link.Symbolic.readTarget(at:)`.
+    /// Returns the fully-resolved, normalized absolute path via
+    /// `GetFinalPathNameByHandleW` (`\\?\` prefix stripped), NOT the stored
+    /// link text. This DIFFERS from POSIX `readlink` /
+    /// `ISO_9945.Kernel.Link.Symbolic.readTarget(at:)`, which return the link
+    /// text verbatim. A dangling link throws `.notFound`. The stored-text
+    /// `FSCTL_GET_REPARSE_POINT` rewrite is a tracked follow-up.
     public static func readTarget(
         at path: borrowing Path.Borrowed
     ) throws(Windows.`32`.Kernel.Link.Symbolic.Error) -> String_Primitives.String {

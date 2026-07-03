@@ -25,7 +25,7 @@ extension Windows.`32`.Kernel.Pipe {
 
 extension Windows.`32`.Kernel.Pipe.Named {
     /// Named pipe open mode flags.
-    package struct OpenMode: OptionSet, Sendable {
+    public struct OpenMode: OptionSet, Sendable {
         public let rawValue: DWORD
 
         public init(rawValue: DWORD) {
@@ -34,7 +34,7 @@ extension Windows.`32`.Kernel.Pipe.Named {
     }
 
     /// Named pipe type/mode flags.
-    package struct PipeMode: OptionSet, Sendable {
+    public struct PipeMode: OptionSet, Sendable {
         public let rawValue: DWORD
 
         public init(rawValue: DWORD) {

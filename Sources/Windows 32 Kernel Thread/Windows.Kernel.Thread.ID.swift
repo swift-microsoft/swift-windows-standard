@@ -11,7 +11,7 @@
 
 #if os(Windows)
 
-internal import WinSDK
+public import WinSDK
 
 extension Windows.`32`.Kernel.Thread {
     /// Opaque OS thread identifier on Windows.

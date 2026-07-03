@@ -11,7 +11,7 @@
 
 #if os(Windows)
 public import Error_Primitives
-internal import WinSDK
+public import WinSDK
 
 extension Error_Primitives.Error {
     /// Captures current Win32 last error as a `Error_Primitives.Error.Code`.

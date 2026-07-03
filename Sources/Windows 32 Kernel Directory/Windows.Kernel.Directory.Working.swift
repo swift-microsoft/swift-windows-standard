@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-internal import WinSDK
+public import WinSDK
 
 // MARK: - Windows Working Directory Operations
 

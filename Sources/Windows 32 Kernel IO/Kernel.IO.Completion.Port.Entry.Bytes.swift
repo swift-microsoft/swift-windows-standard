@@ -11,7 +11,7 @@
 
 #if os(Windows)
     public import Error_Primitives
-    internal import WinSDK
+    public import WinSDK
 
     extension Windows.`32`.Kernel.IO.Completion.Port.Entry {
         /// Byte-related properties for completion entry.

@@ -19,7 +19,7 @@
 // same shapes to L3.
 
 #if os(Windows)
-internal import WinSDK
+public import WinSDK
 public import String_Primitives
 
 // MARK: - Stats (get/lget statics, ISO shape)

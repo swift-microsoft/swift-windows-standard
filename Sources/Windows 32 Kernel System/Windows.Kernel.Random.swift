@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-internal import WinSDK
+public import WinSDK
 public import Random_Primitives
 
 // MARK: - Windows BCryptGenRandom syscall

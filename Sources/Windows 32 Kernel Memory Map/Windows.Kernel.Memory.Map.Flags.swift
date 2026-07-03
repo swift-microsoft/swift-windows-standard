@@ -12,7 +12,7 @@
 #if os(Windows)
 public import Error_Primitives
 public import Memory_Primitives
-internal import WinSDK
+public import WinSDK
 
 // MARK: - Windows Memory Map Flags
 

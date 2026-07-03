@@ -113,7 +113,7 @@ extension Windows.`32`.Kernel.File.Open {
         path: borrowing Path.Borrowed,
         mode: Windows.`32`.Kernel.File.Open.Mode,
         options: Windows.`32`.Kernel.File.Open.Options,
-        permissions: Windows.`32`.Kernel.File.Permissions = .standard
+        permissions: Windows.`32`.Kernel.File.Permissions
     ) throws(Windows.`32`.Kernel.File.Open.Error) -> Windows.`32`.Kernel.Descriptor {
         try unsafe path.withUnsafePointer { ptr throws(Windows.`32`.Kernel.File.Open.Error) in
             try open(unsafePath: ptr, mode: mode, options: options, permissions: permissions)

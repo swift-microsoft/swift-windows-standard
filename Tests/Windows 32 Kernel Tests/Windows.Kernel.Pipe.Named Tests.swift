@@ -10,158 +10,158 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Path_Primitives
-import Clock_Primitives
-import Random_Primitives
-import System_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Path_Primitives
+    import Clock_Primitives
+    import Random_Primitives
+    import System_Primitives
 
-extension Windows.`32`.Kernel.Pipe.Named {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension Windows.`32`.Kernel.Pipe.Named.Test.Unit {
-    @Test
-    func `Pipe.Named namespace exists`() {
-        _ = Windows.`32`.Kernel.Pipe.Named.self
+    extension Windows.`32`.Kernel.Pipe.Named {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
+        }
     }
 
-    @Test
-    func `Pipe.Named.OpenMode type exists`() {
-        _ = Windows.`32`.Kernel.Pipe.Named.OpenMode.self
+    // MARK: - Namespace Tests
+
+    extension Windows.`32`.Kernel.Pipe.Named.Test.Unit {
+        @Test
+        func `Pipe.Named namespace exists`() {
+            _ = Windows.`32`.Kernel.Pipe.Named.self
+        }
+
+        @Test
+        func `Pipe.Named.OpenMode type exists`() {
+            _ = Windows.`32`.Kernel.Pipe.Named.OpenMode.self
+        }
+
+        @Test
+        func `Pipe.Named.PipeMode type exists`() {
+            _ = Windows.`32`.Kernel.Pipe.Named.PipeMode.self
+        }
     }
 
-    @Test
-    func `Pipe.Named.PipeMode type exists`() {
-        _ = Windows.`32`.Kernel.Pipe.Named.PipeMode.self
-    }
-}
+    // MARK: - OpenMode Tests
 
-// MARK: - OpenMode Tests
+    extension Windows.`32`.Kernel.Pipe.Named.Test.Unit {
+        @Test
+        func `OpenMode.accessDuplex exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessDuplex
+            #expect(mode.rawValue == DWORD(PIPE_ACCESS_DUPLEX))
+        }
 
-extension Windows.`32`.Kernel.Pipe.Named.Test.Unit {
-    @Test
-    func `OpenMode.accessDuplex exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessDuplex
-        #expect(mode.rawValue == DWORD(PIPE_ACCESS_DUPLEX))
-    }
+        @Test
+        func `OpenMode.accessInbound exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessInbound
+            #expect(mode.rawValue == DWORD(PIPE_ACCESS_INBOUND))
+        }
 
-    @Test
-    func `OpenMode.accessInbound exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessInbound
-        #expect(mode.rawValue == DWORD(PIPE_ACCESS_INBOUND))
-    }
+        @Test
+        func `OpenMode.accessOutbound exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessOutbound
+            #expect(mode.rawValue == DWORD(PIPE_ACCESS_OUTBOUND))
+        }
 
-    @Test
-    func `OpenMode.accessOutbound exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessOutbound
-        #expect(mode.rawValue == DWORD(PIPE_ACCESS_OUTBOUND))
-    }
+        @Test
+        func `OpenMode.overlapped exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.overlapped
+            #expect(mode.rawValue == DWORD(FILE_FLAG_OVERLAPPED))
+        }
 
-    @Test
-    func `OpenMode.overlapped exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.overlapped
-        #expect(mode.rawValue == DWORD(FILE_FLAG_OVERLAPPED))
-    }
+        @Test
+        func `OpenMode.writeThrough exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.writeThrough
+            #expect(mode.rawValue == DWORD(FILE_FLAG_WRITE_THROUGH))
+        }
 
-    @Test
-    func `OpenMode.writeThrough exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.writeThrough
-        #expect(mode.rawValue == DWORD(FILE_FLAG_WRITE_THROUGH))
-    }
-
-    @Test
-    func `OpenMode.firstPipeInstance exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.firstPipeInstance
-        #expect(mode.rawValue == DWORD(FILE_FLAG_FIRST_PIPE_INSTANCE))
-    }
-}
-
-// MARK: - PipeMode Tests
-
-extension Windows.`32`.Kernel.Pipe.Named.Test.Unit {
-    @Test
-    func `PipeMode.typeByte exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.typeByte
-        #expect(mode.rawValue == DWORD(PIPE_TYPE_BYTE))
+        @Test
+        func `OpenMode.firstPipeInstance exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.firstPipeInstance
+            #expect(mode.rawValue == DWORD(FILE_FLAG_FIRST_PIPE_INSTANCE))
+        }
     }
 
-    @Test
-    func `PipeMode.typeMessage exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.typeMessage
-        #expect(mode.rawValue == DWORD(PIPE_TYPE_MESSAGE))
+    // MARK: - PipeMode Tests
+
+    extension Windows.`32`.Kernel.Pipe.Named.Test.Unit {
+        @Test
+        func `PipeMode.typeByte exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.typeByte
+            #expect(mode.rawValue == DWORD(PIPE_TYPE_BYTE))
+        }
+
+        @Test
+        func `PipeMode.typeMessage exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.typeMessage
+            #expect(mode.rawValue == DWORD(PIPE_TYPE_MESSAGE))
+        }
+
+        @Test
+        func `PipeMode.readModeByte exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.readModeByte
+            #expect(mode.rawValue == DWORD(PIPE_READMODE_BYTE))
+        }
+
+        @Test
+        func `PipeMode.readModeMessage exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.readModeMessage
+            #expect(mode.rawValue == DWORD(PIPE_READMODE_MESSAGE))
+        }
+
+        @Test
+        func `PipeMode.wait exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.wait
+            #expect(mode.rawValue == DWORD(PIPE_WAIT))
+        }
+
+        @Test
+        func `PipeMode.noWait exists`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.noWait
+            #expect(mode.rawValue == DWORD(PIPE_NOWAIT))
+        }
+
+        @Test
+        func `PipeMode.defaultByte is combination`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.defaultByte
+            #expect(mode.contains(.typeByte))
+            #expect(mode.contains(.readModeByte))
+            #expect(mode.contains(.wait))
+        }
+
+        @Test
+        func `PipeMode.defaultMessage is combination`() {
+            let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.defaultMessage
+            #expect(mode.contains(.typeMessage))
+            #expect(mode.contains(.readModeMessage))
+            #expect(mode.contains(.wait))
+        }
     }
 
-    @Test
-    func `PipeMode.readModeByte exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.readModeByte
-        #expect(mode.rawValue == DWORD(PIPE_READMODE_BYTE))
-    }
+    // MARK: - Edge Cases
 
-    @Test
-    func `PipeMode.readModeMessage exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.readModeMessage
-        #expect(mode.rawValue == DWORD(PIPE_READMODE_MESSAGE))
-    }
+    extension Windows.`32`.Kernel.Pipe.Named.Test.EdgeCase {
+        @Test
+        func `OpenMode can be combined`() {
+            var mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessDuplex
+            mode.insert(.overlapped)
+            #expect(mode.contains(.accessDuplex))
+            #expect(mode.contains(.overlapped))
+        }
 
-    @Test
-    func `PipeMode.wait exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.wait
-        #expect(mode.rawValue == DWORD(PIPE_WAIT))
+        @Test
+        func `PipeMode can be combined`() {
+            var mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.typeByte
+            mode.insert(.wait)
+            #expect(mode.contains(.typeByte))
+            #expect(mode.contains(.wait))
+        }
     }
-
-    @Test
-    func `PipeMode.noWait exists`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.noWait
-        #expect(mode.rawValue == DWORD(PIPE_NOWAIT))
-    }
-
-    @Test
-    func `PipeMode.defaultByte is combination`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.defaultByte
-        #expect(mode.contains(.typeByte))
-        #expect(mode.contains(.readModeByte))
-        #expect(mode.contains(.wait))
-    }
-
-    @Test
-    func `PipeMode.defaultMessage is combination`() {
-        let mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.defaultMessage
-        #expect(mode.contains(.typeMessage))
-        #expect(mode.contains(.readModeMessage))
-        #expect(mode.contains(.wait))
-    }
-}
-
-// MARK: - Edge Cases
-
-extension Windows.`32`.Kernel.Pipe.Named.Test.EdgeCase {
-    @Test
-    func `OpenMode can be combined`() {
-        var mode = Windows.`32`.Kernel.Pipe.Named.OpenMode.accessDuplex
-        mode.insert(.overlapped)
-        #expect(mode.contains(.accessDuplex))
-        #expect(mode.contains(.overlapped))
-    }
-
-    @Test
-    func `PipeMode can be combined`() {
-        var mode = Windows.`32`.Kernel.Pipe.Named.PipeMode.typeByte
-        mode.insert(.wait)
-        #expect(mode.contains(.typeByte))
-        #expect(mode.contains(.wait))
-    }
-}
 
 #endif

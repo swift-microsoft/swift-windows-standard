@@ -10,183 +10,183 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import Error_Primitives
-public import WinSDK
+    public import Error_Primitives
+    public import WinSDK
 
-// MARK: - Socket Receive
+    // MARK: - Socket Receive
 
-extension Windows.`32`.Kernel.Socket {
-    /// Receive flags.
-    public struct ReceiveFlags: OptionSet, Sendable {
-        public let rawValue: Int32
+    extension Windows.`32`.Kernel.Socket {
+        /// Receive flags.
+        public struct ReceiveFlags: OptionSet, Sendable {
+            public let rawValue: Int32
 
-        public init(rawValue: Int32) {
-            self.rawValue = rawValue
+            public init(rawValue: Int32) {
+                self.rawValue = rawValue
+            }
         }
     }
-}
 
-extension Windows.`32`.Kernel.Socket.ReceiveFlags {
-    /// Peek at incoming data without removing it from the queue.
-    public static let peek = Self(rawValue: MSG_PEEK)
+    extension Windows.`32`.Kernel.Socket.ReceiveFlags {
+        /// Peek at incoming data without removing it from the queue.
+        public static let peek = Self(rawValue: MSG_PEEK)
 
-    /// Receive out-of-band data.
-    public static let outOfBand = Self(rawValue: MSG_OOB)
+        /// Receive out-of-band data.
+        public static let outOfBand = Self(rawValue: MSG_OOB)
 
-    /// Block until the full amount is received.
-    public static let waitAll = Self(rawValue: MSG_WAITALL)
+        /// Block until the full amount is received.
+        public static let waitAll = Self(rawValue: MSG_WAITALL)
 
-    /// No flags.
-    public static let none = Self(rawValue: 0)
-}
-
-extension Windows.`32`.Kernel.Socket {
-    /// Receives data from a connected socket.
-    ///
-    /// - Parameters:
-    ///   - socket: The connected socket.
-    ///   - buffer: Buffer to receive data into.
-    ///   - length: Maximum number of bytes to receive.
-    ///   - flags: Receive flags.
-    /// - Returns: Number of bytes received, or 0 if the connection was closed.
-    /// - Throws: `Error.receive` on failure.
-    ///
-    /// ## Return Values
-    ///
-    /// - Positive: Number of bytes received.
-    /// - Zero: Connection closed gracefully (EOF).
-    /// - Error: Connection error or socket error.
-    public static func receive(
-        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
-        buffer: UnsafeMutableRawPointer,
-        length: Int,
-        flags: ReceiveFlags = .none
-    ) throws(Error) -> Int {
-        try receive(socket._rawValue, buffer: buffer, length: length, flags: flags)
+        /// No flags.
+        public static let none = Self(rawValue: 0)
     }
 
-    /// Receives data from a SOCKET bit pattern.
-    ///
-    /// Spec-literal raw `recv`. The typed L2 convenience
-    /// (`receive(_:buffer:length:flags:)` taking
-    /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
-    /// internally via `socket._rawValue`.
-    ///
-    /// - Parameters:
-    ///   - socket: SOCKET bit pattern.
-    ///   - buffer: Buffer to receive data into.
-    ///   - length: Maximum number of bytes to receive.
-    ///   - flags: Receive flags.
-    /// - Returns: Number of bytes received, or 0 if the connection was closed.
-    /// - Throws: `Error.receive` on failure.
+    extension Windows.`32`.Kernel.Socket {
+        /// Receives data from a connected socket.
+        ///
+        /// - Parameters:
+        ///   - socket: The connected socket.
+        ///   - buffer: Buffer to receive data into.
+        ///   - length: Maximum number of bytes to receive.
+        ///   - flags: Receive flags.
+        /// - Returns: Number of bytes received, or 0 if the connection was closed.
+        /// - Throws: `Error.receive` on failure.
+        ///
+        /// ## Return Values
+        ///
+        /// - Positive: Number of bytes received.
+        /// - Zero: Connection closed gracefully (EOF).
+        /// - Error: Connection error or socket error.
+        public static func receive(
+            _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
+            buffer: UnsafeMutableRawPointer,
+            length: Int,
+            flags: ReceiveFlags = .none
+        ) throws(Error) -> Int {
+            try receive(socket._rawValue, buffer: buffer, length: length, flags: flags)
+        }
+
+        /// Receives data from a SOCKET bit pattern.
+        ///
+        /// Spec-literal raw `recv`. The typed L2 convenience
+        /// (`receive(_:buffer:length:flags:)` taking
+        /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
+        /// internally via `socket._rawValue`.
+        ///
+        /// - Parameters:
+        ///   - socket: SOCKET bit pattern.
+        ///   - buffer: Buffer to receive data into.
+        ///   - length: Maximum number of bytes to receive.
+        ///   - flags: Receive flags.
+        /// - Returns: Number of bytes received, or 0 if the connection was closed.
+        /// - Throws: `Error.receive` on failure.
         package static func receive(
-        _ socket: UInt,
-        buffer: UnsafeMutableRawPointer,
-        length: Int,
-        flags: ReceiveFlags = .none
-    ) throws(Error) -> Int {
-        let result = recv(
-            SOCKET(socket),
-            buffer.assumingMemoryBound(to: CChar.self),
-            Int32(length),
-            flags.rawValue
-        )
-        guard result != SOCKET_ERROR else {
-            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
+            _ socket: UInt,
+            buffer: UnsafeMutableRawPointer,
+            length: Int,
+            flags: ReceiveFlags = .none
+        ) throws(Error) -> Int {
+            let result = recv(
+                SOCKET(socket),
+                buffer.assumingMemoryBound(to: CChar.self),
+                Int32(length),
+                flags.rawValue
+            )
+            guard result != SOCKET_ERROR else {
+                throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
+            }
+            return Int(result)
         }
-        return Int(result)
-    }
 
-    /// Receives data from a connected socket into a buffer.
-    ///
-    /// - Parameters:
-    ///   - socket: The connected socket.
-    ///   - buffer: The buffer to receive data into.
-    ///   - flags: Receive flags.
-    /// - Returns: Number of bytes received.
-    /// - Throws: `Error.receive` on failure.
-    public static func receive(
-        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
-        buffer: UnsafeMutableBufferPointer<UInt8>,
-        flags: ReceiveFlags = .none
-    ) throws(Error) -> Int {
-        guard let baseAddress = buffer.baseAddress else {
-            return 0
+        /// Receives data from a connected socket into a buffer.
+        ///
+        /// - Parameters:
+        ///   - socket: The connected socket.
+        ///   - buffer: The buffer to receive data into.
+        ///   - flags: Receive flags.
+        /// - Returns: Number of bytes received.
+        /// - Throws: `Error.receive` on failure.
+        public static func receive(
+            _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
+            buffer: UnsafeMutableBufferPointer<UInt8>,
+            flags: ReceiveFlags = .none
+        ) throws(Error) -> Int {
+            guard let baseAddress = buffer.baseAddress else {
+                return 0
+            }
+            return try receive(socket, buffer: baseAddress, length: buffer.count, flags: flags)
         }
-        return try receive(socket, buffer: baseAddress, length: buffer.count, flags: flags)
-    }
 
-    /// Receives data and retrieves the source address.
-    ///
-    /// Used for connectionless (datagram) sockets to receive data and
-    /// determine who sent it.
-    ///
-    /// - Parameters:
-    ///   - socket: The socket.
-    ///   - buffer: Buffer to receive data into.
-    ///   - length: Maximum number of bytes to receive.
-    ///   - flags: Receive flags.
-    ///   - srcAddr: Pointer to receive the source address.
-    ///   - srcAddrLength: On input, size of the address buffer.
-    ///                    On output, actual size of the returned address.
-    /// - Returns: Number of bytes received.
-    /// - Throws: `Error.receive` on failure.
-    public static func receiveFrom(
-        _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
-        buffer: UnsafeMutableRawPointer,
-        length: Int,
-        flags: ReceiveFlags = .none,
-        srcAddr: UnsafeMutablePointer<sockaddr>,
-        srcAddrLength: UnsafeMutablePointer<Int32>
-    ) throws(Error) -> Int {
-        try receiveFrom(
-            socket._rawValue,
-            buffer: buffer,
-            length: length,
-            flags: flags,
-            srcAddr: srcAddr,
-            srcAddrLength: srcAddrLength
-        )
-    }
+        /// Receives data and retrieves the source address.
+        ///
+        /// Used for connectionless (datagram) sockets to receive data and
+        /// determine who sent it.
+        ///
+        /// - Parameters:
+        ///   - socket: The socket.
+        ///   - buffer: Buffer to receive data into.
+        ///   - length: Maximum number of bytes to receive.
+        ///   - flags: Receive flags.
+        ///   - srcAddr: Pointer to receive the source address.
+        ///   - srcAddrLength: On input, size of the address buffer.
+        ///                    On output, actual size of the returned address.
+        /// - Returns: Number of bytes received.
+        /// - Throws: `Error.receive` on failure.
+        public static func receiveFrom(
+            _ socket: borrowing Windows.`32`.Kernel.Socket.Descriptor,
+            buffer: UnsafeMutableRawPointer,
+            length: Int,
+            flags: ReceiveFlags = .none,
+            srcAddr: UnsafeMutablePointer<sockaddr>,
+            srcAddrLength: UnsafeMutablePointer<Int32>
+        ) throws(Error) -> Int {
+            try receiveFrom(
+                socket._rawValue,
+                buffer: buffer,
+                length: length,
+                flags: flags,
+                srcAddr: srcAddr,
+                srcAddrLength: srcAddrLength
+            )
+        }
 
-    /// Receives data on a SOCKET bit pattern and retrieves the source address.
-    ///
-    /// Spec-literal raw `recvfrom`. The typed L2 convenience
-    /// (`receiveFrom(_:buffer:length:flags:srcAddr:srcAddrLength:)` taking
-    /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
-    /// internally via `socket._rawValue`.
-    ///
-    /// - Parameters:
-    ///   - socket: SOCKET bit pattern.
-    ///   - buffer: Buffer to receive data into.
-    ///   - length: Maximum number of bytes to receive.
-    ///   - flags: Receive flags.
-    ///   - srcAddr: Pointer to receive the source address.
-    ///   - srcAddrLength: On input, size of the address buffer.
-    ///                    On output, actual size of the returned address.
-    /// - Returns: Number of bytes received.
-    /// - Throws: `Error.receive` on failure.
+        /// Receives data on a SOCKET bit pattern and retrieves the source address.
+        ///
+        /// Spec-literal raw `recvfrom`. The typed L2 convenience
+        /// (`receiveFrom(_:buffer:length:flags:srcAddr:srcAddrLength:)` taking
+        /// `borrowing Windows.`32`.Kernel.Socket.Descriptor`) delegates to this raw SPI
+        /// internally via `socket._rawValue`.
+        ///
+        /// - Parameters:
+        ///   - socket: SOCKET bit pattern.
+        ///   - buffer: Buffer to receive data into.
+        ///   - length: Maximum number of bytes to receive.
+        ///   - flags: Receive flags.
+        ///   - srcAddr: Pointer to receive the source address.
+        ///   - srcAddrLength: On input, size of the address buffer.
+        ///                    On output, actual size of the returned address.
+        /// - Returns: Number of bytes received.
+        /// - Throws: `Error.receive` on failure.
         package static func receiveFrom(
-        _ socket: UInt,
-        buffer: UnsafeMutableRawPointer,
-        length: Int,
-        flags: ReceiveFlags = .none,
-        srcAddr: UnsafeMutablePointer<sockaddr>,
-        srcAddrLength: UnsafeMutablePointer<Int32>
-    ) throws(Error) -> Int {
-        let result = recvfrom(
-            SOCKET(socket),
-            buffer.assumingMemoryBound(to: CChar.self),
-            Int32(length),
-            flags.rawValue,
-            srcAddr,
-            srcAddrLength
-        )
-        guard result != SOCKET_ERROR else {
-            throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
+            _ socket: UInt,
+            buffer: UnsafeMutableRawPointer,
+            length: Int,
+            flags: ReceiveFlags = .none,
+            srcAddr: UnsafeMutablePointer<sockaddr>,
+            srcAddrLength: UnsafeMutablePointer<Int32>
+        ) throws(Error) -> Int {
+            let result = recvfrom(
+                SOCKET(socket),
+                buffer.assumingMemoryBound(to: CChar.self),
+                Int32(length),
+                flags.rawValue,
+                srcAddr,
+                srcAddrLength
+            )
+            guard result != SOCKET_ERROR else {
+                throw .platform(Error_Primitives.Error(code: captureLastSocketError()))
+            }
+            return Int(result)
         }
-        return Int(result)
     }
-}
 
 #endif

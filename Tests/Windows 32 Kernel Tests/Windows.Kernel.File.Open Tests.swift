@@ -10,205 +10,205 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Path_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Path_Primitives
 
-extension Windows.`32`.Kernel.File.Open {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension Windows.`32`.Kernel.File.Open.Test.Unit {
-    @Test
-    func `File.Open namespace exists`() {
-        _ = Windows.`32`.Kernel.File.Open.self
+    extension Windows.`32`.Kernel.File.Open {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
+        }
     }
 
-    @Test
-    func `File.Open.Mode type exists`() {
-        _ = Kernel.File.Open.Mode.self
+    // MARK: - Namespace Tests
+
+    extension Windows.`32`.Kernel.File.Open.Test.Unit {
+        @Test
+        func `File.Open namespace exists`() {
+            _ = Windows.`32`.Kernel.File.Open.self
+        }
+
+        @Test
+        func `File.Open.Mode type exists`() {
+            _ = Kernel.File.Open.Mode.self
+        }
+
+        @Test
+        func `File.Open.Options type exists`() {
+            _ = Kernel.File.Open.Options.self
+        }
+
+        @Test
+        func `File.Open.Error type exists`() {
+            _ = Kernel.File.Open.Error.self
+        }
     }
 
-    @Test
-    func `File.Open.Options type exists`() {
-        _ = Kernel.File.Open.Options.self
+    // MARK: - Mode Tests
+
+    extension Windows.`32`.Kernel.File.Open.Test.Unit {
+        @Test
+        func `Mode.read exists`() {
+            let mode = Kernel.File.Open.Mode.read
+            #expect(mode.read)
+            #expect(!mode.write)
+        }
+
+        @Test
+        func `Mode.write exists`() {
+            let mode = Kernel.File.Open.Mode.write
+            #expect(mode.write)
+            #expect(!mode.read)
+        }
+
+        @Test
+        func `Mode.readWrite exists`() {
+            let mode = Kernel.File.Open.Mode.readWrite
+            #expect(mode.read)
+            #expect(mode.write)
+        }
     }
 
-    @Test
-    func `File.Open.Error type exists`() {
-        _ = Kernel.File.Open.Error.self
-    }
-}
+    // MARK: - Options Tests
 
-// MARK: - Mode Tests
+    extension Windows.`32`.Kernel.File.Open.Test.Unit {
+        @Test
+        func `Options.create exists`() {
+            let options = Kernel.File.Open.Options.create
+            #expect(options.contains(.create))
+        }
 
-extension Windows.`32`.Kernel.File.Open.Test.Unit {
-    @Test
-    func `Mode.read exists`() {
-        let mode = Kernel.File.Open.Mode.read
-        #expect(mode.read)
-        #expect(!mode.write)
-    }
+        @Test
+        func `Options.truncate exists`() {
+            let options = Kernel.File.Open.Options.truncate
+            #expect(options.contains(.truncate))
+        }
 
-    @Test
-    func `Mode.write exists`() {
-        let mode = Kernel.File.Open.Mode.write
-        #expect(mode.write)
-        #expect(!mode.read)
-    }
+        @Test
+        func `Options.exclusive exists`() {
+            let options = Kernel.File.Open.Options.exclusive
+            #expect(options.contains(.exclusive))
+        }
 
-    @Test
-    func `Mode.readWrite exists`() {
-        let mode = Kernel.File.Open.Mode.readWrite
-        #expect(mode.read)
-        #expect(mode.write)
-    }
-}
+        @Test
+        func `Options.direct exists`() {
+            let options = Kernel.File.Open.Options.direct
+            #expect(options.contains(.direct))
+        }
 
-// MARK: - Options Tests
+        @Test
+        func `Options.noFollow exists`() {
+            let options = Kernel.File.Open.Options.noFollow
+            #expect(options.contains(.noFollow))
+        }
 
-extension Windows.`32`.Kernel.File.Open.Test.Unit {
-    @Test
-    func `Options.create exists`() {
-        let options = Kernel.File.Open.Options.create
-        #expect(options.contains(.create))
-    }
+        @Test
+        func `Options.overlapped exists (Windows-specific)`() {
+            let options = Kernel.File.Open.Options.overlapped
+            #expect(options.contains(.overlapped))
+        }
 
-    @Test
-    func `Options.truncate exists`() {
-        let options = Kernel.File.Open.Options.truncate
-        #expect(options.contains(.truncate))
-    }
+        @Test
+        func `Options.backupSemantics exists (Windows-specific)`() {
+            let options = Kernel.File.Open.Options.backupSemantics
+            #expect(options.contains(.backupSemantics))
+        }
 
-    @Test
-    func `Options.exclusive exists`() {
-        let options = Kernel.File.Open.Options.exclusive
-        #expect(options.contains(.exclusive))
-    }
-
-    @Test
-    func `Options.direct exists`() {
-        let options = Kernel.File.Open.Options.direct
-        #expect(options.contains(.direct))
+        @Test
+        func `Options.deleteOnClose exists (Windows-specific)`() {
+            let options = Kernel.File.Open.Options.deleteOnClose
+            #expect(options.contains(.deleteOnClose))
+        }
     }
 
-    @Test
-    func `Options.noFollow exists`() {
-        let options = Kernel.File.Open.Options.noFollow
-        #expect(options.contains(.noFollow))
+    // MARK: - Windows Conversion Tests
+
+    extension Windows.`32`.Kernel.File.Open.Test.Unit {
+        @Test
+        func `Mode.read converts to GENERIC_READ`() {
+            let mode = Kernel.File.Open.Mode.read
+            let access = mode.windowsDesiredAccess
+            #expect(access & DWORD(GENERIC_READ) != 0)
+            #expect(access & DWORD(GENERIC_WRITE) == 0)
+        }
+
+        @Test
+        func `Mode.write converts to GENERIC_WRITE`() {
+            let mode = Kernel.File.Open.Mode.write
+            let access = mode.windowsDesiredAccess
+            #expect(access & DWORD(GENERIC_WRITE) != 0)
+            #expect(access & DWORD(GENERIC_READ) == 0)
+        }
+
+        @Test
+        func `Mode.readWrite converts to both`() {
+            let mode = Kernel.File.Open.Mode.readWrite
+            let access = mode.windowsDesiredAccess
+            #expect(access & DWORD(GENERIC_READ) != 0)
+            #expect(access & DWORD(GENERIC_WRITE) != 0)
+        }
+
+        @Test
+        func `Options.create + exclusive converts to CREATE_NEW`() {
+            let options: Kernel.File.Open.Options = [.create, .exclusive]
+            let disposition = options.windowsCreationDisposition
+            #expect(disposition == DWORD(CREATE_NEW))
+        }
+
+        @Test
+        func `Options.create + truncate converts to CREATE_ALWAYS`() {
+            let options: Kernel.File.Open.Options = [.create, .truncate]
+            let disposition = options.windowsCreationDisposition
+            #expect(disposition == DWORD(CREATE_ALWAYS))
+        }
+
+        @Test
+        func `Options.create alone converts to OPEN_ALWAYS`() {
+            let options: Kernel.File.Open.Options = [.create]
+            let disposition = options.windowsCreationDisposition
+            #expect(disposition == DWORD(OPEN_ALWAYS))
+        }
+
+        @Test
+        func `Options.truncate alone converts to TRUNCATE_EXISTING`() {
+            let options: Kernel.File.Open.Options = [.truncate]
+            let disposition = options.windowsCreationDisposition
+            #expect(disposition == DWORD(TRUNCATE_EXISTING))
+        }
+
+        @Test
+        func `Empty options converts to OPEN_EXISTING`() {
+            let options: Kernel.File.Open.Options = []
+            let disposition = options.windowsCreationDisposition
+            #expect(disposition == DWORD(OPEN_EXISTING))
+        }
     }
 
-    @Test
-    func `Options.overlapped exists (Windows-specific)`() {
-        let options = Kernel.File.Open.Options.overlapped
-        #expect(options.contains(.overlapped))
+    // MARK: - Edge Cases
+
+    extension Windows.`32`.Kernel.File.Open.Test.EdgeCase {
+        @Test
+        func `Mode can be combined`() {
+            let mode = Kernel.File.Open.Mode(read: true, write: true)
+            #expect(mode.read)
+            #expect(mode.write)
+        }
+
+        @Test
+        func `Options can be combined`() {
+            var options: Kernel.File.Open.Options = [.create]
+            options.insert(.truncate)
+            options.insert(.overlapped)
+            #expect(options.contains(.create))
+            #expect(options.contains(.truncate))
+            #expect(options.contains(.overlapped))
+        }
     }
-
-    @Test
-    func `Options.backupSemantics exists (Windows-specific)`() {
-        let options = Kernel.File.Open.Options.backupSemantics
-        #expect(options.contains(.backupSemantics))
-    }
-
-    @Test
-    func `Options.deleteOnClose exists (Windows-specific)`() {
-        let options = Kernel.File.Open.Options.deleteOnClose
-        #expect(options.contains(.deleteOnClose))
-    }
-}
-
-// MARK: - Windows Conversion Tests
-
-extension Windows.`32`.Kernel.File.Open.Test.Unit {
-    @Test
-    func `Mode.read converts to GENERIC_READ`() {
-        let mode = Kernel.File.Open.Mode.read
-        let access = mode.windowsDesiredAccess
-        #expect(access & DWORD(GENERIC_READ) != 0)
-        #expect(access & DWORD(GENERIC_WRITE) == 0)
-    }
-
-    @Test
-    func `Mode.write converts to GENERIC_WRITE`() {
-        let mode = Kernel.File.Open.Mode.write
-        let access = mode.windowsDesiredAccess
-        #expect(access & DWORD(GENERIC_WRITE) != 0)
-        #expect(access & DWORD(GENERIC_READ) == 0)
-    }
-
-    @Test
-    func `Mode.readWrite converts to both`() {
-        let mode = Kernel.File.Open.Mode.readWrite
-        let access = mode.windowsDesiredAccess
-        #expect(access & DWORD(GENERIC_READ) != 0)
-        #expect(access & DWORD(GENERIC_WRITE) != 0)
-    }
-
-    @Test
-    func `Options.create + exclusive converts to CREATE_NEW`() {
-        let options: Kernel.File.Open.Options = [.create, .exclusive]
-        let disposition = options.windowsCreationDisposition
-        #expect(disposition == DWORD(CREATE_NEW))
-    }
-
-    @Test
-    func `Options.create + truncate converts to CREATE_ALWAYS`() {
-        let options: Kernel.File.Open.Options = [.create, .truncate]
-        let disposition = options.windowsCreationDisposition
-        #expect(disposition == DWORD(CREATE_ALWAYS))
-    }
-
-    @Test
-    func `Options.create alone converts to OPEN_ALWAYS`() {
-        let options: Kernel.File.Open.Options = [.create]
-        let disposition = options.windowsCreationDisposition
-        #expect(disposition == DWORD(OPEN_ALWAYS))
-    }
-
-    @Test
-    func `Options.truncate alone converts to TRUNCATE_EXISTING`() {
-        let options: Kernel.File.Open.Options = [.truncate]
-        let disposition = options.windowsCreationDisposition
-        #expect(disposition == DWORD(TRUNCATE_EXISTING))
-    }
-
-    @Test
-    func `Empty options converts to OPEN_EXISTING`() {
-        let options: Kernel.File.Open.Options = []
-        let disposition = options.windowsCreationDisposition
-        #expect(disposition == DWORD(OPEN_EXISTING))
-    }
-}
-
-// MARK: - Edge Cases
-
-extension Windows.`32`.Kernel.File.Open.Test.EdgeCase {
-    @Test
-    func `Mode can be combined`() {
-        let mode = Kernel.File.Open.Mode(read: true, write: true)
-        #expect(mode.read)
-        #expect(mode.write)
-    }
-
-    @Test
-    func `Options can be combined`() {
-        var options: Kernel.File.Open.Options = [.create]
-        options.insert(.truncate)
-        options.insert(.overlapped)
-        #expect(options.contains(.create))
-        #expect(options.contains(.truncate))
-        #expect(options.contains(.overlapped))
-    }
-}
 
 #endif

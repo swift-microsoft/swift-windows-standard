@@ -10,120 +10,121 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import Error_Primitives
-public import Memory_Primitives
-public import WinSDK
+    public import Error_Primitives
+    public import Memory_Primitives
+    public import WinSDK
 
-// MARK: - Windows Virtual Memory Allocation
+    // MARK: - Windows Virtual Memory Allocation
 
-extension Memory.Allocation {
-    /// Allocates virtual memory.
-    ///
-    /// - Parameters:
-    ///   - addr: Suggested address, or `nil` for system to choose.
-    ///   - size: Number of bytes to allocate.
-    ///   - protection: Memory protection flags.
-    /// - Returns: Pointer to the allocated memory.
-    /// - Throws: `Memory.Allocation.Error` on failure.
-    public static func allocate(
-        addr: Memory.Address? = nil,
-        size: Int,
-        protection: Memory.Map.Protection
-    ) throws(Memory.Map.Error) -> Memory.Address {
-        guard size > 0 else {
-            throw .invalid(.length)
+    extension Memory.Allocation {
+        /// Allocates virtual memory.
+        ///
+        /// - Parameters:
+        ///   - addr: Suggested address, or `nil` for system to choose.
+        ///   - size: Number of bytes to allocate.
+        ///   - protection: Memory protection flags.
+        /// - Returns: Pointer to the allocated memory.
+        /// - Throws: `Memory.Allocation.Error` on failure.
+        public static func allocate(
+            addr: Memory.Address? = nil,
+            size: Int,
+            protection: Memory.Map.Protection
+        ) throws(Memory.Map.Error) -> Memory.Address {
+            guard size > 0 else {
+                throw .invalid(.length)
+            }
+
+            let result = unsafe VirtualAlloc(
+                addr?.mutablePointer,
+                SIZE_T(size),
+                DWORD(MEM_COMMIT | MEM_RESERVE),
+                protection.windowsVirtualProtect
+            )
+
+            guard let result else {
+                throw .map(Error_Primitives.Error.captureLastError())
+            }
+
+            return unsafe Memory.Address(result)
         }
 
-        let result = unsafe VirtualAlloc(
-            addr?.mutablePointer,
-            SIZE_T(size),
-            DWORD(MEM_COMMIT | MEM_RESERVE),
-            protection.windowsVirtualProtect
-        )
-
-        guard let result else {
-            throw .map(Error_Primitives.Error.captureLastError())
+        /// Frees virtual memory.
+        ///
+        /// - Parameter addr: The base address of the allocation.
+        /// - Throws: `Memory.Allocation.Error` on failure.
+        public static func free(
+            addr: Memory.Address
+        ) throws(Memory.Map.Error) {
+            guard unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE)) else {
+                throw .unmap(Error_Primitives.Error.captureLastError())
+            }
         }
 
-        return unsafe Memory.Address(result)
-    }
+        /// Allocates aligned virtual memory.
+        ///
+        /// On Windows, VirtualAlloc always returns page-aligned memory (typically 4KB).
+        ///
+        /// - Parameters:
+        ///   - size: Number of bytes to allocate.
+        ///   - alignment: Required alignment (must be a power of 2).
+        ///   - protection: Memory protection flags.
+        /// - Returns: Pointer to the aligned memory.
+        /// - Throws: `Memory.Allocation.Error` on failure.
+        public static func allocateAligned(
+            size: Int,
+            alignment: Int,
+            protection: Memory.Map.Protection
+        ) throws(Memory.Map.Error) -> Memory.Address {
+            // Windows VirtualAlloc returns page-aligned memory
+            // For larger alignments, we need to allocate extra and align manually
+            let pageSize = Int(systemPageSize())
 
-    /// Frees virtual memory.
-    ///
-    /// - Parameter addr: The base address of the allocation.
-    /// - Throws: `Memory.Allocation.Error` on failure.
-    public static func free(
-        addr: Memory.Address
-    ) throws(Memory.Map.Error) {
-        guard unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE)) else {
-            throw .unmap(Error_Primitives.Error.captureLastError())
-        }
-    }
+            if alignment <= pageSize {
+                return try allocate(size: size, protection: protection)
+            }
 
-    /// Allocates aligned virtual memory.
-    ///
-    /// On Windows, VirtualAlloc always returns page-aligned memory (typically 4KB).
-    ///
-    /// - Parameters:
-    ///   - size: Number of bytes to allocate.
-    ///   - alignment: Required alignment (must be a power of 2).
-    ///   - protection: Memory protection flags.
-    /// - Returns: Pointer to the aligned memory.
-    /// - Throws: `Memory.Allocation.Error` on failure.
-    public static func allocateAligned(
-        size: Int,
-        alignment: Int,
-        protection: Memory.Map.Protection
-    ) throws(Memory.Map.Error) -> Memory.Address {
-        // Windows VirtualAlloc returns page-aligned memory
-        // For larger alignments, we need to allocate extra and align manually
-        let pageSize = Int(systemPageSize())
+            // For larger alignments, allocate extra space
+            let extraSize = size + alignment - pageSize
+            let baseAddr = try allocate(size: extraSize, protection: protection)
 
-        if alignment <= pageSize {
-            return try allocate(size: size, protection: protection)
-        }
+            // Calculate aligned address within the allocation
+            let baseValue = Int(bitPattern: baseAddr.pointer)
+            let alignedValue = (baseValue + alignment - 1) & ~(alignment - 1)
 
-        // For larger alignments, allocate extra space
-        let extraSize = size + alignment - pageSize
-        let baseAddr = try allocate(size: extraSize, protection: protection)
+            // If already aligned, return as-is
+            if baseValue == alignedValue {
+                return baseAddr
+            }
 
-        // Calculate aligned address within the allocation
-        let baseValue = Int(bitPattern: baseAddr.pointer)
-        let alignedValue = (baseValue + alignment - 1) & ~(alignment - 1)
-
-        // If already aligned, return as-is
-        if baseValue == alignedValue {
-            return baseAddr
+            // Otherwise, free and re-allocate at aligned address
+            // Note: This is a simplification. A more robust implementation
+            // would use VirtualAlloc with MEM_RESERVE, then MEM_COMMIT
+            // at the aligned address.
+            try? free(addr: baseAddr)
+            throw .invalid(.alignment)
         }
 
-        // Otherwise, free and re-allocate at aligned address
-        // Note: This is a simplification. A more robust implementation
-        // would use VirtualAlloc with MEM_RESERVE, then MEM_COMMIT
-        // at the aligned address.
-        try? free(addr: baseAddr)
-        throw .invalid(.alignment)
-    }
+        /// Returns the system page size.
+        ///
+        /// - Returns: The system memory page size in bytes.
+        public static func systemPageSize() -> UInt {
+            var sysInfo = SYSTEM_INFO()
+            GetSystemInfo(&sysInfo)
+            return UInt(sysInfo.dwPageSize)
+        }
 
-    /// Returns the system page size.
-    ///
-    /// - Returns: The system memory page size in bytes.
-    public static func systemPageSize() -> UInt {
-        var sysInfo = SYSTEM_INFO()
-        GetSystemInfo(&sysInfo)
-        return UInt(sysInfo.dwPageSize)
+        /// The system's allocation granularity.
+        ///
+        /// On Windows, this is typically 64KB, larger than page size.
+        /// Use this for memory mapping offset alignment.
+        public static var system: Memory.Allocation.Granularity {
+            var sysInfo = SYSTEM_INFO()
+            GetSystemInfo(&sysInfo)
+            let granularity = Int(sysInfo.dwAllocationGranularity)
+            // Safe: allocation granularity is always a power of 2
+            // swiftlint:disable:next force_try
+            return Memory.Allocation.Granularity(try! Memory.Alignment(granularity))
+        }
     }
-
-    /// The system's allocation granularity.
-    ///
-    /// On Windows, this is typically 64KB, larger than page size.
-    /// Use this for memory mapping offset alignment.
-    public static var system: Memory.Allocation.Granularity {
-        var sysInfo = SYSTEM_INFO()
-        GetSystemInfo(&sysInfo)
-        let granularity = Int(sysInfo.dwAllocationGranularity)
-        // Safe: allocation granularity is always a power of 2
-        return Memory.Allocation.Granularity(try! Memory.Alignment(granularity))
-    }
-}
 
 #endif

@@ -10,124 +10,124 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Memory_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Memory_Primitives
 
-extension Memory.Allocation {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension Memory.Allocation.Test.Unit {
-    @Test
-    func `Memory.Allocation namespace exists`() {
-        _ = Memory.Allocation.self
-    }
-
-    @Test
-    func `Memory.Allocation.Error type exists`() {
-        _ = Memory.Allocation.Error.self
-    }
-}
-
-// MARK: - System Info Tests
-
-extension Memory.Allocation.Test.Unit {
-    @Test
-    func `systemPageSize returns non-zero`() {
-        let pageSize = Memory.Allocation.systemPageSize()
-        #expect(pageSize > 0)
-    }
-
-    @Test
-    func `systemPageSize is typically 4096`() {
-        let pageSize = Memory.Allocation.systemPageSize()
-        // Common page sizes are 4096 or 8192
-        #expect(pageSize >= 4096)
-        #expect(pageSize <= 65536)  // Reasonable upper bound
-    }
-
-    @Test
-    func `system granularity exists`() {
-        let granularity = Memory.Allocation.system
-        #expect(granularity.underlying >= .byte)
-    }
-}
-
-// MARK: - Allocation Tests
-
-extension Memory.Allocation.Test.Unit {
-    @Test
-    func `allocate with zero size throws invalid length`() {
-        #expect(throws: Memory.Map.Error.self) {
-            _ = try Memory.Allocation.allocate(
-                size: 0,
-                protection: .readWrite
-            )
+    extension Memory.Allocation {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
         }
     }
 
-    @Test
-    func `allocate with valid size succeeds`() throws {
-        let pageSize = Int(Memory.Allocation.systemPageSize())
-        let addr = try Memory.Allocation.allocate(
-            size: pageSize,
-            protection: .readWrite
-        )
+    // MARK: - Namespace Tests
 
-        // Cleanup
-        try Memory.Allocation.free(addr: addr)
+    extension Memory.Allocation.Test.Unit {
+        @Test
+        func `Memory.Allocation namespace exists`() {
+            _ = Memory.Allocation.self
+        }
+
+        @Test
+        func `Memory.Allocation.Error type exists`() {
+            _ = Memory.Allocation.Error.self
+        }
     }
 
-    @Test
-    func `allocate and free round-trip`() throws {
-        let pageSize = Int(Memory.Allocation.systemPageSize())
+    // MARK: - System Info Tests
 
-        for _ in 0..<10 {
+    extension Memory.Allocation.Test.Unit {
+        @Test
+        func `systemPageSize returns non-zero`() {
+            let pageSize = Memory.Allocation.systemPageSize()
+            #expect(pageSize > 0)
+        }
+
+        @Test
+        func `systemPageSize is typically 4096`() {
+            let pageSize = Memory.Allocation.systemPageSize()
+            // Common page sizes are 4096 or 8192
+            #expect(pageSize >= 4096)
+            #expect(pageSize <= 65536)  // Reasonable upper bound
+        }
+
+        @Test
+        func `system granularity exists`() {
+            let granularity = Memory.Allocation.system
+            #expect(granularity.underlying >= .byte)
+        }
+    }
+
+    // MARK: - Allocation Tests
+
+    extension Memory.Allocation.Test.Unit {
+        @Test
+        func `allocate with zero size throws invalid length`() {
+            #expect(throws: Memory.Map.Error.self) {
+                _ = try Memory.Allocation.allocate(
+                    size: 0,
+                    protection: .readWrite
+                )
+            }
+        }
+
+        @Test
+        func `allocate with valid size succeeds`() throws {
+            let pageSize = Int(Memory.Allocation.systemPageSize())
             let addr = try Memory.Allocation.allocate(
                 size: pageSize,
                 protection: .readWrite
             )
+
+            // Cleanup
+            try Memory.Allocation.free(addr: addr)
+        }
+
+        @Test
+        func `allocate and free round-trip`() throws {
+            let pageSize = Int(Memory.Allocation.systemPageSize())
+
+            for _ in 0..<10 {
+                let addr = try Memory.Allocation.allocate(
+                    size: pageSize,
+                    protection: .readWrite
+                )
+                try Memory.Allocation.free(addr: addr)
+            }
+        }
+    }
+
+    // MARK: - Error Tests
+
+    extension Memory.Allocation.Test.Unit {
+        @Test
+        func `Error.exhausted exists`() {
+            let error = Memory.Allocation.Error.exhausted
+            #expect(error == .exhausted)
+        }
+    }
+
+    // MARK: - Edge Cases
+
+    extension Memory.Allocation.Test.EdgeCase {
+        @Test
+        func `allocate large size`() throws {
+            // Allocate 1MB
+            let size = 1024 * 1024
+            let addr = try Memory.Allocation.allocate(
+                size: size,
+                protection: .readWrite
+            )
+
+            // Cleanup
             try Memory.Allocation.free(addr: addr)
         }
     }
-}
-
-// MARK: - Error Tests
-
-extension Memory.Allocation.Test.Unit {
-    @Test
-    func `Error.exhausted exists`() {
-        let error = Memory.Allocation.Error.exhausted
-        #expect(error == .exhausted)
-    }
-}
-
-// MARK: - Edge Cases
-
-extension Memory.Allocation.Test.EdgeCase {
-    @Test
-    func `allocate large size`() throws {
-        // Allocate 1MB
-        let size = 1024 * 1024
-        let addr = try Memory.Allocation.allocate(
-            size: size,
-            protection: .readWrite
-        )
-
-        // Cleanup
-        try Memory.Allocation.free(addr: addr)
-    }
-}
 
 #endif

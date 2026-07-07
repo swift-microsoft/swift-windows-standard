@@ -18,20 +18,20 @@ public import Windows_32_Core
 // MARK: - Windows.`32`.Kernel.Descriptor Veneer
 
 #if os(Windows)
-public import WinSDK
+    public import WinSDK
 
-extension Windows_32_Core.Windows.`32`.Kernel.Descriptor {
-    /// Creates a descriptor by borrowing a Windows HANDLE.
-    ///
-    /// - Parameter handle: The raw Windows HANDLE.
-    /// - Returns: A `Windows.`32`.Kernel.Descriptor` wrapping the handle.
-    public static func borrowing(handle: HANDLE) -> Self {
-        Self(_rawValue: UInt(bitPattern: handle))
-    }
+    extension Windows_32_Core.Windows.`32`.Kernel.Descriptor {
+        /// Creates a descriptor by borrowing a Windows HANDLE.
+        ///
+        /// - Parameter handle: The raw Windows HANDLE.
+        /// - Returns: A `Windows.`32`.Kernel.Descriptor` wrapping the handle.
+        public static func borrowing(handle: HANDLE) -> Self {
+            Self(_rawValue: UInt(bitPattern: handle))
+        }
 
-    /// The raw Windows HANDLE value.
-    public var handle: HANDLE {
-        HANDLE(bitPattern: _rawValue)!
+        /// The raw Windows HANDLE value.
+        public var handle: HANDLE {
+            HANDLE(bitPattern: _rawValue)!
+        }
     }
-}
 #endif

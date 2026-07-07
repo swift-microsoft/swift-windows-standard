@@ -10,109 +10,109 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Path_Primitives
-import Clock_Primitives
-import Random_Primitives
-import System_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Path_Primitives
+    import Clock_Primitives
+    import Random_Primitives
+    import System_Primitives
 
-extension Windows.`32`.Kernel.Link {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension Windows.`32`.Kernel.Link.Test.Unit {
-    @Test
-    func `Link namespace exists`() {
-        _ = Windows.`32`.Kernel.Link.self
-    }
-}
-
-// MARK: - Error Mapping Tests
-
-extension Windows.`32`.Kernel.Link.Test.Unit {
-    @Test
-    func `Error.notFound maps from FILE_NOT_FOUND`() {
-        let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.notFound)
-        if case .notFound = error {
-            // Expected
-        } else {
-            Issue.record("Expected .notFound, got \(error)")
+    extension Windows.`32`.Kernel.Link {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
         }
     }
 
-    @Test
-    func `Error.notFound maps from PATH_NOT_FOUND`() {
-        let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
-        if case .notFound = error {
-            // Expected
-        } else {
-            Issue.record("Expected .notFound, got \(error)")
+    // MARK: - Namespace Tests
+
+    extension Windows.`32`.Kernel.Link.Test.Unit {
+        @Test
+        func `Link namespace exists`() {
+            _ = Windows.`32`.Kernel.Link.self
         }
     }
 
-    @Test
-    func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.Access.denied)
-        if case .permission = error {
-            // Expected
-        } else {
-            Issue.record("Expected .permission, got \(error)")
+    // MARK: - Error Mapping Tests
+
+    extension Windows.`32`.Kernel.Link.Test.Unit {
+        @Test
+        func `Error.notFound maps from FILE_NOT_FOUND`() {
+            let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.notFound)
+            if case .notFound = error {
+                // Expected
+            } else {
+                Issue.record("Expected .notFound, got \(error)")
+            }
+        }
+
+        @Test
+        func `Error.notFound maps from PATH_NOT_FOUND`() {
+            let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
+            if case .notFound = error {
+                // Expected
+            } else {
+                Issue.record("Expected .notFound, got \(error)")
+            }
+        }
+
+        @Test
+        func `Error.permission maps from ACCESS_DENIED`() {
+            let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.Access.denied)
+            if case .permission = error {
+                // Expected
+            } else {
+                Issue.record("Expected .permission, got \(error)")
+            }
+        }
+
+        @Test
+        func `Error.exists maps from FILE_EXISTS`() {
+            let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.exists)
+            if case .exists = error {
+                // Expected
+            } else {
+                Issue.record("Expected .exists, got \(error)")
+            }
+        }
+
+        @Test
+        func `Error.noSpace maps from DISK_FULL`() {
+            let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
+            if case .noSpace = error {
+                // Expected
+            } else {
+                Issue.record("Expected .noSpace, got \(error)")
+            }
         }
     }
 
-    @Test
-    func `Error.exists maps from FILE_EXISTS`() {
-        let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.File.exists)
-        if case .exists = error {
-            // Expected
-        } else {
-            Issue.record("Expected .exists, got \(error)")
-        }
-    }
+    // MARK: - Edge Cases
 
-    @Test
-    func `Error.noSpace maps from DISK_FULL`() {
-        let error = Kernel.Link.Error.current(from: Error_Primitives.Error.Code.Storage.diskFull)
-        if case .noSpace = error {
-            // Expected
-        } else {
-            Issue.record("Expected .noSpace, got \(error)")
-        }
-    }
-}
+    extension Windows.`32`.Kernel.Link.Test.EdgeCase {
+        @Test
+        func `link to nonexistent source throws notFound`() {
+            let sourcePath = "C:\\nonexistent_source_\(GetCurrentProcessId()).tmp"
+            let linkPath = "C:\\link_\(GetCurrentProcessId()).tmp"
 
-// MARK: - Edge Cases
+            var source = Array(sourcePath.utf16) + [0]
+            var link = Array(linkPath.utf16) + [0]
 
-extension Windows.`32`.Kernel.Link.Test.EdgeCase {
-    @Test
-    func `link to nonexistent source throws notFound`() {
-        let sourcePath = "C:\\nonexistent_source_\(GetCurrentProcessId()).tmp"
-        let linkPath = "C:\\link_\(GetCurrentProcessId()).tmp"
-
-        var source = Array(sourcePath.utf16) + [0]
-        var link = Array(linkPath.utf16) + [0]
-
-        #expect(throws: Kernel.Link.Error.self) {
-            try source.withUnsafeBufferPointer { sourcePtr in
-                try link.withUnsafeBufferPointer { linkPtr in
-                    let wsource = UnsafeRawPointer(sourcePtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                    try Windows.`32`.Kernel.Link.create(source: wsource, linkPath: wlink)
+            #expect(throws: Kernel.Link.Error.self) {
+                try source.withUnsafeBufferPointer { sourcePtr in
+                    try link.withUnsafeBufferPointer { linkPtr in
+                        let wsource = UnsafeRawPointer(sourcePtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
+                        let wlink = UnsafeRawPointer(linkPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
+                        try Windows.`32`.Kernel.Link.create(source: wsource, linkPath: wlink)
+                    }
                 }
             }
         }
     }
-}
 
 #endif

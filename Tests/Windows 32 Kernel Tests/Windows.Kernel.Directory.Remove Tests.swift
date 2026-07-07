@@ -10,103 +10,103 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Path_Primitives
-import Clock_Primitives
-import Random_Primitives
-import System_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Path_Primitives
+    import Clock_Primitives
+    import Random_Primitives
+    import System_Primitives
 
-extension Windows.`32`.Kernel.Directory.Remove {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension Windows.`32`.Kernel.Directory.Remove.Test.Unit {
-    @Test
-    func `Rmdir namespace exists`() {
-        _ = Windows.`32`.Kernel.Directory.Remove.self
-    }
-}
-
-// MARK: - Error Mapping Tests
-
-extension Windows.`32`.Kernel.Directory.Remove.Test.Unit {
-    @Test
-    func `Error.notFound maps from FILE_NOT_FOUND`() {
-        let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.File.notFound)
-        if case .notFound = error {
-            // Expected
-        } else {
-            Issue.record("Expected .notFound, got \(error)")
+    extension Windows.`32`.Kernel.Directory.Remove {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
         }
     }
 
-    @Test
-    func `Error.notFound maps from PATH_NOT_FOUND`() {
-        let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
-        if case .notFound = error {
-            // Expected
-        } else {
-            Issue.record("Expected .notFound, got \(error)")
+    // MARK: - Namespace Tests
+
+    extension Windows.`32`.Kernel.Directory.Remove.Test.Unit {
+        @Test
+        func `Rmdir namespace exists`() {
+            _ = Windows.`32`.Kernel.Directory.Remove.self
         }
     }
 
-    @Test
-    func `Error.permission maps from ACCESS_DENIED`() {
-        let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.Access.denied)
-        if case .permission = error {
-            // Expected
-        } else {
-            Issue.record("Expected .permission, got \(error)")
+    // MARK: - Error Mapping Tests
+
+    extension Windows.`32`.Kernel.Directory.Remove.Test.Unit {
+        @Test
+        func `Error.notFound maps from FILE_NOT_FOUND`() {
+            let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.File.notFound)
+            if case .notFound = error {
+                // Expected
+            } else {
+                Issue.record("Expected .notFound, got \(error)")
+            }
         }
-    }
 
-    @Test
-    func `Error.notEmpty maps from DIR_NOT_EMPTY`() {
-        let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.Directory.notEmpty)
-        if case .notEmpty = error {
-            // Expected
-        } else {
-            Issue.record("Expected .notEmpty, got \(error)")
+        @Test
+        func `Error.notFound maps from PATH_NOT_FOUND`() {
+            let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.File.pathNotFound)
+            if case .notFound = error {
+                // Expected
+            } else {
+                Issue.record("Expected .notFound, got \(error)")
+            }
         }
-    }
 
-    @Test
-    func `Error.busy maps from SHARING_VIOLATION`() {
-        let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.Access.sharingViolation)
-        if case .busy = error {
-            // Expected
-        } else {
-            Issue.record("Expected .busy, got \(error)")
+        @Test
+        func `Error.permission maps from ACCESS_DENIED`() {
+            let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.Access.denied)
+            if case .permission = error {
+                // Expected
+            } else {
+                Issue.record("Expected .permission, got \(error)")
+            }
         }
-    }
-}
 
-// MARK: - Edge Cases
+        @Test
+        func `Error.notEmpty maps from DIR_NOT_EMPTY`() {
+            let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.Directory.notEmpty)
+            if case .notEmpty = error {
+                // Expected
+            } else {
+                Issue.record("Expected .notEmpty, got \(error)")
+            }
+        }
 
-extension Windows.`32`.Kernel.Directory.Remove.Test.EdgeCase {
-    @Test
-    func `rmdir on nonexistent path throws notFound`() {
-        let fakePath = "C:\\nonexistent_dir_12345_\(GetCurrentProcessId())"
-        var utf16Path = Array(fakePath.utf16) + [0]
-
-        #expect(throws: Kernel.Directory.Remove.Error.self) {
-            try utf16Path.withUnsafeBufferPointer { pathPtr in
-                let ptr = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
-                try Windows.`32`.Kernel.Directory.Remove.remove(unsafePath: ptr)
+        @Test
+        func `Error.busy maps from SHARING_VIOLATION`() {
+            let error = Kernel.Directory.Remove.Error.current(from: Error_Primitives.Error.Code.Access.sharingViolation)
+            if case .busy = error {
+                // Expected
+            } else {
+                Issue.record("Expected .busy, got \(error)")
             }
         }
     }
-}
+
+    // MARK: - Edge Cases
+
+    extension Windows.`32`.Kernel.Directory.Remove.Test.EdgeCase {
+        @Test
+        func `rmdir on nonexistent path throws notFound`() {
+            let fakePath = "C:\\nonexistent_dir_12345_\(GetCurrentProcessId())"
+            var utf16Path = Array(fakePath.utf16) + [0]
+
+            #expect(throws: Kernel.Directory.Remove.Error.self) {
+                try utf16Path.withUnsafeBufferPointer { pathPtr in
+                    let ptr = UnsafeRawPointer(pathPtr.baseAddress!).assumingMemoryBound(to: UInt16.self)
+                    try Windows.`32`.Kernel.Directory.Remove.remove(unsafePath: ptr)
+                }
+            }
+        }
+    }
 
 #endif

@@ -9,8 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-public import Windows_32_Core
 public import Loader_Primitives
+public import Windows_32_Core
 
 extension Windows_32_Core.Windows {
     /// Windows dynamic loader mechanisms.

@@ -1,6 +1,6 @@
-@_exported public import Windows_32_Kernel_Core
 @_exported public import Windows_32_Kernel_Clock
 @_exported public import Windows_32_Kernel_Console
+@_exported public import Windows_32_Kernel_Core
 @_exported public import Windows_32_Kernel_Directory
 @_exported public import Windows_32_Kernel_Environment
 @_exported public import Windows_32_Kernel_File

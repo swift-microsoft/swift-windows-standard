@@ -9,263 +9,263 @@
 //
 // ===----------------------------------------------------------------------===//
 
-internal import Windows_32_Core
 internal import Error_Primitives
 internal import Path_Primitives
 internal import Random_Primitives
 internal import System_Primitives
+internal import Windows_32_Core
 
 #if os(Windows)
-public import WinSDK
+    public import WinSDK
 
-extension Windows_32_Core.Windows.File {
-    /// Windows-specific file metadata including creation time.
-    ///
-    /// This type extends the cross-platform `Windows.`32`.Kernel.File.Stats` with Windows-specific
-    /// fields like `creationTime` that are always available on Windows.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// import Windows_32_Kernel
-    ///
-    /// let stats = try Windows.File.Stats.get(path: "C:\\data.txt")
-    /// print("Created: \(stats.creationTime)")  // Non-optional, always available on Windows
-    /// print("Size: \(stats.base.size)")
-    /// ```
-    ///
-    /// ## See Also
-    ///
-    /// - ``Kernel/File/Stats`` for cross-platform file stats
-    public struct Stats: Sendable, Equatable {
-        /// The cross-platform file stats.
-        public let base: Windows.`32`.Kernel.File.Stats
-
-        /// File creation time.
+    extension Windows_32_Core.Windows.File {
+        /// Windows-specific file metadata including creation time.
         ///
-        /// This is always available on Windows systems as `ftCreationTime`.
-        /// On other platforms, use the platform-specific package or omit this field.
-        public let creationTime: Windows.`32`.Kernel.Time
+        /// This type extends the cross-platform `Windows.`32`.Kernel.File.Stats` with Windows-specific
+        /// fields like `creationTime` that are always available on Windows.
+        ///
+        /// ## Usage
+        ///
+        /// ```swift
+        /// import Windows_32_Kernel
+        ///
+        /// let stats = try Windows.File.Stats.get(path: "C:\\data.txt")
+        /// print("Created: \(stats.creationTime)")  // Non-optional, always available on Windows
+        /// print("Size: \(stats.base.size)")
+        /// ```
+        ///
+        /// ## See Also
+        ///
+        /// - ``Kernel/File/Stats`` for cross-platform file stats
+        public struct Stats: Sendable, Equatable {
+            /// The cross-platform file stats.
+            public let base: Windows.`32`.Kernel.File.Stats
 
-        /// Creates Windows file stats.
+            /// File creation time.
+            ///
+            /// This is always available on Windows systems as `ftCreationTime`.
+            /// On other platforms, use the platform-specific package or omit this field.
+            public let creationTime: Windows.`32`.Kernel.Time
+
+            /// Creates Windows file stats.
+            @inlinable
+            public init(base: Windows.`32`.Kernel.File.Stats, creationTime: Windows.`32`.Kernel.Time) {
+                self.base = base
+                self.creationTime = creationTime
+            }
+        }
+    }
+
+    // MARK: - Convenience accessors
+
+    extension Windows_32_Core.Windows.File.Stats {
+        /// File size in bytes.
         @inlinable
-        public init(base: Windows.`32`.Kernel.File.Stats, creationTime: Windows.`32`.Kernel.Time) {
-            self.base = base
-            self.creationTime = creationTime
-        }
-    }
-}
+        public var size: Windows.`32`.Kernel.File.Size { base.size }
 
-// MARK: - Convenience accessors
+        /// File type (regular, directory, symlink, etc.).
+        @inlinable
+        public var type: Windows.`32`.Kernel.File.Stats.Kind { base.type }
 
-extension Windows_32_Core.Windows.File.Stats {
-    /// File size in bytes.
-    @inlinable
-    public var size: Windows.`32`.Kernel.File.Size { base.size }
+        /// POSIX file permissions (synthesized from Windows attributes).
+        @inlinable
+        public var permissions: Windows.`32`.Kernel.File.Permissions { base.permissions }
 
-    /// File type (regular, directory, symlink, etc.).
-    @inlinable
-    public var type: Windows.`32`.Kernel.File.Stats.Kind { base.type }
+        /// Owner user ID (always 0 on Windows).
+        @inlinable
+        public var uid: Windows.`32`.Kernel.User.ID { base.uid }
 
-    /// POSIX file permissions (synthesized from Windows attributes).
-    @inlinable
-    public var permissions: Windows.`32`.Kernel.File.Permissions { base.permissions }
+        /// Owner group ID (always 0 on Windows).
+        @inlinable
+        public var gid: Windows.`32`.Kernel.Group.ID { base.gid }
 
-    /// Owner user ID (always 0 on Windows).
-    @inlinable
-    public var uid: Windows.`32`.Kernel.User.ID { base.uid }
+        /// Inode number (synthesized from file ID).
+        @inlinable
+        public var inode: Windows.`32`.Kernel.Inode { base.inode }
 
-    /// Owner group ID (always 0 on Windows).
-    @inlinable
-    public var gid: Windows.`32`.Kernel.Group.ID { base.gid }
+        /// Device ID (from volume serial number).
+        @inlinable
+        public var device: Windows.`32`.Kernel.Device { base.device }
 
-    /// Inode number (synthesized from file ID).
-    @inlinable
-    public var inode: Windows.`32`.Kernel.Inode { base.inode }
+        /// Number of hard links.
+        @inlinable
+        public var linkCount: Windows.`32`.Kernel.Link.Count { base.linkCount }
 
-    /// Device ID (from volume serial number).
-    @inlinable
-    public var device: Windows.`32`.Kernel.Device { base.device }
+        /// Last access time.
+        @inlinable
+        public var accessTime: Windows.`32`.Kernel.Time { base.accessTime }
 
-    /// Number of hard links.
-    @inlinable
-    public var linkCount: Windows.`32`.Kernel.Link.Count { base.linkCount }
+        /// Last modification time.
+        @inlinable
+        public var modificationTime: Windows.`32`.Kernel.Time { base.modificationTime }
 
-    /// Last access time.
-    @inlinable
-    public var accessTime: Windows.`32`.Kernel.Time { base.accessTime }
-
-    /// Last modification time.
-    @inlinable
-    public var modificationTime: Windows.`32`.Kernel.Time { base.modificationTime }
-
-    /// Status change time (same as modification time on Windows).
-    @inlinable
-    public var changeTime: Windows.`32`.Kernel.Time { base.changeTime }
-}
-
-// MARK: - Get operations
-
-extension Windows_32_Core.Windows.File.Stats {
-    /// Error type for Windows file stats operations.
-    public typealias Error = Windows.`32`.Kernel.File.Stats.Error
-
-    /// Gets Windows-specific file metadata for a path (follows symlinks).
-    ///
-    /// - Parameter path: The path to stat.
-    /// - Returns: Windows file metadata including creation time.
-    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func get(path: borrowing Path) throws(Error) -> Self {
-        try unsafe path.view.withUnsafePointer { ptr throws(Error) in
-            try get(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
-        }
+        /// Status change time (same as modification time on Windows).
+        @inlinable
+        public var changeTime: Windows.`32`.Kernel.Time { base.changeTime }
     }
 
-    /// Gets Windows-specific file metadata for a path using a wide string.
-    ///
-    /// - Parameter path: The path as a wide string.
-    /// - Returns: Windows file metadata including creation time.
-    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+    // MARK: - Get operations
+
+    extension Windows_32_Core.Windows.File.Stats {
+        /// Error type for Windows file stats operations.
+        public typealias Error = Windows.`32`.Kernel.File.Stats.Error
+
+        /// Gets Windows-specific file metadata for a path (follows symlinks).
+        ///
+        /// - Parameter path: The path to stat.
+        /// - Returns: Windows file metadata including creation time.
+        /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+        public static func get(path: borrowing Path) throws(Error) -> Self {
+            try unsafe path.view.withUnsafePointer { ptr throws(Error) in
+                try get(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
+            }
+        }
+
+        /// Gets Windows-specific file metadata for a path using a wide string.
+        ///
+        /// - Parameter path: The path as a wide string.
+        /// - Returns: Windows file metadata including creation time.
+        /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
         package static func get(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
-        let handle = CreateFileW(
-            path,
-            DWORD(FILE_READ_ATTRIBUTES),
-            DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE),
-            nil,
-            DWORD(OPEN_EXISTING),
-            DWORD(FILE_FLAG_BACKUP_SEMANTICS),
-            nil
-        )
-        guard handle != INVALID_HANDLE_VALUE else {
-            throw Error(_windowsError: GetLastError())
-        }
-        defer { CloseHandle(handle) }
+            let handle = CreateFileW(
+                path,
+                DWORD(FILE_READ_ATTRIBUTES),
+                DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE),
+                nil,
+                DWORD(OPEN_EXISTING),
+                DWORD(FILE_FLAG_BACKUP_SEMANTICS),
+                nil
+            )
+            guard handle != INVALID_HANDLE_VALUE else {
+                throw Error(_windowsError: GetLastError())
+            }
+            defer { CloseHandle(handle) }
 
-        var info = BY_HANDLE_FILE_INFORMATION()
-        guard GetFileInformationByHandle(handle, &info) else {
-            throw Error(_windowsError: GetLastError())
+            var info = BY_HANDLE_FILE_INFORMATION()
+            guard GetFileInformationByHandle(handle, &info) else {
+                throw Error(_windowsError: GetLastError())
+            }
+            return Self(_from: info)
         }
-        return Self(_from: info)
-    }
 
-    /// Gets Windows-specific file metadata for a path without following symlinks.
-    ///
-    /// - Parameter path: The path to stat.
-    /// - Returns: Windows file metadata including creation time.
-    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func lget(path: borrowing Path) throws(Error) -> Self {
-        try unsafe path.view.withUnsafePointer { ptr throws(Error) in
-            try lget(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
+        /// Gets Windows-specific file metadata for a path without following symlinks.
+        ///
+        /// - Parameter path: The path to stat.
+        /// - Returns: Windows file metadata including creation time.
+        /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+        public static func lget(path: borrowing Path) throws(Error) -> Self {
+            try unsafe path.view.withUnsafePointer { ptr throws(Error) in
+                try lget(path: UnsafeRawPointer(ptr).assumingMemoryBound(to: WCHAR.self))
+            }
         }
-    }
 
-    /// Gets Windows-specific file metadata for a path using a wide string without following symlinks.
-    ///
-    /// - Parameter path: The path as a wide string.
-    /// - Returns: Windows file metadata including creation time.
-    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+        /// Gets Windows-specific file metadata for a path using a wide string without following symlinks.
+        ///
+        /// - Parameter path: The path as a wide string.
+        /// - Returns: Windows file metadata including creation time.
+        /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
         package static func lget(path: UnsafePointer<WCHAR>) throws(Error) -> Self {
-        let handle = CreateFileW(
-            path,
-            DWORD(FILE_READ_ATTRIBUTES),
-            DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE),
-            nil,
-            DWORD(OPEN_EXISTING),
-            DWORD(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT),
-            nil
-        )
-        guard handle != INVALID_HANDLE_VALUE else {
-            throw Error(_windowsError: GetLastError())
-        }
-        defer { CloseHandle(handle) }
+            let handle = CreateFileW(
+                path,
+                DWORD(FILE_READ_ATTRIBUTES),
+                DWORD(FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE),
+                nil,
+                DWORD(OPEN_EXISTING),
+                DWORD(FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OPEN_REPARSE_POINT),
+                nil
+            )
+            guard handle != INVALID_HANDLE_VALUE else {
+                throw Error(_windowsError: GetLastError())
+            }
+            defer { CloseHandle(handle) }
 
-        var info = BY_HANDLE_FILE_INFORMATION()
-        guard GetFileInformationByHandle(handle, &info) else {
-            throw Error(_windowsError: GetLastError())
+            var info = BY_HANDLE_FILE_INFORMATION()
+            guard GetFileInformationByHandle(handle, &info) else {
+                throw Error(_windowsError: GetLastError())
+            }
+            return Self(_from: info)
         }
-        return Self(_from: info)
-    }
 
-    /// Gets Windows-specific file metadata for a HANDLE bit pattern.
-    ///
-    /// Spec-literal raw `GetFileInformationByHandle`. The typed L2
-    /// convenience (`get(descriptor:)` taking `Windows.`32`.Kernel.Descriptor`) delegates
-    /// to this raw SPI internally via `descriptor._rawValue`.
-    ///
-    /// - Parameter handle: HANDLE bit pattern.
-    /// - Returns: Windows file metadata including creation time.
-    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+        /// Gets Windows-specific file metadata for a HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `GetFileInformationByHandle`. The typed L2
+        /// convenience (`get(descriptor:)` taking `Windows.`32`.Kernel.Descriptor`) delegates
+        /// to this raw SPI internally via `descriptor._rawValue`.
+        ///
+        /// - Parameter handle: HANDLE bit pattern.
+        /// - Returns: Windows file metadata including creation time.
+        /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
         package static func get(handle: UInt) throws(Error) -> Self {
-        var info = BY_HANDLE_FILE_INFORMATION()
-        guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
-            throw Error(_windowsError: GetLastError())
+            var info = BY_HANDLE_FILE_INFORMATION()
+            guard GetFileInformationByHandle(UnsafeMutableRawPointer(bitPattern: handle)!, &info) else {
+                throw Error(_windowsError: GetLastError())
+            }
+            return Self(_from: info)
         }
-        return Self(_from: info)
-    }
 
-    /// Gets Windows-specific file metadata for an open file descriptor.
-    ///
-    /// Typed L2 form. Delegates to the raw `get(handle:)` SPI via
-    /// `descriptor._rawValue`.
-    ///
-    /// - Parameter descriptor: The file descriptor to stat.
-    /// - Returns: Windows file metadata including creation time.
-    /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
-    public static func get(descriptor: borrowing Windows.`32`.Kernel.Descriptor) throws(Error) -> Self {
-        try get(handle: descriptor._rawValue)
-    }
-}
-
-// MARK: - Internal construction
-
-extension Windows_32_Core.Windows.File.Stats {
-    /// Creates Windows file stats from a BY_HANDLE_FILE_INFORMATION structure.
-    ///
-    /// The POSIX-mirror fields are synthesized by the kernel
-    /// `Stats(_from:)`; this adapter adds the Windows-native creation time.
-    internal init(_from info: BY_HANDLE_FILE_INFORMATION) {
-        self.init(
-            base: Windows.`32`.Kernel.File.Stats(_from: info),
-            creationTime: Instant(_from: info.ftCreationTime)
-        )
-    }
-}
-
-// MARK: - Error extension for Windows error
-
-extension Windows.`32`.Kernel.File.Stats.Error {
-    /// Creates an error from a Windows error code.
-    internal init(_windowsError error: DWORD) {
-        let errorCode = Error_Primitives.Error.Code.win32(error)
-        if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: errorCode) {
-            self = .handle(e)
-            return
+        /// Gets Windows-specific file metadata for an open file descriptor.
+        ///
+        /// Typed L2 form. Delegates to the raw `get(handle:)` SPI via
+        /// `descriptor._rawValue`.
+        ///
+        /// - Parameter descriptor: The file descriptor to stat.
+        /// - Returns: Windows file metadata including creation time.
+        /// - Throws: ``Kernel/File/Stats/Error`` if the syscall fails.
+        public static func get(descriptor: borrowing Windows.`32`.Kernel.Descriptor) throws(Error) -> Self {
+            try get(handle: descriptor._rawValue)
         }
-        self = .platform(Error_Primitives.Error(code: errorCode))
     }
-}
 
-// MARK: - Instant from FILETIME
+    // MARK: - Internal construction
 
-extension Instant {
-    /// Creates an instant from a Windows FILETIME.
-    ///
-    /// FILETIME is 100-nanosecond intervals since January 1, 1601.
-    /// We convert to Unix epoch (January 1, 1970).
-    internal init(_from ft: FILETIME) {
-        // FILETIME to 100-nanosecond intervals
-        let intervals = (Int64(ft.dwHighDateTime) << 32) | Int64(ft.dwLowDateTime)
-        // Offset between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
-        let epochOffset: Int64 = 116_444_736_000_000_000
-        let unixIntervals = intervals - epochOffset
-        let seconds = unixIntervals / 10_000_000
-        let nanoseconds = Int32((unixIntervals % 10_000_000) * 100)
-        self.init(
-            _unchecked: (),
-            secondsSinceUnixEpoch: seconds,
-            nanosecondFraction: nanoseconds
-        )
+    extension Windows_32_Core.Windows.File.Stats {
+        /// Creates Windows file stats from a BY_HANDLE_FILE_INFORMATION structure.
+        ///
+        /// The POSIX-mirror fields are synthesized by the kernel
+        /// `Stats(_from:)`; this adapter adds the Windows-native creation time.
+        internal init(_from info: BY_HANDLE_FILE_INFORMATION) {
+            self.init(
+                base: Windows.`32`.Kernel.File.Stats(_from: info),
+                creationTime: Instant(_from: info.ftCreationTime)
+            )
+        }
     }
-}
+
+    // MARK: - Error extension for Windows error
+
+    extension Windows.`32`.Kernel.File.Stats.Error {
+        /// Creates an error from a Windows error code.
+        internal init(_windowsError error: DWORD) {
+            let errorCode = Error_Primitives.Error.Code.win32(error)
+            if let e = Windows.`32`.Kernel.Descriptor.Validity.Error(code: errorCode) {
+                self = .handle(e)
+                return
+            }
+            self = .platform(Error_Primitives.Error(code: errorCode))
+        }
+    }
+
+    // MARK: - Instant from FILETIME
+
+    extension Instant {
+        /// Creates an instant from a Windows FILETIME.
+        ///
+        /// FILETIME is 100-nanosecond intervals since January 1, 1601.
+        /// We convert to Unix epoch (January 1, 1970).
+        internal init(_from ft: FILETIME) {
+            // FILETIME to 100-nanosecond intervals
+            let intervals = (Int64(ft.dwHighDateTime) << 32) | Int64(ft.dwLowDateTime)
+            // Offset between Windows epoch (1601) and Unix epoch (1970) in 100-ns intervals
+            let epochOffset: Int64 = 116_444_736_000_000_000
+            let unixIntervals = intervals - epochOffset
+            let seconds = unixIntervals / 10_000_000
+            let nanoseconds = Int32((unixIntervals % 10_000_000) * 100)
+            self.init(
+                _unchecked: (),
+                secondsSinceUnixEpoch: seconds,
+                nanosecondFraction: nanoseconds
+            )
+        }
+    }
 
 #endif

@@ -11,13 +11,13 @@
 
 #if os(Windows)
 
-// MARK: - Windows Error Code Mapping
+    // MARK: - Windows Error Code Mapping
 
-extension Windows.`32`.Kernel.Socket.Shutdown.Error {
-    /// Creates an error from a Windows error code.
-    @usableFromInline
-    internal init(code: Error_Primitives.Error.Code) {
-        self = .platform(Error_Primitives.Error(code: code))
+    extension Windows.`32`.Kernel.Socket.Shutdown.Error {
+        /// Creates an error from a Windows error code.
+        @usableFromInline
+        internal init(code: Error_Primitives.Error.Code) {
+            self = .platform(Error_Primitives.Error(code: code))
+        }
     }
-}
 #endif

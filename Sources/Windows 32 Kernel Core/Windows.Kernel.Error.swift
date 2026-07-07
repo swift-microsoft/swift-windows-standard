@@ -10,127 +10,127 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import Error_Primitives
-public import WinSDK
+    public import Error_Primitives
+    public import WinSDK
 
-extension Error_Primitives.Error {
-    /// Captures current Win32 last error as a `Error_Primitives.Error.Code`.
-    ///
-    /// Must be called immediately after a failing Win32 API call, before any other API call.
-    ///
-    /// ## Usage
-    ///
-    /// ```swift
-    /// let handle = CreateFileW(...)
-    /// guard handle != INVALID_HANDLE_VALUE else {
-    ///     throw SomeError(code: Error_Primitives.Error.captureLastError())
-    /// }
-    /// ```
-    @inlinable
-    public static func captureLastError() -> Error_Primitives.Error.Code {
-        .win32(GetLastError())
+    extension Error_Primitives.Error {
+        /// Captures current Win32 last error as a `Error_Primitives.Error.Code`.
+        ///
+        /// Must be called immediately after a failing Win32 API call, before any other API call.
+        ///
+        /// ## Usage
+        ///
+        /// ```swift
+        /// let handle = CreateFileW(...)
+        /// guard handle != INVALID_HANDLE_VALUE else {
+        ///     throw SomeError(code: Error_Primitives.Error.captureLastError())
+        /// }
+        /// ```
+        @inlinable
+        public static func captureLastError() -> Error_Primitives.Error.Code {
+            .win32(GetLastError())
+        }
     }
-}
 
-// MARK: - Common Win32 Error Code Constants
+    // MARK: - Common Win32 Error Code Constants
 
-// Win32 error-code constants grouped by category. These EXTEND the canonical
-// `Error_Primitives.Error.Code` with nested namespaces; a previous version
-// redeclared `enum Code` here, which collided with the base `Error.Code`
-// ("ambiguous type name 'Code' in 'Error'").
-extension Error_Primitives.Error.Code {
-    /// File/path errors.
-    public enum File {}
+    // Win32 error-code constants grouped by category. These EXTEND the canonical
+    // `Error_Primitives.Error.Code` with nested namespaces; a previous version
+    // redeclared `enum Code` here, which collided with the base `Error.Code`
+    // ("ambiguous type name 'Code' in 'Error'").
+    extension Error_Primitives.Error.Code {
+        /// File/path errors.
+        public enum File {}
 
-    /// Access/permission errors.
-    public enum Access {}
+        /// Access/permission errors.
+        public enum Access {}
 
-    /// Handle errors.
-    public enum Handle {}
+        /// Handle errors.
+        public enum Handle {}
 
-    /// Storage errors.
-    public enum Storage {}
+        /// Storage errors.
+        public enum Storage {}
 
-    /// I/O errors.
-    public enum IO {}
+        /// I/O errors.
+        public enum IO {}
 
-    /// Directory errors.
-    public enum Directory {}
+        /// Directory errors.
+        public enum Directory {}
 
-    /// General errors.
-    public enum General {}
-}
+        /// General errors.
+        public enum General {}
+    }
 
-extension Error_Primitives.Error.Code.File {
-    /// The system cannot find the file specified.
-    public static let notFound: UInt32 = UInt32(ERROR_FILE_NOT_FOUND)
+    extension Error_Primitives.Error.Code.File {
+        /// The system cannot find the file specified.
+        public static let notFound: UInt32 = UInt32(ERROR_FILE_NOT_FOUND)
 
-    /// The system cannot find the path specified.
-    public static let pathNotFound: UInt32 = UInt32(ERROR_PATH_NOT_FOUND)
+        /// The system cannot find the path specified.
+        public static let pathNotFound: UInt32 = UInt32(ERROR_PATH_NOT_FOUND)
 
-    /// The file exists.
-    public static let exists: UInt32 = UInt32(ERROR_FILE_EXISTS)
+        /// The file exists.
+        public static let exists: UInt32 = UInt32(ERROR_FILE_EXISTS)
 
-    /// Cannot create a file when that file already exists.
-    public static let alreadyExists: UInt32 = UInt32(ERROR_ALREADY_EXISTS)
-}
+        /// Cannot create a file when that file already exists.
+        public static let alreadyExists: UInt32 = UInt32(ERROR_ALREADY_EXISTS)
+    }
 
-extension Error_Primitives.Error.Code.Access {
-    /// Access is denied.
-    public static let denied: UInt32 = UInt32(ERROR_ACCESS_DENIED)
+    extension Error_Primitives.Error.Code.Access {
+        /// Access is denied.
+        public static let denied: UInt32 = UInt32(ERROR_ACCESS_DENIED)
 
-    /// The process cannot access the file because it is being used by another process.
-    public static let sharingViolation: UInt32 = UInt32(ERROR_SHARING_VIOLATION)
+        /// The process cannot access the file because it is being used by another process.
+        public static let sharingViolation: UInt32 = UInt32(ERROR_SHARING_VIOLATION)
 
-    /// The process cannot access the file because another process has locked a portion of the file.
-    public static let lockViolation: UInt32 = UInt32(ERROR_LOCK_VIOLATION)
-}
+        /// The process cannot access the file because another process has locked a portion of the file.
+        public static let lockViolation: UInt32 = UInt32(ERROR_LOCK_VIOLATION)
+    }
 
-extension Error_Primitives.Error.Code.Handle {
-    /// The handle is invalid.
-    public static let invalid: UInt32 = UInt32(ERROR_INVALID_HANDLE)
-}
+    extension Error_Primitives.Error.Code.Handle {
+        /// The handle is invalid.
+        public static let invalid: UInt32 = UInt32(ERROR_INVALID_HANDLE)
+    }
 
-extension Error_Primitives.Error.Code.Storage {
-    /// There is not enough space on the disk.
-    public static let diskFull: UInt32 = UInt32(ERROR_DISK_FULL)
+    extension Error_Primitives.Error.Code.Storage {
+        /// There is not enough space on the disk.
+        public static let diskFull: UInt32 = UInt32(ERROR_DISK_FULL)
 
-    /// The disk is full.
-    public static let handleDiskFull: UInt32 = UInt32(ERROR_HANDLE_DISK_FULL)
-}
+        /// The disk is full.
+        public static let handleDiskFull: UInt32 = UInt32(ERROR_HANDLE_DISK_FULL)
+    }
 
-extension Error_Primitives.Error.Code.IO {
-    /// The I/O operation has been aborted because of either a thread exit or an application request.
-    public static let pending: UInt32 = UInt32(ERROR_IO_PENDING)
+    extension Error_Primitives.Error.Code.IO {
+        /// The I/O operation has been aborted because of either a thread exit or an application request.
+        public static let pending: UInt32 = UInt32(ERROR_IO_PENDING)
 
-    /// Reached the end of the file.
-    public static let handleEOF: UInt32 = UInt32(ERROR_HANDLE_EOF)
+        /// Reached the end of the file.
+        public static let handleEOF: UInt32 = UInt32(ERROR_HANDLE_EOF)
 
-    /// The pipe has been ended.
-    public static let brokenPipe: UInt32 = UInt32(ERROR_BROKEN_PIPE)
+        /// The pipe has been ended.
+        public static let brokenPipe: UInt32 = UInt32(ERROR_BROKEN_PIPE)
 
-    /// No more data is available.
-    public static let noData: UInt32 = UInt32(ERROR_NO_DATA)
-}
+        /// No more data is available.
+        public static let noData: UInt32 = UInt32(ERROR_NO_DATA)
+    }
 
-extension Error_Primitives.Error.Code.Directory {
-    /// The directory is not empty.
-    public static let notEmpty: UInt32 = UInt32(ERROR_DIR_NOT_EMPTY)
+    extension Error_Primitives.Error.Code.Directory {
+        /// The directory is not empty.
+        public static let notEmpty: UInt32 = UInt32(ERROR_DIR_NOT_EMPTY)
 
-    /// The directory name is invalid — the path is not a directory
-    /// (`ERROR_DIRECTORY`, 267).
-    public static let invalidName: UInt32 = UInt32(ERROR_DIRECTORY)
-}
+        /// The directory name is invalid — the path is not a directory
+        /// (`ERROR_DIRECTORY`, 267).
+        public static let invalidName: UInt32 = UInt32(ERROR_DIRECTORY)
+    }
 
-extension Error_Primitives.Error.Code.General {
-    /// The parameter is incorrect.
-    public static let invalidParameter: UInt32 = UInt32(ERROR_INVALID_PARAMETER)
+    extension Error_Primitives.Error.Code.General {
+        /// The parameter is incorrect.
+        public static let invalidParameter: UInt32 = UInt32(ERROR_INVALID_PARAMETER)
 
-    /// Not enough memory resources are available to process this command.
-    public static let notEnoughMemory: UInt32 = UInt32(ERROR_NOT_ENOUGH_MEMORY)
+        /// Not enough memory resources are available to process this command.
+        public static let notEnoughMemory: UInt32 = UInt32(ERROR_NOT_ENOUGH_MEMORY)
 
-    /// The operation completed successfully.
-    public static let success: UInt32 = UInt32(ERROR_SUCCESS)
-}
+        /// The operation completed successfully.
+        public static let success: UInt32 = UInt32(ERROR_SUCCESS)
+    }
 
 #endif

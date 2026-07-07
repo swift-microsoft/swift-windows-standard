@@ -10,112 +10,112 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Path_Primitives
-import Clock_Primitives
-import Random_Primitives
-import System_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Path_Primitives
+    import Clock_Primitives
+    import Random_Primitives
+    import System_Primitives
 
-extension Error_Primitives.Error {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension Error_Primitives.Error.Test.Unit {
-    @Test
-    func `Error_Primitives.Error namespace exists`() {
-        _ = Error_Primitives.Error.self
+    extension Error_Primitives.Error {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
+        }
     }
 
-    @Test
-    func `Error_Primitives.Error.Code type exists`() {
-        _ = Error_Primitives.Error.Code.self
-    }
-}
+    // MARK: - Namespace Tests
 
-// MARK: - Capture Tests
+    extension Error_Primitives.Error.Test.Unit {
+        @Test
+        func `Error_Primitives.Error namespace exists`() {
+            _ = Error_Primitives.Error.self
+        }
 
-extension Error_Primitives.Error.Test.Unit {
-    @Test
-    func `captureLastError returns Code`() {
-        // Set a known error
-        SetLastError(DWORD(ERROR_FILE_NOT_FOUND))
-
-        let code = Error_Primitives.Error.captureLastError()
-        #expect(code.win32 == Error_Primitives.Error.Code.File.notFound)
+        @Test
+        func `Error_Primitives.Error.Code type exists`() {
+            _ = Error_Primitives.Error.Code.self
+        }
     }
 
-    @Test
-    func `captureLastError with no error returns success`() {
-        SetLastError(0)  // ERROR_SUCCESS
+    // MARK: - Capture Tests
 
-        let code = Error_Primitives.Error.captureLastError()
-        #expect(code.win32 == 0)
-    }
-}
+    extension Error_Primitives.Error.Test.Unit {
+        @Test
+        func `captureLastError returns Code`() {
+            // Set a known error
+            SetLastError(DWORD(ERROR_FILE_NOT_FOUND))
 
-// MARK: - Error Code Constants Tests
+            let code = Error_Primitives.Error.captureLastError()
+            #expect(code.win32 == Error_Primitives.Error.Code.File.notFound)
+        }
 
-extension Error_Primitives.Error.Test.Unit {
-    @Test
-    func `Code.File.notFound exists`() {
-        let code = Error_Primitives.Error.Code.File.notFound
-        #expect(code == DWORD(ERROR_FILE_NOT_FOUND))
-    }
+        @Test
+        func `captureLastError with no error returns success`() {
+            SetLastError(0)  // ERROR_SUCCESS
 
-    @Test
-    func `Code.File.pathNotFound exists`() {
-        let code = Error_Primitives.Error.Code.File.pathNotFound
-        #expect(code == DWORD(ERROR_PATH_NOT_FOUND))
+            let code = Error_Primitives.Error.captureLastError()
+            #expect(code.win32 == 0)
+        }
     }
 
-    @Test
-    func `Code.Access.denied exists`() {
-        let code = Error_Primitives.Error.Code.Access.denied
-        #expect(code == DWORD(ERROR_ACCESS_DENIED))
+    // MARK: - Error Code Constants Tests
+
+    extension Error_Primitives.Error.Test.Unit {
+        @Test
+        func `Code.File.notFound exists`() {
+            let code = Error_Primitives.Error.Code.File.notFound
+            #expect(code == DWORD(ERROR_FILE_NOT_FOUND))
+        }
+
+        @Test
+        func `Code.File.pathNotFound exists`() {
+            let code = Error_Primitives.Error.Code.File.pathNotFound
+            #expect(code == DWORD(ERROR_PATH_NOT_FOUND))
+        }
+
+        @Test
+        func `Code.Access.denied exists`() {
+            let code = Error_Primitives.Error.Code.Access.denied
+            #expect(code == DWORD(ERROR_ACCESS_DENIED))
+        }
+
+        @Test
+        func `Code.Handle.invalid exists`() {
+            let code = Error_Primitives.Error.Code.Handle.invalid
+            #expect(code == DWORD(ERROR_INVALID_HANDLE))
+        }
     }
 
-    @Test
-    func `Code.Handle.invalid exists`() {
-        let code = Error_Primitives.Error.Code.Handle.invalid
-        #expect(code == DWORD(ERROR_INVALID_HANDLE))
+    // MARK: - Error Code Conversion Tests
+
+    extension Error_Primitives.Error.Test.Unit {
+        @Test
+        func `Code.win32 creates correct code`() {
+            let code = Error_Primitives.Error.Code.win32(DWORD(ERROR_FILE_NOT_FOUND))
+            #expect(code.win32 == DWORD(ERROR_FILE_NOT_FOUND))
+        }
     }
-}
 
-// MARK: - Error Code Conversion Tests
+    // MARK: - Edge Cases
 
-extension Error_Primitives.Error.Test.Unit {
-    @Test
-    func `Code.win32 creates correct code`() {
-        let code = Error_Primitives.Error.Code.win32(DWORD(ERROR_FILE_NOT_FOUND))
-        #expect(code.win32 == DWORD(ERROR_FILE_NOT_FOUND))
+    extension Error_Primitives.Error.Test.EdgeCase {
+        @Test
+        func `captureLastError is non-destructive`() {
+            SetLastError(DWORD(ERROR_ACCESS_DENIED))
+
+            let code1 = Error_Primitives.Error.captureLastError()
+            let code2 = GetLastError()
+
+            // GetLastError should still return the same value
+            // (captureLastError doesn't reset it)
+            #expect(code1.win32 == code2)
+        }
     }
-}
-
-// MARK: - Edge Cases
-
-extension Error_Primitives.Error.Test.EdgeCase {
-    @Test
-    func `captureLastError is non-destructive`() {
-        SetLastError(DWORD(ERROR_ACCESS_DENIED))
-
-        let code1 = Error_Primitives.Error.captureLastError()
-        let code2 = GetLastError()
-
-        // GetLastError should still return the same value
-        // (captureLastError doesn't reset it)
-        #expect(code1.win32 == code2)
-    }
-}
 
 #endif

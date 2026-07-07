@@ -10,208 +10,210 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import Error_Primitives
-public import Memory_Primitives
-public import WinSDK
+    public import Error_Primitives
+    public import Memory_Primitives
+    public import WinSDK
 
-// MARK: - Windows Memory Mapping (raw @_spi(Syscall))
+    // MARK: - Windows Memory Mapping (raw @_spi(Syscall))
 
-extension Memory.Map {
-    /// Maps a file into the process address space via HANDLE bit pattern.
-    ///
-    /// Spec-literal raw `CreateFileMappingW + MapViewOfFile`. The typed L2
-    /// convenience (`map(fd:length:protection:flags:offset:)` taking
-    /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
-    /// `descriptor._rawValue`.
-    ///
-    /// Windows memory mapping requires two steps:
-    /// 1. CreateFileMappingW to create a file mapping object
-    /// 2. MapViewOfFile to map a view of that object
-    ///
-    /// - Parameters:
-    ///   - handle: HANDLE bit pattern.
-    ///   - length: Number of bytes to map (must be > 0).
-    ///   - protection: Memory protection flags.
-    ///   - flags: Mapping flags (shared/private).
-    ///   - offset: Offset into the file.
-    /// - Returns: Pointer to the mapped region.
-    /// - Throws: `Error.map` on failure.
+    extension Memory.Map {
+        /// Maps a file into the process address space via HANDLE bit pattern.
+        ///
+        /// Spec-literal raw `CreateFileMappingW + MapViewOfFile`. The typed L2
+        /// convenience (`map(fd:length:protection:flags:offset:)` taking
+        /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
+        /// `descriptor._rawValue`.
+        ///
+        /// Windows memory mapping requires two steps:
+        /// 1. CreateFileMappingW to create a file mapping object
+        /// 2. MapViewOfFile to map a view of that object
+        ///
+        /// - Parameters:
+        ///   - handle: HANDLE bit pattern.
+        ///   - length: Number of bytes to map (must be > 0).
+        ///   - protection: Memory protection flags.
+        ///   - flags: Mapping flags (shared/private).
+        ///   - offset: Offset into the file.
+        /// - Returns: Pointer to the mapped region.
+        /// - Throws: `Error.map` on failure.
         package static func map(
-        fd handle: UInt,
-        length: Memory.Address.Count,
-        protection: Protection,
-        flags: Options,
-        offset: Windows.`32`.Kernel.File.Offset = .zero
-    ) throws(Memory.Map.Error) -> Memory.Address {
-        guard length.underlying.rawValue > 0 else {
-            throw .invalid(.length)
+            fd handle: UInt,
+            length: Memory.Address.Count,
+            protection: Protection,
+            flags: Options,
+            offset: Windows.`32`.Kernel.File.Offset = .zero
+        ) throws(Memory.Map.Error) -> Memory.Address {
+            guard length.underlying.rawValue > 0 else {
+                throw .invalid(.length)
+            }
+
+            // Create file mapping object
+            let fileMappingProtect = protection.windowsFileMapProtect
+            let mappingHandle = CreateFileMappingW(
+                UnsafeMutableRawPointer(bitPattern: handle)!,
+                nil,
+                fileMappingProtect,
+                DWORD((offset.underlying + Int64(length.underlying.rawValue)) >> 32),
+                DWORD((offset.underlying + Int64(length.underlying.rawValue)) & 0xFFFF_FFFF),
+                nil
+            )
+
+            guard let mappingHandle, mappingHandle != INVALID_HANDLE_VALUE else {
+                throw .map(Error_Primitives.Error.captureLastError())
+            }
+
+            // Map view of file
+            let desiredAccess = protection.windowsMapViewAccess
+            let baseAddress = MapViewOfFile(
+                mappingHandle,
+                desiredAccess,
+                DWORD(offset.underlying >> 32),
+                DWORD(offset.underlying & 0xFFFF_FFFF),
+                SIZE_T(length.underlying.rawValue)
+            )
+
+            // Capture MapViewOfFile's failure error BEFORE CloseHandle runs —
+            // CloseHandle overwrites the thread-local last-error, so reading it
+            // after the close (as the previous code did) reported the close's
+            // error, not the map's.
+            let mapError = Error_Primitives.Error.captureLastError()
+
+            // Close the mapping handle - the view keeps it alive
+            _ = CloseHandle(mappingHandle)
+
+            guard let baseAddress else {
+                throw .map(mapError)
+            }
+
+            return unsafe Memory.Address(baseAddress)
         }
 
-        // Create file mapping object
-        let fileMappingProtect = protection.windowsFileMapProtect
-        let mappingHandle = CreateFileMappingW(
-            UnsafeMutableRawPointer(bitPattern: handle)!,
-            nil,
-            fileMappingProtect,
-            DWORD((offset.underlying + Int64(length.underlying.rawValue)) >> 32),
-            DWORD((offset.underlying + Int64(length.underlying.rawValue)) & 0xFFFFFFFF),
-            nil
-        )
-
-        guard let mappingHandle, mappingHandle != INVALID_HANDLE_VALUE else {
-            throw .map(Error_Primitives.Error.captureLastError())
+        /// Maps a file into the process address space.
+        ///
+        /// Typed L2 form. Delegates to the raw `map(fd:length:protection:flags:offset:)`
+        /// SPI via `descriptor._rawValue`.
+        ///
+        /// - Parameters:
+        ///   - fd: The file descriptor to map.
+        ///   - length: Number of bytes to map (must be > 0).
+        ///   - protection: Memory protection flags.
+        ///   - flags: Mapping flags (shared/private).
+        ///   - offset: Offset into the file.
+        /// - Returns: Pointer to the mapped region.
+        /// - Throws: `Error.map` on failure.
+        public static func map(
+            fd: borrowing Windows.`32`.Kernel.Descriptor,
+            length: Memory.Address.Count,
+            protection: Protection,
+            flags: Options,
+            offset: Windows.`32`.Kernel.File.Offset = .zero
+        ) throws(Memory.Map.Error) -> Memory.Address {
+            try map(
+                fd: fd._rawValue,
+                length: length,
+                protection: protection,
+                flags: flags,
+                offset: offset
+            )
         }
 
-        // Map view of file
-        let desiredAccess = protection.windowsMapViewAccess
-        let baseAddress = MapViewOfFile(
-            mappingHandle,
-            desiredAccess,
-            DWORD(offset.underlying >> 32),
-            DWORD(offset.underlying & 0xFFFFFFFF),
-            SIZE_T(length.underlying.rawValue)
-        )
+        /// Maps anonymous memory.
+        ///
+        /// Uses VirtualAlloc for anonymous memory allocations.
+        ///
+        /// - Parameters:
+        ///   - addr: Suggested address, or `nil` for system to choose.
+        ///   - length: Number of bytes to map (must be > 0).
+        ///   - protection: Memory protection flags.
+        /// - Returns: Pointer to the mapped region.
+        /// - Throws: `Error.map` on failure.
+        public static func mapAnonymous(
+            addr: Memory.Address? = nil,
+            length: Memory.Address.Count,
+            protection: Protection
+        ) throws(Memory.Map.Error) -> Memory.Address {
+            guard length.underlying.rawValue > 0 else {
+                throw .invalid(.length)
+            }
 
-        // Capture MapViewOfFile's failure error BEFORE CloseHandle runs —
-        // CloseHandle overwrites the thread-local last-error, so reading it
-        // after the close (as the previous code did) reported the close's
-        // error, not the map's.
-        let mapError = Error_Primitives.Error.captureLastError()
+            let allocationType = DWORD(MEM_COMMIT | MEM_RESERVE)
+            let result = unsafe VirtualAlloc(
+                addr?.mutablePointer,
+                SIZE_T(length.underlying.rawValue),
+                allocationType,
+                protection.windowsVirtualProtect
+            )
 
-        // Close the mapping handle - the view keeps it alive
-        _ = CloseHandle(mappingHandle)
+            guard let result else {
+                throw .map(Error_Primitives.Error.captureLastError())
+            }
 
-        guard let baseAddress else {
-            throw .map(mapError)
+            return unsafe Memory.Address(result)
         }
 
-        return unsafe Memory.Address(baseAddress)
+        /// Unmaps a previously mapped region.
+        ///
+        /// - Parameters:
+        ///   - addr: The base address of the mapping.
+        ///   - length: The length of the mapping (ignored on Windows for file mappings).
+        ///   - isAnonymous: True if this was an anonymous mapping (VirtualAlloc).
+        /// - Throws: `Error.unmap` on failure.
+        public static func unmap(
+            addr: Memory.Address,
+            length: Memory.Address.Count,
+            isAnonymous: Bool = false
+        ) throws(Memory.Map.Error) {
+            let success: Bool
+            if isAnonymous {
+                success = unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE))
+            } else {
+                success = unsafe UnmapViewOfFile(addr.pointer)
+            }
+
+            guard success else {
+                throw .unmap(Error_Primitives.Error.captureLastError())
+            }
+        }
+
+        /// Synchronizes a mapped file region to disk.
+        ///
+        /// - Parameters:
+        ///   - addr: The base address of the region.
+        ///   - length: The length of the region.
+        /// - Throws: `Error.sync` on failure.
+        public static func sync(
+            addr: Memory.Address,
+            length: Memory.Address.Count
+        ) throws(Memory.Map.Error) {
+            guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.underlying.rawValue)) else {
+                throw .sync(Error_Primitives.Error.captureLastError())
+            }
+        }
+
+        /// Changes the protection on a memory region.
+        ///
+        /// - Parameters:
+        ///   - addr: The base address (must be page-aligned).
+        ///   - length: The length of the region.
+        ///   - protection: The new protection flags.
+        /// - Throws: `Error.protect` on failure.
+        public static func protect(
+            addr: Memory.Address,
+            length: Memory.Address.Count,
+            protection: Protection
+        ) throws(Memory.Map.Error) {
+            var oldProtect: DWORD = 0
+            guard
+                unsafe VirtualProtect(
+                    addr.mutablePointer,
+                    SIZE_T(length.underlying.rawValue),
+                    protection.windowsVirtualProtect,
+                    &oldProtect
+                )
+            else {
+                throw .protect(Error_Primitives.Error.captureLastError())
+            }
+        }
     }
-
-    /// Maps a file into the process address space.
-    ///
-    /// Typed L2 form. Delegates to the raw `map(fd:length:protection:flags:offset:)`
-    /// SPI via `descriptor._rawValue`.
-    ///
-    /// - Parameters:
-    ///   - fd: The file descriptor to map.
-    ///   - length: Number of bytes to map (must be > 0).
-    ///   - protection: Memory protection flags.
-    ///   - flags: Mapping flags (shared/private).
-    ///   - offset: Offset into the file.
-    /// - Returns: Pointer to the mapped region.
-    /// - Throws: `Error.map` on failure.
-    public static func map(
-        fd: borrowing Windows.`32`.Kernel.Descriptor,
-        length: Memory.Address.Count,
-        protection: Protection,
-        flags: Options,
-        offset: Windows.`32`.Kernel.File.Offset = .zero
-    ) throws(Memory.Map.Error) -> Memory.Address {
-        try map(
-            fd: fd._rawValue,
-            length: length,
-            protection: protection,
-            flags: flags,
-            offset: offset
-        )
-    }
-
-    /// Maps anonymous memory.
-    ///
-    /// Uses VirtualAlloc for anonymous memory allocations.
-    ///
-    /// - Parameters:
-    ///   - addr: Suggested address, or `nil` for system to choose.
-    ///   - length: Number of bytes to map (must be > 0).
-    ///   - protection: Memory protection flags.
-    /// - Returns: Pointer to the mapped region.
-    /// - Throws: `Error.map` on failure.
-    public static func mapAnonymous(
-        addr: Memory.Address? = nil,
-        length: Memory.Address.Count,
-        protection: Protection
-    ) throws(Memory.Map.Error) -> Memory.Address {
-        guard length.underlying.rawValue > 0 else {
-            throw .invalid(.length)
-        }
-
-        let allocationType = DWORD(MEM_COMMIT | MEM_RESERVE)
-        let result = unsafe VirtualAlloc(
-            addr?.mutablePointer,
-            SIZE_T(length.underlying.rawValue),
-            allocationType,
-            protection.windowsVirtualProtect
-        )
-
-        guard let result else {
-            throw .map(Error_Primitives.Error.captureLastError())
-        }
-
-        return unsafe Memory.Address(result)
-    }
-
-    /// Unmaps a previously mapped region.
-    ///
-    /// - Parameters:
-    ///   - addr: The base address of the mapping.
-    ///   - length: The length of the mapping (ignored on Windows for file mappings).
-    ///   - isAnonymous: True if this was an anonymous mapping (VirtualAlloc).
-    /// - Throws: `Error.unmap` on failure.
-    public static func unmap(
-        addr: Memory.Address,
-        length: Memory.Address.Count,
-        isAnonymous: Bool = false
-    ) throws(Memory.Map.Error) {
-        let success: Bool
-        if isAnonymous {
-            success = unsafe VirtualFree(addr.mutablePointer, 0, DWORD(MEM_RELEASE))
-        } else {
-            success = unsafe UnmapViewOfFile(addr.pointer)
-        }
-
-        guard success else {
-            throw .unmap(Error_Primitives.Error.captureLastError())
-        }
-    }
-
-    /// Synchronizes a mapped file region to disk.
-    ///
-    /// - Parameters:
-    ///   - addr: The base address of the region.
-    ///   - length: The length of the region.
-    /// - Throws: `Error.sync` on failure.
-    public static func sync(
-        addr: Memory.Address,
-        length: Memory.Address.Count
-    ) throws(Memory.Map.Error) {
-        guard unsafe FlushViewOfFile(addr.pointer, SIZE_T(length.underlying.rawValue)) else {
-            throw .sync(Error_Primitives.Error.captureLastError())
-        }
-    }
-
-    /// Changes the protection on a memory region.
-    ///
-    /// - Parameters:
-    ///   - addr: The base address (must be page-aligned).
-    ///   - length: The length of the region.
-    ///   - protection: The new protection flags.
-    /// - Throws: `Error.protect` on failure.
-    public static func protect(
-        addr: Memory.Address,
-        length: Memory.Address.Count,
-        protection: Protection
-    ) throws(Memory.Map.Error) {
-        var oldProtect: DWORD = 0
-        guard unsafe VirtualProtect(
-            addr.mutablePointer,
-            SIZE_T(length.underlying.rawValue),
-            protection.windowsVirtualProtect,
-            &oldProtect
-        ) else {
-            throw .protect(Error_Primitives.Error.captureLastError())
-        }
-    }
-}
 
 #endif

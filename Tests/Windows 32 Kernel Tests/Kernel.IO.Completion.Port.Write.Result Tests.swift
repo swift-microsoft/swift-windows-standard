@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import Testing
+    import Testing
 
     @testable import Windows_32_Kernel
     import Error_Primitives

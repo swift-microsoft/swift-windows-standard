@@ -11,16 +11,16 @@
 
 #if os(Windows)
 
-// MARK: - Windows Error Code Mapping
+    // MARK: - Windows Error Code Mapping
 
-extension Windows.`32`.Kernel.Directory.Working.Error {
-    /// Creates an error from a Windows error code.
-    package init(code: Error_Primitives.Error.Code) {
-        if let e = Path.Resolution.Error(code: code) {
-            self = .path(e)
-            return
+    extension Windows.`32`.Kernel.Directory.Working.Error {
+        /// Creates an error from a Windows error code.
+        package init(code: Error_Primitives.Error.Code) {
+            if let e = Path.Resolution.Error(code: code) {
+                self = .path(e)
+                return
+            }
+            self = .platform(Error_Primitives.Error(code: code))
         }
-        self = .platform(Error_Primitives.Error(code: code))
     }
-}
 #endif

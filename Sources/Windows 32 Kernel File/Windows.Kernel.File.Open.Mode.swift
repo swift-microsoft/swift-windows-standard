@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import WinSDK
+    public import WinSDK
 #endif
 
 // MARK: - File Open Mode
@@ -58,22 +58,22 @@ extension Windows.`32`.Kernel.File.Open.Mode {
 
 #if os(Windows)
 
-extension Windows.`32`.Kernel.File.Open.Mode {
-    /// Converts the mode to Windows desired access flags.
-    ///
-    /// Maps the portable `Mode` flags to Win32 `GENERIC_READ` and `GENERIC_WRITE`.
-    package var windowsDesiredAccess: DWORD {
-        var access: DWORD = 0
+    extension Windows.`32`.Kernel.File.Open.Mode {
+        /// Converts the mode to Windows desired access flags.
+        ///
+        /// Maps the portable `Mode` flags to Win32 `GENERIC_READ` and `GENERIC_WRITE`.
+        package var windowsDesiredAccess: DWORD {
+            var access: DWORD = 0
 
-        if read {
-            access |= DWORD(GENERIC_READ)
-        }
-        if write {
-            access |= DWORD(GENERIC_WRITE)
-        }
+            if read {
+                access |= DWORD(GENERIC_READ)
+            }
+            if write {
+                access |= DWORD(GENERIC_WRITE)
+            }
 
-        return access
+            return access
+        }
     }
-}
 
 #endif

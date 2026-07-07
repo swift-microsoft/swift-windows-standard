@@ -10,8 +10,9 @@
 // ===----------------------------------------------------------------------===//
 
 public import Windows_32_Core
+
 #if os(Windows)
-import CWindowsMemoryShim
+    import CWindowsMemoryShim
 #endif
 
 extension Windows.Memory.Allocation {
@@ -51,14 +52,14 @@ extension Windows.Memory.Allocation.Statistics {
     /// - Returns: Current allocation statistics.
     public static func capture() -> Self {
         #if os(Windows)
-        let stats = windows_heap_statistics()
-        return Self(
-            allocations: Int(stats.allocations),
-            deallocations: Int(stats.deallocations),
-            bytesAllocated: Int(stats.bytes_allocated)
-        )
+            let stats = windows_heap_statistics()
+            return Self(
+                allocations: Int(stats.allocations),
+                deallocations: Int(stats.deallocations),
+                bytesAllocated: Int(stats.bytes_allocated)
+            )
         #else
-        return Self()
+            return Self()
         #endif
     }
 }

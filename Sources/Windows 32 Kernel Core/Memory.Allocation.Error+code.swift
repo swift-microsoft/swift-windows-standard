@@ -13,30 +13,30 @@
 // in Error_Primitives only on Windows.
 #if os(Windows)
 
-public import Error_Primitives
-public import Memory_Allocation_Primitives
+    public import Error_Primitives
+    public import Memory_Allocation_Primitives
 
-// MARK: - Win32 Error Code Mapping
+    // MARK: - Win32 Error Code Mapping
 
-// Mirrors `ISO 9945.Memory.Allocation.Error+code.swift` (POSIX maps ENOMEM);
-// consumed by swift-kernel's `Kernel.Failure.init?(_:)` domain cascade.
+    // Mirrors `ISO 9945.Memory.Allocation.Error+code.swift` (POSIX maps ENOMEM);
+    // consumed by swift-kernel's `Kernel.Failure.init?(_:)` domain cascade.
 
-extension Memory.Allocation.Error {
-    /// Creates an allocation error from a Win32 error code, if applicable.
-    ///
-    /// Returns `nil` if the code does not map to a memory allocation failure.
-    ///
-    /// - Parameter code: The platform error code.
-    @inlinable
-    public init?(code: Error_Primitives.Error.Code) {
-        switch code {
-        case .Windows.ERROR_NOT_ENOUGH_MEMORY,
-             .win32(14):  // ERROR_OUTOFMEMORY (no named constant yet)
-            self = .exhausted
-        default:
-            return nil
+    extension Memory.Allocation.Error {
+        /// Creates an allocation error from a Win32 error code, if applicable.
+        ///
+        /// Returns `nil` if the code does not map to a memory allocation failure.
+        ///
+        /// - Parameter code: The platform error code.
+        @inlinable
+        public init?(code: Error_Primitives.Error.Code) {
+            switch code {
+            case .Windows.ERROR_NOT_ENOUGH_MEMORY,
+                .win32(14):  // ERROR_OUTOFMEMORY (no named constant yet)
+                self = .exhausted
+            default:
+                return nil
+            }
         }
     }
-}
 
 #endif

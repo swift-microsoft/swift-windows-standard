@@ -11,12 +11,12 @@
 
 #if os(Windows)
 
-@testable import Windows_32_Kernel
+    @testable import Windows_32_Kernel
 
-/// Test-module shorthand for the L2 spec namespace.
-///
-/// Bare `Kernel` is reserved for the L3 unifier ([PLAT-ARCH-008k]); inside
-/// this test module it is a private convenience, not API surface.
-typealias Kernel = Windows.`32`.Kernel
+    /// Test-module shorthand for the L2 spec namespace.
+    ///
+    /// Bare `Kernel` is reserved for the L3 unifier ([PLAT-ARCH-008k]); inside
+    /// this test module it is a private convenience, not API surface.
+    typealias Kernel = Windows.`32`.Kernel
 
 #endif

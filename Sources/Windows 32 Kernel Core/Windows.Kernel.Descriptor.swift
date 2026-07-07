@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-internal import WinSDK
+    internal import WinSDK
 #endif
 
 extension Windows.`32`.Kernel {
@@ -40,8 +40,8 @@ extension Windows.`32`.Kernel {
         deinit {
             guard isValid else { return }
             #if os(Windows)
-            guard let pointer = UnsafeMutableRawPointer(bitPattern: _raw) else { return }
-            _ = unsafe CloseHandle(pointer)
+                guard let pointer = UnsafeMutableRawPointer(bitPattern: _raw) else { return }
+                _ = unsafe CloseHandle(pointer)
             #endif
         }
     }

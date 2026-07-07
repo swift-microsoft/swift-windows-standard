@@ -9,9 +9,8 @@
 //
 // ===----------------------------------------------------------------------===//
 
-
 #if os(Windows)
-internal import WinSDK
+    internal import WinSDK
 #endif
 
 // MARK: - Windows CloseHandle — spec-literal raw
@@ -35,12 +34,12 @@ extension Windows.`32`.Kernel.Close {
     ///   `GetLastError` to inspect the error code).
     internal static func close(_ handle: UInt) -> Bool {
         #if os(Windows)
-        guard let pointer = UnsafeMutableRawPointer(bitPattern: handle) else {
-            return false
-        }
-        return CloseHandle(pointer)
+            guard let pointer = UnsafeMutableRawPointer(bitPattern: handle) else {
+                return false
+            }
+            return CloseHandle(pointer)
         #else
-        return false
+            return false
         #endif
     }
 }

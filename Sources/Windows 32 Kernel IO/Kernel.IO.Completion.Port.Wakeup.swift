@@ -44,58 +44,58 @@
 // without depending on the absent `Kernel.Event` surface.
 
 #if os(Windows)
-public import WinSDK
+    public import WinSDK
 
-extension Windows.`32`.Kernel.IO.Completion.Port {
-    /// Creates a Sendable signal closure for cross-thread IOCP interruption.
-    ///
-    /// Captures the port's raw HANDLE bit pattern into a `@Sendable` closure
-    /// that, when invoked from any thread, posts a sentinel completion packet
-    /// via `PostQueuedCompletionStatus` (0 bytes transferred, 0 completion
-    /// key, NULL OVERLAPPED). Threads blocked in `GetQueuedCompletionStatus`
-    /// or `GetQueuedCompletionStatusEx` will wake and observe the sentinel
-    /// packet, allowing graceful shutdown.
-    ///
-    /// L3 consumers wrap the returned closure into
-    /// `Kernel.Wakeup.Channel(signal:)` at the site of use; the closure
-    /// carries the raw HANDLE capture so L3 callers never see `_rawValue`
-    /// (typed-everywhere discipline per [PLAT-ARCH-008j]).
-    ///
-    /// ## Sentinel pattern
-    ///
-    /// The returned closure posts `(bytes: 0, key: 0, overlapped: nil)` —
-    /// the canonical Win32 IOCP shutdown idiom. Consumers must distinguish
-    /// shutdown packets from real completions by checking for this sentinel
-    /// shape (e.g., a NULL `lpOverlapped` field).
-    ///
-    /// ## Errors
-    ///
-    /// Construction never throws — IOCP wakeup requires no per-port
-    /// registration (unlike epoll's `EPOLL_CTL_ADD`-on-eventfd or kqueue's
-    /// `EV_ADD` on `EVFILT_USER`). Errors during signal invocation
-    /// (e.g., `ERROR_INVALID_HANDLE` if the port was closed during
-    /// shutdown) are silently suppressed inside the closure, matching
-    /// the `EBADF`/`ENOENT` suppression in
-    /// `ISO_9945.Kernel.Event.Queue.wakeup()`.
-    ///
-    /// - Parameter port: The completion port handle.
-    /// - Returns: A `@Sendable` signal closure.
-    @unsafe
-    @inlinable
-    public static func wakeup(
-        _ port: borrowing Windows.`32`.Kernel.Descriptor
-    ) -> @Sendable () -> Void {
-        let rawPort = port._rawValue
-        return {
-            _ = unsafe PostQueuedCompletionStatus(
-                UnsafeMutableRawPointer(bitPattern: rawPort)!,
-                0,    // dwNumberOfBytesTransferred — sentinel
-                0,    // dwCompletionKey — sentinel
-                nil   // lpOverlapped — sentinel
-            )
-            // Errors during shutdown ignored — benign if port already closed.
+    extension Windows.`32`.Kernel.IO.Completion.Port {
+        /// Creates a Sendable signal closure for cross-thread IOCP interruption.
+        ///
+        /// Captures the port's raw HANDLE bit pattern into a `@Sendable` closure
+        /// that, when invoked from any thread, posts a sentinel completion packet
+        /// via `PostQueuedCompletionStatus` (0 bytes transferred, 0 completion
+        /// key, NULL OVERLAPPED). Threads blocked in `GetQueuedCompletionStatus`
+        /// or `GetQueuedCompletionStatusEx` will wake and observe the sentinel
+        /// packet, allowing graceful shutdown.
+        ///
+        /// L3 consumers wrap the returned closure into
+        /// `Kernel.Wakeup.Channel(signal:)` at the site of use; the closure
+        /// carries the raw HANDLE capture so L3 callers never see `_rawValue`
+        /// (typed-everywhere discipline per [PLAT-ARCH-008j]).
+        ///
+        /// ## Sentinel pattern
+        ///
+        /// The returned closure posts `(bytes: 0, key: 0, overlapped: nil)` —
+        /// the canonical Win32 IOCP shutdown idiom. Consumers must distinguish
+        /// shutdown packets from real completions by checking for this sentinel
+        /// shape (e.g., a NULL `lpOverlapped` field).
+        ///
+        /// ## Errors
+        ///
+        /// Construction never throws — IOCP wakeup requires no per-port
+        /// registration (unlike epoll's `EPOLL_CTL_ADD`-on-eventfd or kqueue's
+        /// `EV_ADD` on `EVFILT_USER`). Errors during signal invocation
+        /// (e.g., `ERROR_INVALID_HANDLE` if the port was closed during
+        /// shutdown) are silently suppressed inside the closure, matching
+        /// the `EBADF`/`ENOENT` suppression in
+        /// `ISO_9945.Kernel.Event.Queue.wakeup()`.
+        ///
+        /// - Parameter port: The completion port handle.
+        /// - Returns: A `@Sendable` signal closure.
+        @unsafe
+        @inlinable
+        public static func wakeup(
+            _ port: borrowing Windows.`32`.Kernel.Descriptor
+        ) -> @Sendable () -> Void {
+            let rawPort = port._rawValue
+            return {
+                _ = unsafe PostQueuedCompletionStatus(
+                    UnsafeMutableRawPointer(bitPattern: rawPort)!,
+                    0,  // dwNumberOfBytesTransferred — sentinel
+                    0,  // dwCompletionKey — sentinel
+                    nil  // lpOverlapped — sentinel
+                )
+                // Errors during shutdown ignored — benign if port already closed.
+            }
         }
     }
-}
 
 #endif

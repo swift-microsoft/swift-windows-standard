@@ -39,19 +39,19 @@ extension Windows.`32`.Kernel.Environment.Error {
 // Windows-only: `Permission.Error(code:)` maps Win32 constants that
 // Error_Primitives declares only on Windows.
 #if os(Windows)
-extension Windows.`32`.Kernel.Environment.Error {
-    /// Creates an error from a canonical error code.
-    ///
-    /// Maps permission codes to the semantic `permission` case; everything
-    /// else lands in `platform`.
-    public init(code: Error_Primitives.Error.Code) {
-        if let permission = Windows.`32`.Kernel.Permission.Error(code: code) {
-            self = .permission(permission)
-        } else {
-            self = .platform(Error_Primitives.Error(code: code))
+    extension Windows.`32`.Kernel.Environment.Error {
+        /// Creates an error from a canonical error code.
+        ///
+        /// Maps permission codes to the semantic `permission` case; everything
+        /// else lands in `platform`.
+        public init(code: Error_Primitives.Error.Code) {
+            if let permission = Windows.`32`.Kernel.Permission.Error(code: code) {
+                self = .permission(permission)
+            } else {
+                self = .platform(Error_Primitives.Error(code: code))
+            }
         }
     }
-}
 #endif
 
 // MARK: - Equatable

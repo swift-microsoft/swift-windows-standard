@@ -10,134 +10,134 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-import WinSDK
-import Testing
+    import WinSDK
+    import Testing
 
-@testable import Windows_32_Kernel
-import Error_Primitives
-import Path_Primitives
-import Clock_Primitives
-import Random_Primitives
-import System_Primitives
+    @testable import Windows_32_Kernel
+    import Error_Primitives
+    import Path_Primitives
+    import Clock_Primitives
+    import Random_Primitives
+    import System_Primitives
 
-extension System {
-    enum Test {
-        @Suite struct Unit {}
-        @Suite struct EdgeCase {}
-        @Suite struct Integration {}
-        @Suite(.serialized) struct Performance {}
-    }
-}
-
-// MARK: - Namespace Tests
-
-extension System.Test.Unit {
-    @Test
-    func `System namespace exists`() {
-        _ = System.self
-    }
-}
-
-// MARK: - Path Max Tests
-
-extension System.Test.Unit {
-    @Test
-    func `pathMax returns MAX_PATH`() {
-        let pathMax = System.pathMax
-        #expect(pathMax.underlying == 260)  // MAX_PATH
-    }
-}
-
-// MARK: - Page Size Tests
-
-extension System.Test.Unit {
-    @Test
-    func `pageSize returns positive value`() {
-        let pageSize = System.pageSize
-        #expect(pageSize.underlying > 0)
+    extension System {
+        enum Test {
+            @Suite struct Unit {}
+            @Suite struct EdgeCase {}
+            @Suite struct Integration {}
+            @Suite(.serialized) struct Performance {}
+        }
     }
 
-    @Test
-    func `pageSize is typically 4096`() {
-        let pageSize = System.pageSize
-        // Common values are 4096 or higher
-        #expect(pageSize.underlying >= 4096)
-        #expect(pageSize.underlying <= 65536)
+    // MARK: - Namespace Tests
+
+    extension System.Test.Unit {
+        @Test
+        func `System namespace exists`() {
+            _ = System.self
+        }
     }
 
-    @Test
-    func `pageSize is power of 2`() {
-        let pageSize = System.pageSize
-        let value = pageSize.underlying.rawValue
-        #expect(value > 0 && (value & (value - 1)) == 0)
-    }
-}
+    // MARK: - Path Max Tests
 
-// MARK: - Processor Count Tests
-
-extension System.Test.Unit {
-    @Test
-    func `processorCount returns positive value`() {
-        let count = System.processorCount
-        #expect(count.underlying > 0)
+    extension System.Test.Unit {
+        @Test
+        func `pathMax returns MAX_PATH`() {
+            let pathMax = System.pathMax
+            #expect(pathMax.underlying == 260)  // MAX_PATH
+        }
     }
 
-    @Test
-    func `processorCount is reasonable`() {
-        let count = System.processorCount
-        // Modern systems have at least 1, rarely more than 256
-        #expect(count.underlying >= 1)
-        #expect(count.underlying <= 1024)
+    // MARK: - Page Size Tests
+
+    extension System.Test.Unit {
+        @Test
+        func `pageSize returns positive value`() {
+            let pageSize = System.pageSize
+            #expect(pageSize.underlying > 0)
+        }
+
+        @Test
+        func `pageSize is typically 4096`() {
+            let pageSize = System.pageSize
+            // Common values are 4096 or higher
+            #expect(pageSize.underlying >= 4096)
+            #expect(pageSize.underlying <= 65536)
+        }
+
+        @Test
+        func `pageSize is power of 2`() {
+            let pageSize = System.pageSize
+            let value = pageSize.underlying.rawValue
+            #expect(value > 0 && (value & (value - 1)) == 0)
+        }
     }
 
-    @Test
-    func `processorCount matches GetSystemInfo`() {
-        var sysInfo = SYSTEM_INFO()
-        GetSystemInfo(&sysInfo)
+    // MARK: - Processor Count Tests
 
-        let count = System.processorCount
-        #expect(count.underlying.rawValue == UInt(sysInfo.dwNumberOfProcessors))
-    }
-}
+    extension System.Test.Unit {
+        @Test
+        func `processorCount returns positive value`() {
+            let count = System.processorCount
+            #expect(count.underlying > 0)
+        }
 
-// MARK: - Sleep Tests
+        @Test
+        func `processorCount is reasonable`() {
+            let count = System.processorCount
+            // Modern systems have at least 1, rarely more than 256
+            #expect(count.underlying >= 1)
+            #expect(count.underlying <= 1024)
+        }
 
-extension System.Test.Unit {
-    @Test
-    func `sleep completes`() {
-        let start = GetTickCount64()
-        System.sleep(.milliseconds(10))
-        let elapsed = GetTickCount64() - start
-        // Should have slept at least ~9ms (allowing for timing)
-        #expect(elapsed >= 9)
-    }
+        @Test
+        func `processorCount matches GetSystemInfo`() {
+            var sysInfo = SYSTEM_INFO()
+            GetSystemInfo(&sysInfo)
 
-    @Test
-    func `sleep zero completes immediately`() {
-        let start = GetTickCount64()
-        System.sleep(.zero)
-        let elapsed = GetTickCount64() - start
-        // Should complete quickly (< 100ms)
-        #expect(elapsed < 100)
-    }
-}
-
-// MARK: - Edge Cases
-
-extension System.Test.EdgeCase {
-    @Test
-    func `pageSize is consistent`() {
-        let size1 = System.pageSize
-        let size2 = System.pageSize
-        #expect(size1.underlying == size2.underlying)
+            let count = System.processorCount
+            #expect(count.underlying.rawValue == UInt(sysInfo.dwNumberOfProcessors))
+        }
     }
 
-    @Test
-    func `processorCount is consistent`() {
-        let count1 = System.processorCount
-        let count2 = System.processorCount
-        #expect(count1.underlying == count2.underlying)
+    // MARK: - Sleep Tests
+
+    extension System.Test.Unit {
+        @Test
+        func `sleep completes`() {
+            let start = GetTickCount64()
+            System.sleep(.milliseconds(10))
+            let elapsed = GetTickCount64() - start
+            // Should have slept at least ~9ms (allowing for timing)
+            #expect(elapsed >= 9)
+        }
+
+        @Test
+        func `sleep zero completes immediately`() {
+            let start = GetTickCount64()
+            System.sleep(.zero)
+            let elapsed = GetTickCount64() - start
+            // Should complete quickly (< 100ms)
+            #expect(elapsed < 100)
+        }
     }
-}
+
+    // MARK: - Edge Cases
+
+    extension System.Test.EdgeCase {
+        @Test
+        func `pageSize is consistent`() {
+            let size1 = System.pageSize
+            let size2 = System.pageSize
+            #expect(size1.underlying == size2.underlying)
+        }
+
+        @Test
+        func `processorCount is consistent`() {
+            let count1 = System.processorCount
+            let count2 = System.processorCount
+            #expect(count1.underlying == count2.underlying)
+        }
+    }
 
 #endif

@@ -10,7 +10,7 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-internal import WinSDK
+    internal import WinSDK
 #endif
 
 extension Windows.`32`.Kernel {
@@ -36,12 +36,12 @@ extension Windows.`32`.Kernel.Close {
         descriptor._raw = ~0
 
         #if os(Windows)
-        guard let pointer = UnsafeMutableRawPointer(bitPattern: raw) else {
-            throw .handle(.invalid)
-        }
-        guard unsafe CloseHandle(pointer) else {
-            throw .platform(Error_Primitives.Error(code: .win32(GetLastError())))
-        }
+            guard let pointer = UnsafeMutableRawPointer(bitPattern: raw) else {
+                throw .handle(.invalid)
+            }
+            guard unsafe CloseHandle(pointer) else {
+                throw .platform(Error_Primitives.Error(code: .win32(GetLastError())))
+            }
         #endif
     }
 }

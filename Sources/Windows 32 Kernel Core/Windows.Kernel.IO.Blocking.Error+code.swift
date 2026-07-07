@@ -11,18 +11,18 @@
 
 #if os(Windows)
 
-// MARK: - Windows Error Code Mapping
-//
-// Windows has no analogue of POSIX `EAGAIN` for non-blocking I/O on synchronous
-// handles — overlapped I/O surfaces "would block" via different mechanisms. The
-// Windows mapping therefore returns `nil` for all codes; the cascade callers
-// fall through to the next sub-mapper.
+    // MARK: - Windows Error Code Mapping
+    //
+    // Windows has no analogue of POSIX `EAGAIN` for non-blocking I/O on synchronous
+    // handles — overlapped I/O surfaces "would block" via different mechanisms. The
+    // Windows mapping therefore returns `nil` for all codes; the cascade callers
+    // fall through to the next sub-mapper.
 
-extension Windows.`32`.Kernel.IO.Blocking.Error {
-    /// Always returns `nil` on Windows.
-    @inlinable
-    public init?(code: Error_Primitives.Error.Code) {
-        return nil
+    extension Windows.`32`.Kernel.IO.Blocking.Error {
+        /// Always returns `nil` on Windows.
+        @inlinable
+        public init?(code: Error_Primitives.Error.Code) {
+            return nil
+        }
     }
-}
 #endif

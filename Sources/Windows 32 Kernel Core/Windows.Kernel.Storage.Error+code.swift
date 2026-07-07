@@ -11,23 +11,23 @@
 
 #if os(Windows)
 
-// MARK: - Windows Error Code Mapping
+    // MARK: - Windows Error Code Mapping
 
-extension Windows.`32`.Kernel.Storage.Error {
-    /// Creates an error from a Windows error code, if applicable.
-    ///
-    /// Returns `nil` if the error code doesn't map to a storage error.
-    ///
-    /// - Parameter code: The platform error code.
-    /// - Returns: A storage error, or `nil` if not applicable.
-    @inlinable
-    public init?(code: Error_Primitives.Error.Code) {
-        switch code {
-        case .Windows.ERROR_DISK_FULL:
-            self = .exhausted
-        default:
-            return nil
+    extension Windows.`32`.Kernel.Storage.Error {
+        /// Creates an error from a Windows error code, if applicable.
+        ///
+        /// Returns `nil` if the error code doesn't map to a storage error.
+        ///
+        /// - Parameter code: The platform error code.
+        /// - Returns: A storage error, or `nil` if not applicable.
+        @inlinable
+        public init?(code: Error_Primitives.Error.Code) {
+            switch code {
+            case .Windows.ERROR_DISK_FULL:
+                self = .exhausted
+            default:
+                return nil
+            }
         }
     }
-}
 #endif

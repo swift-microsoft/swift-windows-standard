@@ -11,16 +11,16 @@
 
 #if os(Windows)
 
-// MARK: - Windows Translation from Syscall
+    // MARK: - Windows Translation from Syscall
 
-extension Windows.`32`.Kernel.File.Direct.Error {
-    /// Maps a Windows error code to a semantic error.
-    @usableFromInline
-    internal init(code: Error_Primitives.Error.Code, operation: Operation) {
-        // Windows: most direct-IO errors surface as ERROR_INVALID_PARAMETER (87)
-        // or ERROR_NOT_SUPPORTED (50). Without a clean POSIX-style mapping,
-        // route Windows codes to .platform.
-        self = .platform(code: code, operation: operation)
+    extension Windows.`32`.Kernel.File.Direct.Error {
+        /// Maps a Windows error code to a semantic error.
+        @usableFromInline
+        internal init(code: Error_Primitives.Error.Code, operation: Operation) {
+            // Windows: most direct-IO errors surface as ERROR_INVALID_PARAMETER (87)
+            // or ERROR_NOT_SUPPORTED (50). Without a clean POSIX-style mapping,
+            // route Windows codes to .platform.
+            self = .platform(code: code, operation: operation)
+        }
     }
-}
 #endif

@@ -11,16 +11,16 @@
 
 #if os(Windows)
 
-// MARK: - Windows Error Code Access
+    // MARK: - Windows Error Code Access
 
-extension Windows.`32`.Kernel.File.Flush.Error {
-    /// The underlying Windows error code.
-    @inlinable
-    public var code: Error_Primitives.Error.Code {
-        switch self {
-        case .handle(let e): return e.code
-        case .platform(let e): return e.code
+    extension Windows.`32`.Kernel.File.Flush.Error {
+        /// The underlying Windows error code.
+        @inlinable
+        public var code: Error_Primitives.Error.Code {
+            switch self {
+            case .handle(let e): return e.code
+            case .platform(let e): return e.code
+            }
         }
     }
-}
 #endif

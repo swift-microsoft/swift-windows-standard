@@ -10,67 +10,67 @@
 // ===----------------------------------------------------------------------===//
 
 #if os(Windows)
-public import WinSDK
+    public import WinSDK
 
-// MARK: - Windows DeleteFileW syscall
+    // MARK: - Windows DeleteFileW syscall
 
-extension Windows.`32`.Kernel.File.Delete {
-    /// Deletes a file.
-    ///
-    /// On Windows, the file may not be immediately deleted if other processes
-    /// have the file open. The file will be deleted when the last handle is closed.
-    ///
-    /// - Parameter path: The path of the file to delete.
-    /// - Throws: `Windows.`32`.Kernel.File.Delete.Error` on failure.
-    public static func delete(
-        path: borrowing Path
-    ) throws(Windows.`32`.Kernel.File.Delete.Error) {
-        try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.File.Delete.Error) in
-            try delete(unsafePath: ptr)
+    extension Windows.`32`.Kernel.File.Delete {
+        /// Deletes a file.
+        ///
+        /// On Windows, the file may not be immediately deleted if other processes
+        /// have the file open. The file will be deleted when the last handle is closed.
+        ///
+        /// - Parameter path: The path of the file to delete.
+        /// - Throws: `Windows.`32`.Kernel.File.Delete.Error` on failure.
+        public static func delete(
+            path: borrowing Path
+        ) throws(Windows.`32`.Kernel.File.Delete.Error) {
+            try unsafe path.view.withUnsafePointer { ptr throws(Windows.`32`.Kernel.File.Delete.Error) in
+                try delete(unsafePath: ptr)
+            }
+        }
+
+        /// Deletes a file using an unsafe wide string.
+        ///
+        /// - Parameter unsafePath: The path as a null-terminated wide string.
+        /// - Throws: `Windows.`32`.Kernel.File.Delete.Error` on failure.
+        public static func delete(
+            unsafePath: UnsafePointer<Path.Char>
+        ) throws(Windows.`32`.Kernel.File.Delete.Error) {
+            let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
+            guard DeleteFileW(wpath) else {
+                throw .current()
+            }
         }
     }
 
-    /// Deletes a file using an unsafe wide string.
-    ///
-    /// - Parameter unsafePath: The path as a null-terminated wide string.
-    /// - Throws: `Windows.`32`.Kernel.File.Delete.Error` on failure.
-    public static func delete(
-        unsafePath: UnsafePointer<Path.Char>
-    ) throws(Windows.`32`.Kernel.File.Delete.Error) {
-        let wpath = UnsafeRawPointer(unsafePath).assumingMemoryBound(to: WCHAR.self)
-        guard DeleteFileW(wpath) else {
-            throw .current()
+    // MARK: - Error Construction
+
+    extension Windows.`32`.Kernel.File.Delete.Error {
+        /// Creates an error from the current Win32 last error.
+        @usableFromInline
+        internal static func current() -> Self {
+            let code = Error_Primitives.Error.captureLastError()
+            guard let win32Code = code.win32 else {
+                return .platform(Error_Primitives.Error(code: code))
+            }
+            return current(from: win32Code)
+        }
+
+        /// Maps a Win32 error code to the semantic error (testing seam).
+        package static func current(from win32Code: UInt32) -> Self {
+            switch win32Code {
+            case Error_Primitives.Error.Code.File.notFound,
+                Error_Primitives.Error.Code.File.pathNotFound:
+                return .notFound
+            case Error_Primitives.Error.Code.Access.denied:
+                return .permission
+            case Error_Primitives.Error.Code.Access.sharingViolation:
+                return .busy
+            default:
+                return .platform(Error_Primitives.Error(code: .win32(win32Code)))
+            }
         }
     }
-}
-
-// MARK: - Error Construction
-
-extension Windows.`32`.Kernel.File.Delete.Error {
-    /// Creates an error from the current Win32 last error.
-    @usableFromInline
-    internal static func current() -> Self {
-        let code = Error_Primitives.Error.captureLastError()
-        guard let win32Code = code.win32 else {
-            return .platform(Error_Primitives.Error(code: code))
-        }
-        return current(from: win32Code)
-    }
-
-    /// Maps a Win32 error code to the semantic error (testing seam).
-    package static func current(from win32Code: UInt32) -> Self {
-        switch win32Code {
-        case Error_Primitives.Error.Code.File.notFound,
-             Error_Primitives.Error.Code.File.pathNotFound:
-            return .notFound
-        case Error_Primitives.Error.Code.Access.denied:
-            return .permission
-        case Error_Primitives.Error.Code.Access.sharingViolation:
-            return .busy
-        default:
-            return .platform(Error_Primitives.Error(code: .win32(win32Code)))
-        }
-    }
-}
 
 #endif

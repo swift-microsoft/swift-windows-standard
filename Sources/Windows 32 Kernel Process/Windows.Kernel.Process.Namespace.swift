@@ -34,7 +34,7 @@ extension Windows.`32`.Kernel.Process {
     /// Mirrors the POSIX iso-9945 ``ISO_9945/Kernel/Process/Error`` shape
     /// in structure (case for spawn / wait / status with embedded error
     /// codes).
-    public enum Error: Swift.Error, Sendable, Equatable {
+    public enum Error: Swift.Error, Sendable, Equatable, Hashable {
         /// `CreateProcessW` failed (or related setup such as
         /// `InitializeProcThreadAttributeList`).
         case create(Error_Primitives.Error.Code)

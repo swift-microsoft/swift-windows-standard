@@ -21,7 +21,7 @@
         /// ## Usage
         ///
         /// ```swift
-        /// let result = try Windows.`32`.Kernel.IO.Completion.Port.read(handle, into: buffer, overlapped: &overlapped)
+        /// let result = try unsafe Windows.`32`.Kernel.IO.Completion.Port.read(handle, into: buffer, overlapped: overlapped)
         /// switch result {
         /// case .pending:
         ///     // Wait for completion via port

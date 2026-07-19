@@ -23,32 +23,59 @@
         ///
         /// ## Usage
         ///
-        /// ```swift
-        /// var overlapped = Windows.`32`.Kernel.IO.Completion.Port.Overlapped()
-        /// overlapped.offset = position
+        /// `read`/`write` take `UnsafeMutablePointer<Overlapped>`, not
+        /// `inout Overlapped`: the pointer must stay valid and unmoved for
+        /// the *entire operation*, not merely for the duration of the call
+        /// that starts it. On a `.pending` result the kernel keeps writing
+        /// completion state into this exact address, and posts a packet
+        /// referencing it, after the initiating call has already returned —
+        /// which can be arbitrarily later. A plain Swift local passed via
+        /// `inout` does not give that guarantee (`withUnsafeMutablePointer`
+        /// only promises validity for its own closure's duration); a
+        /// pointer the caller allocates and owns for the operation's
+        /// lifetime does:
         ///
-        /// // Start async read (overlapped must stay alive until completion)
-        /// try Windows.`32`.Kernel.IO.Completion.Port.read(
+        /// ```swift
+        /// let overlapped = UnsafeMutablePointer<Windows.`32`.Kernel.IO.Completion.Port.Overlapped>
+        ///     .allocate(capacity: 1)
+        /// overlapped.initialize(to: .init())
+        /// overlapped.pointee.offset = position
+        ///
+        /// // Start async read — `overlapped` must remain valid and unmoved
+        /// // until the operation completes (dequeued or cancelled).
+        /// let result = try unsafe Windows.`32`.Kernel.IO.Completion.Port.read(
         ///     handle,
-        ///     buffer: buffer,
-        ///     overlapped: &overlapped
+        ///     into: buffer,
+        ///     overlapped: overlapped
         /// )
         ///
         /// // Later, retrieve completion
         /// let entry = try Windows.`32`.Kernel.IO.Completion.Port.Dequeue.single(port, timeout: .infinite)
         /// let count = entry.bytes.transferred
+        ///
+        /// // Once dequeued (or cancelled and confirmed not pending), the
+        /// // caller reclaims the storage:
+        /// overlapped.deinitialize(count: 1)
+        /// overlapped.deallocate()
         /// ```
         ///
         /// ## Container-Of Pattern
         ///
         /// For associating state with operations, embed `Overlapped` as the
-        /// first field of a struct:
+        /// first field of a **heap-allocated** (e.g. `class`) type, so its
+        /// address stays stable across the whole operation the same way the
+        /// pointer above does:
         ///
         /// ```swift
-        /// struct MyOperation {
+        /// final class MyOperation {
         ///     var overlapped: Windows.`32`.Kernel.IO.Completion.Port.Overlapped
         ///     var buffer: [UInt8]
         ///     var callback: (Int) -> Void
+        ///     init(buffer: [UInt8], callback: @escaping (Int) -> Void) {
+        ///         self.overlapped = .init()
+        ///         self.buffer = buffer
+        ///         self.callback = callback
+        ///     }
         /// }
         /// ```
         ///

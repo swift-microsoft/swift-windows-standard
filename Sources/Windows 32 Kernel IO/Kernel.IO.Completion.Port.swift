@@ -130,10 +130,32 @@
         /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
         /// `descriptor._rawValue` after a fast-fail validity check.
         ///
+        /// ## Overlapped storage requirement
+        ///
+        /// `overlapped` must point to memory the **caller** owns and keeps
+        /// address-stable for the entire lifetime of the operation — not
+        /// merely for the duration of this call. When this returns
+        /// `.pending`, the kernel has not finished with `overlapped`: it
+        /// continues to write completion state into that exact address and
+        /// posts a packet referencing it when the read finishes, which can
+        /// be arbitrarily long after this function returns. Prior to this
+        /// API taking a raw pointer, this parameter was `inout Overlapped`,
+        /// which routed the OS pointer through
+        /// `withUnsafeMutablePointer(to:)` — valid *only* for that
+        /// function's duration by the standard library's own contract — so
+        /// a `.pending` result reliably left the OS holding a pointer whose
+        /// validity was already unspecified. A raw pointer the caller
+        /// allocates (e.g. `UnsafeMutablePointer<Overlapped>.allocate`, or a
+        /// field inside caller-owned heap storage such as a class) does not
+        /// have that problem: its address does not depend on any Swift
+        /// closure scope.
+        ///
         /// - Parameters:
         ///   - handle: File HANDLE bit pattern (must be opened with FILE_FLAG_OVERLAPPED).
         ///   - buffer: The buffer to read into.
-        ///   - overlapped: The overlapped structure for this operation.
+        ///   - overlapped: Pointer to caller-owned, address-stable storage
+        ///     for this operation. Must remain valid and unmoved until the
+        ///     operation completes (dequeued or cancelled) — see above.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
         @unsafe
@@ -141,10 +163,10 @@
         package static func read(
             _ handle: UInt,
             into buffer: UnsafeMutableRawBufferPointer,
-            overlapped: inout Overlapped
+            overlapped: UnsafeMutablePointer<Overlapped>
         ) throws(Error) -> Read.Result {
             var count: DWORD = 0
-            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+            let success = unsafe withUnsafeMutablePointer(to: &overlapped.pointee.raw) { rawPtr in
                 ReadFile(
                     UnsafeMutableRawPointer(bitPattern: handle)!,
                     buffer.baseAddress,
@@ -173,10 +195,17 @@
         /// `Windows.`32`.Kernel.Descriptor`) delegates to this raw SPI internally via
         /// `descriptor._rawValue` after a fast-fail validity check.
         ///
+        /// Same overlapped-storage requirement as ``read(_:into:overlapped:)``:
+        /// `overlapped` must be caller-owned, address-stable storage kept
+        /// alive until the operation completes, not a `withUnsafeMutablePointer`-scoped
+        /// temporary. See that function's doc comment for the full rationale.
+        ///
         /// - Parameters:
         ///   - handle: File HANDLE bit pattern (must be opened with FILE_FLAG_OVERLAPPED).
         ///   - buffer: The buffer to write from.
-        ///   - overlapped: The overlapped structure for this operation.
+        ///   - overlapped: Pointer to caller-owned, address-stable storage
+        ///     for this operation. Must remain valid and unmoved until the
+        ///     operation completes (dequeued or cancelled).
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
         @unsafe
@@ -184,10 +213,10 @@
         package static func write(
             _ handle: UInt,
             from buffer: UnsafeRawBufferPointer,
-            overlapped: inout Overlapped
+            overlapped: UnsafeMutablePointer<Overlapped>
         ) throws(Error) -> Write.Result {
             var count: DWORD = 0
-            let success = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+            let success = unsafe withUnsafeMutablePointer(to: &overlapped.pointee.raw) { rawPtr in
                 WriteFile(
                     UnsafeMutableRawPointer(bitPattern: handle)!,
                     buffer.baseAddress,
@@ -313,7 +342,9 @@
         /// - Parameters:
         ///   - handle: The file handle (must be opened with FILE_FLAG_OVERLAPPED).
         ///   - buffer: The buffer to read into.
-        ///   - overlapped: The overlapped structure for this operation.
+        ///   - overlapped: Pointer to caller-owned, address-stable storage
+        ///     for this operation — see the raw `read(_:into:overlapped:)`
+        ///     doc comment for why this cannot be `inout`.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.read` on failure (excluding ERROR_IO_PENDING).
         @unsafe
@@ -321,9 +352,9 @@
         public static func read(
             _ handle: borrowing Windows.`32`.Kernel.Descriptor,
             into buffer: UnsafeMutableRawBufferPointer,
-            overlapped: inout Overlapped
+            overlapped: UnsafeMutablePointer<Overlapped>
         ) throws(Error) -> Read.Result {
-            try unsafe read(handle._rawValue, into: buffer, overlapped: &overlapped)
+            try unsafe read(handle._rawValue, into: buffer, overlapped: overlapped)
         }
 
         /// Initiates an overlapped write operation.
@@ -334,7 +365,9 @@
         /// - Parameters:
         ///   - handle: The file handle (must be opened with FILE_FLAG_OVERLAPPED).
         ///   - buffer: The buffer to write from.
-        ///   - overlapped: The overlapped structure for this operation.
+        ///   - overlapped: Pointer to caller-owned, address-stable storage
+        ///     for this operation — see the raw `write(_:from:overlapped:)`
+        ///     doc comment for why this cannot be `inout`.
         /// - Returns: `.pending` if async, `.completed(bytes:)` if sync completion.
         /// - Throws: `Error.write` on failure (excluding ERROR_IO_PENDING).
         @unsafe
@@ -342,9 +375,9 @@
         public static func write(
             _ handle: borrowing Windows.`32`.Kernel.Descriptor,
             from buffer: UnsafeRawBufferPointer,
-            overlapped: inout Overlapped
+            overlapped: UnsafeMutablePointer<Overlapped>
         ) throws(Error) -> Write.Result {
-            try unsafe write(handle._rawValue, from: buffer, overlapped: &overlapped)
+            try unsafe write(handle._rawValue, from: buffer, overlapped: overlapped)
         }
 
         /// Gets the result of a completed overlapped operation.

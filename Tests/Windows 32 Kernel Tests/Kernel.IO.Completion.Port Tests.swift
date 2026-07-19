@@ -221,6 +221,64 @@
         }
     }
 
+    // MARK: - Overlapped Pointer Storage Tests (F-002 regression)
+    //
+    // `read`/`write` used to take `overlapped: inout Overlapped`, routing
+    // the OS pointer through `withUnsafeMutablePointer(to:)` — valid only
+    // for that call's duration by the standard library's own contract. On
+    // the `.pending` path the kernel keeps writing into (and eventually
+    // posts a completion packet referencing) that address well after this
+    // function returns, so the old signature could leave the OS holding a
+    // pointer whose validity was already unspecified. Both now take
+    // `UnsafeMutablePointer<Overlapped>`, caller-owned address-stable
+    // storage.
+
+    extension Kernel.IO.Completion.Port.Test.Unit {
+        @Test
+        func `read(_:into:overlapped:) takes a caller-owned pointer, not a closure-scoped inout`() {
+            let overlapped = UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>.allocate(capacity: 1)
+            overlapped.initialize(to: .init())
+            defer {
+                overlapped.deinitialize(count: 1)
+                overlapped.deallocate()
+            }
+
+            var buffer = [UInt8](repeating: 0, count: 16)
+            // Compiles only against the fixed signature: pre-fix, this
+            // pointer argument would not type-check against `inout Overlapped`.
+            #expect(throws: Kernel.IO.Completion.Port.Error.self) {
+                _ = try buffer.withUnsafeMutableBytes { raw in
+                    try unsafe Kernel.IO.Completion.Port.read(
+                        Kernel.Descriptor.invalid,
+                        into: raw,
+                        overlapped: overlapped
+                    )
+                }
+            }
+        }
+
+        @Test
+        func `write(_:from:overlapped:) takes a caller-owned pointer, not a closure-scoped inout`() {
+            let overlapped = UnsafeMutablePointer<Kernel.IO.Completion.Port.Overlapped>.allocate(capacity: 1)
+            overlapped.initialize(to: .init())
+            defer {
+                overlapped.deinitialize(count: 1)
+                overlapped.deallocate()
+            }
+
+            let buffer: [UInt8] = [1, 2, 3, 4]
+            #expect(throws: Kernel.IO.Completion.Port.Error.self) {
+                _ = try buffer.withUnsafeBytes { raw in
+                    try unsafe Kernel.IO.Completion.Port.write(
+                        Kernel.Descriptor.invalid,
+                        from: raw,
+                        overlapped: overlapped
+                    )
+                }
+            }
+        }
+    }
+
     // MARK: - Nested Types Tests
 
     extension Kernel.IO.Completion.Port.Test.Unit {

@@ -115,6 +115,46 @@
         }
     }
 
+    // MARK: - pending(_:overlapped:) Result-Type Tests (F-001 regression)
+    //
+    // The safe, `inout`-taking `pending(_:overlapped:)` overload used to
+    // return `Pending` — an accessor storing an `UnsafeMutablePointer`
+    // obtained from `withUnsafeMutablePointer(to: &overlapped)`, valid only
+    // for that closure's duration, and dereferenced later from
+    // `callAsFunction()`/`status`. That is undefined behavior: the pointer
+    // escapes its only guaranteed-valid scope. It now returns
+    // `Pending.Result`, computed eagerly inside the pointer-safe scope, with
+    // no stored pointer at all.
+
+    extension Kernel.IO.Completion.Port.Cancel.Test.Unit {
+        @Test
+        func `pending(_:overlapped:) returns Pending Result, not the pointer-storing Pending accessor`() {
+            var overlapped = Kernel.IO.Completion.Port.Overlapped()
+            // This explicit annotation only compiles against the fixed API:
+            // pre-fix, `pending(_:overlapped:)` returned `Pending` (no
+            // nested `Result` type existed at all).
+            let result: Kernel.IO.Completion.Port.Cancel.Pending.Result = Kernel.IO.Completion.Port.Cancel.pending(
+                Kernel.Descriptor.invalid,
+                overlapped: &overlapped
+            )
+            _ = result.status
+        }
+
+        @Test
+        func `pending(_:overlapped:).status is stable across repeated reads`() {
+            // Unlike the old `Pending.status`, which re-ran `CancelIoEx`
+            // against a (potentially already-invalid) stored pointer on
+            // every access, `Pending.Result.status` reads only
+            // already-computed state and is therefore idempotent by
+            // construction.
+            var overlapped = Kernel.IO.Completion.Port.Overlapped()
+            let result = Kernel.IO.Completion.Port.Cancel.pending(Kernel.Descriptor.invalid, overlapped: &overlapped)
+            let first = result.status
+            let second = result.status
+            #expect(first == second)
+        }
+    }
+
     // MARK: - Edge Cases
 
     extension Kernel.IO.Completion.Port.Cancel.Test.EdgeCase {

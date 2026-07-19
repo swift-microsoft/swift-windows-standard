@@ -181,25 +181,91 @@
         }
     }
 
+    // MARK: - Cancel Specific (Safe, Immediate)
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel.Pending {
+        /// Result of a specific pending-I/O cancellation that has **already
+        /// executed**.
+        ///
+        /// Unlike ``Pending`` itself, a `Result` stores no pointer into
+        /// caller storage. It is produced by the safe, `inout`-taking
+        /// `Cancel.pending(_:overlapped:)` overload, which must call
+        /// `CancelIoEx` *inside* the scope that produces a valid
+        /// `LPOVERLAPPED` (see that overload's doc comment for why): by the
+        /// time a `Result` exists, the cancel has already happened, so there
+        /// is nothing left to defer and nothing that could reference memory
+        /// past the caller's `overlapped` local going out of scope.
+        public struct Result: Sendable {
+            let succeeded: Bool
+            let lastError: DWORD
+
+            init(succeeded: Bool, lastError: DWORD) {
+                self.succeeded = succeeded
+                self.lastError = lastError
+            }
+        }
+    }
+
+    extension Windows.`32`.Kernel.IO.Completion.Port.Cancel.Pending.Result {
+        /// No-op: the cancel already ran when this value was constructed.
+        ///
+        /// Kept for call-site symmetry with ``Pending/callAsFunction()`` so
+        /// existing fire-and-forget call sites
+        /// (`Cancel.pending(descriptor, overlapped: &overlapped)()`) keep
+        /// compiling unchanged.
+        public func callAsFunction() {}
+
+        /// Whether cancellation succeeded.
+        ///
+        /// Mirrors ``Pending/status``'s exact success formula, just
+        /// evaluated eagerly at cancel time instead of lazily at access
+        /// time.
+        ///
+        /// - Returns: `true` if cancelled, `false` if already completed.
+        public var status: Bool {
+            if succeeded {
+                return true
+            }
+            return lastError != Windows.`32`.Kernel.IO.Completion.Port.Error.Code.Lookup.notFound
+        }
+    }
+
     extension Windows.`32`.Kernel.IO.Completion.Port.Cancel {
         /// Cancels a specific pending I/O operation.
         ///
-        /// Typed L2 form. Returns an accessor whose
-        /// ``Pending/callAsFunction()``/``Pending/status`` delegate to the raw
-        /// `Cancel.pending(_:overlapped:)` SPI via `descriptor._rawValue`.
+        /// Typed L2 form, safe (no `@unsafe`). Executes `CancelIoEx`
+        /// **immediately**, inside the pointer scope that
+        /// `withUnsafeMutablePointer(to:)` guarantees is valid, and returns
+        /// an already-computed ``Pending/Result``.
+        ///
+        /// ## Why not return `Pending`
+        ///
+        /// An earlier revision returned `Pending` — an accessor that stored
+        /// an `UnsafeMutablePointer` obtained from
+        /// `withUnsafeMutablePointer(to: &overlapped)` and deferred the
+        /// actual `CancelIoEx` call to `callAsFunction()`/`status`. That
+        /// pointer is only guaranteed valid for the duration of the
+        /// `withUnsafeMutablePointer` closure; storing it in the returned
+        /// value and dereferencing it later, after the closure (and this
+        /// function) has returned, is undefined behavior — the compiler is
+        /// free to treat the pointee as dead the moment the closure exits.
+        /// Executing the cancel inside the closure and returning only the
+        /// already-computed result removes the escape entirely.
         ///
         /// - Parameters:
         ///   - descriptor: The descriptor with pending I/O.
         ///   - overlapped: The overlapped structure for the operation to cancel.
-        /// - Returns: An accessor for cancel operations.
+        /// - Returns: The already-executed cancel result.
         public static func pending(
             _ descriptor: borrowing Windows.`32`.Kernel.Descriptor,
             overlapped: inout Windows.`32`.Kernel.IO.Completion.Port.Overlapped
-        ) -> Pending {
+        ) -> Pending.Result {
             let handle = descriptor._rawValue
-            return unsafe withUnsafeMutablePointer(to: &overlapped) { ptr in
-                unsafe Pending(handle, overlapped: ptr)
+            let succeeded = unsafe withUnsafeMutablePointer(to: &overlapped.raw) { rawPtr in
+                Windows.`32`.Kernel.IO.Completion.Port.Cancel.pending(handle, overlapped: rawPtr)
             }
+            let lastError = succeeded ? DWORD(0) : GetLastError()
+            return Pending.Result(succeeded: succeeded, lastError: lastError)
         }
 
         /// Cancels a specific pending I/O operation via pointer.

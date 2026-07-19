@@ -94,6 +94,41 @@
             }
             return access
         }
+
+        /// Converts to Windows CreateFileMapping protection flags for a
+        /// copy-on-write (`.private`) mapping.
+        ///
+        /// Windows expresses "private" (`Memory.Map.Options.private`) via
+        /// `PAGE_WRITECOPY` / `PAGE_EXECUTE_WRITECOPY` on the *mapping
+        /// object*, paired with `FILE_MAP_COPY` on the *view* (see
+        /// ``windowsMapViewAccessCopyOnWrite``). `MapViewOfFile` requires
+        /// the mapping object to have been created with `PAGE_READWRITE`,
+        /// `PAGE_EXECUTE_READWRITE`, `PAGE_WRITECOPY`, or
+        /// `PAGE_EXECUTE_WRITECOPY` protection before `FILE_MAP_COPY` is a
+        /// valid view access — a plain `PAGE_READONLY` mapping object (what
+        /// ``windowsFileMapProtect`` would otherwise select for read-only
+        /// protection) cannot back a copy-on-write view at all.
+        @usableFromInline
+        internal var windowsFileMapProtectCopyOnWrite: DWORD {
+            contains(.execute) ? DWORD(PAGE_EXECUTE_WRITECOPY) : DWORD(PAGE_WRITECOPY)
+        }
+
+        /// Converts to Windows MapViewOfFile desired access flags for a
+        /// copy-on-write (`.private`) mapping.
+        ///
+        /// `FILE_MAP_COPY` alone already permits writes (with copy-on-write
+        /// semantics: modified pages are privately copied and never written
+        /// back to the file) — it must not be combined with
+        /// `FILE_MAP_WRITE`. `FILE_MAP_EXECUTE` may still be combined with
+        /// it for an executable private view.
+        @usableFromInline
+        internal var windowsMapViewAccessCopyOnWrite: DWORD {
+            var access = DWORD(FILE_MAP_COPY)
+            if contains(.execute) {
+                access |= DWORD(FILE_MAP_EXECUTE)
+            }
+            return access
+        }
     }
 
 #endif

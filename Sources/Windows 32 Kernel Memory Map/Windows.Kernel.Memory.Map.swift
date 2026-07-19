@@ -28,6 +28,15 @@
         /// 1. CreateFileMappingW to create a file mapping object
         /// 2. MapViewOfFile to map a view of that object
         ///
+        /// `flags.isPrivate` selects a copy-on-write mapping (`PAGE_WRITECOPY`
+        /// / `PAGE_EXECUTE_WRITECOPY` on the mapping object, `FILE_MAP_COPY`
+        /// on the view): writes are visible only to this process and are
+        /// never written back to the file. Any other `flags` value —
+        /// including the default `.shared` and an empty `Options()` —
+        /// produces the pre-existing shared, write-through mapping. If both
+        /// `.private` and `.shared` are set, `.private` wins (checked
+        /// first): the more restrictive, non-data-leaking interpretation.
+        ///
         /// - Parameters:
         ///   - handle: HANDLE bit pattern.
         ///   - length: Number of bytes to map (must be > 0).
@@ -47,8 +56,12 @@
                 throw .invalid(.length)
             }
 
+            let isPrivate = flags.isPrivate
+
             // Create file mapping object
-            let fileMappingProtect = protection.windowsFileMapProtect
+            let fileMappingProtect = isPrivate
+                ? protection.windowsFileMapProtectCopyOnWrite
+                : protection.windowsFileMapProtect
             let mappingHandle = CreateFileMappingW(
                 UnsafeMutableRawPointer(bitPattern: handle)!,
                 nil,
@@ -63,7 +76,9 @@
             }
 
             // Map view of file
-            let desiredAccess = protection.windowsMapViewAccess
+            let desiredAccess = isPrivate
+                ? protection.windowsMapViewAccessCopyOnWrite
+                : protection.windowsMapViewAccess
             let baseAddress = MapViewOfFile(
                 mappingHandle,
                 desiredAccess,

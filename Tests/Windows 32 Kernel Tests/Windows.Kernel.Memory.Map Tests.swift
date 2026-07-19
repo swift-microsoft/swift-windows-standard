@@ -146,6 +146,74 @@
         }
     }
 
+    // MARK: - Private (Copy-on-Write) Flag Conversion Tests (F-003 regression)
+    //
+    // `map(fd:...)` used to compute `fileMappingProtect`/`desiredAccess`
+    // from `protection` alone — `flags` was accepted but never read, so a
+    // `.private` request silently produced the same shared, write-through
+    // mapping as `.shared`. These properties are the corrected,
+    // `.private`-specific conversions `map(fd:...)` now selects via
+    // `flags.isPrivate`; they mirror the existing
+    // `windowsFileMapProtect`/`windowsMapViewAccess` conversion tests above,
+    // which cover the pre-existing `.shared` path.
+
+    extension Memory.Map.Test.Unit {
+        @Test
+        func `Protection.readWrite converts to PAGE_WRITECOPY for a private mapping object`() {
+            let prot = Memory.Map.Protection.readWrite
+            #expect(prot.windowsFileMapProtectCopyOnWrite == DWORD(PAGE_WRITECOPY))
+        }
+
+        @Test
+        func `Protection.readExecute converts to PAGE_EXECUTE_WRITECOPY for a private mapping object`() {
+            let prot = Memory.Map.Protection.readExecute
+            #expect(prot.windowsFileMapProtectCopyOnWrite == DWORD(PAGE_EXECUTE_WRITECOPY))
+        }
+
+        @Test
+        func `Protection.read converts to FILE_MAP_COPY for a private view`() {
+            let prot = Memory.Map.Protection.read
+            #expect(prot.windowsMapViewAccessCopyOnWrite == DWORD(FILE_MAP_COPY))
+        }
+
+        @Test
+        func `Protection.readExecute adds FILE_MAP_EXECUTE to a private view`() {
+            let prot = Memory.Map.Protection.readExecute
+            let access = prot.windowsMapViewAccessCopyOnWrite
+            #expect(access & DWORD(FILE_MAP_COPY) != 0)
+            #expect(access & DWORD(FILE_MAP_EXECUTE) != 0)
+        }
+
+        @Test
+        func `Private mapping conversion differs from shared for the same protection`() {
+            // The actual F-003 bug: `.private` and `.shared` produced
+            // identical Windows flags because `map(fd:...)` never
+            // consulted `flags` at all. Post-fix, the two conversion paths
+            // for the same `Protection` value must diverge.
+            let prot = Memory.Map.Protection.readWrite
+            #expect(prot.windowsFileMapProtect != prot.windowsFileMapProtectCopyOnWrite)
+            #expect(prot.windowsMapViewAccess != prot.windowsMapViewAccessCopyOnWrite)
+        }
+    }
+
+    // MARK: - Options.private / .isPrivate Wiring Tests
+
+    extension Memory.Map.Test.Unit {
+        @Test
+        func `Options.private is recognized as private, not shared`() {
+            let flags = Memory.Map.Options.private
+            #expect(flags.isPrivate)
+            #expect(!flags.isShared)
+        }
+
+        @Test
+        func `Options.shared is recognized as shared, not private`() {
+            let flags = Memory.Map.Options.shared
+            #expect(flags.isShared)
+            #expect(!flags.isPrivate)
+        }
+    }
+
     // MARK: - Edge Cases
 
     extension Memory.Map.Test.EdgeCase {
